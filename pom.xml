@@ -28,42 +28,42 @@
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
         <commons-csv.version>1.14.1</commons-csv.version>
-        <commons-io.version>2.20.0</commons-io.version>
-        <flatlaf.version>3.6.1</flatlaf.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <flatlaf.version>3.7</flatlaf.version>
         <gson.version>2.13.2</gson.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <log4j.version>2.25.2</log4j.version>
-        <selenium.version>4.36.0</selenium.version>
+        <selenium.version>4.38.0</selenium.version>
 
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <exec-maven-plugin.version>3.6.1</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
-        <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
 
         <!-- Linter 3PP Versions -->
         <asm-version>9.9</asm-version>
-        <checkstyle.version>11.1.0</checkstyle.version>
-        <error_prone_core.version>2.42.0</error_prone_core.version>
+        <checkstyle.version>12.2.0</checkstyle.version>
+        <error_prone_core.version>2.45.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
         <nullaway.version>0.11.0</nullaway.version>
-        <pmd.version>7.17.0</pmd.version>
-        <spotbugs.version>4.9.6</spotbugs.version>
+        <pmd.version>7.19.0</pmd.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
 
         <!-- Linter Plugin Versions -->
         <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
-        <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
-        <spotbugs-maven-plugin.version>4.9.6.0</spotbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+        <sonar-maven-plugin.version>5.4.0.6343</sonar-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
 
         <!-- Linter Properties -->
         <!--suppress UnresolvedMavenProperty, files are only used in child modules -->
@@ -410,7 +410,6 @@
                     <configuration>
                         <configLocation>${checkstyle-file}</configLocation>
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <!--suppress UnresolvedMavenProperty, file is only used in child modules -->
                         <propertyExpansion>checkstyle.config.path=${ci-config-directory}</propertyExpansion>
                         <skip>${skip-linters}</skip>
                         <violationSeverity>info</violationSeverity>
@@ -442,6 +441,7 @@
                     <version>${maven-enforcer-plugin.version}</version>
                     <configuration>
                         <rules>
+<!--                            <banDeprecated implementation="org.apache.maven.plugins.enforcer.BanDeprecated"/>-->
                             <banDynamicVersions>
                                 <excludedScopes/>
                             </banDynamicVersions>

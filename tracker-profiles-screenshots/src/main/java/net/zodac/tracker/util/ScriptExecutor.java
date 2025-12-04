@@ -76,7 +76,11 @@ public class ScriptExecutor {
         final Wait<WebDriver> wait = new WebDriverWait(driver, DEFAULT_WAIT_FOR_ALERT)
             .ignoring(NoSuchElementException.class);
         final Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-        alert.accept();
+        if (alert != null) {
+            alert.accept();
+        } else {
+            LOGGER.warn("Expected alert not found, not attempting to click anything");
+        }
     }
 
     /**
