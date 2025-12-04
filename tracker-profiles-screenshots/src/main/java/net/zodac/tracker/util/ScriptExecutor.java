@@ -300,7 +300,6 @@ public class ScriptExecutor {
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(selector));
         } catch (final TimeoutException e) {
-            // TODO: Pretty-print this HTML
             LOGGER.trace("Page source: {}", driver.getPageSource());
             throw e;
         }
