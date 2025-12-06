@@ -486,14 +486,16 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * Sometimes when clicking the login button or the profile page button, the page won't load correctly. If a {@link TimeoutException} occurs due to
-     * the webpage, not loading within {@code clickResolutionTime} it is simply ignored. We then force the web page to stop loading before proceeding.
+     * the webpage, not loading within {@code clickResolutionDuration} it is simply ignored. We then force the web page to stop loading before
+     * proceeding.
      *
-     * @param buttonToClick the {@link WebElement} to {@link WebElement#click()}
+     * @param buttonToClick           the {@link WebElement} to {@link WebElement#click()}
+     * @param clickResolutionDuration the {@link Duration} to wait for the click to action a change (like a page load)
      * @see ScriptExecutor#stopPageLoad()
      */
-    protected void clickButton(final WebElement buttonToClick, final Duration clickResolutionTime) {
+    protected void clickButton(final WebElement buttonToClick, final Duration clickResolutionDuration) {
         try {
-            driver.manage().timeouts().pageLoadTimeout(clickResolutionTime);
+            driver.manage().timeouts().pageLoadTimeout(clickResolutionDuration);
             buttonToClick.click();
         } catch (final TimeoutException e) {
             LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
