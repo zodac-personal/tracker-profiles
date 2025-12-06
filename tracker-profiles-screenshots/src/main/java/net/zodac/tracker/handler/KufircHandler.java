@@ -101,7 +101,8 @@ public class KufircHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Kapcsolodás')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Kapcsolodás')]/span[1]"), // IP address (Hungarian)
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Connectable')]/span[1]") // IP address (English)
         );
     }
 
