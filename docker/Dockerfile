@@ -14,12 +14,12 @@ COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
 RUN mvn clean install
 
 # Stage 2: Install Python
-FROM python:3.13.7-slim AS python_builder
+FROM python:3.14.1-slim AS python_builder
 
 # BEGIN PYTHON PACKAGES
 RUN python3 -m ensurepip && \
     pip install \
-        pip=="25.2" \
+        pip=="25.3" \
         wheel=="0.45.1"
 # END PYTHON PACKAGES
 
@@ -48,7 +48,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
     find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
 
 # Stage 4: Prepare scripts
-FROM debian:trixie-slim AS scripts_builder
+FROM debian:13.2-slim AS scripts_builder
 COPY ./docker/scripts/start.sh /start.sh
 RUN chmod +x /start.sh
 
@@ -56,7 +56,7 @@ RUN chmod +x /start.sh
 FROM busybox:1.37.0-musl AS shell_builder
 
 # Runtime
-FROM debian:13.1-slim
+FROM debian:13.2-slim
 
 # Set the working directory
 WORKDIR /app
@@ -68,7 +68,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="141.0.7390.54-1~deb13u1" \
+        chromium="143.0.7499.40-1~deb13u1" \
     && \
     apt-get autoremove && \
     apt-get clean && \
@@ -113,6 +113,9 @@ RUN chown -R nonroot:nonroot /tmp/chrome-home
 ENV HOME=/tmp/chrome-home
 USER nonroot
 VOLUME /tmp/chrome-home
+
+# Suppress 'dbind-WARNING' error logs
+ENV NO_AT_BRIDGE=1
 
 # Start application
 CMD ["/app/start.sh"]
