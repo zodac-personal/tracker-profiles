@@ -45,8 +45,8 @@ public class UploadCxHandler extends Unit3dHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link UploadCxHandler}, prior to clicking the login button with a successful username/password there is another field where the user is prompted to verify
-     * themselves as a non-bot. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * For {@link UploadCxHandler}, prior to clicking the login button with a successful username/password there is another field where the user is
+     * prompted to verify themselves as a human. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
      *
      * <p>
      * Manual user interaction:

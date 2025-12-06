@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -475,16 +474,26 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Sometimes when clicking the login button or the profile page button, the page won't load correctly. This sets the
-     * {@link WebDriver.Timeouts#pageLoadTimeout(Duration)} to {@link #MAXIMUM_CLICK_RESOLUTION_TIME}, and if a {@link TimeoutException} occurs, it is
-     * ignored. We then force the web page to stop loading before proceeding.
+     * Same as {@link #clickButton(WebElement, Duration)}, but the click resolution time is {@link #MAXIMUM_CLICK_RESOLUTION_TIME}.
+     *
+     * @param buttonToClick the {@link WebElement} to {@link WebElement#click()}
+     * @see #clickButton(WebElement)
+     * @see ScriptExecutor#stopPageLoad()
+     */
+    protected void clickButton(final WebElement buttonToClick) {
+        clickButton(buttonToClick, MAXIMUM_CLICK_RESOLUTION_TIME);
+    }
+
+    /**
+     * Sometimes when clicking the login button or the profile page button, the page won't load correctly. If a {@link TimeoutException} occurs due to
+     * the webpage, not loading within {@code clickResolutionTime} it is simply ignored. We then force the web page to stop loading before proceeding.
      *
      * @param buttonToClick the {@link WebElement} to {@link WebElement#click()}
      * @see ScriptExecutor#stopPageLoad()
      */
-    protected void clickButton(final WebElement buttonToClick) {
+    protected void clickButton(final WebElement buttonToClick, final Duration clickResolutionTime) {
         try {
-            driver.manage().timeouts().pageLoadTimeout(MAXIMUM_CLICK_RESOLUTION_TIME);
+            driver.manage().timeouts().pageLoadTimeout(clickResolutionTime);
             buttonToClick.click();
         } catch (final TimeoutException e) {
             LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
