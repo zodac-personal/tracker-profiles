@@ -73,12 +73,6 @@ public class DicMusicHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean isNotEnglish(final String username) {
-        LOGGER.debug("- Not translating, there is an option in the user settings to translate to English");
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         // Highlight the profile menu to make the logout button interactable
         final By logoutParentSelector = By.id("userinfo_username");

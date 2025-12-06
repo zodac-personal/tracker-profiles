@@ -15,6 +15,7 @@ FearNoPeer,username,password
 FileList,username,password
 HDUnited,username,password
 ItaTorrents,username,password
+Lat-Team,username,password
 Libble,username,password
 LST,username,password
 Metal-Tracker,username,password
@@ -37,7 +38,6 @@ UHDBits,username,password
 Unwalled,username,password
 #,Non-english trackers,UI required to translate
 Kufirc,username,password
-Lat-Team,username,password
 RUTracker,username,password
 #,Manual trackers,UI required for user input
 BeyondHD,username,password
@@ -55,3 +55,4 @@ CinemaZ,username,password
 ExoticaZ,username,password
 HDBits,username,password
 PrivateHD,username,password
+UploadCX,username,password

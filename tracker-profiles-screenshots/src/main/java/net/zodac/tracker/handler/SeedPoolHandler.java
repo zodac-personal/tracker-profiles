@@ -24,10 +24,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Extension of the {@link Unit3dHandler} for the {@code Lat-Team} tracker.
+ * Extension of the {@link Unit3dHandler} for the {@code SeedPool} tracker.
  */
-@TrackerHandler(name = "Lat-Team", url = "https://lat-team.com/")
-public class LatTeamHandler extends Unit3dHandler {
+@TrackerHandler(name = "SeedPool", url = "https://seedpool.org/")
+public class SeedPoolHandler extends Unit3dHandler {
 
     /**
      * Default constructor.
@@ -35,7 +35,7 @@ public class LatTeamHandler extends Unit3dHandler {
      * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
      * @param trackerUrls the URLs to the tracker
      */
-    public LatTeamHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
+    public SeedPoolHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
         super(driver, trackerUrls);
     }
 
@@ -43,17 +43,18 @@ public class LatTeamHandler extends Unit3dHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link LatTeamHandler}, unlike most other {@code UNIT3D}-based trackers, the user profile dropdown does not open when the mouse hovers
-     * over it. Instead, we need to click it.
+     * For {@link SeedPoolHandler}, unlike most other {@code UNIT3D}-based trackers, there is no link to the username available in the nav bar.
+     * Instead, we must move the mouse over the profile icon in the nav bar. This will activate the dropdown menu and make the profile link button
+     * interactive.
      *
-     * @return {@link By} the selector for the logout link
+     * @return {@link By} the selector for the profile link
      */
     @Override
-    protected By logoutButtonSelector() {
-        final By logoutParentSelector = By.xpath("//span[contains(@class, 'user-sidebar__toggle-label')]");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        clickButton(logoutParent);
+    protected By profilePageSelector() {
+        final By profileParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
+        final WebElement profileParent = driver.findElement(profileParentSelector);
+        scriptExecutor.moveTo(profileParent);
 
-        return By.xpath("//button[contains(@class, 'user-sidebar__menu-link--logout')]");
+        return By.xpath("//a[@class='top-nav__username']");
     }
 }
