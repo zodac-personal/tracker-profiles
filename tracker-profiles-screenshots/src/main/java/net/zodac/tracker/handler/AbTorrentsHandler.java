@@ -60,42 +60,10 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * For {@link AbTorrentsHandler}, there is no login button to click. The output of {@link #manualCheckBeforeLoginClick(String)} should log in.
      */
-    @Nullable
     @Override
     protected By loginButtonSelector() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link AbTorrentsHandler}, there is no login button to click. After the username/password is entered the user interaction must be
-     * completed.
-     * There is an icon to be selected, and then an 'X' button to be clicked to perform the login. This must be done within
-     * {@link DisplayUtils#INPUT_WAIT_DURATION}.
-     *
-     * <p>
-     * Manual user interactions:
-     * <ol>
-     *     <li>Select the correct image</li>
-     *     <li>Click the 'X' button to log in</li>
-     * </ol>
-     */
-    @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
-        final WebElement captchaTextElement = driver.findElement(By.xpath("//span[@class='captchaText']"));
-        LOGGER.info("\t\t >>> Waiting for user to select the '{}' image and click the 'X' button to log in, for {} seconds",
-            captchaTextElement.getText(), DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
-
-        scriptExecutor.highlightElement(driver.findElement(By.id("captcha")));
-        scriptExecutor.highlightElement(driver.findElement(By.xpath("//table[count(.//tr) >= 6]/tbody/tr[6]/td[1]")));
-        DisplayUtils.userInputConfirmation(trackerName,
-            String.format("Select the '%s' image and click the 'X' button to log in", captchaTextElement.getText()));
+        return By.xpath("//input[@name='submitme' and @type='submit' and @value='Login']");
     }
 
     /**
