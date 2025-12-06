@@ -20,8 +20,6 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
-import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -31,8 +29,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 @TrackerHandler(name = "MoreThanTV", url = "https://www.morethantv.me/")
 public class MoreThanTvHandler extends AbstractTrackerHandler {
-
-    private static final String PASSKEY_PREFIX = "Passkey: ";
 
     /**
      * Default constructor.
@@ -72,27 +68,6 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         return By.xpath("//a[@class='username']");
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link MoreThanTvHandler}, we also need to redact a passkey {@link WebElement}. We find an element with text that is prefixed by
-     * {@value #PASSKEY_PREFIX}, signifying a {@link WebElement} with a sensitive passkey. We redact this element by replacing all text with the
-     * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
-     */
-    @Override
-    public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(text(), '%s')]", PASSKEY_PREFIX));
-        final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
-        final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
-        scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
-
-        return 1 + super.redactElements();
     }
 
     @Override
