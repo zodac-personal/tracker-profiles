@@ -19,7 +19,6 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import java.util.List;
-import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -34,7 +33,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "LST", url = "https://lst.gg/")
 @TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
 @TrackerHandler(name = "SeedPool", url = "https://seedpool.org/")
-@TrackerHandler(name = "UploadCX", type = TrackerType.CLOUDFLARE_CHECK, url = "https://upload.cx/") // Cloudflare check on login screen, no redirect
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 public class Unit3dHandler extends AbstractTrackerHandler {
 
