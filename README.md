@@ -92,6 +92,7 @@ The following trackers are not currently supported:
 | DarkPeers       |
 | Hawke-Uno       |
 | IPTorrents      |
+| OnlyEncodes     |
 | SceneTime       |
 | Speed.CD        |
 | SportsCult      |

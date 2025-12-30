@@ -1,5 +1,5 @@
 # Stage 1: Build the Java artefact
-FROM maven:3.9.11-eclipse-temurin-25-alpine AS maven_builder
+FROM maven:3.9.12-eclipse-temurin-25-alpine AS maven_builder
 
 # Set the working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
 RUN mvn clean install
 
 # Stage 2: Install Python
-FROM python:3.14.1-slim AS python_builder
+FROM python:3.14.2-slim AS python_builder
 
 # BEGIN PYTHON PACKAGES
 RUN python3 -m ensurepip && \
@@ -68,7 +68,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="143.0.7499.40-1~deb13u1" \
+        chromium="143.0.7499.169-1~deb13u1" \
     && \
     apt-get autoremove && \
     apt-get clean && \
