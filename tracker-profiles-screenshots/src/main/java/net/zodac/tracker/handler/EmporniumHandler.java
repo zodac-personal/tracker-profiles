@@ -29,8 +29,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Empornium} tracker.
  */
 @TrackerHandler(name = "Empornium", url = {
-    "https://www.empornium.is/",
-    "https://www.empornium.sx/"
+    "https://www.empornium.sx/",
+    "https://www.emparadise.rs/"
 })
 public class EmporniumHandler extends AbstractTrackerHandler {
 
