@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-# Copyright (c) 2024-2025 zodac.net
+# Copyright (c) 2024-2026 zodac.net
 
 from collections.abc import Generator
 from unittest.mock import MagicMock, patch
