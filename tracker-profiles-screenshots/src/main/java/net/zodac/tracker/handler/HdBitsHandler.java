@@ -84,7 +84,12 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         scriptExecutor.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerName, String.format("Select the '%s' image", captchaTextElement.getText()));
+
+        final WebElement twoFactorPasscodeElement = driver.findElement(By.xpath("//table[1]/tbody[1]/tr[3]/td[2]"));
+        scriptExecutor.highlightElement(twoFactorPasscodeElement);
+
+        DisplayUtils.userInputConfirmation(trackerName, String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
+            captchaTextElement.getText()));
     }
 
     @Override
