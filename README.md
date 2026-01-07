@@ -26,76 +26,76 @@ The available trackers come in the following types:
 
 ### Supported Trackers
 
-| Tracker Name     | Support              |
-|------------------|----------------------|
-| ABTorrents       | Headless             |
-| Aither           | Headless             |
-| AlphaRatio       | Headless             |
-| AnimeBytes       | Headless             |
-| AnimeTorrents    | **Cloudflare-check** |
-| Anthelion        | Headless             |
-| AvistaZ          | **Cloudflare-check** |
-| BackUps          | Headless             |
-| BakaBT           | Headless             |
-| BeyondHD         | **Manual**           |
-| Blutopia         | Headless             |
-| BwTorrents       | Headless             |
-| Cathode-Ray.Tube | Headless             |
-| CinemaZ          | **Cloudflare-check** |
-| DICMusic         | Headless             |
-| DigitalCore.Club | **Manual**           |
-| DocsPedia        | **Manual**           |
-| Empornium        | Headless             |
-| ExoticaZ         | **Cloudflare-check** |
-| FearNoPeer       | Headless             |
-| FileList         | Headless             |
-| GazelleGames     | **Manual**           |
-| HDBits           | **Cloudflare-check** |
-| HDUnited         | Headless             |
-| ItaTorrents      | Headless             |
-| Kufirc           | **Non-English**      |
-| Lat-Team         | Headless             |
-| Libble           | Headless             |
-| LST              | Headless             |
-| Metal-Tracker    | Headless             |
-| MoreThanTV       | Headless             |
-| MyAnonaMouse     | Headless             |
-| Nebulance        | Headless             |
-| Orpheus          | Headless             |
-| PassThePopcorn   | **Manual**           |
-| PixelCove        | Headless             |
-| PornBay          | Headless             |
-| PrivateHD        | **Cloudflare-check** |
-| Redacted         | Headless             |
-| ReelFlix         | Headless             |
-| RUTracker        | **Non-English**      |
-| SecretCinema     | Headless             |
-| SeedPool         | Headless             |
-| Tasmanites       | Headless             |
-| TeamOS           | Headless             |
-| TheEmpire        | **Manual**           |
-| TheGeeks         | **Manual**           |
-| TorrentLeech     | Headless             |
-| TVChaosUK        | Headless             |
-| UHDBits          | Headless             |
-| Unwalled         | Headless             |
-| UploadCX         | **Cloudflare-check** |
+| Tracker Name                                      | Support              |
+|---------------------------------------------------|----------------------|
+| [ABTorrents](https://usefultrash.net/)            | Headless             |
+| [Aither](https://aither.cc/)                      | Headless             |
+| [AlphaRatio](https://alpharatio.cc/)              | Headless             |
+| [AnimeBytes](https://animebytes.tv/)              | Headless             |
+| [AnimeTorrents](https://animetorrents.me/)        | **Cloudflare-check** |
+| [Anthelion](https://anthelion.me/)                | Headless             |
+| [AvistaZ](https://avistaz.to/)                    | **Cloudflare-check** |
+| [BackUps](https://back-ups.me/)                   | Headless             |
+| [BakaBT](https://bakabt.me/)                      | Headless             |
+| [BeyondHD](https://beyond-hd.me/)                 | **Manual**           |
+| [Blutopia](https://blutopia.cc/)                  | Headless             |
+| [BwTorrents](https://bwtorrents.tv/)              | Headless             |
+| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | Headless             |
+| [CinemaZ](https://cinemaz.to/)                    | **Cloudflare-check** |
+| [DICMusic](https://dicmusic.com/)                 | Headless             |
+| [DigitalCore.Club](https://digitalcore.club/)     | **Manual**           |
+| [DocsPedia](https://docspedia.world/)             | **Manual**           |
+| [Empornium](https://www.empornium.sx/)            | Headless             |
+| [ExoticaZ](https://exoticaz.to/)                  | **Cloudflare-check** |
+| [FearNoPeer](https://fearnopeer.com/)             | Headless             |
+| [FileList](https://filelist.io/)                  | Headless             |
+| [GazelleGames](https://gazellegames.net/)         | **Manual**           |
+| [HDBits](https://hdbits.org/)                     | **Cloudflare-check** |
+| [HDUnited](https://hd-united.vn/)                 | Headless             |
+| [ItaTorrents](https://itatorrents.xyz/)           | Headless             |
+| [Kufirc](https://kufirc.com/)                     | **Non-English**      |
+| [Lat-Team](https://lat-team.com/)                 | Headless             |
+| [Libble](https://libble.me/)                      | Headless             |
+| [LST](https://lst.gg/)                            | Headless             |
+| [Metal-Tracker](https://en.metal-tracker.com/)    | Headless             |
+| [MoreThanTV](https://www.morethantv.me/)          | Headless             |
+| [MyAnonaMouse](https://www.myanonamouse.net/)     | Headless             |
+| [Nebulance](https://nebulance.io/)                | Headless             |
+| [Orpheus](https://orpheus.network/)               | Headless             |
+| [PassThePopcorn](https://passthepopcorn.me/)      | **Manual**           |
+| [PixelCove](https://www.pixelcove.me/)            | Headless             |
+| [PornBay](https://pornbay.org/)                   | Headless             |
+| [PrivateHD](https://privatehd.to/)                | **Cloudflare-check** |
+| [Redacted](https://redacted.sh/)                  | Headless             |
+| [ReelFlix](https://reelflix.cc/)                  | Headless             |
+| [RUTracker](https://rutracker.org/)               | **Non-English**      |
+| [SecretCinema](https://secret-cinema.pw/)         | Headless             |
+| [SeedPool](https://seedpool.org/)                 | Headless             |
+| [Tasmanites](https://tasmanit.es/)                | Headless             |
+| [TeamOS](https://teamos.xyz/)                     | Headless             |
+| [TheEmpire](https://theempire.click/)             | **Manual**           |
+| [TheGeeks](https://thegeeks.click/)               | **Manual**           |
+| [TorrentLeech](https://www.torrentleech.org/)     | Headless             |
+| [TVChaosUK](https://tvchaosuk.com/)               | Headless             |
+| [UHDBits](https://uhdbits.org/)                   | Headless             |
+| [Unwalled](https://unwalled.cc/)                  | Headless             |
+| [UploadCX](https://upload.cx/)                    | **Cloudflare-check** |
 
 ### Unsupported Trackers
 
-The following trackers are not currently supported:
+The following trackers are not currently supported, but I'll implement them next.
 
-| Tracker Name    |
-|-----------------|
-| BroadcasThe.Net |
-| CGPeers         |
-| DarkPeers       |
-| Hawke-Uno       |
-| IPTorrents      |
-| OnlyEncodes     |
-| SceneTime       |
-| Speed.CD        |
-| SportsCult      |
+| Tracker Name                                |
+|---------------------------------------------|
+| [BroadcasThe.Net](https://broadcasthe.net/) |
+| [CGPeers](https://cgpeers.to/)              |
+| [DarkPeers](https://darkpeers.org/)         |
+| [Hawke-Uno](https://hawke.uno/)             |
+| [IPTorrents](https://iptorrents.com/)       |
+| [OnlyEncodes](https://onlyencodes.cc/)      |
+| [SceneTime](https://www.scenetime.com/)     |
+| [Speed.CD](https://speed.cd/)               |
+| [SportsCult](https://sportscult.org/)       |
 
 ## How To Use
 
