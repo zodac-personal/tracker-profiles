@@ -39,6 +39,7 @@ The available trackers come in the following types:
 | [BakaBT](https://bakabt.me/)                      | Headless             |
 | [BeyondHD](https://beyond-hd.me/)                 | **Manual**           |
 | [Blutopia](https://blutopia.cc/)                  | Headless             |
+| [BroadcasThe.Net](https://broadcasthe.net/)       | **Cloudflare-check** |
 | [BwTorrents](https://bwtorrents.tv/)              | Headless             |
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | Headless             |
 | [CinemaZ](https://cinemaz.to/)                    | **Cloudflare-check** |
@@ -87,7 +88,6 @@ The following trackers are not currently supported, but I'll implement them next
 
 | Tracker Name                                |
 |---------------------------------------------|
-| [BroadcasThe.Net](https://broadcasthe.net/) |
 | [CGPeers](https://cgpeers.to/)              |
 | [DarkPeers](https://darkpeers.org/)         |
 | [Hawke-Uno](https://hawke.uno/)             |
