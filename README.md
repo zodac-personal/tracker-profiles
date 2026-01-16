@@ -75,6 +75,7 @@ The available trackers come in the following types:
 | [RUTracker](https://rutracker.org/)               | **Non-English**      |
 | [SecretCinema](https://secret-cinema.pw/)         | Headless             |
 | [SeedPool](https://seedpool.org/)                 | Headless             |
+| [Speed.CD](https://speed.cd/)                     | **Cloudflare-check** |
 | [SportsCult](https://sportscult.org/)             | Headless             |
 | [Tasmanites](https://tasmanit.es/)                | Headless             |
 | [TeamOS](https://teamos.xyz/)                     | Headless             |
@@ -90,13 +91,13 @@ The available trackers come in the following types:
 
 The following trackers are not currently supported, but I'll implement them next.
 
-| Tracker Name                            |
-|-----------------------------------------|
-| [CGPeers](https://cgpeers.to/)          |
-| [FunFile](https://www.funfile.org/)     |
-| [IPTorrents](https://iptorrents.com/)   |
-| [SceneTime](https://www.scenetime.com/) |
-| [Speed.CD](https://speed.cd/)           |
+| Tracker Name                             |
+|------------------------------------------|
+| [CGPeers](https://cgpeers.to/)           |
+| [FunFile](https://www.funfile.org/)      |
+| [ImmortalSeed](https://immortalseed.me/) |
+| [IPTorrents](https://iptorrents.com/)    |
+| [SceneTime](https://www.scenetime.com/)  |
 
 ## How To Use
 
