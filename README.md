@@ -75,6 +75,7 @@ The available trackers come in the following types:
 | [RUTracker](https://rutracker.org/)               | **Non-English**      |
 | [SecretCinema](https://secret-cinema.pw/)         | Headless             |
 | [SeedPool](https://seedpool.org/)                 | Headless             |
+| [SportsCult](https://sportscult.org/)             | Headless             |
 | [Tasmanites](https://tasmanit.es/)                | Headless             |
 | [TeamOS](https://teamos.xyz/)                     | Headless             |
 | [TheEmpire](https://theempire.click/)             | **Manual**           |
@@ -96,7 +97,6 @@ The following trackers are not currently supported, but I'll implement them next
 | [IPTorrents](https://iptorrents.com/)   |
 | [SceneTime](https://www.scenetime.com/) |
 | [Speed.CD](https://speed.cd/)           |
-| [SportsCult](https://sportscult.org/)   |
 
 ## How To Use
 

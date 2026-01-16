@@ -20,15 +20,16 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code MyAnonaMouse} tracker.
+ * Implementation of {@link AbstractTrackerHandler} for the {@code SportsCult} tracker.
  */
-@TrackerHandler(name = "MyAnonaMouse", url = "https://www.myanonamouse.net/")
-public class MyAnonaMouseHandler extends AbstractTrackerHandler {
+@TrackerHandler(name = "SportsCult", url = "https://sportscult.org/")
+public class SportsCultHandler extends AbstractTrackerHandler {
 
     /**
      * Default constructor.
@@ -36,55 +37,37 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
      * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
      * @param trackerUrls the URLs to the tracker
      */
-    public MyAnonaMouseHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
+    public SportsCultHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
         super(driver, trackerUrls);
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@type='email' and @name='email']");
+        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[2]/input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@type='password' and @name='password']");
+        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[4]/input[1]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Log in!' and @type='submit']");
+        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[5]/input[1]");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.id("userStat");
+        return By.xpath("//form[@name='jump1']");
     }
 
     @Override
     protected By profilePageSelector() {
-        // Highlight the profile menu to make the logout button interactable
-        final By profileDropDownSelector = By.xpath("//li[@class='mmUserStats']//a[@tabindex='0']");
-        final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
-        scriptExecutor.moveTo(profileDropDown);
-
-        return By.xpath("//a[@class='myInfo']");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            // TODO: Replace `contains(text(), 'Address')` with `contains(normalize-space(), 'Address')`
-            By.xpath("//div[@class='blockBody']//table/tbody/tr[td[contains(text(), 'Address')]]/td[2]")
-        );
+        return By.xpath("//a[contains(@class, 'mainuser') and contains(normalize-space(), 'My Panel')]");
     }
 
     @Override
     protected By logoutButtonSelector() {
-        // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.id("userMenu");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//a[text()='Log Out']");
+        return By.xpath("//a[contains(normalize-space(), '(Logout)')]");
     }
 }
