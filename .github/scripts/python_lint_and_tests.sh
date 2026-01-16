@@ -25,8 +25,8 @@
 
 set -euo pipefail
 
-LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.13.3"
-TEST_DOCKER_IMAGE="python:3.13.7-alpine"
+LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.14.13"
+TEST_DOCKER_IMAGE="python:3.14.2-slim"
 
 # Linting
 echo

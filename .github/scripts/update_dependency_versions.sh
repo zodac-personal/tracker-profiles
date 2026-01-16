@@ -34,7 +34,7 @@
 
 set -euo pipefail
 
-DEBIAN_DOCKER_IMAGE_VERSION="13.1"
+DEBIAN_DOCKER_IMAGE_VERSION="13.3"
 
 get_pypi_version() {
     version=$(curl -fsSL "https://pypi.org/pypi/${1}/json" | jq -r '.info.version // empty')

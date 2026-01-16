@@ -56,7 +56,7 @@ RUN chmod +x /start.sh
 FROM busybox:1.37.0-musl AS shell_builder
 
 # Runtime
-FROM debian:13.2-slim
+FROM debian:13.3-slim
 
 # Set the working directory
 WORKDIR /app

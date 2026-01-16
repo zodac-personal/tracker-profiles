@@ -17,12 +17,10 @@
 
 package net.zodac.tracker.handler;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -56,8 +54,8 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // After login, a popup blocks the dropdown menu. So we wait a couple of seconds
-        ScriptExecutor.explicitWait(Duration.ofSeconds(4L));
+        // After login, a popup blocks the dropdown menu, so we wait a few seconds
+        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
         // Click the user dropdown menu bar to make the profile button interactable
         final By profileParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[3]/a[1]");
