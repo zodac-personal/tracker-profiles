@@ -43,6 +43,7 @@ The available trackers come in the following types:
 | [BwTorrents](https://bwtorrents.tv/)              | Headless             |
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | Headless             |
 | [CinemaZ](https://cinemaz.to/)                    | **Cloudflare-check** |
+| [DarkPeers](https://darkpeers.org/)               | Headless             |
 | [DICMusic](https://dicmusic.com/)                 | Headless             |
 | [DigitalCore.Club](https://digitalcore.club/)     | **Manual**           |
 | [DocsPedia](https://docspedia.world/)             | **Manual**           |
@@ -90,7 +91,6 @@ The following trackers are not currently supported, but I'll implement them next
 | Tracker Name                            |
 |-----------------------------------------|
 | [CGPeers](https://cgpeers.to/)          |
-| [DarkPeers](https://darkpeers.org/)     |
 | [FunFile](https://www.funfile.org/)     |
 | [Hawke-Uno](https://hawke.uno/)         |
 | [IPTorrents](https://iptorrents.com/)   |

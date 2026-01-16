@@ -76,6 +76,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
+        // TODO: replace all `@class=''` with `contains(@class, 'login-btn')`
         return By.xpath("//a[@class='top-nav__username--highresolution']");
     }
 
