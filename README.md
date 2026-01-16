@@ -62,6 +62,7 @@ The available trackers come in the following types:
 | [MoreThanTV](https://www.morethantv.me/)          | Headless             |
 | [MyAnonaMouse](https://www.myanonamouse.net/)     | Headless             |
 | [Nebulance](https://nebulance.io/)                | Headless             |
+| [OnlyEncodes](https://onlyencodes.cc/)            | Headless             | 
 | [Orpheus](https://orpheus.network/)               | Headless             |
 | [PassThePopcorn](https://passthepopcorn.me/)      | **Manual**           |
 | [PixelCove](https://www.pixelcove.me/)            | Headless             |
@@ -86,16 +87,16 @@ The available trackers come in the following types:
 
 The following trackers are not currently supported, but I'll implement them next.
 
-| Tracker Name                                |
-|---------------------------------------------|
-| [CGPeers](https://cgpeers.to/)              |
-| [DarkPeers](https://darkpeers.org/)         |
-| [Hawke-Uno](https://hawke.uno/)             |
-| [IPTorrents](https://iptorrents.com/)       |
-| [OnlyEncodes](https://onlyencodes.cc/)      |
-| [SceneTime](https://www.scenetime.com/)     |
-| [Speed.CD](https://speed.cd/)               |
-| [SportsCult](https://sportscult.org/)       |
+| Tracker Name                            |
+|-----------------------------------------|
+| [CGPeers](https://cgpeers.to/)          |
+| [DarkPeers](https://darkpeers.org/)     |
+| [FunFile](https://www.funfile.org/)     |
+| [Hawke-Uno](https://hawke.uno/)         |
+| [IPTorrents](https://iptorrents.com/)   |
+| [SceneTime](https://www.scenetime.com/) |
+| [Speed.CD](https://speed.cd/)           |
+| [SportsCult](https://sportscult.org/)   |
 
 ## How To Use
 

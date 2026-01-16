@@ -68,7 +68,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="143.0.7499.169-1~deb13u1" \
+        chromium="144.0.7559.59-1~deb13u1" \
     && \
     apt-get autoremove && \
     apt-get clean && \

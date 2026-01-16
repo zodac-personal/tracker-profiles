@@ -50,8 +50,8 @@
 
         <!-- Linter 3PP Versions -->
         <asm-version>9.9.1</asm-version>
-        <checkstyle.version>12.3.0</checkstyle.version>
-        <error_prone_core.version>2.45.0</error_prone_core.version>
+        <checkstyle.version>13.0.0</checkstyle.version>
+        <error_prone_core.version>2.46.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
         <nullaway.version>0.11.0</nullaway.version>
         <pmd.version>7.20.0</pmd.version>
