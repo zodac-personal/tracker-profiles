@@ -57,7 +57,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         // After login, a popup blocks the dropdown menu. So we wait a couple of seconds
-        ScriptExecutor.explicitWait(Duration.ofSeconds(2L));
+        ScriptExecutor.explicitWait(Duration.ofSeconds(4L));
 
         // Click the user dropdown menu bar to make the profile button interactable
         final By profileParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[3]/a[1]");
