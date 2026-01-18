@@ -74,6 +74,7 @@ The available trackers come in the following types:
 | [Redacted](https://redacted.sh/)                  | Headless             |
 | [ReelFlix](https://reelflix.cc/)                  | Headless             |
 | [RUTracker](https://rutracker.org/)               | **Non-English**      |
+| [SceneTime](https://www.scenetime.com/)           | **Cloudflare-check** |
 | [SecretCinema](https://secret-cinema.pw/)         | Headless             |
 | [SeedPool](https://seedpool.org/)                 | Headless             |
 | [Speed.CD](https://speed.cd/)                     | **Cloudflare-check** |
@@ -97,7 +98,6 @@ The following trackers are not currently supported, but I'll implement them next
 | [CGPeers](https://cgpeers.to/)           |
 | [FunFile](https://www.funfile.org/)      |
 | [ImmortalSeed](https://immortalseed.me/) |
-| [SceneTime](https://www.scenetime.com/)  |
 
 ## How To Use
 
