@@ -275,7 +275,7 @@ public final class ProfileScreenshotter {
         trackerHandler.openProfilePage();
 
         // TODO: Take both redacted and non-redacted screenshots?
-        if (!trackerHandler.getElementsPotentiallyContainingSensitiveInformation().isEmpty()) {
+        if (trackerHandler.hasElementsNeedingRedaction()) {
             LOGGER.info("\t- Redacting elements with sensitive information");
             final int numberOfRedactedElements = trackerHandler.redactElements();
             if (numberOfRedactedElements != 0) {

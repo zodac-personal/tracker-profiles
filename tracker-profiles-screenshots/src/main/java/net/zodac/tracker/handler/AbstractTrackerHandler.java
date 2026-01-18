@@ -354,6 +354,19 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
+     * Checks if the {@link AbstractTrackerHandler} requires redaction of any elements.
+     *
+     * <p>
+     * By default, it will check the result of {@link #getElementsPotentiallyContainingSensitiveInformation()}, and only return <code>true</code> if
+     * it is not {@link Collection#isEmpty()}.
+     *
+     * @return <code>true</code> if there are elements in need of redaction
+     */
+    public boolean hasElementsNeedingRedaction() {
+        return !getElementsPotentiallyContainingSensitiveInformation().isEmpty();
+    }
+
+    /**
      * Retrieves a {@link Collection} of {@link WebElement}s from the user's profile page, where the inner text needs to be redacted. This is used for
      * {@link WebElement}s that has sensitive information (like an IP address), which should not be visible in the screenshot. Once found, the text
      * in the {@link WebElement}s is redacted.
@@ -395,7 +408,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return the {@link By} selectors for elements that may contain sensitive information
      */
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of();
     }
 

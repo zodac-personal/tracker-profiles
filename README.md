@@ -55,6 +55,7 @@ The available trackers come in the following types:
 | [Hawke-Uno](https://hawke.uno/)                   | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                     | **Cloudflare-check** |
 | [HDUnited](https://hd-united.vn/)                 | Headless             |
+| [IPTorrents](https://iptorrents.com/)             | Headless             |
 | [ItaTorrents](https://itatorrents.xyz/)           | Headless             |
 | [Kufirc](https://kufirc.com/)                     | **Non-English**      |
 | [Lat-Team](https://lat-team.com/)                 | Headless             |
@@ -96,7 +97,6 @@ The following trackers are not currently supported, but I'll implement them next
 | [CGPeers](https://cgpeers.to/)           |
 | [FunFile](https://www.funfile.org/)      |
 | [ImmortalSeed](https://immortalseed.me/) |
-| [IPTorrents](https://iptorrents.com/)    |
 | [SceneTime](https://www.scenetime.com/)  |
 
 ## How To Use
