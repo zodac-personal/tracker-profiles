@@ -117,7 +117,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link HdBitsHandler}, there is also a table entry with our passkey. We find the {@literal <}{@code tr}{@literal >} {@link WebElement}s
-     * which has a {@literal <}{@code th}{@literal >} {@link WebElement} with the text value <b>Passkey</b>. From this
+     * which has a {@literal <}{@code td}{@literal >} {@link WebElement} with the text value <b>Passkey</b>. From this
      * {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs its content redacted.
      *
      * @see AbstractTrackerHandler#redactElements()
