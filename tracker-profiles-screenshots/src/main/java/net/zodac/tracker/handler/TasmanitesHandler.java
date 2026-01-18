@@ -71,7 +71,8 @@ public class TasmanitesHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//tbody[@id='collapseobj_content2a']/tr[1]/td[1]"), // Email
-            By.xpath("//tbody[@id='collapseobj_content2c']/tr[1]/td[1]") // IP address
+            By.xpath("//tbody[@id='collapseobj_content2c']/tr[1]/td[1]"), // IP address
+            By.xpath("//div[@id='top']/div[2]/span") // IP address in header
         );
     }
 
