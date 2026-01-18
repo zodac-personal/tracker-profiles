@@ -97,7 +97,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
      * <p>
      * For {@link DocspediaHandler}, there is a table with our passkey. We
      * find the {@literal <}{@code tr}{@literal >} {@link WebElement} which has a {@literal <}{@code td}{@literal >} {@link WebElement} with the text
-     * value <b>Torrent Passkey</b>. From this {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs
+     * value <b>Passkey</b>. From this {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs
      * its content redacted.
      *
      * @see AbstractTrackerHandler#redactElements()
