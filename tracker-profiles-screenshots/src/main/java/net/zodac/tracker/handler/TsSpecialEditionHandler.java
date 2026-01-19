@@ -26,10 +26,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code Tasmanites} tracker.
+ * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
  */
 @TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
-public class TasmanitesHandler extends AbstractTrackerHandler {
+@TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
+public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     /**
      * Default constructor.
@@ -37,34 +38,34 @@ public class TasmanitesHandler extends AbstractTrackerHandler {
      * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
      * @param trackerUrls the URLs to the tracker
      */
-    public TasmanitesHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
+    public TsSpecialEditionHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
         super(driver, trackerUrls);
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//tbody[@id='collapseobj_loginbox']//input[@name='username' and @type='text']");
+        return By.xpath("//*[@id='collapseobj_loginbox']//input[@name='username' and @type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//tbody[@id='collapseobj_loginbox']//input[@name='password' and @type='password']");
+        return By.xpath("//*[@id='collapseobj_loginbox']//input[@name='password' and @type='password']");
     }
 
     @Nullable
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//tbody[@id='collapseobj_loginbox']//input[@value='LOGIN' and @type='submit']");
+        return By.xpath("//*[@id='collapseobj_loginbox']//input[@value='LOGIN' and @type='submit']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.id("collapseobj_loginbox");
+        return By.id("collapseobj_search");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//tbody[@id='collapseobj_loginbox']/tr[1]/td[1]/a[1]");
+        return By.xpath("//div[@id='top']/div[2]/span[1]/a[1]");
     }
 
     @Override
@@ -80,7 +81,7 @@ public class TasmanitesHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link TasmanitesHandler}, after clicking the logout button, a Javascript alert appears, which must be accepted.
+     * For {@link TsSpecialEditionHandler}, after clicking the logout button, a Javascript alert appears, which must be accepted.
      */
     @Override
     public void logout() {
