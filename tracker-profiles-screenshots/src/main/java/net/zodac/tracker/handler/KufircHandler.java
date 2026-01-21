@@ -91,7 +91,7 @@ public class KufircHandler extends AbstractTrackerHandler {
         final int superRedactedElements = super.redactElements();
 
         final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
-        final WebElement passkeyElement = driver.findElement(By.xpath(String.format("//li[contains(text(), '%s')]", PASSKEY_PREFIX)));
+        final WebElement passkeyElement = driver.findElement(By.xpath(String.format("//li[contains(normalize-space(), '%s')]", PASSKEY_PREFIX)));
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
         return superRedactedElements + 1;
@@ -99,10 +99,11 @@ public class KufircHandler extends AbstractTrackerHandler {
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+        // TODO: Handle IP regardless of language
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Kapcsolodás')]/span[1]"), // IP address (Hungarian)
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Connectable')]/span[1]") // IP address (English)
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Kapcsolodás')]/span[1]"), // IP address (Hungarian)
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address (English)
         );
     }
 

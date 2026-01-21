@@ -46,7 +46,7 @@ public class NebulanceHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[text()='Login']");
+        return By.xpath("//a[contains(normalize-space(), 'Login')]");
     }
 
     @Override
@@ -91,7 +91,7 @@ public class NebulanceHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(text(), '%s')]", PASSKEY_PREFIX));
+        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]", PASSKEY_PREFIX));
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
         final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
@@ -102,13 +102,13 @@ public class NebulanceHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Connectable')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[text()='Logout']");
+        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), 'Logout')]");
     }
 }

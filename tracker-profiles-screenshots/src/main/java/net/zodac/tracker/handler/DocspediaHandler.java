@@ -105,7 +105,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[text()='Passkey']]/td[2]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[contains(normalize-space(), 'Passkey')]]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -114,12 +114,13 @@ public class DocspediaHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table/tbody/tr[td[contains(text(), 'Address')]]/td[2]") // IP address
+            By.xpath("//table/tbody/tr[td[contains(normalize-space(), 'Address')]]/td[2]") // IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(text(), 'Logout')]");
+        // TODO: Create some sort of XPATH builder to construct this in a single place?
+        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
     }
 }

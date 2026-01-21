@@ -78,7 +78,7 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[text()='Login' and @type='submit']");
+        return By.xpath("//button[contains(normalize-space(), 'Login') and @type='submit']");
     }
 
     @Override
@@ -110,6 +110,6 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[contains(@class, 'hidden-xs2') and text()='Sign out']");
+        return By.xpath("//span[contains(@class, 'hidden-xs2') and contains(normalize-space(), 'Sign out')]");
     }
 }

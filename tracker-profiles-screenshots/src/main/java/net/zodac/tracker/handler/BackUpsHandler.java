@@ -41,7 +41,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(text(), 'Login')]");
+        return By.xpath("//a[contains(normalize-space(), 'Login')]");
     }
 
     @Override

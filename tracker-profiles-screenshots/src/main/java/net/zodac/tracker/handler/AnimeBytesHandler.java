@@ -89,6 +89,6 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//li[@id='username_menu']//ul[contains(@class, 'subnav')]//a[text()='Logout']");
+        return By.xpath("//li[@id='username_menu']//ul[contains(@class, 'subnav')]//a[contains(normalize-space(), 'Logout')]");
     }
 }

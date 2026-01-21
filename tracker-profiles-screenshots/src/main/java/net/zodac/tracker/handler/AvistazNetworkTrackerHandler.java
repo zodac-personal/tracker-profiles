@@ -46,7 +46,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(text(), 'Login')]");
+        return By.xpath("//a[contains(normalize-space(), 'Login')]");
     }
 
     @Override
@@ -99,8 +99,8 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(text(), 'Email')]]/td[2]"),
-            By.xpath("//tr[td[contains(text(), 'IP')]]/td[2]")
+            By.xpath("//tr[td[contains(normalize-space(), 'Email')]]/td[2]"),
+            By.xpath("//tr[td[contains(normalize-space(), 'IP')]]/td[2]")
         );
     }
 

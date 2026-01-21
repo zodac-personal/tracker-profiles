@@ -68,7 +68,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'user-info')]/tbody/tr[td[text()='E-mail']]/td[2]") // Email
+            By.xpath("//table[contains(@class, 'user-info')]/tbody/tr[td[contains(normalize-space(), 'E-mail')]]/td[2]") // Email
         );
     }
 

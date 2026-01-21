@@ -42,7 +42,7 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[text()='Login']");
+        return By.xpath("//a[contains(normalize-space(), 'Login')]");
     }
 
     @Override
@@ -73,8 +73,8 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Connectable')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address
         );
     }
 

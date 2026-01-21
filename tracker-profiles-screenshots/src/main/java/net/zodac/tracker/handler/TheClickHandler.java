@@ -100,7 +100,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tbody/tr[td[1][contains(text(), 'IP Address')]]/td[2]") // IP address
+            By.xpath("//tbody/tr[td[1][contains(normalize-space(), 'IP Address')]]/td[2]") // IP address
         );
     }
 

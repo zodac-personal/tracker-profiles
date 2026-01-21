@@ -60,7 +60,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(text(), 'Log in')]");
+        return By.xpath("//button[contains(normalize-space(), 'Log in')]");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[text()='Torrent Passkey']]/td[2]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[contains(normalize-space(), 'Torrent Passkey')]]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -107,7 +107,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(text(), 'Email')]]/td[2]")
+            By.xpath("//tr[td[contains(normalize-space(), 'Email')]]/td[2]")
         );
     }
 

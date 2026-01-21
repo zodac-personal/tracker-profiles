@@ -47,7 +47,7 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(text(), 'Login')]");
+        return By.xpath("//button[contains(normalize-space(), 'Login')]");
     }
 
     @Override

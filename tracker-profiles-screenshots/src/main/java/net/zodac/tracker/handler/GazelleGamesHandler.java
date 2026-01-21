@@ -82,7 +82,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
             By.xpath("//div[@id='copyright']/p[2]/a[1]/span[3]") // Footer with last used IP address
         );
     }
@@ -109,6 +109,6 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[text()='[Logout]']");
+        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), '[Logout]')]");
     }
 }

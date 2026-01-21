@@ -52,7 +52,7 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit' and text()='One now']");
+        return By.xpath("//button[@type='submit' and contains(normalize-space(), 'One now')]");
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'userstats')]/tbody/tr[td[1][contains(text(), 'E-mail')]]/td[2]/a[1]") // Email
+            By.xpath("//table[contains(@class, 'userstats')]/tbody/tr[td[1][contains(normalize-space(), 'E-mail')]]/td[2]/a[1]") // Email
         );
     }
 
@@ -78,6 +78,6 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(profilePageSelector());
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[text()='Logout']");
+        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
     }
 }

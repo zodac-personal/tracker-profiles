@@ -73,7 +73,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
         final String title = driver.getTitle();
         if (title != null && title.contains("Oops! We ran into some problems.")) {
             LOGGER.debug("\t\t- Tracker admin requires updated thread to be viewed, clicking...");
-            final By threadRedirectSelector = By.xpath("//a[span[contains(text(), 'You can click here to view the thread')]]");
+            final By threadRedirectSelector = By.xpath("//a[span[contains(normalize-space(), 'You can click here to view the thread')]]");
             final WebElement threadRedirect = driver.findElement(threadRedirectSelector);
 
             scriptExecutor.removeAttribute(threadRedirect, "target"); // Stop forcing the link to open in a new tab
@@ -90,13 +90,13 @@ public class TeamOsHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[text()='Your profile']");
+        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[contains(normalize-space(), 'Your profile')]");
     }
 
     @Override
     protected By logoutButtonSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[text()='Log out']");
+        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[contains(normalize-space(), 'Log out')]");
     }
 
     private void navigateToUserPage() {
@@ -122,6 +122,6 @@ public class TeamOsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected By postLogoutElementSelector() {
-        return By.xpath("//a[span[text()='Log in']]");
+        return By.xpath("//a[span[contains(normalize-space(), 'Log in')]]");
     }
 }

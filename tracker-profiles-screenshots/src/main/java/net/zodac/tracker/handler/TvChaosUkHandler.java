@@ -53,7 +53,7 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     @Override
     public boolean canBannerBeCleared() {
         // Cookie banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(text(), 'Allow cookies')]"));
+        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(normalize-space(), 'Allow cookies')]"));
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -64,7 +64,7 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(text(), 'E-mail')]]/td[2]")
+            By.xpath("//tr[td[contains(normalize-space(), 'E-mail')]]/td[2]")
         );
     }
 

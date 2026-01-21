@@ -73,8 +73,7 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            // TODO: Replace `contains(text(), 'Address')` with `contains(normalize-space(), 'Address')`
-            By.xpath("//div[contains(@class, 'blockBody')]//table/tbody/tr[td[contains(text(), 'Address')]]/td[2]")
+            By.xpath("//div[contains(@class, 'blockBody')]//table/tbody/tr[td[contains(normalize-space(), 'Address')]]/td[2]")
         );
     }
 
@@ -85,6 +84,6 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[text()='Log Out']");
+        return By.xpath("//a[contains(normalize-space(), 'Log Out')]");
     }
 }

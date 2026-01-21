@@ -100,13 +100,13 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'list')]/li[contains(text(), 'Email:')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'list')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
             By.xpath("//a[@title='Manage Sessions']") // Footer with last used IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[text()='Logout']");
+        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), 'Logout')]");
     }
 }

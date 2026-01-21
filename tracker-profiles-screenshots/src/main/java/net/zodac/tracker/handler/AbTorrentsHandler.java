@@ -72,7 +72,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     protected void manualCheckAfterLoginClick(final String trackerName) {
         ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
 
-        final By pmWarningSelector = By.xpath("//a[b[contains(@class, 'alert-warning') and contains(text(), 'New Private message')]]");
+        final By pmWarningSelector = By.xpath("//a[b[contains(@class, 'alert-warning') and contains(normalize-space(), 'New Private message')]]");
         final List<WebElement> privateMessageWarnings = driver.findElements(pmWarningSelector);
 
         if (privateMessageWarnings.isEmpty()) {
@@ -84,7 +84,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
         final WebElement privateMessageWarning = privateMessageWarnings.getFirst();
         clickButton(privateMessageWarning);
 
-        final By unreadPmsSelector = By.xpath("//td[span[1][contains(text(), 'Unread')]]/a[1]");
+        final By unreadPmsSelector = By.xpath("//td[span[1][contains(normalize-space(), 'Unread')]]/a[1]");
         final List<WebElement> unreadPms = driver.findElements(unreadPmsSelector);
         LOGGER.debug("\t- {} unread PMs", unreadPms.size());
 
@@ -109,7 +109,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[1][contains(text(), 'Connectable')]]/td[2]//span") // Last connected IP address
+            By.xpath("//tr[td[1][contains(normalize-space(), 'Connectable')]]/td[2]//span") // Last connected IP address
         );
     }
 

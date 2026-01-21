@@ -279,7 +279,7 @@ public class ScriptExecutor {
 
             // After translation, some username elements will have been incorrectly translated
             if (mistranslatedUsername != null) {
-                final By mistranslatedElementSelector = By.xpath(String.format("//*[contains(text(), '%s')]", mistranslatedUsername));
+                final By mistranslatedElementSelector = By.xpath(String.format("//*[contains(normalize-space(), '%s')]", mistranslatedUsername));
                 for (final WebElement element : driver.findElements(mistranslatedElementSelector)) {
                     driver.executeScript(String.format("arguments[0].innerText = '%s'", username), element);
                 }

@@ -61,6 +61,6 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(text(), 'Logout')]");
+        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
     }
 }

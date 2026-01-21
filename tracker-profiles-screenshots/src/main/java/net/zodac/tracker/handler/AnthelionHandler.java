@@ -58,7 +58,7 @@ public class AnthelionHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(text(), 'Email:')]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
             By.xpath("//div[@id='footer']/div[2]/a[1]/span[3]") // Footer with last used IP address
         );
     }
@@ -70,6 +70,6 @@ public class AnthelionHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//div[@id='user_menu']//a[text()='Logout']");
+        return By.xpath("//div[@id='user_menu']//a[contains(normalize-space(), 'Logout')]");
     }
 }

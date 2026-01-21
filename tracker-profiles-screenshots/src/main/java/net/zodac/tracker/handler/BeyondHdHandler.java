@@ -87,6 +87,6 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[contains(text(), 'Logout')]");
+        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
     }
 }
