@@ -1,5 +1,25 @@
 # Tracker Profiles
 
+- [Overview](#overview)
+- [Features](#features)
+- [Trackers](#trackers)
+    - [Headless](#headless)
+    - [Non-Headless](#non-headless)
+    - [Unsupported](#unsupported)
+- [How To Use](#how-to-use)
+    - [Tracker Definitions](#tracker-definitions)
+    - [Running In Docker](#running-in-docker)
+    - [Browser UI](#browser-ui)
+        - [Enable UI In Docker](#enable-ui-in-docker)
+    - [Configuration Options](#configuration-options)
+- [Contributing](#contributing)
+    - [Requirements](#requirements)
+    - [Install Git Hooks](#install-git-hooks)
+    - [Debugging Application](#debugging-application)
+    - [Building And Running In Docker](#building-and-running-in-docker)
+    - [Implementing Support For New Trackers](#implementing-support-for-new-trackers)
+    - [Cloudflare Trackers](#cloudflare-trackers)
+
 ## Overview
 
 This is a tool used to log in to private torrent websites and take a screenshot of the user's profile page. This can be used to showcase stats on your
@@ -24,81 +44,90 @@ The available trackers come in the following types:
 
 **Note:** Any tracker not listed in either section below has not been tested (most likely due to lack of an account).
 
-### Supported Trackers
+### Headless
 
-| Tracker Name                                      | Support              |
-|---------------------------------------------------|----------------------|
-| [ABTorrents](https://usefultrash.net/)            | Headless             |
-| [Aither](https://aither.cc/)                      | Headless             |
-| [AlphaRatio](https://alpharatio.cc/)              | Headless             |
-| [AnimeBytes](https://animebytes.tv/)              | Headless             |
-| [AnimeTorrents](https://animetorrents.me/)        | **Cloudflare-check** |
-| [Anthelion](https://anthelion.me/)                | Headless             |
-| [AvistaZ](https://avistaz.to/)                    | **Cloudflare-check** |
-| [BackUps](https://back-ups.me/)                   | Headless             |
-| [BakaBT](https://bakabt.me/)                      | Headless             |
-| [BeyondHD](https://beyond-hd.me/)                 | **Manual**           |
-| [Blutopia](https://blutopia.cc/)                  | Headless             |
-| [BroadcasThe.Net](https://broadcasthe.net/)       | **Cloudflare-check** |
-| [BwTorrents](https://bwtorrents.tv/)              | Headless             |
-| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | Headless             |
-| [CinemaZ](https://cinemaz.to/)                    | **Cloudflare-check** |
-| [CGPeers](https://cgpeers.to/)                    | **Cloudflare-check** |
-| [DarkPeers](https://darkpeers.org/)               | Headless             |
-| [DICMusic](https://dicmusic.com/)                 | Headless             |
-| [DigitalCore.Club](https://digitalcore.club/)     | **Manual**           |
-| [DocsPedia](https://docspedia.world/)             | **Manual**           |
-| [Empornium](https://www.empornium.sx/)            | Headless             |
-| [ExoticaZ](https://exoticaz.to/)                  | **Cloudflare-check** |
-| [FearNoPeer](https://fearnopeer.com/)             | Headless             |
-| [FileList](https://filelist.io/)                  | Headless             |
-| [FunFile](https://www.funfile.org/)               | Headless             |
-| [GazelleGames](https://gazellegames.net/)         | **Manual**           |
-| [Hawke-Uno](https://hawke.uno/)                   | **Cloudflare-check** |
-| [HDBits](https://hdbits.org/)                     | **Cloudflare-check** |
-| [HDUnited](https://hd-united.vn/)                 | Headless             |
-| [ImmortalSeed](https://immortalseed.me/)          | Headless             |
-| [IPTorrents](https://iptorrents.com/)             | Headless             |
-| [ItaTorrents](https://itatorrents.xyz/)           | Headless             |
-| [Kufirc](https://kufirc.com/)                     | **Non-English**      |
-| [Lat-Team](https://lat-team.com/)                 | Headless             |
-| [Libble](https://libble.me/)                      | Headless             |
-| [LST](https://lst.gg/)                            | Headless             |
-| [Metal-Tracker](https://en.metal-tracker.com/)    | Headless             |
-| [MoreThanTV](https://www.morethantv.me/)          | Headless             |
-| [MyAnonaMouse](https://www.myanonamouse.net/)     | Headless             |
-| [Nebulance](https://nebulance.io/)                | Headless             |
-| [OnlyEncodes](https://onlyencodes.cc/)            | Headless             | 
-| [Orpheus](https://orpheus.network/)               | Headless             |
-| [PassThePopcorn](https://passthepopcorn.me/)      | **Manual**           |
-| [PixelCove](https://www.pixelcove.me/)            | Headless             |
-| [PornBay](https://pornbay.org/)                   | Headless             |
-| [PrivateHD](https://privatehd.to/)                | **Cloudflare-check** |
-| [Redacted](https://redacted.sh/)                  | Headless             |
-| [ReelFlix](https://reelflix.cc/)                  | Headless             |
-| [RUTracker](https://rutracker.org/)               | **Non-English**      |
-| [SceneTime](https://www.scenetime.com/)           | **Cloudflare-check** |
-| [SecretCinema](https://secret-cinema.pw/)         | Headless             |
-| [SeedPool](https://seedpool.org/)                 | Headless             |
-| [Speed.CD](https://speed.cd/)                     | **Cloudflare-check** |
-| [SportsCult](https://sportscult.org/)             | Headless             |
-| [Tasmanites](https://tasmanit.es/)                | Headless             |
-| [TeamOS](https://teamos.xyz/)                     | Headless             |
-| [TheEmpire](https://theempire.click/)             | **Manual**           |
-| [TheGeeks](https://thegeeks.click/)               | **Manual**           |
-| [TorrentLeech](https://www.torrentleech.org/)     | Headless             |
-| [TVChaosUK](https://tvchaosuk.com/)               | Headless             |
-| [UHDBits](https://uhdbits.org/)                   | Headless             |
-| [Unwalled](https://unwalled.cc/)                  | Headless             |
-| [UploadCX](https://upload.cx/)                    | **Cloudflare-check** |
+The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the background:
 
-### Unsupported Trackers
+| Tracker Name                                      |
+|---------------------------------------------------|
+| [ABTorrents](https://usefultrash.net/)            |
+| [Aither](https://aither.cc/)                      |
+| [AlphaRatio](https://alpharatio.cc/)              |
+| [AnimeBytes](https://animebytes.tv/)              |
+| [Anthelion](https://anthelion.me/)                |
+| [BackUps](https://back-ups.me/)                   |
+| [BakaBT](https://bakabt.me/)                      |
+| [Blutopia](https://blutopia.cc/)                  |
+| [BwTorrents](https://bwtorrents.tv/)              |
+| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) |
+| [DarkPeers](https://darkpeers.org/)               |
+| [DICMusic](https://dicmusic.com/)                 |
+| [Empornium](https://www.empornium.sx/)            |
+| [FearNoPeer](https://fearnopeer.com/)             |
+| [FileList](https://filelist.io/)                  |
+| [FunFile](https://www.funfile.org/)               |
+| [HDUnited](https://hd-united.vn/)                 |
+| [ImmortalSeed](https://immortalseed.me/)          |
+| [IPTorrents](https://iptorrents.com/)             |
+| [ItaTorrents](https://itatorrents.xyz/)           |
+| [Lat-Team](https://lat-team.com/)                 |
+| [Libble](https://libble.me/)                      |
+| [LST](https://lst.gg/)                            |
+| [Metal-Tracker](https://en.metal-tracker.com/)    |
+| [MoreThanTV](https://www.morethantv.me/)          |
+| [MyAnonaMouse](https://www.myanonamouse.net/)     |
+| [Nebulance](https://nebulance.io/)                |
+| [OnlyEncodes](https://onlyencodes.cc/)            | 
+| [Orpheus](https://orpheus.network/)               |
+| [PixelCove](https://www.pixelcove.me/)            |
+| [PornBay](https://pornbay.org/)                   |
+| [Redacted](https://redacted.sh/)                  |
+| [ReelFlix](https://reelflix.cc/)                  |
+| [SecretCinema](https://secret-cinema.pw/)         |
+| [SeedPool](https://seedpool.org/)                 |
+| [SportsCult](https://sportscult.org/)             |
+| [Tasmanites](https://tasmanit.es/)                |
+| [TeamOS](https://teamos.xyz/)                     |
+| [TorrentLeech](https://www.torrentleech.org/)     |
+| [TVChaosUK](https://tvchaosuk.com/)               |
+| [UHDBits](https://uhdbits.org/)                   |
+| [Unwalled](https://unwalled.cc/)                  |
 
-The following trackers are not currently supported, but I'll implement them next.
+### Non-Headless
 
-| Tracker Name                             |
-|------------------------------------------|
+If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type included in `TRACKER_EXECUTION_ORDER`), then a
+UI must be enabled. Instructions for this in Docker can be seen [below](#enable-ui-in-docker).
 
+| Tracker Name                                  | Type                 |
+|-----------------------------------------------|----------------------|
+| [AnimeTorrents](https://animetorrents.me/)    | **Cloudflare-check** |
+| [AvistaZ](https://avistaz.to/)                | **Cloudflare-check** |
+| [BeyondHD](https://beyond-hd.me/)             | **Manual**           |
+| [BroadcasThe.Net](https://broadcasthe.net/)   | **Cloudflare-check** |
+| [CinemaZ](https://cinemaz.to/)                | **Cloudflare-check** |
+| [CGPeers](https://cgpeers.to/)                | **Cloudflare-check** |
+| [DigitalCore.Club](https://digitalcore.club/) | **Manual**           |
+| [DocsPedia](https://docspedia.world/)         | **Manual**           |
+| [ExoticaZ](https://exoticaz.to/)              | **Cloudflare-check** |
+| [GazelleGames](https://gazellegames.net/)     | **Manual**           |
+| [Hawke-Uno](https://hawke.uno/)               | **Cloudflare-check** |
+| [HDBits](https://hdbits.org/)                 | **Cloudflare-check** |
+| [Kufirc](https://kufirc.com/)                 | **Non-English**      |
+| [PassThePopcorn](https://passthepopcorn.me/)  | **Manual**           |
+| [PrivateHD](https://privatehd.to/)            | **Cloudflare-check** |
+| [RUTracker](https://rutracker.org/)           | **Non-English**      |
+| [SceneTime](https://www.scenetime.com/)       | **Cloudflare-check** |
+| [Speed.CD](https://speed.cd/)                 | **Cloudflare-check** |
+| [TheEmpire](https://theempire.click/)         | **Manual**           |
+| [TheGeeks](https://thegeeks.click/)           | **Manual**           |
+| [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
+
+### Unsupported
+
+The following trackers are not currently supported:
+
+| Tracker Name |
+|--------------|
 
 ## How To Use
 
@@ -110,7 +139,7 @@ tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_S
 The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when running the application, so
 remember where it is saved and what it is named.
 
-### Running Application
+### Running In Docker
 
 The application is run using Docker. Below is the command to run the `latest` docker image.
 
@@ -143,6 +172,8 @@ to screenshot all trackers. A UI browser is needed for trackers that:
 - Require some user input during login, like a Captcha or 2FA (if `TRACKER_EXECUTION_ORDER` includes **manual**)
 - Need to be translated (if `ENABLE_TRANSLATION_TO_ENGLISH` is set to **true** and `TRACKER_EXECUTION_ORDER` includes **non-english**)
 - Have a Cloudflare verification check (if `TRACKER_EXECUTION_ORDER` includes **cloudflare-check**)
+
+#### Enable UI In Docker
 
 To run through Docker with a UI, local connections to the host display must be enabled (I have only tested this on Debian so far):
 
@@ -214,7 +245,7 @@ application usually runs in headless mode, this can be changed by updating the `
 the [configuration](#configuration-options). This will cause a new browser instance to launch when taking a screenshot, and can be used for debugging
 a new implementation.
 
-### Building and Running In Docker
+### Building And Running In Docker
 
 Below is the command to build and run the development docker image with everything enabled (requires the UI to be defined):
 
@@ -240,7 +271,7 @@ docker run \
     --rm tracker-profiles-dev
 ```
 
-### Implementing New Tracker Handlers
+### Implementing Support For New Trackers
 
 All supported private trackers have an implementation found in the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler)
 package. To add a new one,
@@ -252,7 +283,7 @@ Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/
 
 ### Cloudflare Trackers
 
-The `cloudflare-check` trackers listed in [Supported Trackers](#supported-trackers) are implemented differently from the other trackers, since this
+The `cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the other trackers, since this
 verification check cannot be passed using stock Selenium. [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is
 used to create a web browser that is capable of bypassing Cloudflare detection.
 
@@ -263,4 +294,4 @@ can bypass detection. There is a Java implementation of the
 can attach to the Selenium browser that was launched by Python.
 
 This is all handled by the framework, so an implementation of a tracker can be done following like
-[any other tracker](#implementing-new-tracker-handlers), without needing to worry about whether the browser is launched by Java or Python.
+[any other tracker](#implementing-support-for-new-trackers), without needing to worry about whether the browser is launched by Java or Python.
