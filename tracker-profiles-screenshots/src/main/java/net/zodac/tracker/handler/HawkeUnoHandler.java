@@ -54,7 +54,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // After login, a popup blocks the dropdown menu, so we wait a few seconds
+        // After login, a pop-up blocks the dropdown menu, so we wait a few seconds
         ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
         // Click the user dropdown menu bar to make the profile button interactable

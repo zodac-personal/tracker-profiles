@@ -50,17 +50,4 @@ public class DarkPeersHandler extends Unit3dHandler {
     protected By loginButtonSelector() {
         return By.xpath("//button[contains(@class, 'login-btn')]");
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link DarkPeersHandler}, the normal XPath is not valid, so we need to explicitly select the user profile link in another way.
-     *
-     * @return {@link By} the selector for the profile link
-     */
-    @Override
-    protected By profilePageSelector() {
-        return By.xpath("//ul[@class='top-nav__icon-bar']//a[@class='top-nav__dropdown--nontouch']");
-    }
 }

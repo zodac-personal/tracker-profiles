@@ -31,6 +31,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
+@TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
 @TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 public class Unit3dHandler extends AbstractTrackerHandler {
@@ -52,7 +53,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//a[contains(@href, 'conversations')]");
+        return By.xpath("//ul[contains(@class, 'top-nav__ratio-bar')]");
     }
 
     /**
@@ -77,7 +78,12 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         // TODO: replace all `@class=''` with `contains(@class, 'login-btn')`
-        return By.xpath("//a[@class='top-nav__username--highresolution']");
+        // Highlight the nav bar to make the profile button interactable
+        final By logoutParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
+        final WebElement logoutParent = driver.findElement(logoutParentSelector);
+        scriptExecutor.moveTo(logoutParent);
+
+        return By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]/ul[1]/li[1]/a[1]");
     }
 
     @Override

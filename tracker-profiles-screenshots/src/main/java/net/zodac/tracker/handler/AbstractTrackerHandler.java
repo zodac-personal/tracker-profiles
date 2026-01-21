@@ -521,6 +521,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
             LOGGER.trace(e);
             scriptExecutor.stopPageLoad();
+        } catch (final Exception e) {
+            LOGGER.trace(driver.getPageSource());
+            LOGGER.trace(e);
+            throw e;
         }
 
         driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);

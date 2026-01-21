@@ -39,6 +39,16 @@ public class LatTeamHandler extends Unit3dHandler {
         super(driver, trackerUrls);
     }
 
+    @Override
+    protected By profilePageSelector() {
+        // Click the nav bar to make the profile button interactable
+        final By profileParentSelector = By.xpath("//span[contains(@class, 'user-sidebar__toggle-label')]");
+        final WebElement profileParent = driver.findElement(profileParentSelector);
+        clickButton(profileParent);
+
+        return By.xpath("//nav[contains(@class, 'user-sidebar__nav')]/ul[1]/li[1]/a[1]");
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -50,6 +60,7 @@ public class LatTeamHandler extends Unit3dHandler {
      */
     @Override
     protected By logoutButtonSelector() {
+        // Click the nav bar to make the logout button interactable
         final By logoutParentSelector = By.xpath("//span[contains(@class, 'user-sidebar__toggle-label')]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
