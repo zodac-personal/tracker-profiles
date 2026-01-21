@@ -20,7 +20,6 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -28,8 +27,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
  */
-@TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
 @TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
+@TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
 public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     /**
@@ -52,7 +51,6 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
         return By.xpath("//*[@id='collapseobj_loginbox']//input[@name='password' and @type='password']");
     }
 
-    @Nullable
     @Override
     protected By loginButtonSelector() {
         return By.xpath("//*[@id='collapseobj_loginbox']//input[@value='LOGIN' and @type='submit']");
@@ -60,12 +58,12 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("collapseobj_search");
+        return By.id("collapseobj_loginbox");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@id='top']/div[2]/span[1]/a[1]");
+        return By.xpath("//*[@id='collapseobj_loginbox']//a[1]");
     }
 
     @Override

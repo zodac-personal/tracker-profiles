@@ -70,9 +70,9 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [ImmortalSeed](https://immortalseed.me/)          |
 | [IPTorrents](https://iptorrents.com/)             |
 | [ItaTorrents](https://itatorrents.xyz/)           |
+| [LST](https://lst.gg/)                            |
 | [Lat-Team](https://lat-team.com/)                 |
 | [Libble](https://libble.me/)                      |
-| [LST](https://lst.gg/)                            |
 | [Metal-Tracker](https://en.metal-tracker.com/)    |
 | [MoreThanTV](https://www.morethantv.me/)          |
 | [MyAnonaMouse](https://www.myanonamouse.net/)     |

@@ -18,18 +18,16 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code BackUps} tracker.
+ * Extension of the {@link TsSpecialEditionHandler} for the {@code BackUps} tracker.
  */
 @TrackerHandler(name = "BackUps", url = "https://back-ups.me/")
-public class BackUpsHandler extends AbstractTrackerHandler {
+public class BackUpsHandler extends TsSpecialEditionHandler {
 
     /**
      * Default constructor.
@@ -48,41 +46,17 @@ public class BackUpsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.id("usernameloginphp");
+        return By.xpath("//input[@name='username' and @type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='main']//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password' and @type='password']");
     }
 
-    @Nullable
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//div[@id='main']//input[@value='LOGIN' and @type='submit']");
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("collapseobj_loginbox");
-    }
-
-    @Override
-    protected By profilePageSelector() {
-        // Click the user dropdown menu bar to make the profile button interactable
-        final By profileParentSelector = By.id("quickprofileview");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
-
-        return By.xpath("//div[@class='qactions']/a[1]");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//tbody[@id='collapseobj_content2a']/tr[1]/td[1]"), // Email
-            By.xpath("//tbody[@id='collapseobj_content2c']/tr[1]/td[1]") // IP address
-        );
+        return By.xpath("//input[@value='LOGIN' and @type='submit']");
     }
 
     /**

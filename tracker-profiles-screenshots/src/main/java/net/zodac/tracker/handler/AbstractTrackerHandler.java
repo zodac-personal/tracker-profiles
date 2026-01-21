@@ -144,7 +144,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the login page {@link By} selector
      */
     @Nullable
-    public By loginPageSelector() {
+    protected By loginPageSelector() {
         return null;
     }
 
