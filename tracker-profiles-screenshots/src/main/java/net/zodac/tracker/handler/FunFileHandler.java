@@ -20,7 +20,10 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.util.PatternMatcher;
+import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -59,10 +62,28 @@ public class FunFileHandler extends AbstractTrackerHandler {
         return By.xpath("//div[@id='avatar']/a[1]");
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link FunFileHandler}, while we can redact the IP address using {@link #getElementsPotentiallyContainingSensitiveInformation()}, that
+     * table entry also contains information on the user's ISP, so we redact that IP/ISP entry explicitly.
+     *
+     * @see AbstractTrackerHandler#redactElements()
+     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
+     */
+    @Override
+    public int redactElements() {
+        final WebElement ipAndIspElement = driver.findElement(By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr[td[contains(normalize-space(), 'IP')]]/td[2]"));
+        scriptExecutor.redactInnerTextOf(ipAndIspElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
+
+        return 1 + super.redactElements();
+    }
+
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr/td/a") // Email and IP addresses
+            By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr/td/a") // Email
         );
     }
 
