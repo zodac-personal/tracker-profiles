@@ -51,6 +51,7 @@ The available trackers come in the following types:
 | [ExoticaZ](https://exoticaz.to/)                  | **Cloudflare-check** |
 | [FearNoPeer](https://fearnopeer.com/)             | Headless             |
 | [FileList](https://filelist.io/)                  | Headless             |
+| [FunFile](https://www.funfile.org/)               | Headless             |
 | [GazelleGames](https://gazellegames.net/)         | **Manual**           |
 | [Hawke-Uno](https://hawke.uno/)                   | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                     | **Cloudflare-check** |
@@ -97,7 +98,6 @@ The following trackers are not currently supported, but I'll implement them next
 | Tracker Name                             |
 |------------------------------------------|
 | [CGPeers](https://cgpeers.to/)           |
-| [FunFile](https://www.funfile.org/)      |
 
 ## How To Use
 
