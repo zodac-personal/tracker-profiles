@@ -18,6 +18,7 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -117,6 +118,13 @@ public class CgPeersHandler extends AbstractTrackerHandler {
         clickButton(profileParent);
 
         return By.xpath("//div[contains(@class, 'user-dropdown-section')]//a[contains(normalize-space(), 'Profile')]");
+    }
+
+    @Override
+    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+        return List.of(
+            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]") // Email
+        );
     }
 
     @Override
