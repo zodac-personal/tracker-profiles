@@ -28,7 +28,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
  */
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
-@TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")

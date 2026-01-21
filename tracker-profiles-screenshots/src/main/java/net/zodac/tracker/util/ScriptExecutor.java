@@ -111,7 +111,7 @@ public class ScriptExecutor {
      */
     public static void explicitWait(final Duration sleepTime) {
         try {
-            LOGGER.trace("Sleeping for {} seconds", sleepTime.getSeconds());
+            LOGGER.trace("Sleeping for {}ms", sleepTime.toMillis());
             Thread.sleep(sleepTime);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -311,7 +311,7 @@ public class ScriptExecutor {
      */
     public void waitForElementToAppear(final By selector, final Duration timeout) {
         try {
-            LOGGER.trace("Waiting {} for {} to appear", timeout, selector);
+            LOGGER.trace("Waiting {}ms for [{}] to appear", timeout.toMillis(), selector);
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(selector));
         } catch (final TimeoutException e) {
