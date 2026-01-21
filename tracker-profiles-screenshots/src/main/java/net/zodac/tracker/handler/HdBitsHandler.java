@@ -79,7 +79,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        final WebElement captchaTextElement = driver.findElement(By.xpath("//div[@class='captchaIntro']/p[1]/strong[1]"));
+        final WebElement captchaTextElement = driver.findElement(By.xpath("//div[contains(@class, 'captchaIntro')]/p[1]/strong[1]"));
         LOGGER.info("\t\t >>> Waiting for user to select the '{}' image, for {} seconds", captchaTextElement.getText(),
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
@@ -105,7 +105,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@class='curuser-stats']//b//a[1]");
+        return By.xpath("//div[contains(@class, 'curuser-stats')]//b//a[1]");
     }
 
     @Override

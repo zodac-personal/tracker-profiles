@@ -95,7 +95,7 @@ public class LstHandler extends Unit3dHandler {
         final WebElement profileParent = driver.findElement(profileParentSelector);
         scriptExecutor.moveTo(profileParent);
 
-        return By.xpath("//a[@class='top-nav__username']");
+        return By.xpath("//a[contains(@class, 'top-nav__username')]");
     }
 
     /**
@@ -109,7 +109,7 @@ public class LstHandler extends Unit3dHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[@class='data-table']/tbody/tr/td[2]"), // IP address, potentially multiple entries
+            By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
             By.xpath("//span[contains(@class, 'profile-hero__account-value--email')]") // Email
         );
     }

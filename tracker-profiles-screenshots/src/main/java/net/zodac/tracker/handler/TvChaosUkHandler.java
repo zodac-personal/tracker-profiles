@@ -47,7 +47,7 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//ul[@class='list-inline']/li[1]/a[1]");
+        return By.xpath("//ul[contains(@class, 'list-inline')]/li[1]/a[1]");
     }
 
     @Override

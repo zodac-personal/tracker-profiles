@@ -63,18 +63,18 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final By profileDropDownSelector = By.xpath("//li[@class='mmUserStats']//a[@tabindex='0']");
+        final By profileDropDownSelector = By.xpath("//li[contains(@class, 'mmUserStats')]//a[@tabindex='0']");
         final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
         scriptExecutor.moveTo(profileDropDown);
 
-        return By.xpath("//a[@class='myInfo']");
+        return By.xpath("//a[contains(@class, 'myInfo')]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             // TODO: Replace `contains(text(), 'Address')` with `contains(normalize-space(), 'Address')`
-            By.xpath("//div[@class='blockBody']//table/tbody/tr[td[contains(text(), 'Address')]]/td[2]")
+            By.xpath("//div[contains(@class, 'blockBody')]//table/tbody/tr[td[contains(text(), 'Address')]]/td[2]")
         );
     }
 

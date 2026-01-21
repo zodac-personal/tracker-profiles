@@ -65,7 +65,7 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//a[@class='menu-root']");
+        return By.xpath("//a[contains(@class, 'menu-root')]");
     }
 
     @Override
@@ -81,6 +81,6 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//img[@class='log-out-icon']");
+        return By.xpath("//img[contains(@class, 'log-out-icon')]");
     }
 }

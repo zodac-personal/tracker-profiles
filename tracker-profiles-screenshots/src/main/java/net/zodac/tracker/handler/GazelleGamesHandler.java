@@ -66,7 +66,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and @class='submit']");
+        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
     }
 
     @Override

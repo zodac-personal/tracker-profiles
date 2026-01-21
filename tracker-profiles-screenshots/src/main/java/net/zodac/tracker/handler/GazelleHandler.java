@@ -50,7 +50,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Log in' and @class='submit']");
+        return By.xpath("//input[@type='submit' and @name='login' and @value='Log in' and contains(@class, 'submit')]");
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[@class='username']");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     @Override

@@ -70,7 +70,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//span[@class='user_superuser']");
+        return By.xpath("//span[contains(@class, 'user_superuser')]");
     }
 
     @Override

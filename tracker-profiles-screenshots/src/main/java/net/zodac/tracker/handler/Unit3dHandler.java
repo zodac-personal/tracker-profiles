@@ -76,7 +76,6 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // TODO: replace all `@class=''` with `contains(@class, 'login-btn')`
         // Highlight the nav bar to make the profile button interactable
         final By logoutParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
@@ -88,7 +87,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[@class='data-table']/tbody/tr/td[2]"), // IP address, potentially multiple entries
+            By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
             By.xpath("//div[dt[contains(normalise-space(), 'E-mail')]]/dd[1]") // Email
         );
     }

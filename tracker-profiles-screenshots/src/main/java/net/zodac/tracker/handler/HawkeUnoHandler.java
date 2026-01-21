@@ -62,7 +62,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
 
-        return By.xpath("//ul[@class='right-navbar']//ul[@class='dropdown-menu']/li[1]/a[1]");
+        return By.xpath("//ul[contains(@class, 'right-navbar')]//ul[contains(@class, 'dropdown-menu')]/li[1]/a[1]");
     }
 
     @Override

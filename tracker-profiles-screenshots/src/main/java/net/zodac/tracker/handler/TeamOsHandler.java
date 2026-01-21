@@ -84,19 +84,19 @@ public class TeamOsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[@class='focus-wrap-user']");
+        return By.xpath("//div[contains(@class, 'focus-wrap-user')]");
     }
 
     @Override
     protected By profilePageSelector() {
         navigateToUserPage();
-        return By.xpath("//div[@class='p-body-sideNav']//a[text()='Your profile']");
+        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[text()='Your profile']");
     }
 
     @Override
     protected By logoutButtonSelector() {
         navigateToUserPage();
-        return By.xpath("//div[@class='p-body-sideNav']//a[text()='Log out']");
+        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[text()='Log out']");
     }
 
     private void navigateToUserPage() {

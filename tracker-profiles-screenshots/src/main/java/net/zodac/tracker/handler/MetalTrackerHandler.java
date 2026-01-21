@@ -40,12 +40,12 @@ public class MetalTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@class='inputtext' and @name='username']");
+        return By.xpath("//input[contains(@class, 'inputtext') and @name='username']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@class='inputtext' and @name='password']");
+        return By.xpath("//input[contains(@class, 'inputtext') and @name='password']");
     }
 
     @Override
@@ -55,16 +55,16 @@ public class MetalTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//ul[@class='user_data']");
+        return By.xpath("//ul[contains(@class, 'user_data')]");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@class='user_block']//h4[@class='nickname']/span[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'user_block')]//h4[contains(@class, 'nickname')]/span[1]/a[1]");
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[@class='user_block']//div[@class='logout']/a[1]");
+        return By.xpath("//div[contains(@class, 'user_block')]//div[contains(@class, 'logout')]/a[1]");
     }
 }

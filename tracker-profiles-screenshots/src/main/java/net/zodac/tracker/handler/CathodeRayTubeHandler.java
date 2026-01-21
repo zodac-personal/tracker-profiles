@@ -71,7 +71,7 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[@class='username']");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     /**

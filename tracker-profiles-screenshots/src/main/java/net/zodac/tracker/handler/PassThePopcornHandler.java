@@ -94,7 +94,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[@class='user-info-bar__link']");
+        return By.xpath("//a[contains(@class, 'user-info-bar__link')]");
     }
 
     @Override

@@ -50,7 +50,7 @@ public class FearNoPeerHandler extends Unit3dHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[@class='data-table']/tbody/tr/td[2]"), // IP address, potentially multiple entries
+            By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
             By.xpath("//div[contains(@class, 'profile-hero__info')]//span") // Email
         );
     }

@@ -86,6 +86,6 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//div[@class='qactions']/a[2]");
+        return By.xpath("//div[contains(@class, 'qactions')]/a[2]");
     }
 }

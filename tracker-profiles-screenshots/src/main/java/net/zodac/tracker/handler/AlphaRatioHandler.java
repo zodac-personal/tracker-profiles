@@ -41,7 +41,7 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and @class='submit']");
+        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[@class='username']");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     @Override

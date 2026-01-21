@@ -56,7 +56,7 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@class='statusbar']//div/a[span]");
+        return By.xpath("//div[contains(@class, 'statusbar')]//div/a[span]");
     }
 
     @Override

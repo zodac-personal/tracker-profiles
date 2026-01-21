@@ -57,18 +57,18 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//li[@class='welcomeback']");
+        return By.xpath("//li[contains(@class, 'welcomeback')]");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//li[@class='welcomeback']/a[1]");
+        return By.xpath("//li[contains(@class, 'welcomeback')]/a[1]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[@class='userstats']/tbody/tr[td[1][contains(text(), 'E-mail')]]/td[2]/a[1]") // Email
+            By.xpath("//table[contains(@class, 'userstats')]/tbody/tr[td[1][contains(text(), 'E-mail')]]/td[2]/a[1]") // Email
         );
     }
 

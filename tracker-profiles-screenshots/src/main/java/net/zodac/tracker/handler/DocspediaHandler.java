@@ -88,7 +88,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@class='statusbar']/div[2]/div[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'statusbar')]/div[2]/div[1]/a[1]");
     }
 
     /**

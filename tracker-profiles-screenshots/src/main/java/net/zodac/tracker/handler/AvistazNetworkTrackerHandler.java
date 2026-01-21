@@ -93,7 +93,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@class='ratio-bar']/div[1]/ul[1]/li[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/ul[1]/li[1]/a[1]");
     }
 
     @Override

@@ -72,7 +72,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to solve the captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//div[@class='h-captcha']"));
+        final WebElement captchaElement = driver.findElement(By.xpath("//div[contains(@class, 'h-captcha')]"));
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
@@ -84,12 +84,12 @@ public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//span[@class='statuslink']");
+        return By.xpath("//span[contains(@class, 'statuslink')]");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//span[@class='statuslink']/b[1]/a[1]");
+        return By.xpath("//span[contains(@class, 'statuslink')]/b[1]/a[1]");
     }
 
     @Override
@@ -106,6 +106,6 @@ public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[@class='statuslink']/b[1]/a[2]");
+        return By.xpath("//span[contains(@class, 'statuslink')]/b[1]/a[2]");
     }
 }

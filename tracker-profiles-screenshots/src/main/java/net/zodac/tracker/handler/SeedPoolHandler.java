@@ -55,6 +55,6 @@ public class SeedPoolHandler extends Unit3dHandler {
         final WebElement profileParent = driver.findElement(profileParentSelector);
         scriptExecutor.moveTo(profileParent);
 
-        return By.xpath("//a[@class='top-nav__username']");
+        return By.xpath("//a[contains(@class, 'top-nav__username')]");
     }
 }
