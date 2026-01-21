@@ -46,6 +46,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
+     * The default {@link By} selector for the Cloudflare element to be clicked, if a tracker has a Cloudflare verification check.
+     */
+    protected static final By DEFAULT_CLOUDFLARE_SELECTOR = By.xpath("//div[contains(@class, 'main-content')]//div[1]");
+
+    /**
      * The default wait {@link Duration} when waiting for a web page load.
      */
     protected static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(5L, ChronoUnit.SECONDS);
@@ -176,7 +181,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     // TODO: Can this button be automatically clicked? If the box is always in the same place, move the mouse and click?
     private void cloudflareCheck(final String trackerName) {
-        if (!hasCloudflareCheck()) {
+        final By cloudflareSelector = cloudflareSelector();
+        if (cloudflareSelector == null) {
             return;
         }
 
@@ -184,22 +190,23 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement cloudflareElement = driver.findElement(By.xpath("//div[@class='main-wrapper']//div[1]"));
+        final WebElement cloudflareElement = driver.findElement(cloudflareSelector);
         scriptExecutor.highlightElement(cloudflareElement);
         DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
     }
 
     /**
-     * Checks if the tracker has a Cloudflare verification check.
+     * If the tracker has a Cloudflare verification check, returns the {@link By} selector for the Cloudflare element.
      *
      * <p>
-     * By default, we assume there is Cloudflare check, so this method returns {@code false}. Should be overridden otherwise, but only return to
-     * {@code true}. The common implementation to bypass the check is performed by {@link #cloudflareCheck(String)}.
+     * By default, we assume there is no Cloudflare check, so this method returns {@code null}, but should be overridden otherwise. The common
+     * implementation to bypass the check is performed by {@link #cloudflareCheck(String)}.
      *
-     * @return {@code true} if there is a Cloudflare check
+     * @return the {@link By} selector if there is a Cloudflare check
      */
-    protected boolean hasCloudflareCheck() {
-        return false;
+    @Nullable
+    protected By cloudflareSelector() {
+        return null;
     }
 
     /**

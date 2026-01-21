@@ -43,8 +43,8 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected boolean hasCloudflareCheck() {
-        return true;
+    protected By cloudflareSelector() {
+        return DEFAULT_CLOUDFLARE_SELECTOR;
     }
 
     @Override
