@@ -18,7 +18,9 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -48,5 +50,21 @@ public class BlutopiaHandler extends Unit3dHandler {
     @Override
     public boolean canBannerBeCleared() {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link BlutopiaHandler}, the email is actually listed under a different HTML tag, unlike other {@code UNIT3D}-based trackers.
+     *
+     * @return the {@link By} selectors for email and IP addresses
+     */
+    @Override
+    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+        return List.of(
+            By.xpath("//table[@class='data-table']/tbody/tr/td[2]"), // IP address, potentially multiple entries
+            By.xpath("//div[dt[a[contains(normalize-space(), 'E-mail')]]]/dd[1]") // Email
+        );
     }
 }
