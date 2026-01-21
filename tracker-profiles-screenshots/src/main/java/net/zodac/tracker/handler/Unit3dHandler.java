@@ -90,7 +90,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//table[@class='data-table']/tbody/tr/td[2]"), // IP address, potentially multiple entries
-            By.xpath("//div[dt[text()='E-mail']]/dd[1]") // Email
+            By.xpath("//div[dt[contains(normalise-space(), 'E-mail')]]/dd[1]") // Email
         );
     }
 
