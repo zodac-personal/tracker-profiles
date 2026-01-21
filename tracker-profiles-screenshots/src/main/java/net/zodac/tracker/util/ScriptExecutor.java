@@ -77,6 +77,7 @@ public class ScriptExecutor {
             .ignoring(NoSuchElementException.class);
         final Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         if (alert != null) {
+            LOGGER.warn("Accepting alert pop-up");
             alert.accept();
         } else {
             LOGGER.warn("Expected alert not found, not attempting to click anything");
@@ -87,6 +88,7 @@ public class ScriptExecutor {
      * Disables scrolling on the current webpage, to remove the scrollbar from the screenshot.
      */
     public void disableScrolling() {
+        LOGGER.trace("Disabling scrolling on page to remove scrollbar");
         driver.executeScript("document.body.style.overflow = 'hidden'");
     }
 
@@ -97,6 +99,7 @@ public class ScriptExecutor {
      * @param elementToOverride the element that needs to be overridden to allow scrolling (usually 'body')
      */
     public void enableScrolling(final String elementToOverride) {
+        LOGGER.trace("Enabling scrolling on page");
         driver.executeScript(String.format("document.%s.style.height = 'auto';", elementToOverride));
         driver.executeScript(String.format("document.%s.style.overflowY = 'visible';", elementToOverride));
     }
@@ -108,6 +111,7 @@ public class ScriptExecutor {
      */
     public static void explicitWait(final Duration sleepTime) {
         try {
+            LOGGER.trace("Sleeping for {} seconds", sleepTime.getSeconds());
             Thread.sleep(sleepTime);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -130,6 +134,7 @@ public class ScriptExecutor {
      * @param element the {@link WebElement} to move to
      */
     public void moveTo(final WebElement element) {
+        LOGGER.trace("Moving cursor to element {}", element);
         final Actions actions = new Actions(driver);
         actions.moveToElement(element).perform();
         explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE);
@@ -142,6 +147,7 @@ public class ScriptExecutor {
      * @param y positive pixel value along vertical axis in viewport (numbers increase going down)
      */
     public void moveTo(final int x, final int y) {
+        LOGGER.trace("Moving cursor to ({},{})", x, y);
         final Actions actions = new Actions(driver);
         actions.moveToLocation(x, y).perform();
         explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE);
@@ -184,6 +190,7 @@ public class ScriptExecutor {
 
         final String substitutionText = createSubstitutionText(htmlContent);
         driver.executeScript(String.format("arguments[0].outerHTML = '%s'", substitutionText), element);
+        LOGGER.trace(""); // Add a blank line when trace logging to make logs easier to read through
     }
 
     private static String createSubstitutionText(final String elementText) {
@@ -210,6 +217,7 @@ public class ScriptExecutor {
      * @param attributeName the HTML attribute name
      */
     public void removeAttribute(final WebElement element, final String attributeName) {
+        LOGGER.trace("Removing attribute '{}' from {}", attributeName, element);
         final String script = String.format("arguments[0].removeAttribute('%s');", attributeName);
         driver.executeScript(script, element);
     }
@@ -218,6 +226,7 @@ public class ScriptExecutor {
      * Scrolls the page back to the top of the screen.
      */
     public void scrollToTheTop() {
+        LOGGER.trace("Scrolling to top of page");
         driver.executeScript("window.scrollTo(0, 0);");
         explicitWait(Duration.ofSeconds(1L)); // Wait 1 second to scroll back to the top
     }
@@ -226,6 +235,7 @@ public class ScriptExecutor {
      * Stops the loading of the current web page.
      */
     public void stopPageLoad() {
+        LOGGER.trace("Stopping page load");
         driver.executeScript("window.stop();");
     }
 
@@ -301,6 +311,7 @@ public class ScriptExecutor {
      */
     public void waitForElementToAppear(final By selector, final Duration timeout) {
         try {
+            LOGGER.trace("Waiting {} for {} to appear", timeout, selector);
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(selector));
         } catch (final TimeoutException e) {
@@ -319,6 +330,7 @@ public class ScriptExecutor {
         explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
         try {
+            LOGGER.trace("Waiting {} for page to load", timeout);
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(_ -> "complete".equals(driver.executeScript("return document.readyState")));
         } catch (final TimeoutException e) {

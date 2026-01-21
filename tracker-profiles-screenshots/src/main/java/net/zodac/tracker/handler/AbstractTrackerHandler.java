@@ -385,6 +385,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     public int redactElements() {
         final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
         if (selectors.isEmpty()) {
+            LOGGER.trace("\t\t- No defined elements to redact");
             return 0;
         }
 
@@ -400,6 +401,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
 
         for (final WebElement element : elementsToBeRedacted) {
+            LOGGER.trace("\t\t- Redacting: {}", element);
             scriptExecutor.redactHtmlOf(element);
         }
 
