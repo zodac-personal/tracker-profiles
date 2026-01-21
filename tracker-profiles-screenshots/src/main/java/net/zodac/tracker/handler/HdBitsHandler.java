@@ -32,6 +32,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code HDBits} tracker.
  */
+// TODO: Type is CF check AND manual, should both be listed?
 @TrackerHandler(name = "HDBits", type = TrackerType.CLOUDFLARE_CHECK, url = {
     "https://hdbits.org/",
     "https://backup.hdbits.org/"

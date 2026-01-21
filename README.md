@@ -283,7 +283,7 @@ Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/
 
 ### Cloudflare Trackers
 
-The `cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the other trackers, since this
+The `Cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the other trackers, since this
 verification check cannot be passed using stock Selenium. [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is
 used to create a web browser that is capable of bypassing Cloudflare detection.
 
