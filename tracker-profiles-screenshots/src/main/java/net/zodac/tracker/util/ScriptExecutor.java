@@ -77,7 +77,7 @@ public class ScriptExecutor {
             .ignoring(NoSuchElementException.class);
         final Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         if (alert != null) {
-            LOGGER.warn("Accepting alert pop-up");
+            LOGGER.trace("Accepting alert pop-up");
             alert.accept();
         } else {
             LOGGER.warn("Expected alert not found, not attempting to click anything");
