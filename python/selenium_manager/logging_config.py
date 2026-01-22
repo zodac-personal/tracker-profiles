@@ -47,7 +47,7 @@ def configure_logging() -> None:
 
     log_format = (
         "%(asctime)s "
-        "[%(log_color)s%(levelname)-4s%(reset)s] "
+        "[%(log_color)s%(levelname)-5s%(reset)s] "
         "%(message)s"
     )
 

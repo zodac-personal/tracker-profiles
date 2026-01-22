@@ -46,11 +46,11 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             bash \
+            ca-certificates \
+            curl \
             gawk \
             grep \
-            jq \
-            curl \
-            ca-certificates
+            jq
 
           bash .github/scripts/update_dependency_versions.sh
 

@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -57,6 +58,28 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
     @Override
     protected By loginButtonSelector() {
         return By.xpath("//input[@value='LOGIN' and @type='submit']");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link BackUpsHandler}, having any unread private messages means you are redirected to your PM inbox. We'll check if this is the case, and
+     * then navigate to the home page.
+     */
+    @Override
+    protected void manualCheckAfterLoginClick(final String trackerName) {
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+
+        final String currentTitle = driver.getTitle();
+        if (currentTitle == null || !currentTitle.contains("Private Messages in Folder: Inbox")) {
+            LOGGER.debug("\t- No unread PMs");
+            return;
+        }
+
+        LOGGER.debug("\t\t- Redirected to inbox due to unread PMs, navigating back to the home page");
+        final WebElement homePageLink = driver().findElement(By.xpath("//div[@id='menu']//a[contains(normalize-space(), 'Home')]"));
+        clickButton(homePageLink);
     }
 
     /**
