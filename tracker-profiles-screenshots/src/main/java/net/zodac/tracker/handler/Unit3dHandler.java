@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -27,6 +28,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
  */
+@CommonTrackerHandler("UNIT3D")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")

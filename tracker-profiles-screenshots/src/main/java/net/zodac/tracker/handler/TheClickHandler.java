@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.util.ScriptExecutor;
@@ -31,6 +32,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code .click} family of trackers.
  */
+@CommonTrackerHandler("TheClick")
 @TrackerHandler(name = "TheEmpire", type = TrackerType.MANUAL, url = "https://theempire.click/")
 @TrackerHandler(name = "TheGeeks", type = TrackerType.MANUAL, url = "https://thegeeks.click/")
 public class TheClickHandler extends AbstractTrackerHandler {

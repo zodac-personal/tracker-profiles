@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import java.util.List;
+import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -27,6 +28,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
  */
+@CommonTrackerHandler("TSSpecialEdition")
 @TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
 @TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
 public class TsSpecialEditionHandler extends AbstractTrackerHandler {
