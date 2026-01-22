@@ -84,7 +84,8 @@ public class LibbleHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]", PASSKEY_PREFIX));
+        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]",
+            PASSKEY_PREFIX));
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
         final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);

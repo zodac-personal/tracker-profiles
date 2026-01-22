@@ -42,7 +42,7 @@ The available trackers come in the following types:
 - Non-English: If the tracker is not in English, a UI browser is required to translate the page
 - Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides **Manual** and **Non-English**)
 
-**Note:** Any tracker not listed in either section below has not been tested (most likely due to lack of an account).
+**Note:** Any tracker not listed in any section below has not been tested (most likely due to lack of an account).
 
 ### Headless
 
@@ -94,8 +94,8 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 
 ### Non-Headless
 
-If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type included in `TRACKER_EXECUTION_ORDER`), then a
-UI must be enabled. Instructions for this in Docker can be seen [below](#enable-ui-in-docker).
+If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in `TRACKER_EXECUTION_ORDER`), then
+a  UI must be enabled. Instructions for this in Docker can be seen [below](#enable-ui-in-docker).
 
 | Tracker Name                                  | Type                 |
 |-----------------------------------------------|----------------------|
@@ -178,7 +178,7 @@ to screenshot all trackers. A UI browser is needed for trackers that:
 To run through Docker with a UI, local connections to the host display must be enabled (I have only tested this on Debian so far):
 
 ```bash
-# Please note this will be reset upon reboot and may need to be reapplied
+# This seems to be reset upon reboot and may need to be reapplied
 xhost +local:
 ```
 

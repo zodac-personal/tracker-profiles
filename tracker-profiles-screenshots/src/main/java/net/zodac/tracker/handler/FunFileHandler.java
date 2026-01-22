@@ -74,7 +74,8 @@ public class FunFileHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement ipAndIspElement = driver.findElement(By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr[td[contains(normalize-space(), 'IP')]]/td[2]"));
+        final WebElement ipAndIspElement = driver.findElement(
+            By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr[td[contains(normalize-space(), 'IP')]]/td[2]"));
         scriptExecutor.redactInnerTextOf(ipAndIspElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
