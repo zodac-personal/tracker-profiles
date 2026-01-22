@@ -29,10 +29,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code PornBay} tracker.
  */
-@TrackerHandler(name = "PornBay", url = {
-    "https://pornbay.org/",
-    "https://195.230.23.55/" // In case of site issues
-})
+@TrackerHandler(name = "PornBay", url = "https://pornbay.org/")
 public class PornBayHandler extends AbstractTrackerHandler {
 
     private static final String PASSKEY_PREFIX = "Passkey: ";
