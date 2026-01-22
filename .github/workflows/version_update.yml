@@ -13,7 +13,7 @@ jobs:
   update_versions:
     name: Versions Update
     runs-on: ubuntu-latest
-    container: debian:12
+    container: debian:13
     permissions:
       actions: write
       contents: write
@@ -49,8 +49,11 @@ jobs:
             ca-certificates \
             curl \
             gawk \
+            gnupg \
             grep \
-            jq
+            jq 
+          curl -fsSL https://get.docker.com | sudo sh
+          sudo usermod -aG docker $USER
 
           bash .github/scripts/update_dependency_versions.sh
 

@@ -48,7 +48,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
     find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
 
 # Stage 4: Prepare scripts
-FROM debian:13.2-slim AS scripts_builder
+FROM debian:13.3-slim AS scripts_builder
 COPY ./docker/scripts/start.sh /start.sh
 RUN chmod +x /start.sh
 
