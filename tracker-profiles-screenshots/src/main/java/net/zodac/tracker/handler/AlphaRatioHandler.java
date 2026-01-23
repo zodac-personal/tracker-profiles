@@ -41,7 +41,7 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
+        return By.xpath("//input[@type='submit'][@name='login']");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
-            By.xpath("//div[@id='footer']/p[2]/a[1]") // Footer with last used IP address
+            By.xpath("//div[@id='footer']//a[1]") // Footer with last used IP address
         );
     }
 
