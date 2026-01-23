@@ -52,12 +52,9 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
         return By.xpath("//input[@name='password' and @type='password']");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='submitme' and @type='submit' and @value='Login']");
+        return By.xpath("//input[@name='submitme' and @type='submit']");
     }
 
     /**
@@ -102,13 +99,13 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@id='base_usermenu']//div[1]//span[1]//a[1]");
+        return By.xpath("//div[@id='base_usermenu']/div[1]/span[1]/a[1]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[1][contains(normalize-space(), 'Connectable')]]/td[2]//span") // Last connected IP address
+            By.xpath("//span[contains(@class, 'has-text-green')]") // Last connected IP address
         );
     }
 
