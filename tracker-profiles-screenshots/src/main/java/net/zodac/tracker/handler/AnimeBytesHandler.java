@@ -46,7 +46,7 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Log In!' and @type='submit']");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -73,7 +73,7 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         clickButton(logoutButton);
 
         // After clicking logout, a confirmation box appears - find and click 'Yes'
-        final By logoutConfirmationSelector = By.xpath("//form[@id='tokenconfirm']//input[@name='yes' and @type='submit']");
+        final By logoutConfirmationSelector = By.xpath("//input[@name='yes'][@type='submit']");
         scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, DEFAULT_WAIT_FOR_TRANSITIONS);
         final WebElement logoutConfirmation = driver.findElement(logoutConfirmationSelector);
         clickButton(logoutConfirmation);
@@ -89,6 +89,6 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//li[@id='username_menu']//ul[contains(@class, 'subnav')]//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
     }
 }
