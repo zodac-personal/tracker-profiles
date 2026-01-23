@@ -42,22 +42,22 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[contains(@class, 'memberArea')]/a[1]");
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.id("usernameloginphp");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='LOGIN' and @type='submit']");
+        return By.xpath("//input[@value='LOGIN'][@type='submit']");
     }
 
     /**
@@ -78,7 +78,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         }
 
         LOGGER.debug("\t\t- Redirected to inbox due to unread PMs, navigating back to the home page");
-        final WebElement homePageLink = driver().findElement(By.xpath("//div[@id='menu']//a[contains(normalize-space(), 'Home')]"));
+        final WebElement homePageLink = driver().findElement(By.xpath("//div[@id='menu']//a[1]"));
         clickButton(homePageLink);
     }
 
