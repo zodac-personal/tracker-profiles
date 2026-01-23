@@ -78,14 +78,14 @@ if [[ ${error_found} -gt 0 ]]; then
   echo "Each non-empty line must follow:"
   echo "  [Category] Commit message"
   echo
+
   echo "Allowed categories:"
   for cat in "${static_categories[@]}"; do
     echo "  - ${cat}"
   done
-  echo "Allowed trackers:"
-  for cat in "${dynamic_categories[@]}"; do
-      echo "  - ${cat}"
-    done
+
+  echo
+  echo "Or a defined @CommonTrackerHandler/@TrackerHandler name (case-sensitive)"
   exit 1
 fi
 
