@@ -165,6 +165,7 @@ update_debian_packages() {
     fi
 
     get_debian_version() {
+        docker pull "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" >/dev/null 2>&1 && \
         docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
     }
 
