@@ -8,15 +8,19 @@
     - [Unsupported](#unsupported)
 - [How To Use](#how-to-use)
     - [Tracker Definitions](#tracker-definitions)
-    - [Running In Docker](#running-in-docker)
+    - [Docker](#docker)
+        - [Debian](#running-in-debian)
+        - [Windows](#running-in-windows)
     - [Browser UI](#browser-ui)
-        - [Enable UI In Docker](#enable-ui-in-docker)
+        - [UI In Debian](#ui-in-debian)
+        - [UI In Windows](#ui-in-windows)
+        - [Disable UI](#disable-ui)
     - [Configuration Options](#configuration-options)
 - [Contributing](#contributing)
     - [Requirements](#requirements)
     - [Install Git Hooks](#install-git-hooks)
     - [Debugging Application](#debugging-application)
-    - [Building And Running In Docker](#building-and-running-in-docker)
+    - [Building And Developing In Docker](#building-and-developing-in-docker)
     - [Implementing Support For New Trackers](#implementing-support-for-new-trackers)
     - [Cloudflare Trackers](#cloudflare-trackers)
 
@@ -95,7 +99,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 ### Non-Headless
 
 If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in `TRACKER_EXECUTION_ORDER`), then
-a  UI must be enabled. Instructions for this in Docker can be seen [below](#enable-ui-in-docker).
+a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
 | Tracker Name                                  | Type                 |
 |-----------------------------------------------|----------------------|
@@ -139,9 +143,11 @@ tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_S
 The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when running the application, so
 remember where it is saved and what it is named.
 
-### Running In Docker
+### Docker
 
-The application is run using Docker. Below is the command to run the `latest` docker image.
+The application is run using Docker, and below are the commands to run the `latest` docker image.
+
+#### Running In Debian
 
 ```bash
 docker run \
@@ -164,6 +170,30 @@ docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
+#### Running In Windows
+
+I use [Git Bash](https://git-scm.com/install/windows) to run commands, so I set `MSYS_NO_PATHCONV`:
+
+```bash
+MSYS_NO_PATHCONV=1 docker run \
+    --env DISPLAY=host.docker.internal:0 \
+    --env BROWSER_HEIGHT=1050 \
+    --env BROWSER_WIDTH=1680 \
+    --env CSV_COMMENT_SYMBOL='#' \
+    --env ENABLE_TRANSLATION_TO_ENGLISH=true \
+    --env FORCE_UI_BROWSER=false \
+    --env LOG_LEVEL=INFO \
+    --env OPEN_OUTPUT_DIRECTORY=false \
+    --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
+    --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env TIMEZONE=UTC \
+    --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
+    --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
+    -v /c/tmp/screenshots:/app/screenshots \
+    --name tracker-profiles \
+    --rm zodac/tracker-profiles:latest
+```
+
 ### Browser UI
 
 There are two ways to execute the application - with a UI browser and without. By default, the application is configured
@@ -173,18 +203,31 @@ to screenshot all trackers. A UI browser is needed for trackers that:
 - Need to be translated (if `ENABLE_TRANSLATION_TO_ENGLISH` is set to **true** and `TRACKER_EXECUTION_ORDER` includes **non-english**)
 - Have a Cloudflare verification check (if `TRACKER_EXECUTION_ORDER` includes **cloudflare-check**)
 
-#### Enable UI In Docker
+The default commands will execute [trackers that require a UI](#non-headless), so the UI will need to be configured to
+run through Docker. Below will define how to do this for your host system.
 
-To run through Docker with a UI, local connections to the host display must be enabled (I have only tested this on Debian so far):
+#### UI in Debian
+
+To run through Docker with a UI, local connections to the host display must be enabled:
 
 ```bash
 # This seems to be reset upon reboot and may need to be reapplied
 xhost +local:
 ```
 
+#### UI in Windows
+
+I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VxCsrv, ensure to set:
+
+- Multiple windows
+- Display number 0
+- Disable access control
+
+#### Disable UI
+
 To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and `ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and
-exclude **manual**, **non-english** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You can also remove `-v /tmp/.X11-unix:/tmp/.X11-unix`
-and `--env DISPLAY="${DISPLAY}"` from the `docker run` command.
+exclude **manual**, **non-english** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You can also remove `--env DISPLAY` and/or
+`-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
 ### Configuration Options
 
@@ -245,7 +288,7 @@ application usually runs in headless mode, this can be changed by updating the `
 the [configuration](#configuration-options). This will cause a new browser instance to launch when taking a screenshot, and can be used for debugging
 a new implementation.
 
-### Building And Running In Docker
+### Building And Developing In Docker
 
 Below is the command to build and run the development docker image with everything enabled (requires the UI to be defined):
 
