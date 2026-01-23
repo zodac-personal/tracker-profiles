@@ -196,15 +196,15 @@ MSYS_NO_PATHCONV=1 docker run \
 
 ### Browser UI
 
-There are two ways to execute the application - with a UI browser and without. By default, the application is configured
-to screenshot all trackers. A UI browser is needed for trackers that:
+There are two ways to execute the application - with a UI browser and without. The default commands will
+execute [trackers that require a UI](#non-headless), so the UI will need to be configured to
+run through Docker. A UI browser is needed for trackers that:
 
 - Require some user input during login, like a Captcha or 2FA (if `TRACKER_EXECUTION_ORDER` includes **manual**)
 - Need to be translated (if `ENABLE_TRANSLATION_TO_ENGLISH` is set to **true** and `TRACKER_EXECUTION_ORDER` includes **non-english**)
 - Have a Cloudflare verification check (if `TRACKER_EXECUTION_ORDER` includes **cloudflare-check**)
 
-The default commands will execute [trackers that require a UI](#non-headless), so the UI will need to be configured to
-run through Docker. Below will define how to do this for your host system.
+Below will define how to do this for your host system.
 
 #### UI in Debian
 
@@ -217,7 +217,7 @@ xhost +local:
 
 #### UI in Windows
 
-I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VxCsrv, ensure to set:
+I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VxCsrv, make sure to set the following in the configuration:
 
 - Multiple windows
 - Display number 0

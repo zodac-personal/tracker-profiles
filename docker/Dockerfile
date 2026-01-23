@@ -20,7 +20,7 @@ FROM python:3.14.2-slim AS python_builder
 RUN python3 -m ensurepip && \
     pip install \
         pip=="25.3" \
-        wheel=="0.45.1"
+        wheel=="0.46.3"
 # END PYTHON PACKAGES
 
 # Copy Python requirements
@@ -68,7 +68,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="144.0.7559.59-1~deb13u1" \
+        chromium="144.0.7559.96-1~deb13u1" \
     && \
     apt-get autoremove && \
     apt-get clean && \

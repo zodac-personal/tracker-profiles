@@ -34,7 +34,7 @@
         <jspecify.version>1.0.0</jspecify.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <log4j.version>2.25.3</log4j.version>
-        <selenium.version>4.39.0</selenium.version>
+        <selenium.version>4.40.0</selenium.version>
 
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
@@ -46,7 +46,7 @@
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
-        <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <!-- Linter 3PP Versions -->
         <asm-version>9.9.1</asm-version>
