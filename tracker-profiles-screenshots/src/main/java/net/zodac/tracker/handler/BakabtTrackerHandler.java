@@ -42,33 +42,33 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.xpath("//input[@name='username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit' and contains(normalize-space(), 'One now')]");
+        return By.xpath("//form[@id='loginForm']/button[1]");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//li[contains(@class, 'welcomeback')]");
+        return By.xpath("//div[contains(@class, 'stats')]");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//li[contains(@class, 'welcomeback')]/a[1]");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'userstats')]/tbody/tr[td[1][contains(normalize-space(), 'E-mail')]]/td[2]/a[1]") // Email
+            By.xpath("//table[contains(@class, 'userstats')]//tr[3]/td[2]/a[1]") // Email
         );
     }
 
@@ -78,6 +78,6 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(profilePageSelector());
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//li[contains(@class, 'welcomeback')]/ul[1]/li[3]/a[1]");
     }
 }
