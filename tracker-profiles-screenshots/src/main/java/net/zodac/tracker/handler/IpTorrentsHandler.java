@@ -43,7 +43,7 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(@class, 'submit-btn') and @type='submit']");
+        return By.xpath("//button[@type='submit']");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[th[contains(normalize-space(), 'Passkey')]]/td[1]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[@id='body']//table[1]/tbody[1]/tr[4]/td[1]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -91,6 +91,6 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//button[div[normalize-space()='Log out']]");
+        return By.xpath("//div[contains(@class, 'stats')]//form[1]/button[1]");
     }
 }
