@@ -32,8 +32,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "Cathode-Ray.Tube", url = "https://www.cathode-ray.tube/")
 public class CathodeRayTubeHandler extends AbstractTrackerHandler {
 
-    private static final String PASSKEY_PREFIX = "Passkey: ";
-
     /**
      * Default constructor.
      *
@@ -46,17 +44,17 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='logo']/ul/li[2]/a[1]");
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']//input[@name='username']");
+        return By.xpath("//div[@id='username']/input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']//input[@name='password']");
+        return By.xpath("//div[@id='password']/input[1]");
     }
 
     @Override
@@ -66,7 +64,7 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//table[contains(@class, 'userinfo_stats')]");
+        return By.id("stats_block");
     }
 
     @Override
@@ -78,8 +76,8 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link CathodeRayTubeHandler}, we also need to redact a passkey {@link WebElement}. We find an element with text that is prefixed by
-     * {@value #PASSKEY_PREFIX}, signifying a {@link WebElement} with a sensitive passkey. We redact this element by replacing all text with the
+     * For {@link CathodeRayTubeHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
+     * stats element on the profile page. We redact this element by replacing all text with the
      * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
      *
      * @see AbstractTrackerHandler#redactElements()
@@ -87,10 +85,9 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]",
-            PASSKEY_PREFIX));
+        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[10]/ul[1]/li[4]");
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
-        final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
+        final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
         return 1 + super.redactElements();
@@ -99,8 +96,8 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]"), // Email
+            By.id("statuscont0") // IP address
         );
     }
 
@@ -111,6 +108,6 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }
