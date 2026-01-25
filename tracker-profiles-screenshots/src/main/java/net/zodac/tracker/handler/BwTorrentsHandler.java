@@ -44,17 +44,17 @@ public class BwTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text' and @placeholder='Username']");
+        return By.xpath("//input[@name='username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password' and @placeholder='Password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='LOG IN' and @type='submit']");
+        return By.xpath("//div[@id='up']/input[@type='submit']");
     }
 
     @Override
@@ -76,6 +76,6 @@ public class BwTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[@id='right-sts-aeon']//a[@title='Logout']");
+        return By.xpath("//a[@title='Logout']");
     }
 }
