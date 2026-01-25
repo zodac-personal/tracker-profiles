@@ -45,7 +45,7 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @value='Login']");
+        return By.xpath("//div[contains(@class, 'login-btn')]/input[1]");
     }
 
     @Override
@@ -56,11 +56,11 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'statusbar')]//div/a[span]");
+        return By.xpath("//div[contains(@class, 'status_avatar')]/a[1]");
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//div[contains(@class, 'statusbar')]/div[2]/div[3]/span[4]/a[1]");
     }
 }
