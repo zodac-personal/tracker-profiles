@@ -346,6 +346,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the profile page {@link By} selector
      */
     protected abstract By profilePageSelector();
+    // TODO: Use this as default: return By.xpath("//a[contains(@class, 'username')]");
 
     /**
      * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and

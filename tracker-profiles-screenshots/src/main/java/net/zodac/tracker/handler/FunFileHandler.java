@@ -49,7 +49,7 @@ public class FunFileHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login' and @type='submit']");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -74,8 +74,7 @@ public class FunFileHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement ipAndIspElement = driver.findElement(
-            By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr[td[contains(normalize-space(), 'IP')]]/td[2]"));
+        final WebElement ipAndIspElement = driver.findElement(By.xpath("//td[contains(@class, 'mf_content')]/table[1]/tbody[1]/tr[4]/td[2]"));
         scriptExecutor.redactInnerTextOf(ipAndIspElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -84,12 +83,12 @@ public class FunFileHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//td[contains(@class, 'mf_content')]/table/tbody/tr/td/a") // Email
+            By.xpath("//td[contains(@class, 'mf_content')]/table[1]/tbody[1]/tr[3]/td[2]/a[1]") // Email
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[font[b[contains(normalize-space(), 'Logout')]]]");
+        return By.xpath("//div[contains(@class, 'mb_content')]/table[1]/tbody[1]/tr[7]/td[1]/a[1]");
     }
 }
