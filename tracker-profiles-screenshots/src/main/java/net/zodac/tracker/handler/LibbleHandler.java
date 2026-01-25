@@ -46,12 +46,12 @@ public class LibbleHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='menu']/a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='menu']/a[2]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
+        return By.xpath("//input[@type='submit'][@name='login']");
     }
 
     @Override
@@ -61,12 +61,14 @@ public class LibbleHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//ul[@id='userinfo_username']/li[1]/a[1]");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("header"));
+
+        // TODO: Common usage?
         scriptExecutor.updateCss(headerElement, "position", "static");
         return true;
     }
@@ -84,8 +86,7 @@ public class LibbleHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]",
-            PASSKEY_PREFIX));
+        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[4]/ul[1]/li[4]");
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
         final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
@@ -96,13 +97,13 @@ public class LibbleHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//a[@title='Manage Sessions']") // Footer with last used IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]"), // Email
+            By.xpath("//div[@id='footer']/p[2]/a[1]") // Footer with last used IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//ul[@id='userinfo_username']/li[3]/a[1]");
     }
 }
