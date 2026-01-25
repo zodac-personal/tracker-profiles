@@ -32,6 +32,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
     "https://www.empornium.sx/",
     "https://www.emparadise.rs/"
 })
+// TODO: Combine with CRT/Kufirc as Luminence CommonTrackerHandler
 public class EmporniumHandler extends AbstractTrackerHandler {
 
     /**
@@ -46,17 +47,17 @@ public class EmporniumHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='menu']/ul[1]/li[2]/a[1]");
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']//input[@name='username']");
+        return By.xpath("//div[@id='username']/input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']//input[@name='password']");
+        return By.xpath("//div[@id='password']/input[1]");
     }
 
     @Override
@@ -66,7 +67,7 @@ public class EmporniumHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//table[contains(@class, 'userinfo_stats')]");
+        return By.id("stats_block");
     }
 
     @Override
@@ -115,7 +116,7 @@ public class EmporniumHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]") // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email
         );
     }
 

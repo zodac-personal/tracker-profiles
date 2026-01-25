@@ -44,7 +44,7 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/ul/li[2]/a[1]");
+        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
     }
 
     @Override
