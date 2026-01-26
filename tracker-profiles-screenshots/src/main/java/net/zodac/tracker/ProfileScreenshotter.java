@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+
 import net.zodac.tracker.framework.ApplicationConfiguration;
 import net.zodac.tracker.framework.Configuration;
 import net.zodac.tracker.framework.ExitState;
@@ -76,16 +77,22 @@ public final class ProfileScreenshotter {
      */
     public static ExitState executeProfileScreenshotter() {
         final Map<TrackerType, Set<TrackerDefinition>> trackersByType = getTrackers();
-        // TODO: If a tracker is listed in the CSV, but the category is disabled, it's possible to execute 0 trackers and skip this early exit
-        if (trackersByType.isEmpty()) {
+        final int numberOfTrackers = countAllEnabled(trackersByType);
+        final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
+
+        if (numberOfTrackers == 0) {
             LOGGER.error("No trackers selected!");
             return ExitState.FAILURE;
         }
+        LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, trackersPlural);
 
         final File outputDirectory = CONFIG.outputDirectory().toFile();
         if (!outputDirectory.exists()) {
             LOGGER.trace("Creating output directory: '{}'", outputDirectory);
-            outputDirectory.mkdirs();
+            final boolean wasOutputDirectoryCreated = outputDirectory.mkdirs();
+            if (!wasOutputDirectoryCreated) {
+                LOGGER.trace("Could not create output directory (or already exists): '{}'", outputDirectory);
+            }
         }
 
         printTrackersInfo(trackersByType);
@@ -111,6 +118,10 @@ public final class ProfileScreenshotter {
         }
 
         return returnResultSummary(successfulTrackers, unsuccessfulTrackers);
+    }
+
+    private static boolean noValidTrackersSelected(Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
+        return trackersByType.isEmpty();
     }
 
     private static ExitState returnResultSummary(final Collection<String> successfulTrackers, final Collection<String> unsuccessfulTrackers) {
@@ -152,11 +163,6 @@ public final class ProfileScreenshotter {
     }
 
     private static void printTrackersInfo(final Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
-        final int numberOfTrackers = countAllEnabled(trackersByType);
-        final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
-
-        LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, trackersPlural);
-
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
                 trackerType.printSummary(trackersByType, CONFIG);
@@ -166,10 +172,10 @@ public final class ProfileScreenshotter {
 
     private static int countAllEnabled(final Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
         return TrackerType.ALL_VALUES
-            .stream()
-            .filter(trackerType -> trackerType.isEnabled(trackersByType, CONFIG))
-            .mapToInt(trackerType -> trackersByType.getOrDefault(trackerType, Set.of()).size())
-            .sum();
+                .stream()
+                .filter(trackerType -> trackerType.isEnabled(trackersByType, CONFIG))
+                .mapToInt(trackerType -> trackersByType.getOrDefault(trackerType, Set.of()).size())
+                .sum();
     }
 
     private static Map<TrackerType, Set<TrackerDefinition>> getTrackers() {
@@ -257,7 +263,7 @@ public final class ProfileScreenshotter {
     }
 
     private static void takeScreenshotOfProfilePage(final AbstractTrackerHandler trackerHandler, final TrackerDefinition trackerDefinition)
-        throws IOException {
+            throws IOException {
         // TODO: If screenshot already exists, skip tracker (based on env var)
 
         LOGGER.info("\t- Opening tracker");
