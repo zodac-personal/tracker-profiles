@@ -67,6 +67,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [DarkPeers](https://darkpeers.org/)               |
 | [DICMusic](https://dicmusic.com/)                 |
 | [Empornium](https://www.empornium.sx/)            |
+| [F1Carreras](https://f1carreras.xyz/)             |
 | [FearNoPeer](https://fearnopeer.com/)             |
 | [FileList](https://filelist.io/)                  |
 | [FunFile](https://www.funfile.org/)               |
