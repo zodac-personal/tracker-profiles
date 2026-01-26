@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-
 import net.zodac.tracker.framework.ApplicationConfiguration;
 import net.zodac.tracker.framework.Configuration;
 import net.zodac.tracker.framework.ExitState;
@@ -118,10 +117,6 @@ public final class ProfileScreenshotter {
         }
 
         return returnResultSummary(successfulTrackers, unsuccessfulTrackers);
-    }
-
-    private static boolean noValidTrackersSelected(Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
-        return trackersByType.isEmpty();
     }
 
     private static ExitState returnResultSummary(final Collection<String> successfulTrackers, final Collection<String> unsuccessfulTrackers) {
