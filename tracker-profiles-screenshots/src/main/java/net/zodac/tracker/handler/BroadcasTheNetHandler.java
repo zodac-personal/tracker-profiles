@@ -27,6 +27,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code BroadcasThe.Net} tracker.
  */
+//TODO: GazelleHandler?
 @TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.CLOUDFLARE_CHECK, url = "https://broadcasthe.net/")
 public class BroadcasTheNetHandler extends AbstractTrackerHandler {
 

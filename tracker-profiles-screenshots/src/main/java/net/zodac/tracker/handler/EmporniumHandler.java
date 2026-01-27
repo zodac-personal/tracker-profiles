@@ -32,7 +32,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
     "https://www.empornium.sx/",
     "https://www.emparadise.rs/"
 })
-// TODO: Combine with CRT/Kufirc as Luminence CommonTrackerHandler
+// TODO: Combine with CRT/Kufirc/MTV as Luminence CommonTrackerHandler?
 public class EmporniumHandler extends AbstractTrackerHandler {
 
     /**

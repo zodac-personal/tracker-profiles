@@ -27,6 +27,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code MoreThanTV} tracker.
  */
+// TODO: Luminence
 @TrackerHandler(name = "MoreThanTV", url = "https://www.morethantv.me/")
 public class MoreThanTvHandler extends AbstractTrackerHandler {
 
@@ -42,17 +43,17 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']//input[@name='username']");
+        return By.xpath("//div[@id='username']//input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']//input[@name='password']");
+        return By.xpath("//div[@id='password']//input[1]");
     }
 
     @Override
@@ -62,7 +63,7 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("userinfo");
+        return By.id("userinfo_username");
     }
 
     @Override
@@ -73,8 +74,7 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email // Email
         );
     }
 
@@ -92,6 +92,6 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//li[@id='nav_logout']//a[1]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }
