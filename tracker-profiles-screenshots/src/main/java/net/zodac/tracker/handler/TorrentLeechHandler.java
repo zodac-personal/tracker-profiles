@@ -50,22 +50,22 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.xpath("//input[@name='username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(normalize-space(), 'Log in')]");
+        return By.xpath("//button[@type='submit']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'navbar') and contains(@class, 'loggedin')]");
+        return By.xpath("//div[contains(@class, 'loggedin')]");
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     @Override
     public boolean canBannerBeCleared() {
         // IP address warning banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(@class, 'close') and @title='Dismiss']"));
+        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(@class, 'close')][@title='Dismiss']"));
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -98,7 +98,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[contains(normalize-space(), 'Torrent Passkey')]]/td[2]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[contains(@class, 'profileViewTable')]/tbody[1]/tr[10]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -107,12 +107,12 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(normalize-space(), 'Email')]]/td[2]")
+            By.xpath("//table[contains(@class, 'profileViewTable')]/tbody[1]/tr[2]/td[2]")
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[@title='logout']");
+        return By.xpath("//i[contains(@class, 'fa-sign-out')]");
     }
 }
