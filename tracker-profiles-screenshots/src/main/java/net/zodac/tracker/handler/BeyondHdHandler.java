@@ -58,7 +58,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//*[@id='captcha']/ancestor::div[1]"));
+        final WebElement captchaElement = driver.findElement(By.xpath("//input[@id='captcha']/ancestor::div[1]"));
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
@@ -70,7 +70,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[img[contains(@class, 'beta-image-avatar')]]");
+        return By.xpath("//img[contains(@class, 'beta-image-avatar')]/ancestor::a[1]");
     }
 
     @Override
@@ -83,10 +83,10 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[contains(@class, 'bhd-td')]//div[contains(@class, 'dropmenu')]");
+        final By logoutParentSelector = By.xpath("//div[contains(@class, 'dropmenu')]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//form[@id='logout-form1']/ancestor::div[1]/a[1]");
     }
 }
