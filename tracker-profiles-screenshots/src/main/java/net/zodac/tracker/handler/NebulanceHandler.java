@@ -29,10 +29,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Nebulance} tracker.
  */
+// TODO: GazelleHandler?
 @TrackerHandler(name = "Nebulance", url = "https://nebulance.io/")
 public class NebulanceHandler extends AbstractTrackerHandler {
-
-    private static final String PASSKEY_PREFIX = "Passkey: ";
 
     /**
      * Default constructor.
@@ -46,17 +45,17 @@ public class NebulanceHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.id("candyfloss");
+        return By.id("major_stats_left");
     }
 
     @Override
@@ -82,19 +81,18 @@ public class NebulanceHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link NebulanceHandler}, we also need to redact a passkey {@link WebElement}. We find an element with text that is prefixed by
-     * {@value #PASSKEY_PREFIX}, signifying a {@link WebElement} with a sensitive passkey. We redact this element by replacing all text with the
-     * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
+     * For {@link NebulanceHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
+     * stats element on the profile page. We redact this element by replacing all text with the prefix and
+     * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
      *
      * @see AbstractTrackerHandler#redactElements()
      * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath(String.format("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), '%s')]",
-            PASSKEY_PREFIX));
+        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[7]");
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
-        final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
+        final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
         return 1 + super.redactElements();
@@ -103,8 +101,8 @@ public class NebulanceHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email
+            By.id("statuscont0") // IP address
         );
     }
 

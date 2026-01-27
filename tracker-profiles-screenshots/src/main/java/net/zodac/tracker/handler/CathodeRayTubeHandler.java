@@ -77,8 +77,8 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link CathodeRayTubeHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
-     * stats element on the profile page. We redact this element by replacing all text with the
-     * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
+     * stats element on the profile page. We redact this element by replacing all text with the prefix and
+     * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
      *
      * @see AbstractTrackerHandler#redactElements()
      * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
@@ -96,7 +96,7 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]"), // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
             By.id("statuscont0") // IP address
         );
     }
