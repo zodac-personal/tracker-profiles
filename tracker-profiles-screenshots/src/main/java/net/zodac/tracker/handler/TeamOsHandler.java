@@ -45,17 +45,17 @@ public class TeamOsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='login' and @type='text']");
+        return By.xpath("//input[@name='login'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit' and contains(@class, 'button--icon--login')]");
+        return By.xpath("//button[@type='submit']");
     }
 
     /**
@@ -68,7 +68,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        scriptExecutor.stopPageLoad();
 
         final String title = driver.getTitle();
         if (title != null && title.contains("Oops! We ran into some problems.")) {
@@ -90,13 +90,13 @@ public class TeamOsHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[contains(normalize-space(), 'Your profile')]");
+        return By.xpath("//div[contains(@class, 'p-body-sideNavContent')]/div[1]/div[1]/div[1]/a[1]");
     }
 
     @Override
     protected By logoutButtonSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNav')]//a[contains(normalize-space(), 'Log out')]");
+        return By.xpath("//div[contains(@class, 'p-body-sideNavContent')]/div[2]/div[1]/div[1]/a[1]");
     }
 
     private void navigateToUserPage() {
@@ -122,6 +122,6 @@ public class TeamOsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected By postLogoutElementSelector() {
-        return By.xpath("//a[span[contains(normalize-space(), 'Log in')]]");
+        return By.xpath("//a[contains(@class, 'p-navgroup-link--logIn')]");
     }
 }
