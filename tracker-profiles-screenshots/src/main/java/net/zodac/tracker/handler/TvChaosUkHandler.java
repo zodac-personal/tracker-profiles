@@ -42,18 +42,18 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("main-content");
+        return By.xpath("//div[contains(@class, 'ratio-bar')]");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//ul[contains(@class, 'list-inline')]/li[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/ul[1]/li[1]/a[1]");
     }
 
     @Override
     public boolean canBannerBeCleared() {
         // Cookie banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(normalize-space(), 'Allow cookies')]"));
+        final WebElement cookieButton = driver.findElement(By.xpath("//div[@id='alert_system_notice']/div[1]/button[1]"));
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -64,17 +64,17 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(normalize-space(), 'E-mail')]]/td[2]")
+            By.xpath("//main[@id='vue']/div[1]/div[5]/div[1]/table[1]/tbody[1]/tr[5]/td[2]")
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
         // Click the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]//li[2]//a[contains(@class, 'dropdown-toggle')]");
+        final By logoutParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[2]/a[1]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//a[i[contains(@class, 'fa-sign-out')]]");
+        return By.xpath("//ul[contains(@class, 'right-navbar')]/li[2]/ul[1]/li[8]/a[1]");
     }
 }
