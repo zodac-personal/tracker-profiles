@@ -29,6 +29,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code PornBay} tracker.
  */
+// TODO: Luminance?
 @TrackerHandler(name = "PornBay", url = "https://pornbay.org/")
 public class PornBayHandler extends AbstractTrackerHandler {
 
@@ -51,7 +52,7 @@ public class PornBayHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override

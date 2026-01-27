@@ -38,6 +38,7 @@ public record TrackerDefinition(String name, String username, String password)
      * @return the {@link TrackerDefinition}
      */
     public static TrackerDefinition fromCsv(final CSVRecord csvRecord) {
+        // TODO: Trim these values of leading/trailing whitespace
         return new TrackerDefinition(
             csvRecord.get("trackerName"),
             csvRecord.get("username"),

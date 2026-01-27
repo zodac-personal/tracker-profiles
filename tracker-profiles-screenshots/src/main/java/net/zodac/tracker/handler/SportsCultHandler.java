@@ -40,17 +40,17 @@ public class SportsCultHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[2]/input[1]");
+        return By.xpath("//input[@name='uid'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[4]/input[1]");
+        return By.xpath("//input[@name='pwd'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//form[@name='login']//table[1]//table[1]/tbody/tr/td[5]/input[1]");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -60,11 +60,11 @@ public class SportsCultHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'mainuser') and contains(normalize-space(), 'My Panel')]");
+        return By.xpath("//a[contains(@class, 'mainuser')]");
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(normalize-space(), '(Logout)')]");
+        return By.xpath("//div[@id='header']/table[1]//table[1]/tbody[1]/tr[1]/td[1]/a[1]");
     }
 }
