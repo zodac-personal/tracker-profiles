@@ -5,7 +5,6 @@
 - [Trackers](#trackers)
     - [Headless](#headless)
     - [Non-Headless](#non-headless)
-    - [Unsupported](#unsupported)
 - [How To Use](#how-to-use)
     - [Tracker Definitions](#tracker-definitions)
     - [Docker](#docker)
@@ -126,13 +125,6 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [TheEmpire](https://theempire.click/)         | **Manual**           |
 | [TheGeeks](https://thegeeks.click/)           | **Manual**           |
 | [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
-
-### Unsupported
-
-The following trackers are not currently supported:
-
-| Tracker Name |
-|--------------|
 
 ## How To Use
 
