@@ -42,17 +42,17 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@type='email' and @name='email']");
+        return By.xpath("//input[@name='email'][@type='email']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@type='password' and @name='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Log in!' and @type='submit']");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final By profileDropDownSelector = By.xpath("//li[contains(@class, 'mmUserStats')]//a[@tabindex='0']");
+        final By profileDropDownSelector = By.id("userMenu");
         final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
         scriptExecutor.moveTo(profileDropDown);
 
@@ -73,7 +73,7 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//div[contains(@class, 'blockBody')]//table/tbody/tr[td[contains(normalize-space(), 'Address')]]/td[2]")
+            By.xpath("//div[contains(@class, 'blockBodyCon')]/table[1]/tbody[1]/tr[3]/td[2]") // IP Address
         );
     }
 
@@ -84,6 +84,6 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//a[contains(normalize-space(), 'Log Out')]");
+        return By.xpath("//ul[@id='menu']/li[2]/ul[1]/li[15]/a[1]");
     }
 }
