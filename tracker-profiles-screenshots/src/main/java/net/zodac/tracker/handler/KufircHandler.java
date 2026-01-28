@@ -33,8 +33,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "Kufirc", type = TrackerType.NON_ENGLISH, url = "https://kufirc.com/")
 public class KufircHandler extends AbstractTrackerHandler {
 
-    private static final String PASSKEY_PREFIX = "Passkey: ";
-
     /**
      * Default constructor.
      *
@@ -52,12 +50,12 @@ public class KufircHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']/input[@name='username']");
+        return By.xpath("//div[@id='username']//input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']/input[@name='password']");
+        return By.xpath("//div[@id='password']//input[1]");
     }
 
     @Override
@@ -67,7 +65,7 @@ public class KufircHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("stats_block");
+        return By.id("userinfo_username");
     }
 
     @Override
@@ -79,31 +77,29 @@ public class KufircHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link KufircHandler}, we also need to redact a passkey {@link WebElement}. We find an element with text that is prefixed by
-     * {@value #PASSKEY_PREFIX}, signifying a {@link WebElement} with a sensitive passkey. We redact this element by replacing all text with the
-     * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
+     * For {@link KufircHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
+     *      * stats element on the profile page. We redact this element by replacing all text with the prefix and
+     *      * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
      *
      * @see AbstractTrackerHandler#redactElements()
      * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
      */
     @Override
     public int redactElements() {
-        final int superRedactedElements = super.redactElements();
-
-        final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
-        final WebElement passkeyElement = driver.findElement(By.xpath(String.format("//li[contains(normalize-space(), '%s')]", PASSKEY_PREFIX)));
+        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[4]");
+        final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
+        final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
-        return superRedactedElements + 1;
+        return 1 + super.redactElements();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         // TODO: Handle IP regardless of language
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Kapcsolodás')]/span[1]"), // IP address (Hungarian)
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Connectable')]/span[1]") // IP address (English)
+            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
+            By.id("statuscont0") // IP address
         );
     }
 
