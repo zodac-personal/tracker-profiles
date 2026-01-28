@@ -46,12 +46,12 @@ public class DocspediaHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.xpath("//input[@name='username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     /**
@@ -78,7 +78,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Login' and @type='submit']");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'statusbar')]/div[2]/div[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'status_avatar')]/a[1]");
     }
 
     /**
@@ -105,7 +105,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[contains(normalize-space(), 'Passkey')]]/td[2]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//div[@id='maincolumn']//table[2]/tbody[1]/tr[3]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -114,13 +114,13 @@ public class DocspediaHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table/tbody/tr[td[contains(normalize-space(), 'Address')]]/td[2]") // IP address
+            By.xpath("//div[@id='maincolumn']//table[2]/tbody[1]/tr[4]/td[2]") // IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
         // TODO: Create some sort of XPATH builder to construct this in a single place?
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//div[contains(@class, 'statusbar')]/div[2]/div[3]/span[4]/a[1]");
     }
 }
