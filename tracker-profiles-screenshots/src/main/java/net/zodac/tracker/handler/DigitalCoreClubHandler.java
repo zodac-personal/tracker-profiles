@@ -78,17 +78,17 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(normalize-space(), 'Login') and @type='submit']");
+        return By.xpath("//button[@translate='LOGIN.TITLE']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.tagName("main-menu");
+        return By.id("statusBox");
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//user//a[1]");
+        return By.xpath("//user[1]//a[1]");
     }
 
     /**
@@ -100,16 +100,16 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        // Reload the page
+        // Reload the page in case it was cancelled
         driver.navigate().refresh();
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
-        final By selector = By.xpath("//div[@id='contentContainer']//table");
+        final By selector = By.xpath("//div[@id='contentContainer']//table[1]");
         scriptExecutor.waitForElementToAppear(selector, DEFAULT_WAIT_FOR_PAGE_LOAD);
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[contains(@class, 'hidden-xs2') and contains(normalize-space(), 'Sign out')]");
+        return By.xpath("//span[@translate='STATUS.LOG_OUT']");
     }
 }
