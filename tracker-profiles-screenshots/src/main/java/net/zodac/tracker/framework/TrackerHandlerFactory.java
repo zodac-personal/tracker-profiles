@@ -41,6 +41,7 @@ import java.util.zip.ZipEntry;
 import net.zodac.tracker.framework.annotation.TrackerDisabled;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandlers;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.exception.DisabledTrackerException;

@@ -28,14 +28,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import net.zodac.tracker.framework.ApplicationConfiguration;
-import net.zodac.tracker.framework.Configuration;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerCsvReader;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.BrowserClosedException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DisabledTrackerException;
@@ -205,7 +205,7 @@ public final class ProfileScreenshotter {
         // TODO: Add a retry option
         // TODO: On failure, take a screenshot and add to a subdirectory
         try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerDefinition.name())) {
-            takeScreenshotOfProfilePage(trackerHandler, trackerDefinition);
+            screenshotProfile(trackerHandler, trackerDefinition);
             return true;
         } catch (final CancelledInputException e) {
             LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerDefinition.name(), e);
@@ -257,9 +257,10 @@ public final class ProfileScreenshotter {
         }
     }
 
-    private static void takeScreenshotOfProfilePage(final AbstractTrackerHandler trackerHandler, final TrackerDefinition trackerDefinition)
-            throws IOException {
-        // TODO: If screenshot already exists, skip tracker (based on env var)
+    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerDefinition trackerDefinition) throws IOException {
+        if (screenshotExistsAndSkipSelected(trackerDefinition.name())) {
+            return;
+        }
 
         LOGGER.info("\t- Opening tracker");
         trackerHandler.openTracker();
@@ -298,5 +299,22 @@ public final class ProfileScreenshotter {
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
+    }
+
+    private static boolean screenshotExistsAndSkipSelected(final String trackerName) {
+        if (!ScreenshotTaker.doesScreenshotAlreadyExist(trackerName)) {
+            return false;
+        }
+
+        return switch (CONFIG.existingScreenshotAction()) {
+            case OVERWRITE -> {
+                LOGGER.debug("\t- Screenshot already exists for tracker '{}', overwriting with new screenshot", trackerName);
+                yield false;
+            }
+            case SKIP -> {
+                LOGGER.warn("\t- Screenshot already exists for tracker '{}', skipping", trackerName);
+                yield true;
+            }
+        };
     }
 }

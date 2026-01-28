@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,8 +70,8 @@ final class PythonHttpServerHandler {
      * @param browserDataStoragePath the file path in which to store browser data (profiles, caches, etc.)
      * @param browserDimensions      the dimensions in the format {@code width,height} for the {@code Selenium} web browser
      * @return the {@link SeleniumSession} of the Python browser session
-     * @see net.zodac.tracker.framework.ApplicationConfiguration#browserDataStoragePath()
-     * @see net.zodac.tracker.framework.ApplicationConfiguration#browserDimensions()
+     * @see ApplicationConfiguration#browserDataStoragePath()
+     * @see ApplicationConfiguration#browserDimensions()
      */
     static SeleniumSession openSession(final String browserDataStoragePath, final String browserDimensions) {
         final String jsonPayload = OPEN_REQUEST_PAYLOAD_FORMAT.formatted(browserDataStoragePath, browserDimensions);

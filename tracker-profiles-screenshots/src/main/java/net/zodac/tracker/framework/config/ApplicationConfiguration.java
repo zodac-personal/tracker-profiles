@@ -15,7 +15,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework;
+package net.zodac.tracker.framework.config;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import net.zodac.tracker.framework.TrackerType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,19 +44,21 @@ import org.apache.logging.log4j.Logger;
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
  * @param openOutputDirectory        whether to open the screenshot directory when execution is completed
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
+ * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
  */
 public record ApplicationConfiguration(
-    String browserDataStoragePath,
-    String browserDimensions,
-    char csvCommentSymbol,
-    boolean enableTranslationToEnglish,
-    boolean forceUiBrowser,
-    boolean openOutputDirectory,
-    Path outputDirectory,
-    List<TrackerType> trackerExecutionOrder,
-    Path trackerInputFilePath
+        String browserDataStoragePath,
+        String browserDimensions,
+        char csvCommentSymbol,
+        boolean enableTranslationToEnglish,
+        boolean forceUiBrowser,
+        boolean openOutputDirectory,
+        Path outputDirectory,
+        ExistingScreenshotAction existingScreenshotAction,
+        List<TrackerType> trackerExecutionOrder,
+        Path trackerInputFilePath
 ) {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -67,6 +70,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = File.separator + "app" + File.separator + "screenshots";
+    private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.OVERWRITE;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,non-english,cloudflare-check";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + File.separator + "trackers.csv";
@@ -78,15 +82,16 @@ public record ApplicationConfiguration(
      */
     public static ApplicationConfiguration load() {
         final ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration(
-            BROWSER_DATA_STORAGE_PATH,
-            getBrowserDimensions(),
-            getCsvCommentSymbol(),
-            getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
-            getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
-            getBooleanEnvironmentVariable("OPEN_OUTPUT_DIRECTORY", false),
-            getOutputDirectory(),
-            getTrackerExecutionOrder(),
-            getTrackerInputFilePath()
+                BROWSER_DATA_STORAGE_PATH,
+                getBrowserDimensions(),
+                getCsvCommentSymbol(),
+                getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
+                getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
+                getBooleanEnvironmentVariable("OPEN_OUTPUT_DIRECTORY", false),
+                getOutputDirectory(),
+                getScreenshotExistsAction(),
+                getTrackerExecutionOrder(),
+                getTrackerInputFilePath()
         );
 
         applicationConfiguration.print();
@@ -108,8 +113,8 @@ public record ApplicationConfiguration(
         final String[] executionOrderTokens = executionOrderRaw.split(",");
         if (executionOrderTokens.length == 0 || executionOrderTokens.length > TrackerType.ALL_VALUES.size()) {
             throw new IllegalArgumentException(
-                String.format("Require 1-%d tracker types for EXECUTION_ORDER, found: %s", TrackerType.ALL_VALUES.size(),
-                    Arrays.toString(executionOrderTokens)));
+                    String.format("Require 1-%d tracker types for EXECUTION_ORDER, found: %s", TrackerType.ALL_VALUES.size(),
+                            Arrays.toString(executionOrderTokens)));
         }
 
         final Collection<TrackerType> trackerExecutionOrder = new LinkedHashSet<>();
@@ -137,6 +142,11 @@ public record ApplicationConfiguration(
         return Paths.get(outputDirectoryParentPath, outputDirectoryName);
     }
 
+    private static ExistingScreenshotAction getScreenshotExistsAction() {
+        final String screenshotExistsAction = getOrDefault("SCREENSHOT_EXISTS_ACTION", DEFAULT_SCREENSHOT_EXISTS_ACTION.toString());
+        return ExistingScreenshotAction.get(screenshotExistsAction);
+    }
+
     private static Path getTrackerInputFilePath() {
         return Paths.get(getOrDefault("TRACKER_INPUT_FILE_PATH", DEFAULT_TRACKER_INPUT_FILE_PATH));
     }
@@ -162,6 +172,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
         LOGGER.debug("\t- openOutputDirectory={}", openOutputDirectory);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
+        LOGGER.debug("\t- existingScreenshotAction={}", existingScreenshotAction);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);
     }

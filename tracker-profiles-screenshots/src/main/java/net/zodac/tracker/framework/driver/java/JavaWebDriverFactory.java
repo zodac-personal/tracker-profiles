@@ -19,9 +19,9 @@ package net.zodac.tracker.framework.driver.java;
 
 import java.io.File;
 import java.util.Map;
-import net.zodac.tracker.framework.ApplicationConfiguration;
-import net.zodac.tracker.framework.Configuration;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;

@@ -17,8 +17,8 @@
 
 package net.zodac.tracker.framework.driver.python;
 
-import net.zodac.tracker.framework.ApplicationConfiguration;
-import net.zodac.tracker.framework.Configuration;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -22,8 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import javax.imageio.ImageIO;
-import net.zodac.tracker.framework.ApplicationConfiguration;
-import net.zodac.tracker.framework.Configuration;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.yandex.qatools.ashot.AShot;
@@ -39,6 +39,17 @@ public final class ScreenshotTaker {
 
     private ScreenshotTaker() {
 
+    }
+
+    /**
+     * Checks if the screenshot already exists for the selected tracker.
+     *
+     * @param trackerName the name of the tracker having a screenshot taken (used as the file name)
+     * @return {@code true} if a screenshot for the tracker already exists in the {@link ApplicationConfiguration#outputDirectory()}.
+     */
+    public static boolean doesScreenshotAlreadyExist(final String trackerName) {
+        final File screenshot = createOutputFileHandle(trackerName);
+        return screenshot.exists();
     }
 
     /**
@@ -59,18 +70,22 @@ public final class ScreenshotTaker {
     public static File takeScreenshot(final RemoteWebDriver driver, final String trackerName) throws IOException {
         final ScriptExecutor scriptExecutor = new ScriptExecutor(driver);
         final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, scriptExecutor);
-        final File screenshot = new File(CONFIG.outputDirectory().toAbsolutePath() + File.separator + trackerName + ".png");
+        final File screenshot = createOutputFileHandle(trackerName);
         ImageIO.write(screenshotImage, "PNG", screenshot);
         scriptExecutor.scrollToTheTop();
         return screenshot;
     }
 
+    private static File createOutputFileHandle(final String trackerName) {
+        return new File(CONFIG.outputDirectory().toAbsolutePath() + File.separator + trackerName + ".png");
+    }
+
     private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final ScriptExecutor scriptExecutor) {
         scriptExecutor.disableScrolling();
         final BufferedImage screenshot = new AShot()
-            .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
-            .takeScreenshot(driver)
-            .getImage();
+                .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
+                .takeScreenshot(driver)
+                .getImage();
 
         scriptExecutor.enableScrolling("body");
         return screenshot;

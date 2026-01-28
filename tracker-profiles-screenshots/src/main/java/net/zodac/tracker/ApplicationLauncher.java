@@ -18,8 +18,9 @@
 package net.zodac.tracker;
 
 import java.util.logging.Level;
-import net.zodac.tracker.framework.Configuration;
 import net.zodac.tracker.framework.ExitState;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,10 +48,14 @@ public final class ApplicationLauncher {
             seleniumLogger.setLevel(Level.SEVERE);
 
             // Validate that the application configuration is valid
-            Configuration.get();
-        } catch (final Exception e) {
+            final ApplicationConfiguration _ = Configuration.get();
+        } catch (final ExceptionInInitializerError e) {
             LOGGER.debug("Error starting application pre-requisites", e);
-            LOGGER.error("Error starting application pre-requisites: {}", e.getMessage());
+            LOGGER.error("Error starting application pre-requisites: {}", e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
+            exit(ExitState.FAILURE);
+        } catch (final Exception e) {
+            LOGGER.debug("Unexpected error starting application pre-requisites", e);
+            LOGGER.error("Unexpected error starting application pre-requisites: {}", e.getMessage());
             exit(ExitState.FAILURE);
         }
 

@@ -15,7 +15,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework;
+package net.zodac.tracker.framework.config;
 
 /**
  * Singleton class used to create an instance of {@link ApplicationConfiguration}.

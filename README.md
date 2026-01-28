@@ -162,6 +162,7 @@ docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
@@ -187,6 +188,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
@@ -241,10 +243,11 @@ The following are all possible configuration options, defined as environment var
 | *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                         | #                                            |
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English (only if the tracker has no English option)                           | true                                         |
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                     | false                                        |
-| *LOG_LEVEL*                     | The logging level for console output                                                                                       | INFO                                         |
+| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                     | INFO                                         |
 | *OPEN_OUTPUT_DIRECTORY*         | Whether to open the output directory when execution is complete (not supported in Docker, debug only)                      | false                                        |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                  | yyyy-MM-dd                                   |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                     | /tmp/screenshots                             |
+| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [OVERWRITE, SKIP]                           | OVERWRITE                                    |
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                         | UTC                                          |
 | *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed. Unwanted execution types can be excluded. Case-insensitive. | headless,manual,non-english,cloudflare-check |
 | *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                            | /tmp/screenshots/trackers.csv                |
@@ -306,6 +309,7 @@ docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
