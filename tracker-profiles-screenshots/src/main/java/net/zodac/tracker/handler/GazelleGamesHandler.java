@@ -66,7 +66,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Login' and contains(@class, 'submit')]");
+        return By.xpath("//td[@id='login_td']/input[1]");
     }
 
     @Override
@@ -82,8 +82,8 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]/a[1]"), // Email
-            By.xpath("//div[@id='copyright']/p[2]/a[1]/span[3]") // Footer with last used IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email
+            By.xpath("//div[@id='copyright']//span") // Footer with last used IP address
         );
     }
 
@@ -109,6 +109,6 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), '[Logout]')]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }
