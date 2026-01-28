@@ -154,7 +154,7 @@ docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
+    --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
@@ -180,7 +180,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
+    --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
@@ -301,7 +301,7 @@ docker run \
     --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env SCREENSHOT_EXISTS_ACTION=ALWAYS_OVERWRITE \
+    --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
