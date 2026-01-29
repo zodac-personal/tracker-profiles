@@ -61,6 +61,7 @@ FROM debian:13.3-slim
 # Set the working directory
 WORKDIR /app
 
+# TODO: Use the DEBUG logs for Python and download the chromedriver manually and save in the Dockerfile, and use this version of Chromium
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)

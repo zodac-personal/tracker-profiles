@@ -25,13 +25,14 @@
 
 set -euo pipefail
 
-LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.14.13"
+LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.14.14"
 TEST_DOCKER_IMAGE="python:3.14.2-slim"
 
 # Linting
 echo
 echo "🐳 Running lints using [${LINT_DOCKER_IMAGE}]"
 
+docker pull "${LINT_DOCKER_IMAGE}" >/dev/null && \
 docker run --rm \
     -v "${PWD}":/app \
     -w /app \
@@ -42,6 +43,7 @@ docker run --rm \
 echo
 echo "🐳 Running tests using [${TEST_DOCKER_IMAGE}]"
 
+docker pull "${TEST_DOCKER_IMAGE}" >/dev/null && \
 docker run --rm -t \
     -v "${PWD}":/app \
     -w /app \

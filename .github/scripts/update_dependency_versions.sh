@@ -121,7 +121,7 @@ update_python_packages() {
         for i in "${!package_names[@]}"; do
             pkg="${package_names[$i]}"
             ver="${python_versions[$pkg]}"
-            if (( i == count-1 )); then
+            if ((i == count - 1)); then
                 # last package → no trailing backslash
                 echo "        ${pkg}==\"${ver}\""
             else
@@ -129,7 +129,7 @@ update_python_packages() {
             fi
         done
         echo "${PYTHON_END_MARKER}"
-    } > python_block.txt
+    } >python_block.txt
 
     # Replace the old block with the new one
     awk -v start_marker="${PYTHON_START_MARKER}" \
@@ -145,7 +145,7 @@ update_python_packages() {
     $0 ~ start_marker { print block; in_block = 1; next }
     $0 ~ end_marker { in_block = 0; next }
     !in_block { print }
-    ' "${dockerfile}" > "${dockerfile}.tmp"
+    ' "${dockerfile}" >"${dockerfile}.tmp"
 
     mv "${dockerfile}.tmp" "${dockerfile}"
     rm -f python_block.txt
@@ -164,11 +164,6 @@ update_debian_packages() {
         exit 1
     fi
 
-    get_debian_version() {
-        docker pull "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" >/dev/null 2>&1 && \
-        docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
-    }
-
     # Extract the lines between the start and end markers
     package_block=$(awk "/${DEBIAN_START_MARKER}/,/^${DEBIAN_END_MARKER}$/" "${dockerfile}")
 
@@ -184,6 +179,13 @@ update_debian_packages() {
 
     echo
     echo "🔍 Fetching latest dockerfile Debian package versions..."
+    # Pull latest debian image
+    docker pull "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" >/dev/null
+
+    get_debian_version() {
+        docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
+    }
+
     for package in "${package_names[@]}"; do
         version=$(get_debian_version "${package}")
         if [[ -z "${version}" ]]; then
@@ -207,7 +209,7 @@ update_debian_packages() {
         echo "    apt-get clean && \\"
         echo "    rm -rf /var/lib/apt/lists/*"
         echo "${DEBIAN_END_MARKER}"
-    } > debian_block.txt
+    } >debian_block.txt
 
     # Replace the old block with the new one
     awk -v start_marker="${DEBIAN_START_MARKER}" \
@@ -222,7 +224,7 @@ update_debian_packages() {
     $0 ~ start_marker { print block; in_block = 1; next }
     $0 ~ end_marker { in_block = 0; next }
     !in_block { print }
-    ' "${dockerfile}" > "${dockerfile}.tmp"
+    ' "${dockerfile}" >"${dockerfile}.tmp"
 
     mv "${dockerfile}.tmp" "${dockerfile}"
     rm -f debian_block.txt
