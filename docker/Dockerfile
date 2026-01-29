@@ -64,11 +64,13 @@ WORKDIR /app
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)
+# - wmctrl (force browser to be active window)
 # BEGIN DEBIAN PACKAGES
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
         chromium="144.0.7559.96-1~deb13u1" \
+        wmctrl="1.07+git20240228.1105759-1" \
     && \
     apt-get autoremove && \
     apt-get clean && \

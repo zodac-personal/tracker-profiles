@@ -258,7 +258,7 @@ public final class ProfileScreenshotter {
     }
 
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerDefinition trackerDefinition) throws IOException {
-        if (screenshotExistsAndSkipSelected(trackerDefinition.name())) {
+        if (doesScreenshotExistAndSkipSelected(trackerDefinition.name())) {
             return;
         }
 
@@ -301,7 +301,7 @@ public final class ProfileScreenshotter {
         LOGGER.info("\t- Logged out");
     }
 
-    private static boolean screenshotExistsAndSkipSelected(final String trackerName) {
+    private static boolean doesScreenshotExistAndSkipSelected(final String trackerName) {
         if (!ScreenshotTaker.doesScreenshotAlreadyExist(trackerName)) {
             return false;
         }

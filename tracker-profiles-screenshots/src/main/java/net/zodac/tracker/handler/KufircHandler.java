@@ -96,7 +96,6 @@ public class KufircHandler extends AbstractTrackerHandler {
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        // TODO: Handle IP regardless of language
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
             By.id("statuscont0") // IP address

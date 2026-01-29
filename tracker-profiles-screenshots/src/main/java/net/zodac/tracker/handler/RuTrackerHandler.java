@@ -50,22 +50,22 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//form[@id='login-form-full']//input[@name='login_username' and @type='text']");
+        return By.xpath("//table[contains(@class, 'forumline')]//input[@name='login_username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//form[@id='login-form-full']//input[@name='login_password' and @type='password']");
+        return By.xpath("//table[contains(@class, 'forumline')]//input[@name='login_password'][@type='password']");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//form[@id='login-form-full']//input[@type='submit' and @name='login']");
+        return By.xpath("//table[contains(@class, 'forumline')]//input[@type='submit'][@name='login']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//a[contains(@class, 'menu-root')]");
+        return By.id("logged-in-username");
     }
 
     @Override

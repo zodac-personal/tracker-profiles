@@ -87,12 +87,12 @@ _convert_to_natural_time() {
     elif [ "${elapsed_time}" -lt 3600 ]; then
         elapsed_m=$((elapsed_time / 60))
         elapsed_s=$((elapsed_time % 60))
-        echo "${elapsed_m}m:${elapsed_s}s"
+        printf "%dm:%02ds\n" "${elapsed_m}" "${elapsed_s}"
     else
         elapsed_h=$((elapsed_time / 3600))
         elapsed_m=$(((elapsed_time % 3600) / 60))
         elapsed_s=$((elapsed_time % 60))
-        echo "${elapsed_h}h:${elapsed_m}m:${elapsed_s}s"
+        printf "%dh:%02dm:%02ds\n" "${elapsed_h}" "${elapsed_m}" "${elapsed_s}"
     fi
 }
 

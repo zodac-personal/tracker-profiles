@@ -24,6 +24,7 @@ import java.util.Locale;
 /**
  * Utility class used to open a {@link File} (representing a regular file or a directory).
  */
+// TODO: Remove this functionality
 public final class FileOpener {
 
     private FileOpener() {

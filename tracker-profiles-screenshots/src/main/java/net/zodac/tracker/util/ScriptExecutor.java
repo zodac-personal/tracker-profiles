@@ -20,6 +20,7 @@ package net.zodac.tracker.util;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
@@ -54,7 +55,7 @@ public class ScriptExecutor {
     private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(1L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS);
-    private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5000L, ChronoUnit.MILLIS);
+    private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -202,12 +203,14 @@ public class ScriptExecutor {
     }
 
     private static String escapeForJavaScriptString(final String input) {
-        return input
+        final String escapedString = input
             .replace("\\", "\\\\")
             .replace("'", "\\'")
             .replace("\"", "\\\"")
             .replace("\r", "")
             .replace("\n", "\\n");
+        LOGGER.trace("Escaped input '{}' to '{}'", input, escapedString);
+        return escapedString;
     }
 
     /**
@@ -232,6 +235,20 @@ public class ScriptExecutor {
     }
 
     /**
+     * Sets the {@code Chromium} web browser window to the active window. This may be needed when an action needs to be performed on the window (such
+     * as a key press), but we need to ensure the browser is not in the background.
+     */
+    public static void setBrowserAsActiveWindow() {
+        try {
+            LOGGER.trace("Setting Chromium browser as active window");
+            new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start();
+        } catch (final IOException e) {
+            LOGGER.debug("Error setting browser as active window", e);
+            LOGGER.error("Error setting browser as active window: {}", e.getMessage());
+        }
+    }
+
+    /**
      * Stops the loading of the current web page.
      */
     public void stopPageLoad() {
@@ -253,12 +270,16 @@ public class ScriptExecutor {
      * @param mistranslatedUsername the text (can be partial text) that the username is incorrectly translated into, in order to find and replace it
      */
     public void translatePage(final String username, final @Nullable String mistranslatedUsername) {
+        LOGGER.debug("Translating page to English");
+        setBrowserAsActiveWindow();
+
         try {
             // Find a non-interactive element to right-click
             final WebElement bodyElement = driver.findElement(By.tagName("body"));
 
             // Simulate right-click on the page, then wait for it to appear
             final Actions actions = new Actions(driver);
+            LOGGER.trace("Performing right-click");
             actions.contextClick(bodyElement).perform();
             explicitWait(DEFAULT_WAIT_FOR_CONTEXT_MENU);
 
@@ -266,12 +287,14 @@ public class ScriptExecutor {
             final Robot robot = new Robot();
             final int numberOfUpPressesToSelectTranslateButton = 3;
             for (int i = 0; i < numberOfUpPressesToSelectTranslateButton; i++) {
+                LOGGER.trace("Pressing UP key");
                 robot.keyPress(KeyEvent.VK_UP);
                 robot.keyRelease(KeyEvent.VK_UP);
                 explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS);
             }
 
             // Press "Enter" to select the "Translate to English" option
+            LOGGER.trace("Pressing ENTER key");
             robot.keyPress(KeyEvent.VK_ENTER);
             robot.keyRelease(KeyEvent.VK_ENTER);
 
@@ -279,8 +302,10 @@ public class ScriptExecutor {
 
             // After translation, some username elements will have been incorrectly translated
             if (mistranslatedUsername != null) {
+                LOGGER.debug("Reverting mistranslated username '{}' to original '{}'", mistranslatedUsername, username);
                 final By mistranslatedElementSelector = By.xpath(String.format("//*[contains(normalize-space(), '%s')]", mistranslatedUsername));
                 for (final WebElement element : driver.findElements(mistranslatedElementSelector)) {
+                    LOGGER.trace("Reverting element '{}'", element);
                     driver.executeScript(String.format("arguments[0].innerText = '%s'", username), element);
                 }
                 explicitWait(DEFAULT_WAIT_FOR_TRANSLATION);
@@ -298,6 +323,7 @@ public class ScriptExecutor {
      * @param propertyValue the new CSS property value
      */
     public void updateCss(final WebElement element, final String propertyName, final String propertyValue) {
+        LOGGER.trace("Updating CSS of element '{}', property '{}' to value: '{}'", element, propertyName, propertyValue);
         final String script = String.format("arguments[0].style.%s = '%s';", propertyName, propertyValue);
         driver.executeScript(script, element);
     }

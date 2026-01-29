@@ -71,7 +71,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     protected static final Logger LOGGER = LogManager.getLogger();
 
     private static final Duration MAXIMUM_LINK_RESOLUTION_TIME = Duration.of(2L, ChronoUnit.MINUTES);
-    private static final Duration MAXIMUM_CLICK_RESOLUTION_TIME = Duration.of(30L, ChronoUnit.SECONDS);
+    private static final Duration MAXIMUM_CLICK_RESOLUTION_TIME = Duration.of(15L, ChronoUnit.SECONDS);
 
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
@@ -336,6 +336,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         scriptExecutor.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
+        // TODO: Move this to TRY block of clickButton()? Test against RuTracker
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
         scriptExecutor.moveToOrigin();
         additionalActionOnProfilePage();
@@ -352,11 +353,11 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and
      * screenshot. This might be that the page is considered 'loaded' by
-     * {@link ScriptExecutor#waitForPageToLoad(Duration)}, but the required {@link WebElement} are not all
+     * {@link ScriptExecutor#waitForPageToLoad(Duration)}, but the required {@link WebElement}s are not all
      * on the screen, or that some {@link WebElement}s may need to be interacted with prior to the screenshot.
      *
      * <p>
-     * This method can be overridden as required.
+     * This method should be overridden as required.
      */
     protected void additionalActionOnProfilePage() {
         // Do nothing by default
@@ -523,7 +524,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             driver.manage().timeouts().pageLoadTimeout(clickResolutionDuration);
             buttonToClick.click();
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
+            LOGGER.debug("Page still loading after {}, force stopping page load", clickResolutionDuration);
             LOGGER.trace(e);
             scriptExecutor.stopPageLoad();
         } catch (final Exception e) {
