@@ -50,6 +50,7 @@ public final class DisplayUtils {
     /**
      * The {@link Duration} the program will wait for a user to enter an input.
      */
+    // TODO: Not needed anymore?
     public static final Duration INPUT_WAIT_DURATION = Duration.ofMinutes(5L);
 
     private static final Logger LOGGER = LogManager.getLogger();

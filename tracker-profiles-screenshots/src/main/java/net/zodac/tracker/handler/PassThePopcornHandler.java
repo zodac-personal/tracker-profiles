@@ -72,7 +72,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement selectionElement = driver.findElement(By.xpath("//div[@id='captcha_container']"));
+        final WebElement selectionElement = driver.findElement(By.id("captcha_container"));
         scriptExecutor.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Select the correct movie and click the login button");
 
@@ -94,19 +94,19 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'user-info-bar__link')]");
+        return By.xpath("//li[@id='nav_userinfo']/a[1]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'list')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
-            By.xpath("//a[@title='Manage Sessions']") // Footer with last used IP address
+            By.xpath("//div[@id='content']//ul[contains(@class, 'list')]//a"), // Email
+            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }

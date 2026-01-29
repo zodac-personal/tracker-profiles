@@ -310,6 +310,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the post-login {@link By} selector
      */
     protected abstract By postLoginSelector();
+    // TODO: Shouldn't this usually be the profile selector?
 
     /**
      * Checks if there is a banner on the tracker web page, and closes it. This may be a cookie banner, or some other warning banner that can
