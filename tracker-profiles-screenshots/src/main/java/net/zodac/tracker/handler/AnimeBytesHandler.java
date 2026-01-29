@@ -72,6 +72,7 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
+        // TODO: Create a postLogoutAlert method for impacted trackers
         // After clicking logout, a confirmation box appears - find and click 'Yes'
         final By logoutConfirmationSelector = By.xpath("//input[@name='yes'][@type='submit']");
         scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, DEFAULT_WAIT_FOR_TRANSITIONS);
@@ -85,10 +86,10 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//li[@id='username_menu']//span[contains(@class, 'clickmenu')]");
+        final By logoutParentSelector = By.xpath("//li[@id='username_menu']/span[1]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//li[@id='username_menu']/ul[1]/li[11]/a[1]");
     }
 }

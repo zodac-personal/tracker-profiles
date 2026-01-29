@@ -47,22 +47,22 @@ public class CgPeersHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//ul[contains(@class, 'nav-list')]/li[1]/a[1]");
     }
 
     @Override
     protected By cloudflareSelector() {
-        return By.xpath("//div[contains(@class, 'cf-turnstile')]//div[1]");
+        return By.xpath("//div[contains(@class, 'cf-turnstile')]/div[1]");
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.xpath("//div[@id='username']/input[1]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//div[@id='password']/input[1]");
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CgPeersHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement selectionElement = driver.findElement(By.xpath("//input[contains(@class, 'form-input') and @name='code']"));
+        final WebElement selectionElement = driver.findElement(By.xpath("//input[contains(@class, 'form-input')][@name='code']"));
         scriptExecutor.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Enter the 2FA code and click the 'Verify Code' button");
 
@@ -117,13 +117,13 @@ public class CgPeersHandler extends AbstractTrackerHandler {
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
 
-        return By.xpath("//div[contains(@class, 'user-dropdown-section')]//a[contains(normalize-space(), 'Profile')]");
+        return By.xpath("//div[contains(@class, 'dropdown-quick-actions-grid')]/a[1]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email')]") // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li") // Email
         );
     }
 
@@ -134,6 +134,6 @@ public class CgPeersHandler extends AbstractTrackerHandler {
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
 
-        return By.xpath("//div[contains(@class, 'user-dropdown-section')]//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//div[contains(@class, 'dropdown-quick-actions-grid')]/a[6]");
     }
 }

@@ -108,6 +108,6 @@ public class NebulanceHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }

@@ -74,7 +74,7 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email // Email
+            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email
         );
     }
 

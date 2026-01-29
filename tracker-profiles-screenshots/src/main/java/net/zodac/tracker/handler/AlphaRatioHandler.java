@@ -26,6 +26,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code AlphaRatio} tracker.
  */
+// TODO: Gazelle/Luminance?
 @TrackerHandler(name = "AlphaRatio", url = "https://alpharatio.cc/")
 public class AlphaRatioHandler extends AbstractTrackerHandler {
 
@@ -41,7 +42,7 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit'][@name='login']");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -57,8 +58,8 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
-            By.xpath("//div[@id='footer']//a[1]") // Footer with last used IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
+            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
         );
     }
 
