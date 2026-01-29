@@ -42,7 +42,7 @@ public class AnimeTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//a[@title='Login to AnimeTorrents']");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AnimeTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[@id='UserPanel']/ul[1]");
+        return By.id("UserPanel");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AnimeTorrentsHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'dataTable')]/tbody[1]/tr[td[1]/strong[contains(normalize-space(), 'E-mail')]]/td[2]") // Email
+            By.xpath("//table[contains(@class, 'dataTable')]/tbody/tr/td[2]") // Email
         );
     }
 

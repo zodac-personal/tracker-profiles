@@ -384,7 +384,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see ScriptExecutor#redactHtmlOf(WebElement)
      */
-    // TODO: Rather than redacting the text, maybe put a solid red block over the content to hide it more explicitly?
+    // TODO: Rather than manipulating the text, maybe put a solid red block over the content to hide it more explicitly?
     public int redactElements() {
         final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
         if (selectors.isEmpty()) {
@@ -396,6 +396,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final Collection<WebElement> elementsToBeRedacted = selectors
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
+            // TODO: Define which elements to redact?
             .filter(element -> PatternMatcher.containsEmailAddress(element.getText()) || PatternMatcher.containsIpAddress(element.getText()))
             .toList();
 
