@@ -55,7 +55,7 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
     @Override
     protected By passwordFieldSelector() {
         // The password field doesn't load until the username is entered and the 'Next' button is clicked
-        final By usernameNextButtonSelector = By.xpath("//input[@value='Next']");
+        final By usernameNextButtonSelector = By.xpath("//form[contains(@class, 'login')][1]/div[2]/input[1]");
         final WebElement usernameNextButton = driver.findElement(usernameNextButtonSelector);
         clickButton(usernameNextButton);
         ScriptExecutor.explicitWait(Duration.ofSeconds(2L));
@@ -65,7 +65,7 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Sign In']");
+        return By.xpath("//form[contains(@class, 'login')][2]/div[2]/input[1]");
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//table[contains(@class, 'sts')]//div[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'tSta')]/a[1]");
     }
 
     @Override
