@@ -53,8 +53,8 @@ public class ScriptExecutor {
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_CONTEXT_MENU = Duration.of(500L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(1L, ChronoUnit.SECONDS);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS);
+    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(1L, ChronoUnit.SECONDS); // TODO: Reduce this and test
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS); // TODO: Can this be reduced?
     private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();

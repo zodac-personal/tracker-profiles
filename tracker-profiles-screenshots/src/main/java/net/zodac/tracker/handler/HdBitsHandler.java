@@ -56,12 +56,12 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='uname' and @type='text']");
+        return By.xpath("//input[@name='uname'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     /**
@@ -79,15 +79,15 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        final WebElement captchaTextElement = driver.findElement(By.xpath("//div[contains(@class, 'captchaIntro')]/p[1]/strong[1]"));
+        final WebElement twoFactorPasscodeElement = driver.findElement(By.xpath("//input[@name='twostep_code'][@type='number']/ancestor::td[1]"));
+        scriptExecutor.highlightElement(twoFactorPasscodeElement);
+
+        final WebElement captchaTextElement = driver.findElement(By.xpath("//div[contains(@class, 'captchaIntro')]//strong[1]"));
         LOGGER.info("\t\t >>> Waiting for user to select the '{}' image, for {} seconds", captchaTextElement.getText(),
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         scriptExecutor.highlightElement(captchaElement);
-
-        final WebElement twoFactorPasscodeElement = driver.findElement(By.xpath("//table[1]/tbody[1]/tr[3]/td[2]"));
-        scriptExecutor.highlightElement(twoFactorPasscodeElement);
 
         DisplayUtils.userInputConfirmation(trackerName, String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
             captchaTextElement.getText()));
@@ -95,7 +95,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @value='Log in!']");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'curuser-stats')]//b//a[1]");
+        return By.xpath("//div[contains(@class, 'curuser-stats')][1]/b[1]/a[1]");
     }
 
     @Override
@@ -127,7 +127,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
     @Override
     public int redactElements() {
         final WebElement passkeyValueElement = driver.findElement(
-            By.xpath("//tr[td[contains(@class, 'rowhead')][contains(normalize-space(), 'Passkey')]]/td[2]"));
+            By.xpath("//tr[@id='seclog']/ancestor::tbody[1]/tr[4]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -136,13 +136,14 @@ public class HdBitsHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(@class, 'heading')][contains(normalize-space(), 'Address')]]/td[2]"), // IP address
-            By.xpath("//td[contains(@class, 'rowhead')][contains(normalize-space(), 'Sec log')]/following-sibling::td/table//td") // IP history
+            By.xpath("//td[contains(@class, 'heading')]/ancestor::tr[1]/td[2]"), // IP address
+            By.xpath("//tr[@id='seclog']//tr/td[2]")
+//            By.xpath("//td[contains(@class, 'rowhead')][contains(normalize-space(), 'Sec log')]/following-sibling::td/table//td") // IP history
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Logout')]");
+        return By.xpath("//div[contains(@class, 'curuser-stats')][1]/a[2]");
     }
 }
