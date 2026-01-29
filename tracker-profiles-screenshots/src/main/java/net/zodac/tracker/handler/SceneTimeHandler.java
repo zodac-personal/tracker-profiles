@@ -50,7 +50,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit' and contains(normalize-space(), 'Log in')]");
+        return By.xpath("//form[@id='login-form']/div[1]/button[1]");
     }
 
     @Override
@@ -76,7 +76,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[td[contains(normalize-space(), 'Pass Key')]]/td[2]"));
+        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[contains(@class, 'main')]//table[1]/tbody[1]/tr[4]/td[2]"));
         scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -85,7 +85,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(normalize-space(), 'E-Mail')]]/td[2]") // Email
+            By.xpath("//table/tbody/tr/td[2]") // Email
         );
     }
 
