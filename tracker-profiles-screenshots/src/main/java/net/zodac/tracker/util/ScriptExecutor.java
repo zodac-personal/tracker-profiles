@@ -259,11 +259,12 @@ public class ScriptExecutor {
     /**
      * Translates the web page into English. Performs the following actions:
      * <ol>
-     *     <li>Loads a non-interactive element on the web page</li>
-     *      <li>Performs a right-click</li>
-     *      <li>Using {@link Robot}, performs 3 'UP' keyboard presses to highlight the 'Translate to English' option</li>
-     *      <li>Presses 'ENTER'</li>
-     *      <li>Optionally resets the username {@link WebElement} that may have been incorrectly translated</li>
+     *     <li>Forces the web browser to be the active window</li>
+     *     <li>Loads a non-interactive element on the web page to right-click</li>
+     *     <li>Performs a right-click</li>
+     *     <li>Using {@link Robot}, performs 3 'UP' keyboard presses to highlight the 'Translate to English' option</li>
+     *     <li>Presses 'ENTER'</li>
+     *     <li>Optionally resets the username {@link WebElement} that may have been incorrectly translated</li>
      * </ol>
      *
      * @param username              the username

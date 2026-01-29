@@ -43,7 +43,7 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/a/button[normalize-space()='Login']");
+        return By.xpath("//div[@id='logo']/a[2]");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @value='Log In!']");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//li[@id='nav_user']/a[1]");
+        return By.xpath("//a[contains(@class, 'username')]");
     }
 
     /**
@@ -79,7 +79,7 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
         driver.navigate().refresh();
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
-        final By infoTabSelector = By.xpath("//div[@id='slider']/div/ul/li/a[normalize-space()='Info']");
+        final By infoTabSelector = By.xpath("//div[@id='slider']/div[1]/ul[1]/li[2]/a[1]");
         final WebElement infoTabLink = driver.findElement(infoTabSelector);
         clickButton(infoTabLink);
 
@@ -89,6 +89,6 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//ul[@id='userinfo_username']/li/a[normalize-space()='Logout']");
+        return By.xpath("//ul[@id='userinfo_username']/li[3]/a[1]");
     }
 }
