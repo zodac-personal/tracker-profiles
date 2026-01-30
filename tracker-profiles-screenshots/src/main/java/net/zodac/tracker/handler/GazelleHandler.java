@@ -29,7 +29,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Common implementation of {@link AbstractTrackerHandler} for {@code Gazelle}-based trackers.
  */
 @CommonTrackerHandler("Gazelle")
-@TrackerHandler(name = "Orpheus", url = "https://orpheus.network/")
 @TrackerHandler(name = "Redacted", url = "https://redacted.sh/")
 @TrackerHandler(name = "SecretCinema", url = "https://secret-cinema.pw/")
 @TrackerHandler(name = "UHDBits", url = "https://uhdbits.org/")
@@ -47,12 +46,12 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(@href, 'login.php')]");
+        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @name='login' and @value='Log in' and contains(@class, 'submit')]");
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -68,8 +67,8 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[contains(normalize-space(), 'Email:')]/a[1]"), // Email
-            By.xpath("//div[@id='footer']/p/a[1]/span") // Footer with last used IP address
+            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email, // Email
+            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
         );
     }
 
@@ -90,6 +89,6 @@ public class GazelleHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//li[@id='nav_logout']//a[1]");
+        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }
