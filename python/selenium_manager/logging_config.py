@@ -9,6 +9,7 @@ and timezone-aware timestamp formatting.
 
 import logging
 import os
+import typing
 from datetime import datetime, timezone
 from logging import LogRecord
 from zoneinfo import ZoneInfo
@@ -26,7 +27,7 @@ def configure_logging() -> None:
     - Sets the root logger's level from the `LOG_LEVEL` environment variable (default: INFO).
     - Outputs logs to the console with millisecond resolution timestamps.
     """
-    trace_level_index = 5
+    trace_level_index: int = 5
     logging.addLevelName(trace_level_index, "TRACE")
 
     def trace(self: logging.Logger, message: str, *args: object, **kwargs: object) -> None:
@@ -45,7 +46,7 @@ def configure_logging() -> None:
             s = t.strftime(datefmt or date_format)
             return s[:-3]  # milliseconds
 
-    log_format = (
+    log_format: str = (
         "%(asctime)s "
         "[%(log_color)s%(levelname)-5s%(reset)s] "
         "%(message)s"
@@ -66,11 +67,24 @@ def configure_logging() -> None:
         log_colors=log_colours,
     )
 
+    wanted_log_level = os.getenv("LOG_LEVEL", "INFO").upper()
     handler = logging.StreamHandler()
+    handler.setLevel(wanted_log_level)
     handler.setFormatter(formatter)
 
     root_logger = logging.getLogger()
-    root_logger.setLevel(os.getenv("LOG_LEVEL", "INFO").upper())
+    root_logger.setLevel(wanted_log_level)
     root_logger.handlers = [handler]
+
+    # Intercept the patching logs from undetected_chromedriver and forces them to TRACE level
+    class OverridePatcherLogs(logging.Filter):
+        @typing.override
+        def filter(self, record: logging.LogRecord) -> bool:
+            if record.levelno <= logging.INFO:
+                record.levelno = trace_level_index
+                record.levelname = "TRACE"
+            return True
+    uc_logger = logging.getLogger("undetected_chromedriver.patcher")
+    uc_logger.addFilter(OverridePatcherLogs())
 
     logging.getLogger(__name__).trace("Logging is configured")

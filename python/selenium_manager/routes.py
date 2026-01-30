@@ -82,7 +82,7 @@ def register_routes(app: Flask) -> None:
             400 Bad Request for missing/invalid input.
             500 Internal Server Error for unexpected issues during browser startup.
         """
-        logger.info("\t- /open request received")
+        logger.debug("\t- /open request received")
         data: dict[str, str] | None = request.get_json()
 
         # Validation of input data
@@ -114,13 +114,13 @@ def register_routes(app: Flask) -> None:
             options = create_chrome_options(browser_data_storage_path, browser_dimensions)
 
             version_main = get_chromium_major_version()
-            logger.debug("Detected Chromium major version: '%s'", version_main)
+            logger.debug("\t\t- Detected Chromium major version: '%s'", version_main)
             driver = uc.Chrome(headless=False, use_subprocess=False, options=options, version_main=version_main)
 
             session_id = driver.session_id
             port = driver.service.service_url.split(":")[-1]
 
-            logger.info("\t\t- Started session '%s' on port %s", session_id, port)
+            logger.trace("\t\t- Started session '%s' on port %s", session_id, port)
 
             with lock:
                 sessions[session_id] = driver
@@ -168,7 +168,7 @@ def register_routes(app: Flask) -> None:
             404 Not Found if session ID does not exist.
             500 Internal Server Error if an error occurs while closing the session.
         """
-        logger.info("\t- /close request received")
+        logger.debug("\t- /close request received")
         data: dict[str, str] | None = request.get_json()
 
         # Validation of input data
@@ -192,7 +192,7 @@ def register_routes(app: Flask) -> None:
 
         try:
             driver.quit()
-            logger.info("\t\t- Session '%s' closed", session_id)
+            logger.trace("\t\t- Session '%s' closed", session_id)
             return jsonify({"message": f"Session {session_id} closed"}), 200
         except Exception as e:
             logger.exception("\t- Failed to close session %s", session_id)

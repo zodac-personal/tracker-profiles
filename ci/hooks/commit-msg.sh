@@ -84,6 +84,7 @@ if [[ ${error_found} -gt 0 ]]; then
     echo "  - ${cat}"
   done
 
+  # TODO: Auto-complete using the first letter of the invalid category, and suggest trackers
   echo
   echo "Or a defined @CommonTrackerHandler/@TrackerHandler name (case-sensitive)"
   exit 1
