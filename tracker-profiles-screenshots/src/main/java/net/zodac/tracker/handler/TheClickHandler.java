@@ -49,12 +49,12 @@ public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username' and @type='text']");
+        return By.xpath("//input[@name='username'][@type='text']");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password' and @type='password']");
+        return By.xpath("//input[@name='password'][@type='password']");
     }
 
     /**
@@ -81,7 +81,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit' and @value='Log in!']");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -102,7 +102,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tbody/tr[td[1][contains(normalize-space(), 'IP Address')]]/td[2]") // IP address
+            By.xpath("//td[contains(@class, 'embedded')]/table/tbody/tr/td[2]") // IP address
         );
     }
 

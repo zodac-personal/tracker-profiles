@@ -137,8 +137,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//td[contains(@class, 'heading')]/ancestor::tr[1]/td[2]"), // IP address
-            By.xpath("//tr[@id='seclog']//tr/td[2]")
-//            By.xpath("//td[contains(@class, 'rowhead')][contains(normalize-space(), 'Sec log')]/following-sibling::td/table//td") // IP history
+            By.xpath("//tr[@id='seclog']//tr/td[2]") // IP history
         );
     }
 
