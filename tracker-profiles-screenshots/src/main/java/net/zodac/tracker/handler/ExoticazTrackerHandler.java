@@ -41,28 +41,28 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
     }
 
     @Override
+    public By loginPageSelector() {
+        return By.xpath("//div[@id='topNavBar']/ul[2]/li[1]/a[1]");
+    }
+
+    @Override
     protected By usernameFieldSelector() {
         return By.id("username_email");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(normalize-space(), 'Login')]");
+        return By.xpath("//button[@type='submit']");
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.id("navbar-dropdown-user");
+        return By.id("topNavBar");
     }
 
     @Override
     protected By profilePageSelector() {
-        // Click the user dropdown menu bar to make the profile link interactable
-        final By profileLinkParentSelector = By.xpath("//div[@id='topNavBar']/ul[2]/li[3]");
-        final WebElement profileLinkParent = driver.findElement(profileLinkParentSelector);
-        clickButton(profileLinkParent);
-
-        return By.xpath("//div[@id='topNavBar']/ul[2]/li[3]/div[1]/a[1]");
+        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/div[1]/a[1]");
     }
 
     @Override

@@ -48,7 +48,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//a[contains(normalize-space(), 'Login')]");
+        return By.xpath("//div[@id='navbar']/ul[2]/li[1]/a[1]");
     }
 
     @Override
@@ -78,14 +78,14 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//div[input[@name='captcha']]/div[1]"));
+        final WebElement captchaElement = driver.findElement(By.xpath("//input[@name='captcha']/ancestor::div[1]/div[1]/img[1]"));
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='Login' and @type='submit']");
+        return By.xpath("//input[@type='submit']");
     }
 
     @Override
@@ -101,8 +101,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tr[td[contains(normalize-space(), 'Email')]]/td[2]"),
-            By.xpath("//tr[td[contains(normalize-space(), 'IP')]]/td[2]")
+            By.xpath("//table/tbody[1]/tr/td[2]")
         );
     }
 
@@ -116,10 +115,10 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[@id='navbar']/ul[contains(@class, 'navbar-right')]/li[3]");
+        final By logoutParentSelector = By.xpath("//div[@id='navbar']/ul[2]/li[3]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//div[@id='navbar']/ul[contains(@class, 'navbar-right')]/li[3]/ul[1]/li[16]");
+        return By.xpath("//div[@id='navbar']/ul[2]/li[3]/ul[1]/li[16]");
     }
 }
