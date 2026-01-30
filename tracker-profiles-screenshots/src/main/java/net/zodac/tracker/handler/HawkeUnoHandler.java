@@ -49,36 +49,35 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'ratio-bar')]");
+        return By.id("hoe-header");
     }
 
     @Override
     protected By profilePageSelector() {
         // After login, a pop-up blocks the dropdown menu, so we wait a few seconds
         ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
-
-        // Click the user dropdown menu bar to make the profile button interactable
-        final By profileParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[3]/a[1]");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
-
-        return By.xpath("//ul[contains(@class, 'right-navbar')]//ul[contains(@class, 'dropdown-menu')]/li[1]/a[1]");
+        openUserDropdownMenu();
+        return By.xpath("//ul[contains(@class, 'dropdown-menu')]/li[1]/a[1]");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'user-info')]/tbody/tr[td[contains(normalize-space(), 'E-mail')]]/td[2]") // Email
+            By.xpath("//table[contains(@class, 'user-info')]/tbody/tr/td[2]") // Email
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        // Click the user dropdown menu bar to make the logout button interactable
-        final By profileParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[3]/a[1]");
+        openUserDropdownMenu();
+        return By.xpath("//ul[contains(@class, 'dropdown-menu')]//button[@type='submit']");
+    }
+
+    // TODO: Make a similar method for all trackers that need a dropdown menu opened
+    private void openUserDropdownMenu() {
+        // Click the user dropdown menu bar to make the profile button interactable
+        final By profileParentSelector = By.xpath("//li[contains(@class, 'hoe-header-profile')]/a[contains(@class, 'dropdown-toggle')]");
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
-
-        return By.xpath("//form[@role='form' and @method='POST']//button[@type='submit']");
     }
 }
