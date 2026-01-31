@@ -49,8 +49,8 @@ docker run --rm -t \
     -w /app \
     "${TEST_DOCKER_IMAGE}" \
     sh -c "
-    export PYTHONPATH=/app/python &&
-    pip install --quiet --upgrade pip --root-user-action=ignore &&
-    pip install --quiet -r /app/python/requirements-dev.txt --root-user-action=ignore &&
-    pytest -p no:cacheprovider -v /app/python/tests
-  "
+      export PYTHONPATH=/app/python &&
+      pip install --quiet --upgrade pip --root-user-action=ignore &&
+      pip install --quiet -r /app/python/requirements-dev.txt --root-user-action=ignore &&
+      pytest -p no:cacheprovider -v /app/python/tests
+    "
