@@ -84,9 +84,26 @@ if [[ ${error_found} -gt 0 ]]; then
     echo "  - ${cat}"
   done
 
-  # TODO: Auto-complete using the first letter of the invalid category, and suggest trackers
-  echo
-  echo "Or a defined @CommonTrackerHandler/@TrackerHandler name (case-sensitive)"
+  # Auto-complete suggestions for invalid categories
+  if [[ -n "${category}" ]]; then
+    echo
+    
+    first_letter="${category:0:1}"   # First character of invalid category
+    suggestions=()
+    for cat in "${allowed_categories[@]}"; do
+      if [[ "${cat}" == ${first_letter}* ]]; then
+        suggestions+=("${cat}")
+      fi
+    done
+
+    if [[ ${#suggestions[@]} -gt 0 ]]; then
+      echo "Did you mean one of the following?"
+      for s in "${suggestions[@]}"; do
+        echo "  - ${s}"
+      done
+    fi
+  fi
+
   exit 1
 fi
 
