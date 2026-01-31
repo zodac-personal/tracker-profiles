@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # SPDX-License-Identifier: 0BSD
 # Copyright (c) 2024-2026 zodac.net
 
 """Custom logging configuration for the application.
 
-Defines and installs a TRACE log level, colored output using colorlog,
+Defines and installs a TRACE log level, coloured output using colorlog,
 and timezone-aware timestamp formatting.
 """
 
@@ -22,7 +23,7 @@ def configure_logging() -> None:
 
     This function:
     - Defines a custom TRACE log level (numerically lower than DEBUG).
-    - Uses `colorlog` for colored console logging.
+    - Uses `colorlog` for coloured console logging.
     - Formats timestamps according to the `TIMEZONE` environment variable if set.
     - Sets the root logger's level from the `LOG_LEVEL` environment variable (default: INFO).
     - Outputs logs to the console with millisecond resolution timestamps.
@@ -38,8 +39,8 @@ def configure_logging() -> None:
     date_format = "%Y-%m-%d %H:%M:%S.%f"
 
     class CustomFormatter(ColoredFormatter):
-        @staticmethod
-        def formatTime(record: LogRecord, datefmt: str | None = None) -> str:  # NOQA: N802 - Overriding function in logging.Formatter
+        @typing.override
+        def formatTime(self, record: LogRecord, datefmt: str | None = None) -> str:
             tz_name = os.getenv("TIMEZONE")
             local_tz = ZoneInfo(tz_name) if tz_name else timezone.UTC
             t = datetime.fromtimestamp(record.created, tz=local_tz)

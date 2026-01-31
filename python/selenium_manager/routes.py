@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # SPDX-License-Identifier: 0BSD
 # Copyright (c) 2024-2026 zodac.net
 
@@ -61,7 +62,7 @@ def register_routes(app: Flask) -> None:
     """
 
     @app.route("/ping", methods=["GET"])
-    def ping() -> Response:
+    def ping() -> tuple[Response, int]:
         """Health check endpoint.
 
         Returns:
@@ -70,7 +71,7 @@ def register_routes(app: Flask) -> None:
         return jsonify({"status": "OK"}), 200
 
     @app.route("/open", methods=["POST"])
-    def open_browser_session() -> Response:
+    def open_browser_session() -> tuple[Response, int]:
         """Start a new undetected Chrome browser session with the provided configuration.
 
         Expects JSON payload with:
@@ -143,7 +144,7 @@ def register_routes(app: Flask) -> None:
             The major version of the installed Chromium application
         """
         try:
-            result: str = subprocess.run(
+            result: subprocess.CompletedProcess[str] = subprocess.run(
                 ["/usr/bin/chromium", "--version"],
                 capture_output=True,
                 text=True,
@@ -156,7 +157,7 @@ def register_routes(app: Flask) -> None:
             return None
 
     @app.route("/close", methods=["POST"])
-    def close_browser_session() -> Response:
+    def close_browser_session() -> tuple[Response, int]:
         """Close an existing browser session.
 
         Expects JSON payload with:

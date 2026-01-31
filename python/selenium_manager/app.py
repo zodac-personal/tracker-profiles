@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # SPDX-License-Identifier: 0BSD
 # Copyright (c) 2024-2026 zodac.net
 
@@ -13,7 +14,7 @@ def create_app() -> Flask:
     """Create and configure the Flask application instance.
 
     This function:
-    - Initializes the Flask app.
+    - Initialises the Flask app.
     - Sets up structured logging using `configure_logging()`.
     - Registers all route handlers with `register_routes()`.
 

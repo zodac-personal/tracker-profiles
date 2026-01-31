@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 # SPDX-License-Identifier: 0BSD
 # Copyright (c) 2024-2026 zodac.net
 
-from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -12,7 +13,7 @@ HTTP_OK = 200
 
 
 @pytest.fixture
-def client() -> Generator:
+def client() -> FlaskClient:
     app = create_app()
     app.config["TESTING"] = True
     return app.test_client()
@@ -25,7 +26,7 @@ def test_ping(client: FlaskClient) -> None:
 
 
 @patch("selenium_manager.routes.uc.Chrome")
-def test_open_and_close_session(mock_chrome: MagicMock, client: FlaskClient, tmp_path: "pytest.TempPathFactory") -> None:
+def test_open_and_close_session(mock_chrome: MagicMock, client: FlaskClient, tmp_path: Path) -> None:
     mock_driver = MagicMock()
     mock_driver.session_id = "test-session"
     mock_driver.service.service_url = "http://127.0.0.1:12345"
