@@ -73,7 +73,7 @@ public enum TrackerType {
     public static TrackerType find(final String input) {
         return ALL_VALUES
             .stream()
-            .filter(trackerType -> trackerType.toCapitalised().equalsIgnoreCase(input))
+            .filter(trackerType -> trackerType.formattedName().equalsIgnoreCase(input))
             .findAny()
             .orElse(null);
     }
@@ -100,7 +100,7 @@ public enum TrackerType {
         final int numberOfTrackers = isEnabled(trackersByType, config) ? trackers.size() : 0;
 
         if (numberOfTrackers != 0) {
-            LOGGER.debug(String.format("- %-12s: %d", toCapitalised(), numberOfTrackers));
+            LOGGER.debug(String.format("- %-12s: %d", formattedName(), numberOfTrackers));
             for (final TrackerDefinition trackerDefinition : trackers) {
                 LOGGER.debug(String.format("\t- %-16s", trackerDefinition.name()));
             }
@@ -108,12 +108,12 @@ public enum TrackerType {
     }
 
     /**
-     * Capitalises the {@link TrackerType}. Also replaces and {@code _} characters with a {@code -}. Note that the first letter after any {@code -}
-     * will also be capitalised.
+     * Formats the name of the {@link TrackerType}. Also capitalises the name and replaces any {@code _} characters with a {@code -}. Note that the
+     * first letter after any {@code -} will also be capitalised.
      *
-     * @return the capitalised form of the {@link TrackerType}
+     * @return the formatted name of the {@link TrackerType}
      */
-    public String toCapitalised() {
+    public String formattedName() {
         final String[] parts = name().toLowerCase(Locale.getDefault()).split("_");
         final StringBuilder result = new StringBuilder(name().length());
 

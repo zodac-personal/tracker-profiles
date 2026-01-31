@@ -31,11 +31,11 @@ import java.lang.annotation.Target;
 public @interface TrackerDisabled {
 
     /**
-     * The date the tracker was disabled.
+     * The date the tracker was disabled.  Only used for info on the TrackerHandler, will never be used.
      *
      * @return the disabled date
      */
-    @SuppressWarnings("unused") // Only used for info on the TrackerHandler, will never be used
+    @SuppressWarnings("unused")
     String date();
 
     /**

@@ -83,9 +83,9 @@ public final class ScreenshotTaker {
     private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final ScriptExecutor scriptExecutor) {
         scriptExecutor.disableScrolling();
         final BufferedImage screenshot = new AShot()
-                .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
-                .takeScreenshot(driver)
-                .getImage();
+            .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
+            .takeScreenshot(driver)
+            .getImage();
 
         scriptExecutor.enableScrolling("body");
         return screenshot;

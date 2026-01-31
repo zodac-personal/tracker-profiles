@@ -392,7 +392,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             return 0;
         }
 
-        // TODO: Screenshot all trackers when not connectable/no torrents being seeded, and ensure screenshots work as expected
+        // TODO: Test all trackers when not connectable/no torrents being seeded, and ensure screenshots work as expected
         final Collection<WebElement> elementsToBeRedacted = selectors
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())

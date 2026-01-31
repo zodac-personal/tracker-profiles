@@ -17,9 +17,9 @@
 
 package net.zodac.tracker.framework.config;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import net.zodac.tracker.framework.TrackerType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,31 +50,45 @@ import org.apache.logging.log4j.Logger;
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
  */
 public record ApplicationConfiguration(
-        String browserDataStoragePath,
-        String browserDimensions,
-        char csvCommentSymbol,
-        boolean enableTranslationToEnglish,
-        boolean forceUiBrowser,
-        boolean openOutputDirectory,
-        Path outputDirectory,
-        ExistingScreenshotAction existingScreenshotAction,
-        List<TrackerType> trackerExecutionOrder,
-        Path trackerInputFilePath
+    String browserDataStoragePath,
+    String browserDimensions,
+    char csvCommentSymbol,
+    boolean enableTranslationToEnglish,
+    boolean forceUiBrowser,
+    boolean openOutputDirectory,
+    Path outputDirectory,
+    ExistingScreenshotAction existingScreenshotAction,
+    List<TrackerType> trackerExecutionOrder,
+    Path trackerInputFilePath
 ) {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     // Default values
-    private static final String BROWSER_DATA_STORAGE_PATH = File.separator + "tmp" + File.separator + "chrome-home";
+    private static final String BROWSER_DATA_STORAGE_PATH = "/tmp/chrome-home";
     private static final String DEFAULT_BROWSER_WIDTH = "1680";
     private static final String DEFAULT_BROWSER_HEIGHT = "1050";
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
-    private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = File.separator + "app" + File.separator + "screenshots";
+    private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.OVERWRITE;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,non-english,cloudflare-check";
-    private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + File.separator + "trackers.csv";
+    private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
+
+    private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
+        "800x600",
+        "1024x768",
+        "1280x720",
+        "1280x800",
+        "1280x1024",
+        "1600x1000",
+        "1600x1200",
+        "1680x1050",
+        "1920x1080",
+        "1920x1200",
+        "2560x1440"
+    ));
 
     /**
      * Loads the {@link ApplicationConfiguration} defined by environment variables.
@@ -82,16 +97,16 @@ public record ApplicationConfiguration(
      */
     public static ApplicationConfiguration load() {
         final ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration(
-                BROWSER_DATA_STORAGE_PATH,
-                getBrowserDimensions(),
-                getCsvCommentSymbol(),
-                getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
-                getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
-                getBooleanEnvironmentVariable("OPEN_OUTPUT_DIRECTORY", false),
-                getOutputDirectory(),
-                getScreenshotExistsAction(),
-                getTrackerExecutionOrder(),
-                getTrackerInputFilePath()
+            BROWSER_DATA_STORAGE_PATH,
+            getBrowserDimensions(),
+            getCsvCommentSymbol(),
+            getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
+            getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
+            getBooleanEnvironmentVariable("OPEN_OUTPUT_DIRECTORY", false),
+            getOutputDirectory(),
+            getScreenshotExistsAction(),
+            getTrackerExecutionOrder(),
+            getTrackerInputFilePath()
         );
 
         applicationConfiguration.print();
@@ -101,7 +116,14 @@ public record ApplicationConfiguration(
     private static String getBrowserDimensions() {
         final String browserWidth = getOrDefault("BROWSER_WIDTH", DEFAULT_BROWSER_WIDTH);
         final String browserHeight = getOrDefault("BROWSER_HEIGHT", DEFAULT_BROWSER_HEIGHT);
-        return String.format("%s,%s", browserWidth, browserHeight);
+        final String resolution = String.format("%sx%s", browserWidth, browserHeight);
+
+        if (VALID_RESOLUTIONS.contains(resolution)) {
+            return String.format("%s,%s", browserWidth, browserHeight);
+        }
+
+        throw new IllegalArgumentException(
+            String.format("[BROWSER_WIDTH][BROWSER_HEIGHT] Unsupported browser resolution '%s', must be one of: %s", resolution, VALID_RESOLUTIONS));
     }
 
     private static char getCsvCommentSymbol() {
@@ -113,19 +135,19 @@ public record ApplicationConfiguration(
         final String[] executionOrderTokens = executionOrderRaw.split(",");
         if (executionOrderTokens.length == 0 || executionOrderTokens.length > TrackerType.ALL_VALUES.size()) {
             throw new IllegalArgumentException(
-                    String.format("Require 1-%d tracker types for EXECUTION_ORDER, found: %s", TrackerType.ALL_VALUES.size(),
-                            Arrays.toString(executionOrderTokens)));
+                String.format("[TRACKER_EXECUTION_ORDER] 1-%d tracker types required, found: %s", TrackerType.ALL_VALUES.size(),
+                    Arrays.toString(executionOrderTokens)));
         }
 
         final Collection<TrackerType> trackerExecutionOrder = new LinkedHashSet<>();
         for (final String executionOrderToken : executionOrderTokens) {
             final TrackerType trackerType = TrackerType.find(executionOrderToken);
             if (trackerType == null) {
-                throw new IllegalArgumentException(String.format("Invalid tracker found: '%s'", executionOrderToken));
+                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Invalid tracker found: '%s'", executionOrderToken));
             }
 
             if (!trackerExecutionOrder.add(trackerType)) {
-                throw new IllegalArgumentException(String.format("Duplicate tracker found: '%s'", executionOrderToken));
+                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Duplicate tracker found: '%s'", executionOrderToken));
             }
         }
 
@@ -137,14 +159,25 @@ public record ApplicationConfiguration(
         final String outputDirectoryNameFormat = getOrDefault("OUTPUT_DIRECTORY_NAME_FORMAT", DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT);
         final String outputDirectoryParentPath = getOrDefault("OUTPUT_DIRECTORY_PARENT_PATH", DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH);
 
-        final LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
-        final String outputDirectoryName = currentDate.format(DateTimeFormatter.ofPattern(outputDirectoryNameFormat, Locale.getDefault()));
-        return Paths.get(outputDirectoryParentPath, outputDirectoryName);
+        try {
+            final LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
+            final String outputDirectoryName = currentDate.format(DateTimeFormatter.ofPattern(outputDirectoryNameFormat, Locale.getDefault()));
+            return Paths.get(outputDirectoryParentPath, outputDirectoryName);
+        } catch (final IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("[OUTPUT_DIRECTORY_NAME_FORMAT] Invalid time format: '%s'", timeZone));
+        } catch (final DateTimeException e){
+            throw new IllegalArgumentException(String.format("[TIMEZONE] Invalid timezone: '%s'", timeZone));
+        }
     }
 
     private static ExistingScreenshotAction getScreenshotExistsAction() {
         final String screenshotExistsAction = getOrDefault("SCREENSHOT_EXISTS_ACTION", DEFAULT_SCREENSHOT_EXISTS_ACTION.toString());
-        return ExistingScreenshotAction.get(screenshotExistsAction);
+        final ExistingScreenshotAction inputExistingScreenshotAction = ExistingScreenshotAction.get(screenshotExistsAction);
+        if (inputExistingScreenshotAction == null) {
+            throw new IllegalArgumentException(String.format("[SCREENSHOT_EXISTS_ACTION] Invalid action '%s'", screenshotExistsAction));
+        }
+
+        return inputExistingScreenshotAction;
     }
 
     private static Path getTrackerInputFilePath() {

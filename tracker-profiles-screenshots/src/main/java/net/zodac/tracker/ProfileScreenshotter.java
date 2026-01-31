@@ -105,7 +105,7 @@ public final class ProfileScreenshotter {
             }
 
             LOGGER.info("");
-            LOGGER.info(">>> Executing {} trackers <<<", trackerType.toCapitalised());
+            LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
             for (final TrackerDefinition trackerDefinition : trackersByType.getOrDefault(trackerType, Set.of())) {
                 final boolean successfullyTakenScreenshot = isAbleToTakeScreenshot(trackerDefinition);
                 if (successfullyTakenScreenshot) {

@@ -70,7 +70,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="144.0.7559.96-1~deb13u1" \
+        chromium="144.0.7559.109-1~deb13u1" \
         wmctrl="1.07+git20240228.1105759-1" \
     && \
     apt-get autoremove && \

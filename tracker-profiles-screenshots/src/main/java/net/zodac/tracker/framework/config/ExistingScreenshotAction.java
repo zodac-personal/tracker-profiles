@@ -18,6 +18,7 @@
 package net.zodac.tracker.framework.config;
 
 import java.util.Arrays;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Enum defining the options for what to do when a screenshot already exists.
@@ -38,14 +39,13 @@ public enum ExistingScreenshotAction {
      * Retrieve a {@link ExistingScreenshotAction} based on the input {@link String}. The search is case-insensitive.
      *
      * @param input the {@link ExistingScreenshotAction} as a {@link String}
-     * @return the matching {@link ExistingScreenshotAction}
-     * @throws IllegalArgumentException thrown if there is not matching {@link IllegalArgumentException}
+     * @return the matching {@link ExistingScreenshotAction}, or {@code null} if none is found
      */
+    @Nullable
     public static ExistingScreenshotAction get(final String input) {
         return Arrays.stream(values())
-                .filter(existingScreenshotAction -> existingScreenshotAction.toString().equalsIgnoreCase(input))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("No valid %s for input '%s'", ExistingScreenshotAction.class.getSimpleName(), input)));
+            .filter(existingScreenshotAction -> existingScreenshotAction.toString().equalsIgnoreCase(input))
+            .findAny()
+            .orElse(null);
     }
 }

@@ -50,8 +50,8 @@ public final class ApplicationLauncher {
             // Validate that the application configuration is valid
             final ApplicationConfiguration _ = Configuration.get();
         } catch (final ExceptionInInitializerError e) {
-            LOGGER.debug("Error starting application pre-requisites", e);
-            LOGGER.error("Error starting application pre-requisites: {}", e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
+            LOGGER.debug("Invalid environment variable", e);
+            LOGGER.error("Invalid environment variable: {}", e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
             exit(ExitState.FAILURE);
         } catch (final Exception e) {
             LOGGER.debug("Unexpected error starting application pre-requisites", e);

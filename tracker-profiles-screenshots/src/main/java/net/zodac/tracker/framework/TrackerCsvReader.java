@@ -53,7 +53,7 @@ public final class TrackerCsvReader {
      * Reads the input file {@link ApplicationConfiguration#trackerInputFilePath()}, and converts each row into a {@link TrackerDefinition}.
      *
      * @return the {@link List} of {@link TrackerDefinition}s
-     * @throws IOException thrown if there is a problem reading the header or skipping the first record
+     * @throws IOException thrown if there is a problem reading the file or skipping the first record
      * @see TrackerDefinition#fromCsv(CSVRecord)
      */
     public static List<TrackerDefinition> readTrackerInfo() throws IOException {
