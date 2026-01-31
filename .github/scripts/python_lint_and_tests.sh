@@ -1,11 +1,11 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# Script Name:     python_lint_and_tests.sh
+# Script Name:     lint_and_tests.sh
 #
 # Description:     Lints and tests the Python Selenium manager code using Docker.
 #                  Uses `ruff` for linting and `pytest` for running tests.
 #
-# Usage:           ./python_lint_and_tests.sh [ruff_arguments...]
+# Usage:           ./lint_and_tests.sh [ruff_arguments...]
 #
 # Requirements:
 #   - Docker must be installed and available on the system PATH
@@ -27,6 +27,7 @@ set -euo pipefail
 
 LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.14.14"
 TEST_DOCKER_IMAGE="python:3.14.2-slim"
+JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
 
 # Linting
 echo
@@ -54,3 +55,14 @@ docker run --rm -t \
     pip install --quiet -r /app/python/requirements-dev.txt --root-user-action=ignore &&
     pytest -p no:cacheprovider -v /app/python/tests
   "
+
+echo
+echo "🐳 Running Java build using [${JAVA_DOCKER_IMAGE}]"
+
+docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null && \
+docker run --rm -t \
+    -v "${PWD}":/app \
+    -v "${HOME}/.m2":/root/.m2 \
+    -w /app \
+    "${JAVA_DOCKER_IMAGE}" \
+    mvn clean install -Dall

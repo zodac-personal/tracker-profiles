@@ -164,9 +164,9 @@ public record ApplicationConfiguration(
             final String outputDirectoryName = currentDate.format(DateTimeFormatter.ofPattern(outputDirectoryNameFormat, Locale.getDefault()));
             return Paths.get(outputDirectoryParentPath, outputDirectoryName);
         } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("[OUTPUT_DIRECTORY_NAME_FORMAT] Invalid time format: '%s'", timeZone));
-        } catch (final DateTimeException e){
-            throw new IllegalArgumentException(String.format("[TIMEZONE] Invalid timezone: '%s'", timeZone));
+            throw new IllegalArgumentException(String.format("[OUTPUT_DIRECTORY_NAME_FORMAT] Invalid time format: '%s'", timeZone), e);
+        } catch (final DateTimeException e) {
+            throw new IllegalArgumentException(String.format("[TIMEZONE] Invalid timezone: '%s'", timeZone), e);
         }
     }
 

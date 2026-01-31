@@ -24,6 +24,7 @@
         <!-- All disabled by default, activated through profiles -->
         <skip-linters>true</skip-linters>
         <skip-sonarqube>true</skip-sonarqube>
+        <skip-shade>false</skip-shade>
 
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
@@ -329,6 +330,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${maven-shade-plugin.version}</version>
+                    <configuration>
+                        <skip>${skip-shade}</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -589,7 +593,7 @@
                         </execution>
                     </executions>
                     <dependencies>
-                        <!-- Overwrite the default version of Spotbugs -->
+                        <!-- Overwrite the default version of SpotBugs -->
                         <dependency>
                             <groupId>com.github.spotbugs</groupId>
                             <artifactId>spotbugs</artifactId>
@@ -623,6 +627,7 @@
                 </property>
             </activation>
             <properties>
+                <skip-shade>true</skip-shade>
                 <skip-linters>false</skip-linters>
             </properties>
         </profile>
@@ -636,6 +641,7 @@
                 </property>
             </activation>
             <properties>
+                <skip-shade>true</skip-shade>
                 <skip-linters>false</skip-linters>
             </properties>
         </profile>
