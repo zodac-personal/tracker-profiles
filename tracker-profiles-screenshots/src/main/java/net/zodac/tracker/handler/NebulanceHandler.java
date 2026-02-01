@@ -18,20 +18,16 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code Nebulance} tracker.
+ * Extension of the {@link LuminanceHandler} for the {@code Nebulance} tracker.
  */
-// TODO: GazelleHandler?
 @TrackerHandler(name = "Nebulance", url = "https://nebulance.io/")
-public class NebulanceHandler extends AbstractTrackerHandler {
+public class NebulanceHandler extends LuminanceHandler {
 
     /**
      * Default constructor.
@@ -44,8 +40,13 @@ public class NebulanceHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
+    protected By usernameFieldSelector() {
+        return By.id("username");
+    }
+
+    @Override
+    protected By passwordFieldSelector() {
+        return By.id("password");
     }
 
     @Override
@@ -72,37 +73,8 @@ public class NebulanceHandler extends AbstractTrackerHandler {
         scriptExecutor.enableScrolling("body");
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link NebulanceHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
-     * stats element on the profile page. We redact this element by replacing all text with the prefix and
-     * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
-     */
     @Override
-    public int redactElements() {
-        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[7]");
-        final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
-        final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
-        scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
-
-        return 1 + super.redactElements();
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email
-            By.id("statuscont0") // IP address
-        );
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']/a[1]");
+    protected By passkeyElementSelector() {
+        return By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[7]");
     }
 }

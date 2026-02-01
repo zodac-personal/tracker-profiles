@@ -26,14 +26,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code Empornium} tracker.
+ * Extension of the {@link LuminanceHandler} for the {@code Empornium} tracker.
  */
 @TrackerHandler(name = "Empornium", url = {
     "https://www.empornium.sx/",
     "https://www.emparadise.rs/"
 })
-// TODO: Combine with CRT/Kufirc/MTV/GGn? as Luminence CommonTrackerHandler?
-public class EmporniumHandler extends AbstractTrackerHandler {
+public class EmporniumHandler extends LuminanceHandler {
 
     /**
      *  Default constructor.
@@ -48,21 +47,6 @@ public class EmporniumHandler extends AbstractTrackerHandler {
     @Override
     public By loginPageSelector() {
         return By.xpath("//div[@id='menu']/ul[1]/li[2]/a[1]");
-    }
-
-    @Override
-    protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']/input[1]");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']/input[1]");
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return By.id("login_button");
     }
 
     @Override
@@ -109,19 +93,7 @@ public class EmporniumHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email
-        );
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.id("userinfo_username");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//li[@id='nav_logout']//a[1]");
+    public int redactElements() {
+        return super.originalRedactElements();
     }
 }

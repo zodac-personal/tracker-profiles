@@ -18,18 +18,16 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code MoreThanTV} tracker.
+ * Extension of the {@link LuminanceHandler} for the {@code MoreThanTV} tracker.
  */
-// TODO: Luminence
 @TrackerHandler(name = "MoreThanTV", url = "https://www.morethantv.me/")
-public class MoreThanTvHandler extends AbstractTrackerHandler {
+public class MoreThanTvHandler extends LuminanceHandler {
 
     /**
      * Default constructor.
@@ -42,35 +40,8 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
-    }
-
-    @Override
-    protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']//input[1]");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']//input[1]");
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return By.id("login_button");
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo_username");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email
-        );
+    public int redactElements() {
+        return super.originalRedactElements();
     }
 
     @Override
@@ -78,15 +49,5 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
         final WebElement headerElement = driver.findElement(By.cssSelector("#menu, .main-menu"));
         scriptExecutor.makeUnfixed(headerElement);
         return true;
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.id("userinfo_username");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }

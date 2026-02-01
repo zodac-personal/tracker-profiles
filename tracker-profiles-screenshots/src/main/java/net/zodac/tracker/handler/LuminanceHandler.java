@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import java.util.List;
+import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
@@ -27,11 +28,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code PixelCove} tracker.
+ * Common implementation of {@link AbstractTrackerHandler} for {@code Luminance}-based trackers.
  */
-// TODO: Luminance
+@CommonTrackerHandler("Luminance")
 @TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
-public class PixelCoveHandler extends AbstractTrackerHandler {
+@TrackerHandler(name = "PornBay", url = "https://pornbay.org/")
+public class LuminanceHandler extends AbstractTrackerHandler {
 
     /**
      * Default constructor.
@@ -39,7 +41,7 @@ public class PixelCoveHandler extends AbstractTrackerHandler {
      * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
      * @param trackerUrls the URLs to the tracker
      */
-    public PixelCoveHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
+    public LuminanceHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
         super(driver, trackerUrls);
     }
 
@@ -72,7 +74,7 @@ public class PixelCoveHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link PixelCoveHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
+     * For {@link LuminanceHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
      * stats element on the profile page. We redact this element by replacing all text with the prefix and
      * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
      *
@@ -81,12 +83,30 @@ public class PixelCoveHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[4]");
-        final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
+        final WebElement passkeyElement = driver.findElement(passkeyElementSelector());
         final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
         return 1 + super.redactElements();
+    }
+
+    /**
+     * Utility function that calls {@link #redactElements()} from {@link AbstractTrackerHandler}. This will allow any implementations of this class to
+     * use the original function.
+     *
+     * @return the number of {@link WebElement}s where the text has been redacted
+     */
+    protected int originalRedactElements() {
+        return super.redactElements();
+    }
+
+    /**
+     * Defines the {@link By} selector for the user's passkey on the user profile page.
+     *
+     * @return the {@link By} selector for the user's passkey
+     */
+    protected By passkeyElementSelector() {
+        return By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[4]");
     }
 
     @Override
