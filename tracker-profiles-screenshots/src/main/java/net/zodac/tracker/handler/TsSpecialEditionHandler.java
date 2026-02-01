@@ -45,17 +45,17 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//*[@id='collapseobj_loginbox']//input[@name='username' and @type='text']");
+        return By.xpath("//input[contains(@class, 'inputUsernameLoginbox')]");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//*[@id='collapseobj_loginbox']//input[@name='password' and @type='password']");
+        return By.xpath("//input[contains(@class, 'inputPasswordLoginbox')]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//*[@id='collapseobj_loginbox']//input[@value='LOGIN' and @type='submit']");
+        return By.xpath("//*[@id='collapseobj_loginbox']//form[1]/input[4]");
     }
 
     @Override
@@ -63,6 +63,16 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
         return By.id("collapseobj_loginbox");
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Depending on the specific {@link TsSpecialEditionHandler} tracker, the <b>collapseobj_loginbox</b> HTML element is sometimes a
+     * {@literal <}div{@literal >}, sometimes a {@literal <}table{@literal >}. In addition, the user profile link is sometimes a direct child if this
+     * element, or sometimes nested below other HTML elements. This general XPATH query will work for all trackers of this type.
+     *
+     * @return the profile page {@link By} selector
+     */
     @Override
     protected By profilePageSelector() {
         return By.xpath("//*[@id='collapseobj_loginbox']//a[1]");
@@ -71,8 +81,7 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tbody[@id='collapseobj_content2a']/tr[1]/td[1]"), // Email
-            By.xpath("//tbody[@id='collapseobj_content2c']/tr[1]/td[1]"), // IP address
+            By.xpath("//tbody/tr[1]/td[1]"), // Email and  IP address
             By.xpath("//div[@id='top']/div[2]/span") // IP address in header
         );
     }

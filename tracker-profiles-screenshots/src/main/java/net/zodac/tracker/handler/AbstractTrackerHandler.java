@@ -218,10 +218,12 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void login(final String username, final String password, final String trackerName) {
         ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        LOGGER.trace("Entering username: {}", username);
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
         usernameField.clear();
         usernameField.sendKeys(username);
 
+        LOGGER.trace("Entering password: {}", password);
         final WebElement passwordField = driver.findElement(passwordFieldSelector());
         passwordField.clear();
         passwordField.sendKeys(password);
@@ -232,6 +234,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
             final WebElement loginButton = driver.findElement(loginButtonSelector);
+            LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
         }
         manualCheckAfterLoginClick(trackerName);

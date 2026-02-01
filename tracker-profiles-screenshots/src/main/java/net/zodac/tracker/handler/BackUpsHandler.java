@@ -52,12 +52,12 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return By.xpath("//input[contains(@class, 'inputPassword')]");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@value='LOGIN'][@type='submit']");
+        return By.xpath("//div[@id='main']//input[@type='submit'][1]");
     }
 
     /**
@@ -72,6 +72,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
 
         final String currentTitle = driver.getTitle();
+        // TODO: Find a way to not use the title text, and be generic to language
         if (currentTitle == null || !currentTitle.contains("Private Messages in Folder: Inbox")) {
             LOGGER.debug("\t- No unread private messages");
             return;
@@ -80,26 +81,6 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         LOGGER.debug("\t\t- Tracker redirected to inbox due to unread private messages, manually navigating back to the home page");
         final WebElement homePageLink = driver.findElement(By.xpath("//div[@id='menu']//a[1]"));
         clickButton(homePageLink);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link BackUpsHandler}, after clicking the logout button, a Javascript alert appears, which must be accepted.
-     */
-    @Override
-    public void logout() {
-        final By logoutButtonSelector = logoutButtonSelector();
-        scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
-        final WebElement logoutButton = driver.findElement(logoutButtonSelector);
-        clickButton(logoutButton);
-
-        // After clicking logout, an alert appears - find and click 'Yes'
-        scriptExecutor.acceptAlert();
-
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
     }
 
     @Override
