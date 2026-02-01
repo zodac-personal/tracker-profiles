@@ -21,20 +21,21 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
@@ -50,7 +51,6 @@ public final class DisplayUtils {
     /**
      * The {@link Duration} the program will wait for a user to enter an input.
      */
-    // TODO: Not needed anymore?
     public static final Duration INPUT_WAIT_DURATION = Duration.ofMinutes(5L);
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -62,6 +62,12 @@ public final class DisplayUtils {
     private static final String TITLE_SUFFIX = " Manual Input";
     private static final int DIALOG_BOX_HEIGHT = 125;
     private static final int DIALOG_BOX_WIDTH = 500;
+
+    private static final ScheduledExecutorService TIMEOUT_SCHEDULER = Executors.newSingleThreadScheduledExecutor(r -> {
+        final Thread t = new Thread(r, "dialog-timeout");
+        t.setDaemon(true);
+        return t;
+    });
 
     private DisplayUtils() {
 
@@ -76,14 +82,14 @@ public final class DisplayUtils {
     public static void userInputConfirmation(final String titlePrefix, final String labelPrefix) {
         setStyleToSystemTheme();
 
-        final boolean[] userInputs = {false};
-        final JDialog dialog = createDialog(titlePrefix, labelPrefix, userInputs);
+        final AtomicBoolean userProvidedInput = new AtomicBoolean(false);
+        final AtomicBoolean timedOut = new AtomicBoolean(false);
 
-        showDialog(dialog, userInputs);
+        final JDialog dialog = createDialog(titlePrefix, labelPrefix, userProvidedInput);
+        showDialog(dialog, userProvidedInput, timedOut);
     }
 
-    private static JDialog createDialog(final String titlePrefix, final String labelPrefix, final boolean[] userInputs) {
-        // Create a dialog box with a 'Continue' button and countdown label
+    private static JDialog createDialog(final String titlePrefix, final String labelPrefix, final AtomicBoolean userProvidedInput) {
         final JDialog dialog = new JDialog((Frame) null, titlePrefix + TITLE_SUFFIX, true);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);  // Ensure the dialog remains on top of all windows when interacting with browser
@@ -93,61 +99,80 @@ public final class DisplayUtils {
         panel.add(new JLabel(labelText, SwingConstants.CENTER));
 
         dialog.add(panel, BorderLayout.CENTER);
-        dialog.add(createButtons(userInputs, dialog), BorderLayout.PAGE_END);
+        dialog.add(createButtons(dialog, userProvidedInput), BorderLayout.PAGE_END);
 
         dialog.setPreferredSize(new Dimension(DIALOG_BOX_WIDTH, DIALOG_BOX_HEIGHT));
-        dialog.pack(); // Respects preferredSize but allows it to be larger if needed based on the text
+        dialog.pack();  // Respects preferredSize but allows it to be larger if needed based on the text
+        dialog.setLocationRelativeTo(null);
 
         setDialogPosition(dialog);
         return dialog;
     }
 
-    private static JPanel createButtons(final boolean[] userInputs, final JDialog dialog) {
+    private static JPanel createButtons(final JDialog dialog, final AtomicBoolean userProvidedInput) {
         final JButton continueButton = new JButton(BUTTON_CONTINUE_TEXT);
         continueButton.addActionListener(_ -> {
+            userProvidedInput.set(true);
             dialog.dispose();
-            userInputs[0] = true;
         });
-        final JButton closedButton = new JButton(BUTTON_EXIT_TEXT);
-        closedButton.addActionListener(_ -> {
-            dialog.dispose();
-            userInputs[0] = false; // Assumes there was no user input, even if some action was taken on the webpage
-        });
+
+        final JButton exitButton = new JButton(BUTTON_EXIT_TEXT);
+        exitButton.addActionListener(_ -> dialog.dispose());
 
         final JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
         buttonPanel.add(continueButton);
-        buttonPanel.add(closedButton);
+        buttonPanel.add(exitButton);
         return buttonPanel;
     }
 
-    private static void showDialog(final JDialog dialog, final boolean[] userInputs) {
-        try (final ExecutorService executor = Executors.newSingleThreadExecutor()) {
-            final Future<?> future = executor.submit(() -> dialog.setVisible(true));
-            executor.shutdown();
+    private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
+        final var timeoutTask = TIMEOUT_SCHEDULER.schedule(() -> SwingUtilities.invokeLater(() -> {
+                if (dialog.isShowing()) {
+                    timedOut.set(true);
+                    dialog.dispose();
+                }
+            }),
+            INPUT_WAIT_DURATION.getSeconds(),
+            TimeUnit.SECONDS
+        );
+        LOGGER.trace("Waiting {} for user input", INPUT_WAIT_DURATION);
 
-            future.get(INPUT_WAIT_DURATION.getSeconds(), TimeUnit.SECONDS);
-            if (!userInputs[0]) { // Dialog has been cancelled since no input was set
-                throw new CancelledInputException();
+        try {
+            SwingUtilities.invokeAndWait(() -> dialog.setVisible(true));
+
+            if (userProvidedInput.get()) {
+                LOGGER.trace("Received an input");
+                return;
             }
-        } catch (final TimeoutException | InterruptedException | ExecutionException e) {
+
+            if (timedOut.get()) {
+                LOGGER.trace("Dialog timed out and no input received");
+                throw new NoUserInputException(INPUT_WAIT_DURATION, new IllegalStateException());
+            }
+
+            LOGGER.trace("Dialog still running and no timeout received, assuming the user cancelled execution");
+            throw new CancelledInputException();
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new NoUserInputException(INPUT_WAIT_DURATION, e);
+        } catch (final InvocationTargetException e) {
+            throw new NoUserInputException(INPUT_WAIT_DURATION, e.getCause() == null ? e : e.getCause());
         } finally {
+            timeoutTask.cancel(true);
             dialog.dispose();
         }
     }
 
     private static void setDialogPosition(final JDialog dialog) {
-        // Get the screen size and adjust the dialog's position
-        final Toolkit toolkit = Toolkit.getDefaultToolkit();
-        final Dimension screenSize = toolkit.getScreenSize();
-        final int screenWidth = screenSize.width;
-        final int dialogWidth = dialog.getWidth();
+        // Get the screen the dialog will appear on
+        final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
+        final Rectangle bounds = gc.getBounds();
+        final int margin = 40;
 
-        final int horizontalOffset = (screenWidth / 4) + (screenWidth / 8);
-        final int xPosition = (screenWidth - dialogWidth) / 2 - horizontalOffset;
-        final int yPosition = (screenSize.height - dialog.getHeight()) / 2; // Center vertically
-        dialog.setLocation(xPosition, yPosition);
+        // X is left + margin, Y is vertically centered
+        final int x = bounds.x + margin;
+        final int y = bounds.y + (bounds.height - dialog.getHeight()) / 2;
+        dialog.setLocation(x, y);
     }
 
     private static void setStyleToSystemTheme() {
