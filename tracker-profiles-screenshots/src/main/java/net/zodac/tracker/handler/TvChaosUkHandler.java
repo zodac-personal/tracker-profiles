@@ -64,7 +64,7 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//main[@id='vue']/div[1]/div[5]/div[1]/table[1]/tbody[1]/tr[5]/td[2]")
+            By.xpath("//table/tbody/tr/td[2]")
         );
     }
 
