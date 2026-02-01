@@ -20,9 +20,7 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -41,24 +39,9 @@ public class UploadCxHandler extends Unit3dHandler {
         super(driver, trackerUrls);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link UploadCxHandler}, prior to clicking the login button with a successful username/password there is another field where the user is
-     * prompted to verify themselves as a human. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
-     *
-     * <p>
-     * Manual user interaction:
-     * <ol>
-     *     <li>Pass the verification check</li>
-     * </ol>
-     */
+
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
-        final WebElement verificationElement = driver.findElement(By.id("challenge-container"));
-        LOGGER.info("\t\t >>> Waiting for user to pass the verification check, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
-        scriptExecutor.highlightElement(verificationElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Pass the verification check");
+    protected By cloudflareSelector() {
+        return By.id("challenge-container");
     }
 }

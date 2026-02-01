@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Utility class to define {@link Pattern}s and methods to find and/or replace matches in {@link String}s.
  */
-public final class PatternMatcher {
+public final class TextReplacer {
 
     /**
      * Default {@link String} used to redact sensitive text.
@@ -34,7 +34,7 @@ public final class PatternMatcher {
     private static final Pattern IPV4_MASKED = Pattern.compile("((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x");
     private static final Pattern IPV6 = Pattern.compile("([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
 
-    private PatternMatcher() {
+    private TextReplacer() {
 
     }
 

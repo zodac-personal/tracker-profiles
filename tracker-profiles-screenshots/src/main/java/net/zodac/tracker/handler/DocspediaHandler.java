@@ -22,8 +22,8 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -106,7 +106,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
     @Override
     public int redactElements() {
         final WebElement passkeyValueElement = driver.findElement(By.xpath("//div[@id='maincolumn']//table[2]/tbody[1]/tr[3]/td[2]"));
-        scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
+        scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
     }

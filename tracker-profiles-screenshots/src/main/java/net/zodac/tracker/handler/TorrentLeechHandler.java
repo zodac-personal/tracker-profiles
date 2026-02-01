@@ -20,8 +20,8 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -99,7 +99,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     @Override
     public int redactElements() {
         final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[contains(@class, 'profileViewTable')]/tbody[1]/tr[10]/td[2]"));
-        scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
+        scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
     }

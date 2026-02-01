@@ -19,8 +19,8 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -84,7 +84,7 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
     @Override
     public int redactElements() {
         final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[@id='body']//table[1]/tbody[1]/tr[4]/td[1]"));
-        scriptExecutor.redactInnerTextOf(passkeyValueElement, PatternMatcher.DEFAULT_REDACTION_TEXT);
+        scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
     }

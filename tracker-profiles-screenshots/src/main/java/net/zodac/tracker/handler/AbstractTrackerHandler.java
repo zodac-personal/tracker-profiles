@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.ProfileScreenshotter;
 import net.zodac.tracker.framework.gui.DisplayUtils;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.TextReplacer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -400,7 +400,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             // TODO: Define which elements to redact?
-            .filter(element -> PatternMatcher.containsEmailAddress(element.getText()) || PatternMatcher.containsIpAddress(element.getText()))
+            .filter(element -> TextReplacer.containsEmailAddress(element.getText()) || TextReplacer.containsIpAddress(element.getText()))
             .toList();
 
         if (elementsToBeRedacted.isEmpty()) {
