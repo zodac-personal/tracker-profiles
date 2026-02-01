@@ -17,10 +17,12 @@
 
 package net.zodac.tracker.handler;
 
+import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -86,6 +88,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
         final By logoutParentSelector = By.xpath("//div[contains(@class, 'dropmenu')]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
+        ScriptExecutor.explicitWait(Duration.ofSeconds(1L));  // Give the dropdown menu a chance to load, it is not instant
 
         return By.xpath("//form[@id='logout-form1']/ancestor::div[1]/a[1]");
     }
