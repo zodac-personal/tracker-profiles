@@ -18,21 +18,16 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
-import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code Libble} tracker.
+ * Extension of the {@link LuminanceHandler} for the {@code Libble} tracker.
  */
 @TrackerHandler(name = "Libble", url = "https://libble.me/")
-public class LibbleHandler extends AbstractTrackerHandler {
-
-    private static final String PASSKEY_PREFIX = "Passkey: ";
+public class LibbleHandler extends LuminanceHandler {
 
     /**
      * Default constructor.
@@ -50,13 +45,18 @@ public class LibbleHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit'][@name='login']");
+    protected By usernameFieldSelector() {
+        return By.id("username");
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo_username");
+    protected By passwordFieldSelector() {
+        return By.id("password");
+    }
+
+    @Override
+    protected By loginButtonSelector() {
+        return By.xpath("//input[@name='login'][@type='submit']");
     }
 
     @Override
@@ -66,33 +66,9 @@ public class LibbleHandler extends AbstractTrackerHandler {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link LibbleHandler}, we also need to redact a passkey {@link WebElement}. We find an element with text that is prefixed by
-     * {@value #PASSKEY_PREFIX}, signifying a {@link WebElement} with a sensitive passkey. We redact this element by replacing all text with the
-     * prefix and {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
-     */
     @Override
-    public int redactElements() {
-        final By passkeyElementSelector = By.xpath("//div[contains(@class, 'sidebar')]/div[4]/ul[1]/li[4]");
-        final WebElement passkeyElement = driver.findElement(passkeyElementSelector);
-        final String passkeyRedactionText = PASSKEY_PREFIX + PatternMatcher.DEFAULT_REDACTION_TEXT;
-        scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
-
-        return 1 + super.redactElements();
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]"), // Email
-            By.xpath("//div[@id='footer']/p[2]/a[1]") // Footer with last used IP address
-        );
+    protected By passkeyElementSelector() {
+        return By.xpath("//div[contains(@class, 'sidebar')]/div[4]/ul[1]/li[4]");
     }
 
     @Override
