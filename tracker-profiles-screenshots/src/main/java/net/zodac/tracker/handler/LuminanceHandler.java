@@ -18,22 +18,21 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.PatternMatcher;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Common implementation of {@link AbstractTrackerHandler} for {@code Luminance}-based trackers.
+ * Common implementation of {@link GazelleHandler} for {@code Luminance}-based trackers.
  */
 @CommonTrackerHandler("Luminance")
 @TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
 @TrackerHandler(name = "PornBay", url = "https://pornbay.org/")
-public class LuminanceHandler extends AbstractTrackerHandler {
+public class LuminanceHandler extends GazelleHandler {
 
     /**
      * Default constructor.
@@ -65,18 +64,13 @@ public class LuminanceHandler extends AbstractTrackerHandler {
         return By.id("login_button");
     }
 
-    @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo_username");
-    }
-
     /**
      * {@inheritDoc}
      *
      * <p>
      * For {@link LuminanceHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
      * stats element on the profile page. We redact this element by replacing all text with the prefix and
-     * {@value PatternMatcher#DEFAULT_REDACTION_TEXT}.
+     * {@value TextReplacer#DEFAULT_REDACTION_TEXT}.
      *
      * @see AbstractTrackerHandler#redactElements()
      * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
@@ -84,7 +78,7 @@ public class LuminanceHandler extends AbstractTrackerHandler {
     @Override
     public int redactElements() {
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector());
-        final String passkeyRedactionText = "Passkey: " + PatternMatcher.DEFAULT_REDACTION_TEXT;
+        final String passkeyRedactionText = "Passkey: " + TextReplacer.DEFAULT_REDACTION_TEXT;
         scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
 
         return 1 + super.redactElements();
@@ -107,23 +101,5 @@ public class LuminanceHandler extends AbstractTrackerHandler {
      */
     protected By passkeyElementSelector() {
         return By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[4]");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email
-            By.id("statuscont0") // IP address
-        );
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//a[contains(@class, 'username')]");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//li[@id='nav_logout']/a[1]");
     }
 }

@@ -58,14 +58,15 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("userinfo");
+        return By.id("userinfo_username");
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email, // Email
-            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
+            By.xpath("//div[@id='footer']//a"), // Footer with last used IP address
+            By.id("statuscont0") // IP address
         );
     }
 
@@ -82,7 +83,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.id("userinfo_username");
+        final By logoutParentSelector = By.xpath("//a[contains(@class, 'username')]");
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
