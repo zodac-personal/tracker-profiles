@@ -18,17 +18,16 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code AlphaRatio} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code AlphaRatioHandler} tracker.
  */
-// TODO: Gazelle/Luminance?
 @TrackerHandler(name = "AlphaRatio", url = "https://alpharatio.cc/")
-public class AlphaRatioHandler extends AbstractTrackerHandler {
+public class AlphaRatioHandler extends GazelleHandler {
 
     /**
      * Default constructor.
@@ -40,31 +39,14 @@ public class AlphaRatioHandler extends AbstractTrackerHandler {
         super(driver, trackerUrls);
     }
 
+    /**
+     * Unlike the other {@link GazelleHandler} trackers, {@link AlphaRatioHandler} redirects to the login page immediately.
+     *
+     * @return the login page {@link By} selector
+     */
+    @Nullable
     @Override
-    protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("content");
-    }
-
-    @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
-            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
-        );
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        return By.id("nav_logout");
+    public By loginPageSelector() {
+        return null;
     }
 }

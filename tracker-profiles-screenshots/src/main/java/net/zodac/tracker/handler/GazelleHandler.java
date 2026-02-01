@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -44,6 +45,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
         super(driver, trackerUrls);
     }
 
+    @Nullable
     @Override
     public By loginPageSelector() {
         return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
