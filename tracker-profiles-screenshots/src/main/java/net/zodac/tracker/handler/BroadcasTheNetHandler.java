@@ -18,6 +18,7 @@
 package net.zodac.tracker.handler;
 
 import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import org.openqa.selenium.By;
@@ -69,6 +70,11 @@ public class BroadcasTheNetHandler extends GazelleHandler {
 
         // Move the cursor out of the way, to avoid highlighting a tooltip for a badge
         scriptExecutor.moveToOrigin();
+    }
+
+    @Override
+    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+        return List.of();
     }
 
     @Override
