@@ -233,7 +233,16 @@ update_debian_packages() {
 }
 
 update_pom_versions() {
-    mvn versions:update-properties
+    local JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
+
+    docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null && \
+    docker run --rm -t \
+        -v "${PWD}":/app \
+        -v "${HOME}/.m2":/root/.m2 \
+        -w /app \
+        "${JAVA_DOCKER_IMAGE}" \
+        mvn versions:update-properties
+
     echo "✅ pom.xml updated successfully with latest Maven packages"
 }
 
