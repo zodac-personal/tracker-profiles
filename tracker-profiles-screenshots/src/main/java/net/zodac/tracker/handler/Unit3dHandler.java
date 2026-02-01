@@ -31,6 +31,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @CommonTrackerHandler("UNIT3D")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
+@TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
@@ -92,7 +93,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
-            By.xpath("//div[dt[contains(normalize-space(), 'E-mail')]]/dd[1]") // Email
+            By.xpath("//div[contains(@class, 'key-value__group')]/dd") // Email
         );
     }
 
@@ -110,6 +111,6 @@ public class Unit3dHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//form[@role='form' and @method='POST']//button[@type='submit']");
+        return By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]//form[1]//button[1]");
     }
 }

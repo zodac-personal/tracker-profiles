@@ -51,7 +51,7 @@ public class SeedPoolHandler extends Unit3dHandler {
      */
     @Override
     protected By profilePageSelector() {
-        final By profileParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
+        final By profileParentSelector = By.xpath("//li[contains(@class, 'top-nav__dropdown')]");
         final WebElement profileParent = driver.findElement(profileParentSelector);
         scriptExecutor.moveTo(profileParent);
 
