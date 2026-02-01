@@ -18,8 +18,11 @@
 package net.zodac.tracker.handler;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
@@ -31,6 +34,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 @TrackerHandler(name = "ABTorrents", url = "https://usefultrash.net/")
 public class AbTorrentsHandler extends AbstractTrackerHandler {
+
+    // Tab title is in the format `ABTorrents :(1): Home`, where `1` is the number of unread messages
+    private static final Pattern TITLE_UNREAD_MESSAGES_COUNT_PATTERN = Pattern.compile("\\((\\d+)\\)");
+    private static final Duration WAIT_FOR_TAB_TITLE_UPDATE = Duration.of(2L, ChronoUnit.SECONDS);
 
     /**
      * Default constructor.
@@ -62,34 +69,53 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link AbTorrentsHandler}, having any unread private messages means you are unable to search for any torrents. While this doesn't block
-     * the profile page, we'll click the link to the inbox then open any unread PMs before continuing.
+     * the profile page, we'll click the link to the inbox then open any unread private messages before continuing.
      */
+    // TODO: Make this step optional?
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_TAB_TITLE_UPDATE); // Waiting for tab to update with unread private messages count
 
-        final By pmWarningSelector = By.xpath("//a[b[contains(@class, 'alert-warning') and contains(normalize-space(), 'New Private message')]]");
-        final List<WebElement> privateMessageWarnings = driver.findElements(pmWarningSelector);
-
-        if (privateMessageWarnings.isEmpty()) {
-            LOGGER.debug("\t- No unread PMs");
+        if (!hasUserAnyUnreadPrivateMessages()) {
+            LOGGER.debug("\t- No unread private messages");
             return;
         }
 
         LOGGER.trace("\t- Found some unread private messages, opening inbox");
-        final WebElement privateMessageWarning = privateMessageWarnings.getFirst();
-        clickButton(privateMessageWarning);
+        // Highlight the user menu to make the logout button interactable
+        final By messagesParentSelector = By.id("user");
+        final WebElement messagesParent = driver.findElement(messagesParentSelector);
+        scriptExecutor.moveTo(messagesParent);
 
-        final By unreadPmsSelector = By.xpath("//td[span[1][contains(normalize-space(), 'Unread')]]/a[1]");
-        final List<WebElement> unreadPms = driver.findElements(unreadPmsSelector);
-        LOGGER.debug("\t- {} unread PMs", unreadPms.size());
+        final By messagesSelector = By.xpath("//li[@id='user']/ul[1]/li[1]/a[1]");
+        final WebElement messagesElement = driver.findElement(messagesSelector);
+        clickButton(messagesElement);
 
-        for (final WebElement unreadPm : unreadPms) {
-            clickButton(unreadPm);
+        // Assuming that all 'Unread' <span> elements have the 'has-text-red' class to indicate they are unread, and that can be used instead of text
+        final By unreadPrivateMessagesSelector = By.xpath("//tr/td[2]/span[contains(@class, 'has-text-red')]/ancestor::td[1]/a[1]");
+        final List<WebElement> unreadPrivateMessages = driver.findElements(unreadPrivateMessagesSelector);
+        LOGGER.debug("\t- {} unread private message{}", unreadPrivateMessages.size(), unreadPrivateMessages.size() == 1 ? "" : "s");
+
+        for (final WebElement unreadPrivateMessage : unreadPrivateMessages) {
+            clickButton(unreadPrivateMessage);
             driver.navigate().back();
         }
 
-        LOGGER.debug("\t\t- Unread PMs cleared");
+        LOGGER.debug("\t\t- Unread private messages cleared");
+    }
+
+    private boolean hasUserAnyUnreadPrivateMessages() {
+        final String currentTitle = driver.getTitle() == null ? "" : driver.getTitle();
+        LOGGER.trace("\t- Browser title: '{}'", currentTitle);
+        final Matcher matcher = TITLE_UNREAD_MESSAGES_COUNT_PATTERN.matcher(currentTitle);
+
+        if (matcher.find()) {
+            final int numberOfUnreadPrivateMessages = Integer.parseInt(matcher.group(1));
+            return numberOfUnreadPrivateMessages > 0;
+        }
+
+        // No number found, assume 0
+        return false;
     }
 
     @Override

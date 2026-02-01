@@ -64,8 +64,8 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link BackUpsHandler}, having any unread private messages means you are redirected to your PM inbox. We'll check if this is the case, and
-     * then navigate to the home page.
+     * For {@link BackUpsHandler}, having any unread private messages means you are redirected to your message inbox. We'll check if this is the case,
+     * and then navigate to the home page.
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
@@ -73,12 +73,12 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
         final String currentTitle = driver.getTitle();
         if (currentTitle == null || !currentTitle.contains("Private Messages in Folder: Inbox")) {
-            LOGGER.debug("\t- No unread PMs");
+            LOGGER.debug("\t- No unread private messages");
             return;
         }
 
-        LOGGER.debug("\t\t- Redirected to inbox due to unread PMs, navigating back to the home page");
-        final WebElement homePageLink = driver().findElement(By.xpath("//div[@id='menu']//a[1]"));
+        LOGGER.debug("\t\t- Tracker redirected to inbox due to unread private messages, manually navigating back to the home page");
+        final WebElement homePageLink = driver.findElement(By.xpath("//div[@id='menu']//a[1]"));
         clickButton(homePageLink);
     }
 

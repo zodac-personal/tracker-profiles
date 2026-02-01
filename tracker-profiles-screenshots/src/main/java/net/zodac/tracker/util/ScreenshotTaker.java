@@ -64,7 +64,6 @@ public final class ScreenshotTaker {
      * @param trackerName the name of the tracker having a screenshot taken (used as the file name)
      * @return the {@link File} instance of the saved screenshot
      * @throws IOException thrown if an error occurs saving the screenshot to the file system
-     * @see FileOpener#open(File)
      * @see ScriptExecutor#scrollToTheTop()
      */
     public static File takeScreenshot(final RemoteWebDriver driver, final String trackerName) throws IOException {
