@@ -76,7 +76,7 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.cssSelector("#menu, .main-menu"));
-        scriptExecutor.updateCss(headerElement, "position", "static");
+        scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
 

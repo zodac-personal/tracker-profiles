@@ -68,7 +68,7 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.xpath("//nav[contains(@class, 'fixed-top')]"));
-        scriptExecutor.updateCss(headerElement, "position", "static");
+        scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
 

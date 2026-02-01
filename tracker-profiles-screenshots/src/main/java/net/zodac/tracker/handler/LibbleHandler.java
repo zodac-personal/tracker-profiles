@@ -62,9 +62,7 @@ public class LibbleHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("header"));
-
-        // TODO: Common usage?
-        scriptExecutor.updateCss(headerElement, "position", "static");
+        scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
 

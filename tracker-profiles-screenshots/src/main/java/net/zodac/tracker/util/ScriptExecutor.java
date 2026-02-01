@@ -130,6 +130,21 @@ public class ScriptExecutor {
     }
 
     /**
+     * Updates the {@link WebElement} and unfixes it from its pinned position.
+     *
+     * @param element the {@link WebElement} to unfix
+     */
+    public void makeUnfixed(final WebElement element) {
+        updateCss(element, "position", "static");
+    }
+
+    private void updateCss(final WebElement element, final String propertyName, final String propertyValue) {
+        LOGGER.trace("Updating CSS of element '{}', property '{}' to value: '{}'", element, propertyName, propertyValue);
+        final String script = String.format("arguments[0].style.%s = '%s';", propertyName, propertyValue);
+        driver.executeScript(script, element);
+    }
+
+    /**
      * Moves the mouse cursor to the provided {@link WebElement}.
      *
      * @param element the {@link WebElement} to move to
@@ -314,19 +329,6 @@ public class ScriptExecutor {
         } catch (final AWTException e) {
             throw new TranslationException(e);
         }
-    }
-
-    /**
-     * Updates the provided CSS property for the {@link WebElement}.
-     *
-     * @param element       the {@link WebElement} whose CSS property should be updated
-     * @param propertyName  the CSS property name
-     * @param propertyValue the new CSS property value
-     */
-    public void updateCss(final WebElement element, final String propertyName, final String propertyValue) {
-        LOGGER.trace("Updating CSS of element '{}', property '{}' to value: '{}'", element, propertyName, propertyValue);
-        final String script = String.format("arguments[0].style.%s = '%s';", propertyName, propertyValue);
-        driver.executeScript(script, element);
     }
 
     /**

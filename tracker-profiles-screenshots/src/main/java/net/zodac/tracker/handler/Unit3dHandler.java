@@ -100,7 +100,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.tagName("header"));
-        scriptExecutor.updateCss(headerElement, "position", "static");
+        scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
 

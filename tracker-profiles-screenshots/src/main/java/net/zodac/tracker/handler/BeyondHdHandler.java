@@ -76,7 +76,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
-        scriptExecutor.updateCss(headerElement, "position", "static");
+        scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
 
