@@ -45,16 +45,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class ScriptExecutor {
 
-    /**
-     * Default {@link String} used to redact sensitive text.
-     */
-    public static final String DEFAULT_REDACTION_TEXT = "----";
-
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_CONTEXT_MENU = Duration.of(500L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(1L, ChronoUnit.SECONDS); // TODO: Reduce this and test
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS); // TODO: Can this be reduced?
+    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(200L, ChronoUnit.MILLIS);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(250L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
@@ -190,11 +185,11 @@ public class ScriptExecutor {
 
     /**
      * Reads the HTML of the provided {@link WebElement} and replaces the email and IP addresses using
-     * {@link PatternMatcher#replaceEmailAndIpAddresses(String)}. This can be valuable when trying to hide/redact sensitive information. This will
+     * {@link TextReplacer#replaceEmailAndIpAddresses(String)}. This can be valuable when trying to hide/redact sensitive information. This will
      * attempt to retain all other text and HTML elements in the provided {@link WebElement}.
      *
      * @param element the {@link WebElement} to redact
-     * @see PatternMatcher#replaceEmailAndIpAddresses(String)
+     * @see TextReplacer#replaceEmailAndIpAddresses(String)
      */
     public void redactHtmlOf(final WebElement element) {
         LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
@@ -214,7 +209,7 @@ public class ScriptExecutor {
             return "";
         }
 
-        return escapeForJavaScriptString(PatternMatcher.replaceEmailAndIpAddresses(elementText));
+        return escapeForJavaScriptString(TextReplacer.replaceEmailAndIpAddresses(elementText));
     }
 
     private static String escapeForJavaScriptString(final String input) {
