@@ -43,7 +43,6 @@ import org.apache.logging.log4j.Logger;
  * @param csvCommentSymbol           the {@code char} defining a comment row in the CSV file
  * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
- * @param openOutputDirectory        whether to open the screenshot directory when execution is completed
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
@@ -55,7 +54,6 @@ public record ApplicationConfiguration(
     char csvCommentSymbol,
     boolean enableTranslationToEnglish,
     boolean forceUiBrowser,
-    boolean openOutputDirectory,
     Path outputDirectory,
     ExistingScreenshotAction existingScreenshotAction,
     List<TrackerType> trackerExecutionOrder,
@@ -102,7 +100,6 @@ public record ApplicationConfiguration(
             getCsvCommentSymbol(),
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
-            getBooleanEnvironmentVariable("OPEN_OUTPUT_DIRECTORY", false),
             getOutputDirectory(),
             getScreenshotExistsAction(),
             getTrackerExecutionOrder(),
@@ -203,7 +200,6 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- csvCommentSymbol={}", csvCommentSymbol);
         LOGGER.debug("\t- enableTranslationToEnglish={}", enableTranslationToEnglish);
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
-        LOGGER.debug("\t- openOutputDirectory={}", openOutputDirectory);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- existingScreenshotAction={}", existingScreenshotAction);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);

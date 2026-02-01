@@ -19,7 +19,6 @@ package net.zodac.tracker;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -43,7 +42,6 @@ import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
-import net.zodac.tracker.util.FileOpener;
 import net.zodac.tracker.util.ScreenshotTaker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -128,17 +126,6 @@ public final class ProfileScreenshotter {
                 LOGGER.error("\t- {}", unsuccessfulTracker);
             }
             return ExitState.FAILURE;
-        }
-
-        if (CONFIG.openOutputDirectory()) {
-            final Path directory = CONFIG.outputDirectory().toAbsolutePath();
-            LOGGER.trace("Opening: '{}'", directory);
-            try {
-                FileOpener.open(directory.toFile());
-            } catch (final IOException e) {
-                LOGGER.debug("Unable to open '{}'", directory, e);
-                LOGGER.warn("Unable to open '{}': {}", directory, e.getMessage());
-            }
         }
 
         if (unsuccessfulTrackers.isEmpty()) {

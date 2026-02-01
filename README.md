@@ -152,7 +152,6 @@ docker run \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
     --env LOG_LEVEL=INFO \
-    --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
@@ -178,7 +177,6 @@ MSYS_NO_PATHCONV=1 docker run \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
     --env LOG_LEVEL=INFO \
-    --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
@@ -237,7 +235,6 @@ The following are all possible configuration options, defined as environment var
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                           | true                                         |
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                         | false                                        |
 | *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                         | INFO                                         |
-| *OPEN_OUTPUT_DIRECTORY*         | Whether to open the output directory when execution is complete (not supported in Docker, debug only)                          | false                                        |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                      | yyyy-MM-dd                                   |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                         | /tmp/screenshots                             |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [OVERWRITE, SKIP]                               | OVERWRITE                                    |
@@ -299,7 +296,6 @@ docker run \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=true \
     --env LOG_LEVEL=TRACE \
-    --env OPEN_OUTPUT_DIRECTORY=false \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \

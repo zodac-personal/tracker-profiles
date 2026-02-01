@@ -126,7 +126,8 @@ public final class DisplayUtils {
     }
 
     private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
-        final var timeoutTask = TIMEOUT_SCHEDULER.schedule(() -> SwingUtilities.invokeLater(() -> {
+        final var timeoutTask = TIMEOUT_SCHEDULER.schedule(
+            () -> SwingUtilities.invokeLater(() -> {
                 if (dialog.isShowing()) {
                     timedOut.set(true);
                     dialog.dispose();
