@@ -7,9 +7,7 @@
     - [Non-Headless](#non-headless)
 - [How To Use](#how-to-use)
     - [Tracker Definitions](#tracker-definitions)
-    - [Docker](#docker)
-        - [Debian](#running-in-debian)
-        - [Windows](#running-in-windows)
+    - [Running In Docker](#running-in-docker)
     - [Browser UI](#browser-ui)
         - [UI In Debian](#ui-in-debian)
         - [UI In Windows](#ui-in-windows)
@@ -137,11 +135,14 @@ tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_S
 The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when running the application, so
 remember where it is saved and what it is named.
 
-### Docker
+### Running In Docker
 
 The application is run using Docker, and below are the commands to run the `latest` docker image.
 
-#### Running In Debian
+<table>
+<tr>
+<td>
+<h3>Debian</h3>
 
 ```bash
 docker run \
@@ -164,9 +165,11 @@ docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
-#### Running In Windows
+</td>
+<td>
+<h3>Windows</h3>
 
-I use [Git Bash](https://git-scm.com/install/windows) to run commands, so I set `MSYS_NO_PATHCONV`:
+I use [Git Bash](https://git-scm.com/install/windows) to run commands, so I set `MSYS_NO_PATHCONV`.
 
 ```bash
 MSYS_NO_PATHCONV=1 docker run \
@@ -187,6 +190,10 @@ MSYS_NO_PATHCONV=1 docker run \
     --name tracker-profiles \
     --rm zodac/tracker-profiles:latest
 ```
+
+</td>
+</tr>
+</table>
 
 ### Browser UI
 
