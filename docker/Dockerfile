@@ -19,7 +19,7 @@ FROM python:3.14.2-slim AS python_builder
 # BEGIN PYTHON PACKAGES
 RUN python3 -m ensurepip && \
     pip install \
-        pip=="25.3" \
+        pip=="26.0" \
         wheel=="0.46.3"
 # END PYTHON PACKAGES
 
@@ -61,7 +61,6 @@ FROM debian:13.3-slim
 # Set the working directory
 WORKDIR /app
 
-# TODO: Use the DEBUG logs for Python and download the chromedriver manually and save in the Dockerfile, and use this version of Chromium
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)
@@ -77,6 +76,17 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 # END DEBIAN PACKAGES
+
+# Downloading the chromedriver for the installed version of chromium and installing it in the Docker image
+# Doing this to avoid undetected-chromedriver from downloading a version itself, which means older version aren't able to be used once obsolete
+RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip && \
+    mkdir -p /usr/local/chromium && \
+    curl -fL \
+      "https://storage.googleapis.com/chrome-for-testing-public/$(chromium --version | awk '{print $2}')/linux64/chromedriver-linux64.zip" \
+      -o /tmp/chromedriver.zip && \
+    unzip /tmp/chromedriver.zip -d /usr/local/chromium && rm -f /tmp/chromedriver.zip && \
+    apt-get purge -yqq curl unzip && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    chmod -R 0777 /usr/local/chromium
 
 # Copy Python installation
 COPY --from=python_builder /usr/local /usr/local

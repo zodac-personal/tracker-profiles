@@ -17,7 +17,6 @@ Used internally with a Flask app via `register_routes()`.
 
 import logging
 import os
-import subprocess
 from pathlib import Path
 from threading import Lock
 from typing import TypedDict
@@ -112,10 +111,12 @@ def register_routes(app: Flask) -> None:
 
         try:
             options = create_chrome_options(browser_data_storage_path, browser_dimensions)
-
-            version_main = get_chromium_major_version()
-            logger.debug("\t\t- Detected Chromium major version: '%s'", version_main)
-            driver = uc.Chrome(headless=False, use_subprocess=False, options=options, version_main=version_main)
+            driver = uc.Chrome(
+                headless=False,
+                use_subprocess=False,
+                options=options,
+                driver_executable_path="/usr/local/chromium/chromedriver-linux64/chromedriver",
+            )
 
             session_id = driver.session_id
             port = driver.service.service_url.split(":")[-1]
@@ -132,28 +133,6 @@ def register_routes(app: Flask) -> None:
         except Exception as e:
             logger.exception("\t- Failed to create browser session")
             return jsonify({"error": str(e)}), 500
-
-    def get_chromium_major_version() -> int | None:
-        """Retrieve the major version of Chromium.
-
-        Executes '/usr/bin/chromium --version' to get the full Chromium version, usually in the form: 'Chromium 144.0.7559.96'. We then parse out
-        '144' as the major version.
-
-        Returns:
-            The major version of the installed Chromium application
-        """
-        try:
-            result: subprocess.CompletedProcess[str] = subprocess.run(
-                ["/usr/bin/chromium", "--version"],
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-
-            version_str: str = result.stdout.strip().split()[1]
-            return int(version_str.split(".", maxsplit=1)[0])
-        except (FileNotFoundError, subprocess.CalledProcessError, IndexError, ValueError):
-            return None
 
     @app.route("/close", methods=["POST"])
     def close_browser_session() -> tuple[Response, int]:
