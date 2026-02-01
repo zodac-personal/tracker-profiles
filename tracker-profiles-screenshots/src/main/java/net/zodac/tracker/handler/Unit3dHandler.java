@@ -34,6 +34,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
+@TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
 @TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 public class Unit3dHandler extends AbstractTrackerHandler {

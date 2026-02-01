@@ -83,6 +83,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [OnlyEncodes](https://onlyencodes.cc/)            |
 | [Orpheus](https://orpheus.network/)               |
 | [PixelCove](https://www.pixelcove.me/)            |
+| [PolishTorrent](https://polishtorrent.top/)       |
 | [PornBay](https://pornbay.org/)                   |
 | [Redacted](https://redacted.sh/)                  |
 | [ReelFlix](https://reelflix.cc/)                  |
