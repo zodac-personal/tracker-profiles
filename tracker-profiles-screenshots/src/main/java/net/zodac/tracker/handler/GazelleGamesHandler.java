@@ -75,11 +75,6 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
-    @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email

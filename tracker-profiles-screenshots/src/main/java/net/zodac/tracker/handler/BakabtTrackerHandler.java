@@ -61,11 +61,6 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
-    @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//table[contains(@class, 'userstats')]//tr[3]/td[2]/a[1]") // Email

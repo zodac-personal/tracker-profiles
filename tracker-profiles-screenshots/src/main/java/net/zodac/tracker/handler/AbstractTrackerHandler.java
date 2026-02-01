@@ -302,7 +302,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      * @see ScriptExecutor#highlightElement(WebElement)
      */
-    // TODO: Remove this and just prompt user to click the button themselves?
     protected void manualCheckAfterLoginClick(final String trackerName) {
         // Do nothing by default
     }
@@ -350,8 +349,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return the profile page {@link By} selector
      */
-    protected abstract By profilePageSelector();
-    // TODO: Use this as default: return By.xpath("//a[contains(@class, 'username')]");
+    protected By profilePageSelector() {
+        return By.xpath("//a[contains(@class, 'username')]");
+    }
 
     /**
      * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and

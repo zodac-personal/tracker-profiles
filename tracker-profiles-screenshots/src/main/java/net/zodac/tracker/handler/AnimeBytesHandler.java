@@ -54,11 +54,6 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         return By.id("content");
     }
 
-    @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
     /**
      * {@inheritDoc}
      *

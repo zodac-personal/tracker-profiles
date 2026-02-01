@@ -67,11 +67,6 @@ public class MoreThanTvHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
-    @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
             By.xpath("//ul[contains(@class, 'stats')]/li[3]/a[1]") // Email

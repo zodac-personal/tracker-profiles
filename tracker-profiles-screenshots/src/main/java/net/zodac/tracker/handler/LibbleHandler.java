@@ -60,11 +60,6 @@ public class LibbleHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
-    @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("header"));
 

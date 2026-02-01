@@ -58,11 +58,6 @@ public class NebulanceHandler extends AbstractTrackerHandler {
         return By.id("major_stats_left");
     }
 
-    @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
     /**
      * {@inheritDoc}
      *

@@ -67,11 +67,6 @@ public class CathodeRayTubeHandler extends AbstractTrackerHandler {
         return By.id("stats_block");
     }
 
-    @Override
-    protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
-    }
-
     /**
      * {@inheritDoc}
      *
