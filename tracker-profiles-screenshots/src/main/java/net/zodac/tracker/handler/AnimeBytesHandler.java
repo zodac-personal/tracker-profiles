@@ -67,7 +67,6 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
-        // TODO: Create a postLogoutAlert method for impacted trackers
         // After clicking logout, a confirmation box appears - find and click 'Yes'
         final By logoutConfirmationSelector = By.xpath("//input[@name='yes'][@type='submit']");
         scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, DEFAULT_WAIT_FOR_TRANSITIONS);

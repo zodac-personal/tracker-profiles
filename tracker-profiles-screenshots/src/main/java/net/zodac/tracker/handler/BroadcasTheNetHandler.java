@@ -25,11 +25,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code BroadcasThe.Net} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code BroadcasThe.Net} tracker.
  */
-//TODO: GazelleHandler?
 @TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.CLOUDFLARE_CHECK, url = "https://broadcasthe.net/")
-public class BroadcasTheNetHandler extends AbstractTrackerHandler {
+public class BroadcasTheNetHandler extends GazelleHandler {
 
     /**
      * Default constructor.
@@ -49,16 +48,6 @@ public class BroadcasTheNetHandler extends AbstractTrackerHandler {
     @Override
     protected By cloudflareSelector() {
         return DEFAULT_CLOUDFLARE_SELECTOR;
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo_username");
     }
 
     /**
