@@ -39,7 +39,6 @@ public class UploadCxHandler extends Unit3dHandler {
         super(driver, trackerUrls);
     }
 
-
     @Override
     protected By cloudflareSelector() {
         return By.id("challenge-container");
