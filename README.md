@@ -142,7 +142,8 @@ The application is run using Docker, and below are the commands to run the `late
 <table>
 <tr>
 <td>
-<h3>Debian</h3>
+
+#### Debian
 
 ```bash
 docker run \
@@ -167,9 +168,8 @@ docker run \
 
 </td>
 <td>
-<h3>Windows</h3>
 
-I use [Git Bash](https://git-scm.com/install/windows) to run commands, so I set `MSYS_NO_PATHCONV`.
+#### Windows
 
 ```bash
 MSYS_NO_PATHCONV=1 docker run \

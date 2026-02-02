@@ -25,7 +25,10 @@
     "allowed_elements": [
       "details",
       "img",
-      "summary"
+      "summary",
+      "table",
+      "td",
+      "tr"
     ]
   },
   "MD035": {
