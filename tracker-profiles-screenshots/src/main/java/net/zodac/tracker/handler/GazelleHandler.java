@@ -30,6 +30,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Common implementation of {@link AbstractTrackerHandler} for {@code Gazelle}-based trackers.
  */
 @CommonTrackerHandler("Gazelle")
+@TrackerHandler(name = "DICMusic", url = "https://dicmusic.com/")
 @TrackerHandler(name = "Redacted", url = "https://redacted.sh/")
 @TrackerHandler(name = "SecretCinema", url = "https://secret-cinema.pw/")
 @TrackerHandler(name = "UHDBits", url = "https://uhdbits.org/")
@@ -58,7 +59,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("userinfo_username");
+        return By.id("userinfo");
     }
 
     @Override
