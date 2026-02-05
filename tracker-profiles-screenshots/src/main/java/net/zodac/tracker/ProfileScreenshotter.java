@@ -18,6 +18,7 @@
 package net.zodac.tracker;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -136,6 +137,7 @@ public final class ProfileScreenshotter {
         } else {
             final String trackersPlural = unsuccessfulTrackers.size() == 1 ? "" : "s";
             LOGGER.warn("");
+            // TODO: Print these by type
             LOGGER.warn("Failures for following tracker{}:", trackersPlural);
             for (final String unsuccessfulTracker : unsuccessfulTrackers) {
                 LOGGER.warn("\t- {}", unsuccessfulTracker);
@@ -205,6 +207,10 @@ public final class ProfileScreenshotter {
         } catch (final DriverAttachException e) {
             LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerDefinition.name(), e);
             LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerDefinition.name());
+            return false;
+        } catch (final FileNotFoundException e) {
+            LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerDefinition.name());
+            LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerDefinition.name(), e.getMessage());
             return false;
         } catch (final NoSuchElementException e) {
             LOGGER.debug("\t- No implementation for tracker '{}'", trackerDefinition.name(), e);
