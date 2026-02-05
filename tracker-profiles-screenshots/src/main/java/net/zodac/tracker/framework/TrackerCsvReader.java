@@ -23,10 +23,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.exception.InvalidCsvInputException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -41,7 +43,7 @@ public final class TrackerCsvReader {
     private static final CSVFormat DEFAULT_FORMAT = CSVFormat.DEFAULT
         .builder()
         .setHeader(CSV_HEADERS)
-        .setSkipHeaderRecord(true)
+        .setSkipHeaderRecord(false)
         .setCommentMarker(CONFIG.csvCommentSymbol())
         .get();
 
@@ -57,14 +59,60 @@ public final class TrackerCsvReader {
      * @see TrackerDefinition#fromCsv(CSVRecord)
      */
     public static List<TrackerDefinition> readTrackerInfo() throws IOException {
+        final Path csvPath = CONFIG.trackerInputFilePath();
+        validateFilePath(csvPath);
+
         try (final InputStream inputStream = Files.newInputStream(CONFIG.trackerInputFilePath());
              final Reader reader = new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
              final CSVParser csvParser = CSVParser.builder().setReader(reader).setFormat(DEFAULT_FORMAT).get()
         ) {
-            return csvParser
+            // Ensure file isn't empty
+            final List<CSVRecord> records = csvParser.getRecords();
+            validateCsvFileContent(records, csvPath);
+
+            return records
                 .stream()
+                .skip(1) // Skip header row
                 .map(TrackerDefinition::fromCsv)
                 .toList();
         }
+    }
+
+    private static void validateFilePath(final Path csvPath) {
+        if (!Files.exists(csvPath)) {
+            throw new InvalidCsvInputException(String.format("Tracker CSV file '%s' does not exist", csvPath.toAbsolutePath()));
+        }
+
+        if (!Files.isRegularFile(csvPath)) {
+            throw new InvalidCsvInputException(String.format("Tracker CSV path '%s' is not a file", csvPath.toAbsolutePath()));
+        }
+    }
+
+    private static void validateCsvFileContent(final List<CSVRecord> records, final Path csvPath) {
+        if (records.isEmpty()) {
+            throw new InvalidCsvInputException(String.format("CSV file '%s' is empty", csvPath.toAbsolutePath()));
+        }
+
+        // Validate header row
+        final CSVRecord firstRecord = records.getFirst();
+        if (!isHeaderRow(firstRecord)) {
+            throw new InvalidCsvInputException(
+                String.format("CSV header row in '%s' is missing or commented out, expected: '%s'", csvPath.toAbsolutePath(),
+                    String.join(", ", CSV_HEADERS)));
+        }
+    }
+
+    private static boolean isHeaderRow(final CSVRecord record) {
+        if (record.size() != CSV_HEADERS.length) {
+            return false;
+        }
+
+        for (int i = 0; i < CSV_HEADERS.length; i++) {
+            if (!CSV_HEADERS[i].equalsIgnoreCase(record.get(i).trim())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
