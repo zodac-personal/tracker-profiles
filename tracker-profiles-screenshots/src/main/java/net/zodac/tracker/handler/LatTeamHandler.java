@@ -17,8 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -41,12 +51,13 @@ public class LatTeamHandler extends Unit3dHandler {
 
     @Override
     protected By profilePageSelector() {
-        // Click the nav bar to make the profile button interactable
-        final By profileParentSelector = By.xpath("//span[contains(@class, 'user-sidebar__toggle-label')]");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
-
-        return By.xpath("//nav[contains(@class, 'user-sidebar__nav')]/ul[1]/li[1]/a[1]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(NamedHtmlElement.of("nav"), withClass("user-sidebar__nav"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     /**
@@ -60,11 +71,25 @@ public class LatTeamHandler extends Unit3dHandler {
      */
     @Override
     protected By logoutButtonSelector() {
-        // Click the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//span[contains(@class, 'user-sidebar__toggle-label')]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(button, withClass("user-sidebar__menu-link--logout"))
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link LatTeamHandler}, there is a different XPath query needed to open the user dropdown menu than other UNIT3D-based trackers.
+     */
+    @Override
+    protected void openUserDropdownMenu() {
+        // Click the nav bar to make the profile/logout button interactable
+        final By logoutParentSelector = XpathBuilder
+            .from(span, withClass("user-sidebar__toggle-label"))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
-
-        return By.xpath("//button[contains(@class, 'user-sidebar__menu-link--logout')]");
     }
 }

@@ -17,8 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -51,7 +61,9 @@ public class NebulanceHandler extends LuminanceHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -75,6 +87,11 @@ public class NebulanceHandler extends LuminanceHandler {
 
     @Override
     protected By passkeyElementSelector() {
-        return By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[7]");
+        return XpathBuilder
+            .from(div, withClass("sidebar"))
+            .child(div, atIndex(8))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(7))
+            .build();
     }
 }

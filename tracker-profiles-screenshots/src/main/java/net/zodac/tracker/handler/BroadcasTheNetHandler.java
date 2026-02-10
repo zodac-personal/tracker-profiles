@@ -17,10 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -43,7 +51,10 @@ public class BroadcasTheNetHandler extends GazelleHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/a[2]");
+        return XpathBuilder
+            .from(div, withId("logo"))
+            .child(a, atIndex(2))
+            .build();
     }
 
     @Override
@@ -64,7 +75,13 @@ public class BroadcasTheNetHandler extends GazelleHandler {
         driver.navigate().refresh();
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
-        final By infoTabSelector = By.xpath("//div[@id='slider']/div[1]/ul[1]/li[2]/a[1]");
+        final By infoTabSelector = XpathBuilder
+            .from(div, withId("slider"))
+            .child(div, atIndex(1))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
+            .build();
         final WebElement infoTabLink = driver.findElement(infoTabSelector);
         clickButton(infoTabLink);
 
@@ -79,6 +96,10 @@ public class BroadcasTheNetHandler extends GazelleHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//ul[@id='userinfo_username']/li[3]/a[1]");
+        return XpathBuilder
+            .from(ul, withId("userinfo_username"))
+            .child(li, atIndex(3))
+            .child(a, atIndex(1))
+            .build();
     }
 }

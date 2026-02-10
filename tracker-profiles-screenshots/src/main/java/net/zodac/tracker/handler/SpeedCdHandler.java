@@ -17,10 +17,19 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+
 import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -49,23 +58,35 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username']");
+        return XpathBuilder
+            .from(input, withName("username"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
         // The password field doesn't load until the username is entered and the 'Next' button is clicked
-        final By usernameNextButtonSelector = By.xpath("//form[contains(@class, 'login')][1]/div[2]/input[1]");
+        final By usernameNextButtonSelector = XpathBuilder
+            .from(form, withClass("login"), atIndex(1))
+            .child(div, atIndex(2))
+            .child(input, atIndex(1))
+            .build();
         final WebElement usernameNextButton = driver.findElement(usernameNextButtonSelector);
         clickButton(usernameNextButton);
         ScriptExecutor.explicitWait(Duration.ofSeconds(2L));
 
-        return By.xpath("//input[@name='pwd']");
+        return XpathBuilder
+            .from(input, withName("pwd"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//form[contains(@class, 'login')][2]/div[2]/input[1]");
+        return XpathBuilder
+            .from(form, withClass("login"), atIndex(2))
+            .child(div, atIndex(2))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
@@ -75,16 +96,16 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'tSta')]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("tSta"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//input[contains(@class, 'logOut')]");
-    }
-
-    @Override
-    protected By postLogoutElementSelector() {
-        return usernameFieldSelector();
+        return XpathBuilder
+            .from(input, withClass("logOut"))
+            .build();
     }
 }

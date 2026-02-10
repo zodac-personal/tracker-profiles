@@ -17,12 +17,30 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -48,7 +66,12 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='navbar']/ul[2]/li[1]/a[1]");
+        return XpathBuilder
+            .from(div, withId("navbar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
@@ -78,14 +101,22 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//input[@name='captcha']/ancestor::div[1]/div[1]/img[1]"));
+        final By captchaSelector = XpathBuilder
+            .from(input, withName("captcha"))
+            .parent(div)
+            .child(div, atIndex(1))
+            .child(img, atIndex(1))
+            .build();
+        final WebElement captchaElement = driver.findElement(captchaSelector);
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit']");
+        return XpathBuilder
+            .from(input, withType("submit"))
+            .build();
     }
 
     @Override
@@ -95,19 +126,34 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/ul[1]/li[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("ratio-bar"))
+            .child(div, atIndex(1))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table/tbody[1]/tr/td[2]")
+            // Email
+            XpathBuilder
+                .from(table)
+                .child(tbody, atIndex(1))
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     public boolean hasFixedHeader() {
-        final WebElement headerElement = driver.findElement(By.xpath("//nav[contains(@class, 'navbar-fixed-top')]"));
+        final By headerSelector = XpathBuilder
+            .from(NamedHtmlElement.of("nav"), withClass("navbar-fixed-top"))
+            .build();
+        final WebElement headerElement = driver.findElement(headerSelector);
         scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
@@ -115,10 +161,20 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[@id='navbar']/ul[2]/li[3]");
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withClass("navbar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(3))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//div[@id='navbar']/ul[2]/li[3]/ul[1]/li[16]");
+        return XpathBuilder
+            .from(div, withClass("navbar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(3))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(16))
+            .build();
     }
 }

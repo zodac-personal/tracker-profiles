@@ -17,10 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -50,7 +63,11 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//form[@id='login-form']/div[1]/button[1]");
+        return XpathBuilder
+            .from(form, withId("login-form"))
+            .child(div, atIndex(1))
+            .child(button, atIndex(1))
+            .build();
     }
 
     @Override
@@ -60,7 +77,11 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@id='Statusdiv']/div[1]/a[1]");
+        return XpathBuilder
+            .from(div, withId("Statusdiv"))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     /**
@@ -76,7 +97,14 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[contains(@class, 'main')]//table[1]/tbody[1]/tr[4]/td[2]"));
+        final By passkeySelector = XpathBuilder
+            .from(table, withClass("main"))
+            .descendant(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(4))
+            .child(td, atIndex(2))
+            .build();
+        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
         scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -85,12 +113,22 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table/tbody/tr/td[2]") // Email
+            // Email
+            XpathBuilder
+                .from(table)
+                .child(tbody, atIndex(1))
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[@id='Statusdiv']/div[1]/a[2]");
+        return XpathBuilder
+            .from(div, withId("Statusdiv"))
+            .child(div, atIndex(1))
+            .child(a, atIndex(2))
+            .build();
     }
 }

@@ -17,11 +17,26 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -47,22 +62,35 @@ public class CgPeersHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//ul[contains(@class, 'nav-list')]/li[1]/a[1]");
+        return XpathBuilder
+            .from(ul, withClass("nav-list"))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By cloudflareSelector() {
-        return By.xpath("//div[contains(@class, 'cf-turnstile')]/div[1]");
+        return XpathBuilder
+            .from(div, withClass("cf-turnstile"))
+            .child(div, atIndex(1))
+            .build();
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']/input[1]");
+        return XpathBuilder
+            .from(div, withId("username"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']/input[1]");
+        return XpathBuilder
+            .from(div, withId("password"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
@@ -90,7 +118,10 @@ public class CgPeersHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement selectionElement = driver.findElement(By.xpath("//input[contains(@class, 'form-input')][@name='code']"));
+        final By selectionSelector = XpathBuilder
+            .from(input, withClass("form-input"), withName("code"))
+            .build();
+        final WebElement selectionElement = driver.findElement(selectionSelector);
         scriptExecutor.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Enter the 2FA code and click the 'Verify Code' button");
 
@@ -112,28 +143,45 @@ public class CgPeersHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // Click the user dropdown menu bar to make the profile button interactable
-        final By profileParentSelector = By.id("userDropdownTrigger");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
-
-        return By.xpath("//div[contains(@class, 'dropdown-quick-actions-grid')]/a[1]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(div, withClass("dropdown-quick-actions-grid"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li") // Email
+            // Email
+            XpathBuilder
+                .from(ul, withClass("stats"))
+                .child(li)
+                .build(),
+            // IP addresses
+            XpathBuilder
+                .from(table, withClass("cgp-table-main"))
+                .child(tbody)
+                .child(tr, atIndex(2))
+                .child(td, atIndex(2))
+                .child(a)
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        // Click the user dropdown menu bar to make the logout button interactable
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(div, withClass("dropdown-quick-actions-grid"))
+            .child(a, atIndex(6))
+            .build();
+    }
+
+    private void openUserDropdownMenu() {
+        // Click the user dropdown menu bar to make the profile/logout button interactable
         final By profileParentSelector = By.id("userDropdownTrigger");
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
-
-        return By.xpath("//div[contains(@class, 'dropdown-quick-actions-grid')]/a[6]");
     }
 }

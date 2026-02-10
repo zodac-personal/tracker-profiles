@@ -17,8 +17,12 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -48,6 +52,8 @@ public class DarkPeersHandler extends Unit3dHandler {
      */
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(@class, 'login-btn')]");
+        return XpathBuilder
+            .from(button, withClass("login-btn"))
+            .build();
     }
 }

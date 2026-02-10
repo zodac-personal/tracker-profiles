@@ -17,12 +17,26 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -56,12 +70,16 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='uname'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("uname"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     /**
@@ -79,10 +97,18 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        final WebElement twoFactorPasscodeElement = driver.findElement(By.xpath("//input[@name='twostep_code'][@type='number']/ancestor::td[1]"));
+        final By twoFactorPasscodeSelector = XpathBuilder
+            .from(input, withName("twostep_code"), withType("number"))
+            .parent(td)
+            .build();
+        final WebElement twoFactorPasscodeElement = driver.findElement(twoFactorPasscodeSelector);
         scriptExecutor.highlightElement(twoFactorPasscodeElement);
 
-        final WebElement captchaTextElement = driver.findElement(By.xpath("//div[contains(@class, 'captchaIntro')]//strong[1]"));
+        final By captchaSelector = XpathBuilder
+            .from(div, withClass("captchaIntro"))
+            .descendant(NamedHtmlElement.of("strong"), atIndex(1))
+            .build();
+        final WebElement captchaTextElement = driver.findElement(captchaSelector);
         LOGGER.info("\t\t >>> Waiting for user to select the '{}' image, for {} seconds", captchaTextElement.getText(),
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
@@ -95,7 +121,9 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit']");
+        return XpathBuilder
+            .from(input, withType("submit"))
+            .build();
     }
 
     @Override
@@ -105,7 +133,11 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'curuser-stats')][1]/b[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("curuser-stats"), atIndex(1))
+            .child(NamedHtmlElement.of("b"), atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
@@ -126,7 +158,13 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//tr[@id='seclog']/ancestor::tbody[1]/tr[4]/td[2]"));
+        final By passkeySelector = XpathBuilder
+            .from(tr, withId("seclog"))
+            .parent(tbody)
+            .child(tr, atIndex(4))
+            .child(td, atIndex(2))
+            .build();
+        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
         scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -135,13 +173,26 @@ public class HdBitsHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//td[contains(@class, 'heading')]/ancestor::tr[1]/td[2]"), // IP address
-            By.xpath("//tr[@id='seclog']//tr/td[2]") // IP history
+            // IP address
+            XpathBuilder
+                .from(td, withClass("heading"))
+                .parent(tr)
+                .child(td, atIndex(2))
+                .build(),
+            // IP history
+            XpathBuilder
+                .from(tr, withId("seclog"))
+                .descendant(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[contains(@class, 'curuser-stats')][1]/a[2]");
+        return XpathBuilder
+            .from(div, withClass("curuser-stats"), atIndex(1))
+            .child(a, atIndex(2))
+            .build();
     }
 }

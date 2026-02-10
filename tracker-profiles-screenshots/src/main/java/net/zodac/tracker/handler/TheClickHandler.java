@@ -17,6 +17,19 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +37,8 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -49,12 +64,16 @@ public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     /**
@@ -74,24 +93,35 @@ public class TheClickHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to solve the captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//div[contains(@class, 'h-captcha')]"));
+        final By captchaSelector = XpathBuilder
+            .from(div, withClass("h-captcha"))
+            .build();
+        final WebElement captchaElement = driver.findElement(captchaSelector);
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit']");
+        return XpathBuilder
+            .from(input, withType("submit"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//span[contains(@class, 'statuslink')]");
+        return XpathBuilder
+            .from(span, withClass("statuslink"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//span[contains(@class, 'statuslink')]/b[1]/a[1]");
+        return XpathBuilder
+            .from(span, withClass("statuslink"))
+            .child(NamedHtmlElement.of("b"), atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
@@ -102,12 +132,23 @@ public class TheClickHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//td[contains(@class, 'embedded')]/table/tbody/tr/td[2]") // IP address
+            // IP address
+            XpathBuilder
+                .from(td, withClass("embedded"))
+                .child(table)
+                .child(tbody)
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[contains(@class, 'statuslink')]/b[1]/a[2]");
+        return XpathBuilder
+            .from(span, withClass("statuslink"))
+            .child(NamedHtmlElement.of("b"), atIndex(1))
+            .child(a, atIndex(2))
+            .build();
     }
 }

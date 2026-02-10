@@ -17,9 +17,26 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -42,28 +59,43 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//form[@id='loginForm']/button[1]");
+        return XpathBuilder
+            .from(form, withId("loginForm"))
+            .child(button, atIndex(1))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'stats')]");
+        return XpathBuilder
+            .from(div, withClass("stats"))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'userstats')]//tr[3]/td[2]/a[1]") // Email
+            // Email
+            XpathBuilder
+                .from(table, withClass("userstats"))
+                .descendant(tr, atIndex(3))
+                .descendant(td, atIndex(2))
+                .descendant(a, atIndex(1))
+                .build()
         );
     }
 
@@ -73,6 +105,11 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(profilePageSelector());
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//li[contains(@class, 'welcomeback')]/ul[1]/li[3]/a[1]");
+        return XpathBuilder
+            .from(li, withClass("welcomeback"))
+            .descendant(ul, atIndex(1))
+            .descendant(li, atIndex(3))
+            .descendant(a, atIndex(1))
+            .build();
     }
 }

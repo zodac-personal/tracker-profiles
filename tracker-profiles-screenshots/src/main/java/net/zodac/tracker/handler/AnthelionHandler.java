@@ -17,18 +17,24 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code Anthelion} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code Anthelion} tracker.
  */
 @TrackerHandler(name = "Anthelion", url = "https://anthelion.me/")
-public class AnthelionHandler extends AbstractTrackerHandler {
+public class AnthelionHandler extends GazelleHandler {
 
     /**
      * Default constructor.
@@ -41,21 +47,9 @@ public class AnthelionHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit'][@name='login']");
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("shoutbox");
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email
-            By.xpath("//div[@id='footer']//span") // Footer with last used IP address
-        );
+    @Nullable
+    protected By loginPageSelector() {
+        return null;
     }
 
     @Override
@@ -65,6 +59,9 @@ public class AnthelionHandler extends AbstractTrackerHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//div[@id='user_menu']//a[2]");
+        return XpathBuilder
+            .from(div, withId("user_menu"))
+            .child(a, atIndex(2))
+            .build();
     }
 }

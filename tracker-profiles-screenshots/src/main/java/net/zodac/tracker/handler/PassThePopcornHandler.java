@@ -17,6 +17,14 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -24,6 +32,7 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -94,19 +103,34 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//li[@id='nav_userinfo']/a[1]");
+        return XpathBuilder
+            .from(li, withId("nav_userinfo"))
+                .child(a, atIndex(1))
+                .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//div[@id='content']//ul[contains(@class, 'list')]//a"), // Email
-            By.xpath("//div[@id='footer']//a") // Footer with last used IP address
+            // Email
+            XpathBuilder
+                .from(div, withId("content"))
+                .descendant(ul, withClass("list"))
+                .descendant(a)
+                .build(),
+            // Footer with last used IP address
+            XpathBuilder
+                .from(div, withId("footer"))
+                .descendant(a)
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']/a[1]");
+        return XpathBuilder
+            .from(li, withId("nav_logout"))
+            .child(a, atIndex(1))
+            .build();
     }
 }

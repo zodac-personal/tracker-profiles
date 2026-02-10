@@ -17,12 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.ProfileScreenshotter;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +54,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * The default {@link By} selector for the Cloudflare element to be clicked, if a tracker has a Cloudflare verification check.
      */
-    protected static final By DEFAULT_CLOUDFLARE_SELECTOR = By.xpath("//div[contains(@class, 'main-content')]//div[1]");
+    protected static final By DEFAULT_CLOUDFLARE_SELECTOR = XpathBuilder
+        .from(div, withClass("main-content"))
+        .descendant(div, atIndex(1))
+        .build();
 
     /**
      * The default wait {@link Duration} when waiting for a web page load.
@@ -131,6 +140,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
         if (unableToConnect) {
+            // TODO: This prints the CommonTrackerHandler class
             throw new IllegalStateException(
                 String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", getClass().getSimpleName(), trackerUrls));
         }
@@ -350,7 +360,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the profile page {@link By} selector
      */
     protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'username')]");
+        return XpathBuilder
+            .from(a, withClass("username"))
+            .build();
     }
 
     /**

@@ -17,9 +17,17 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -46,7 +54,12 @@ public class EmporniumHandler extends LuminanceHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='menu']/ul[1]/li[2]/a[1]");
+        return XpathBuilder
+            .from(div, withId("menu"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override

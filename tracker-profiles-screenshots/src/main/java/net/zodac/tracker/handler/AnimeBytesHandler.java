@@ -17,14 +17,26 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code AnimeBytes} tracker.
+ * +
  */
 @TrackerHandler(name = "AnimeBytes", url = "https://animebytes.tv/")
 public class AnimeBytesHandler extends AbstractTrackerHandler {
@@ -46,7 +58,9 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -68,7 +82,9 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         clickButton(logoutButton);
 
         // After clicking logout, a confirmation box appears - find and click 'Yes'
-        final By logoutConfirmationSelector = By.xpath("//input[@name='yes'][@type='submit']");
+        final By logoutConfirmationSelector = XpathBuilder
+            .from(input, withName("yes"), withType("submit"))
+            .build();
         scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, DEFAULT_WAIT_FOR_TRANSITIONS);
         final WebElement logoutConfirmation = driver.findElement(logoutConfirmationSelector);
         clickButton(logoutConfirmation);
@@ -80,10 +96,18 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//li[@id='username_menu']/span[1]");
+        final By logoutParentSelector = XpathBuilder
+            .from(li, withId("username_menu"))
+            .child(span, atIndex(1))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//li[@id='username_menu']/ul[1]/li[11]/a[1]");
+        return XpathBuilder
+            .from(li, withId("username_menu"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(11))
+            .child(a, atIndex(1))
+            .build();
     }
 }

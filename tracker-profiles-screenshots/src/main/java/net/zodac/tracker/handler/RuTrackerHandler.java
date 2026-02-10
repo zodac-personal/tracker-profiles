@@ -17,9 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -45,22 +59,36 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     @Override
     public By loginPageSelector() {
         // Main page actually is not the tracker, so we navigate to the tracker link, which will prompt us to log in
-        return By.xpath("//div[@id='main-nav']/ul[1]/li[2]/a[1]");
+        return XpathBuilder
+            .from(div, withId("main-nav"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//table[contains(@class, 'forumline')]//input[@name='login_username'][@type='text']");
+        return XpathBuilder
+            .from(table, withClass("forumline"))
+            .descendant(input, withName("login_username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//table[contains(@class, 'forumline')]//input[@name='login_password'][@type='password']");
+        return XpathBuilder
+            .from(table, withClass("forumline"))
+            .descendant(input, withName("login_password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//table[contains(@class, 'forumline')]//input[@type='submit'][@name='login']");
+        return XpathBuilder
+            .from(table, withClass("forumline"))
+            .descendant(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -81,6 +109,8 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//img[contains(@class, 'log-out-icon')]");
+        return XpathBuilder
+            .from(img, withClass("log-out-icon"))
+            .build();
     }
 }

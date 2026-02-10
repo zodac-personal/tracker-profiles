@@ -17,10 +17,25 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -31,7 +46,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @CommonTrackerHandler("UNIT3D")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
-@TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
@@ -52,12 +66,16 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[contains(@class, 'auth-form__primary-button')]");
+        return XpathBuilder
+            .from(button, withClass("auth-form__primary-button"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//ul[contains(@class, 'top-nav__ratio-bar')]");
+        return XpathBuilder
+            .from(ul, withClass("top-nav__ratio-bar"))
+            .build();
     }
 
     /**
@@ -70,8 +88,10 @@ public class Unit3dHandler extends AbstractTrackerHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
-        // Cookie banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(@class, 'cookie-consent__agree')]"));
+        final By cookieSelector = XpathBuilder
+            .from(button, withClass("cookie-consent__agree"))
+            .build();
+        final WebElement cookieButton = driver.findElement(cookieSelector);
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -81,19 +101,31 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // Highlight the nav bar to make the profile button interactable
-        final By logoutParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]/ul[1]/li[1]/a[1]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(div, withClass("top-nav__right"))
+            .descendant(li, withClass("top-nav__dropdown"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
-            By.xpath("//div[contains(@class, 'key-value__group')]/dd") // Email
+            // Email
+            XpathBuilder
+                .from(div, withClass("key-value__group"))
+                .child(NamedHtmlElement.of("dd"))
+                .build(),
+            // IP address, potentially multiple entries
+            XpathBuilder
+                .from(table, withClass("data-table"))
+                .child(tbody)
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
@@ -106,11 +138,25 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(div, withClass("top-nav__right"))
+            .descendant(li, withClass("top-nav__dropdown"))
+            .descendant(form, atIndex(1))
+            .descendant(button, atIndex(1))
+            .build();
+    }
+
+    /**
+     * Opens the user's dropdown menu to expose links to the user profile and the logout button.
+     */
+    protected void openUserDropdownMenu() {
+        // Highlight the nav bar to make the profile/logout button interactable
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withClass("top-nav__right"))
+            .descendant(li, withClass("top-nav__dropdown"))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
-
-        return By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]//form[1]//button[1]");
     }
 }

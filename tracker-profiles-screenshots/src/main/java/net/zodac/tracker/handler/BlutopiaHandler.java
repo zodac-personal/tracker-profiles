@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -47,6 +48,8 @@ public class BlutopiaHandler extends Unit3dHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
+        LOGGER.trace("Waiting {} for the login pop-up to disappear", WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
         return false;
     }
 }

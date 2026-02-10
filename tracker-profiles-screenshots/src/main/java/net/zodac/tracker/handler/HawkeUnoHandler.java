@@ -17,10 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -54,29 +67,44 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // After login, a pop-up blocks the dropdown menu, so we wait a few seconds
+        LOGGER.trace("Waiting {} for the login pop-up to disappear", DEFAULT_WAIT_FOR_PAGE_LOAD);
         ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
         openUserDropdownMenu();
-        return By.xpath("//ul[contains(@class, 'dropdown-menu')]/li[1]/a[1]");
+        return XpathBuilder
+            .from(ul, withClass("dropdown-menu"))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'user-info')]/tbody/tr/td[2]") // Email
+            // Email
+            XpathBuilder
+                .from(table, withClass("user-info"))
+                .child(tbody)
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
-        return By.xpath("//ul[contains(@class, 'dropdown-menu')]//button[@type='submit']");
+        return XpathBuilder
+            .from(ul, withClass("dropdown-menu"))
+            .descendant(button, withType("submit"))
+            .build();
     }
 
-    // TODO: Make a similar method for all trackers that need a dropdown menu opened
     private void openUserDropdownMenu() {
-        // Click the user dropdown menu bar to make the profile button interactable
-        final By profileParentSelector = By.xpath("//li[contains(@class, 'hoe-header-profile')]/a[contains(@class, 'dropdown-toggle')]");
+        // Click the user dropdown menu bar to make the profile/logout button interactable
+        final By profileParentSelector = XpathBuilder
+            .from(li, withClass("hoe-header-profile"))
+            .child(a, withClass("dropdown-toggle"))
+            .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
     }

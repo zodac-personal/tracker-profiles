@@ -17,9 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -42,18 +56,30 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'ratio-bar')]");
+        return XpathBuilder
+            .from(div, withClass("ratio-bar"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/ul[1]/li[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("ratio-bar"))
+            .child(div, atIndex(1))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public boolean canBannerBeCleared() {
-        // Cookie banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//div[@id='alert_system_notice']/div[1]/button[1]"));
+        final By cookieSelector = XpathBuilder
+            .from(div, withId("alert_system_notice"))
+            .child(div, atIndex(1))
+            .child(button, atIndex(1))
+            .build();
+        final WebElement cookieButton = driver.findElement(cookieSelector);
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -64,17 +90,33 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table/tbody/tr/td[2]")
+            // Email
+            XpathBuilder
+                .from(table)
+                .child(tbody)
+                .child(tr)
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
         // Click the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//ul[contains(@class, 'right-navbar')]/li[2]/a[1]");
+        final By logoutParentSelector = XpathBuilder
+            .from(ul, withClass("right-navbar"))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//ul[contains(@class, 'right-navbar')]/li[2]/ul[1]/li[8]/a[1]");
+        return XpathBuilder
+            .from(ul, withClass("right-navbar"))
+            .child(li, atIndex(2))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(8))
+            .child(a, atIndex(1))
+            .build();
     }
 }

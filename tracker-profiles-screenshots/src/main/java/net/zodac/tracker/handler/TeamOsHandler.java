@@ -17,8 +17,20 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -45,17 +57,23 @@ public class TeamOsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='login'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit']");
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
     }
 
     /**
@@ -71,9 +89,13 @@ public class TeamOsHandler extends AbstractTrackerHandler {
         scriptExecutor.stopPageLoad();
 
         final String title = driver.getTitle();
+        // TODO: Test this again to be language agnostic
         if (title != null && title.contains("Oops! We ran into some problems.")) {
             LOGGER.debug("\t\t- Tracker admin requires updated thread to be viewed, clicking...");
-            final By threadRedirectSelector = By.xpath("//a[span[contains(normalize-space(), 'You can click here to view the thread')]]");
+            final By threadRedirectSelector = XpathBuilder
+                .from(span, withText("You can click here to view the thread"))
+                .parent(a)
+                .build();
             final WebElement threadRedirect = driver.findElement(threadRedirectSelector);
 
             scriptExecutor.removeAttribute(threadRedirect, "target"); // Stop forcing the link to open in a new tab
@@ -84,25 +106,41 @@ public class TeamOsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'focus-wrap-user')]");
+        return XpathBuilder
+            .from(div, withClass("focus-wrap-user"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNavContent')]/div[1]/div[1]/div[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("p-body-sideNavContent"))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
         navigateToUserPage();
-        return By.xpath("//div[contains(@class, 'p-body-sideNavContent')]/div[2]/div[1]/div[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("p-body-sideNavContent"))
+            .child(div, atIndex(2))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     private void navigateToUserPage() {
         ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
         // Click the nav bar to make the profile button interactable
-        final By profileParentSelector = By.xpath("//a[contains(@class, 'p-navgroup-link--user')]");
+        final By profileParentSelector = XpathBuilder
+            .from(a, withClass("p-navgroup-link--user"))
+            .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
         ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
@@ -122,6 +160,8 @@ public class TeamOsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected By postLogoutElementSelector() {
-        return By.xpath("//a[contains(@class, 'p-navgroup-link--logIn')]");
+        return XpathBuilder
+            .from(a, withClass("p-navgroup-link--logIn"))
+            .build();
     }
 }

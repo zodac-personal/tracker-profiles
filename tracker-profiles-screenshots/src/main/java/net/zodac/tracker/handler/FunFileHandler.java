@@ -17,9 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -44,12 +58,16 @@ public class FunFileHandler extends AbstractTrackerHandler {
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password']");
+        return XpathBuilder
+            .from(input, withName("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -59,7 +77,10 @@ public class FunFileHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@id='avatar']/a[1]");
+        return XpathBuilder
+            .from(div, withId("avatar"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     /**
@@ -74,7 +95,14 @@ public class FunFileHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement ipAndIspElement = driver.findElement(By.xpath("//td[contains(@class, 'mf_content')]/table[1]/tbody[1]/tr[4]/td[2]"));
+        final By ipAndIspSelector = XpathBuilder
+            .from(td, withClass("mf_content"))
+            .child(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(4))
+            .child(td, atIndex(2))
+            .build();
+        final WebElement ipAndIspElement = driver.findElement(ipAndIspSelector);
         scriptExecutor.redactInnerTextOf(ipAndIspElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -83,12 +111,27 @@ public class FunFileHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//td[contains(@class, 'mf_content')]/table[1]/tbody[1]/tr[3]/td[2]/a[1]") // Email
+            // Email
+            XpathBuilder
+                .from(td, withClass("mf_content"))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(3))
+                .child(td, atIndex(2))
+                .child(a, atIndex(1))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[contains(@class, 'mb_content')]/table[1]/tbody[1]/tr[7]/td[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("mb_content"))
+            .child(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(7))
+            .child(td, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 }

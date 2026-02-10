@@ -17,10 +17,22 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -48,13 +60,20 @@ public class GazelleHandler extends AbstractTrackerHandler {
 
     @Nullable
     @Override
-    public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
+    protected By loginPageSelector() {
+        return XpathBuilder
+            .from(div, withId("logo"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -65,9 +84,19 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a"), // Email, // Email
-            By.xpath("//div[@id='footer']//a"), // Footer with last used IP address
-            By.id("statuscont0") // IP address
+            // Email
+            XpathBuilder
+                .from(ul, withClass("stats"))
+                .child(li)
+                .child(a)
+                .build(),
+            // Footer with last used IP address
+            XpathBuilder
+                .from(div, withId("footer"))
+                .descendant(a)
+                .build(),
+            // IP address
+            By.id("statuscont0")
         );
     }
 
@@ -84,10 +113,15 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//a[contains(@class, 'username')]");
+        final By logoutParentSelector = XpathBuilder
+            .from(a, withClass("username"))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
 
-        return By.xpath("//li[@id='nav_logout']/a[1]");
+        return XpathBuilder
+            .from(li, withId("nav_logout"))
+            .child(a, atIndex(1))
+            .build();
     }
 }

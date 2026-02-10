@@ -17,8 +17,23 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -40,31 +55,49 @@ public class SportsCultHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='uid'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("uid"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='pwd'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("pwd"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit']");
+        return XpathBuilder
+            .from(input, withType("submit"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//form[@name='jump1']");
+        return XpathBuilder
+            .from(form, withName("jump1"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'mainuser')]");
+        return XpathBuilder
+            .from(a, withClass("mainuser"))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[@id='header']/table[1]//table[1]/tbody[1]/tr[1]/td[1]/a[1]");
+        return XpathBuilder
+            .from(div, withId("header"))
+            .child(table, atIndex(1))
+            .descendant(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(1))
+            .child(td, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 }

@@ -17,6 +17,19 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -24,6 +37,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -51,17 +65,23 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='submitme'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("submitme"), withType("submit"))
+            .build();
     }
 
     /**
@@ -71,7 +91,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
      * For {@link AbTorrentsHandler}, having any unread private messages means you are unable to search for any torrents. While this doesn't block
      * the profile page, we'll click the link to the inbox then open any unread private messages before continuing.
      */
-    // TODO: Make this step optional?
+    // TODO: Remove this step, no longer needed for this tracker
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
         ScriptExecutor.explicitWait(WAIT_FOR_TAB_TITLE_UPDATE); // Waiting for tab to update with unread private messages count
@@ -87,12 +107,23 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
         final WebElement messagesParent = driver.findElement(messagesParentSelector);
         scriptExecutor.moveTo(messagesParent);
 
-        final By messagesSelector = By.xpath("//li[@id='user']/ul[1]/li[1]/a[1]");
+        final By messagesSelector = XpathBuilder
+            .from(li, withId("user"))
+            .child(li, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
         final WebElement messagesElement = driver.findElement(messagesSelector);
         clickButton(messagesElement);
 
         // Assuming that all 'Unread' <span> elements have the 'has-text-red' class to indicate they are unread, and that can be used instead of text
-        final By unreadPrivateMessagesSelector = By.xpath("//tr/td[2]/span[contains(@class, 'has-text-red')]/ancestor::td[1]/a[1]");
+        final By unreadPrivateMessagesSelector = XpathBuilder
+            .from(tr)
+            .child(td, atIndex(2))
+            .child(span, withClass("has-text-red"))
+            .parent(td)
+            .child(a, atIndex(1))
+            .build();
         final List<WebElement> unreadPrivateMessages = driver.findElements(unreadPrivateMessagesSelector);
         LOGGER.debug("\t- {} unread private message{}", unreadPrivateMessages.size(), unreadPrivateMessages.size() == 1 ? "" : "s");
 
@@ -125,13 +156,21 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[@id='base_usermenu']/div[1]/span[1]/a[1]");
+        return XpathBuilder
+            .from(div, withId("base_usermenu"))
+            .child(div, atIndex(1))
+            .child(span, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//span[contains(@class, 'has-text-green')]") // Last connected IP address
+            // Last connected IP address
+            XpathBuilder
+                .from(span, withClass("has-text-green"))
+                .build()
         );
     }
 

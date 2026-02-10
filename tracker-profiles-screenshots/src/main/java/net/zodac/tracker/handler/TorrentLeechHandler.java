@@ -17,9 +17,25 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -50,33 +66,46 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit']");
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'loggedin')]");
+        return XpathBuilder
+            .from(div, withClass("loggedin"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//span[contains(@class, 'user_superuser')]");
+        return XpathBuilder
+            .from(span, withClass("user_superuser"))
+            .build();
     }
 
     @Override
     public boolean canBannerBeCleared() {
         // IP address warning banner
-        final WebElement cookieButton = driver.findElement(By.xpath("//button[contains(@class, 'close')][@title='Dismiss']"));
+        final By cookieSelector = XpathBuilder
+            .from(button, withClass("close"), withAttribute("title", "Dismiss"))
+            .build();
+        final WebElement cookieButton = driver.findElement(cookieSelector);
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
@@ -98,7 +127,13 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[contains(@class, 'profileViewTable')]/tbody[1]/tr[10]/td[2]"));
+        final By passkeySelector = XpathBuilder
+            .from(table, withClass("profileViewTable"))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(10))
+            .child(td, atIndex(2))
+            .build();
+        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
         scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -107,12 +142,20 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//table[contains(@class, 'profileViewTable')]/tbody[1]/tr[2]/td[2]")
+            // Email
+            XpathBuilder
+                .from(table, withClass("profileViewTable"))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(2))
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//i[contains(@class, 'fa-sign-out')]");
+        return XpathBuilder
+            .from(NamedHtmlElement.of("i"), withClass("fa-sign-out"))
+            .build();
     }
 }

@@ -17,10 +17,24 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -45,17 +59,25 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[contains(@class, 'inputUsernameLoginbox')]");
+        return XpathBuilder
+            .from(input, withClass("inputUsernameLoginbox"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[contains(@class, 'inputPasswordLoginbox')]");
+        return XpathBuilder
+            .from(input, withClass("inputPasswordLoginbox"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//*[@id='collapseobj_loginbox']//form[1]/input[4]");
+        return XpathBuilder
+            .from(NamedHtmlElement.any(), withId("collapseobj_loginbox"))
+            .descendant(form, atIndex(1))
+            .child(input, atIndex(4))
+            .build();
     }
 
     @Override
@@ -69,20 +91,33 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * <p>
      * Depending on the specific {@link TsSpecialEditionHandler} tracker, the <b>collapseobj_loginbox</b> HTML element is sometimes a
      * {@literal <}div{@literal >}, sometimes a {@literal <}table{@literal >}. In addition, the user profile link is sometimes a direct child if this
-     * element, or sometimes nested below other HTML elements. This general XPATH query will work for all trackers of this type.
+     * element, or sometimes nested below other HTML elements. This general XPATH query should work for all trackers of this type.
      *
      * @return the profile page {@link By} selector
      */
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//*[@id='collapseobj_loginbox']//a[1]");
+        return XpathBuilder
+            .from(NamedHtmlElement.any(), withId("collapseobj_loginbox"))
+            .descendant(a, atIndex(1))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//tbody/tr[1]/td[1]"), // Email and  IP address
-            By.xpath("//div[@id='top']/div[2]/span") // IP address in header
+            // Email and IP address
+            XpathBuilder
+                .from(tbody)
+                .child(tr, atIndex(1))
+                .child(td, atIndex(1))
+                .build(),
+            // IP address in header
+            XpathBuilder
+                .from(div, withId("top"))
+                .child(div, atIndex(2))
+                .child(span)
+                .build()
         );
     }
 
@@ -108,6 +143,11 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[@id='top']/div[2]/span[1]/a[2]");
+        return XpathBuilder
+            .from(div, withId("top"))
+            .child(div, atIndex(2))
+            .child(span, atIndex(1))
+            .child(a, atIndex(2))
+            .build();
     }
 }

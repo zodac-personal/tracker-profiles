@@ -17,9 +17,21 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -42,7 +54,12 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='topNavBar']/ul[2]/li[1]/a[1]");
+        return XpathBuilder
+            .from(div, withId("topNavBar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
@@ -52,7 +69,9 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit']");
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
     }
 
     @Override
@@ -62,12 +81,20 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'ratio-bar')]/div[1]/div[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("ratio-bar"))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     public boolean hasFixedHeader() {
-        final WebElement headerElement = driver.findElement(By.xpath("//nav[contains(@class, 'fixed-top')]"));
+        final By headerSelector = XpathBuilder
+            .from(NamedHtmlElement.of("nav"), withClass("fixed-top"))
+            .build();
+        final WebElement headerElement = driver.findElement(headerSelector);
         scriptExecutor.makeUnfixed(headerElement);
         return true;
     }
@@ -75,10 +102,20 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[@id='topNavBar']/ul[2]/li[3]");
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withId("topNavBar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(3))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
-        return By.xpath("//div[@id='topNavBar']/ul[2]/li[3]/div[1]/a[14]");
 
+        return XpathBuilder
+            .from(div, withId("topNavBar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(3))
+            .child(div, atIndex(1))
+            .child(a, atIndex(14))
+            .build();
     }
 }

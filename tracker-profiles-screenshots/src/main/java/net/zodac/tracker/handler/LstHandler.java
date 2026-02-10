@@ -17,11 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -63,7 +70,10 @@ public class LstHandler extends Unit3dHandler {
         LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement selectionElement = driver.findElement(By.xpath("//div[contains(@class, 'auth-form__text-input-group')]"));
+        final By selectionSelector = XpathBuilder
+            .from(div, withClass("auth-form__text-input-group"))
+            .build();
+        final WebElement selectionElement = driver.findElement(selectionSelector);
         scriptExecutor.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Select the correct movie and click the login button");
 
@@ -89,11 +99,9 @@ public class LstHandler extends Unit3dHandler {
      */
     @Override
     protected By profilePageSelector() {
-        final By profileParentSelector = By.xpath("//div[contains(@class, 'top-nav__right')]//li[contains(@class, 'top-nav__dropdown')]");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        scriptExecutor.moveTo(profileParent);
-
-        return By.xpath("//a[contains(@class, 'top-nav__username')]");
+        return XpathBuilder
+            .from(img, withClass("top-nav__profile-image"))
+            .build();
     }
 
     /**
@@ -102,13 +110,19 @@ public class LstHandler extends Unit3dHandler {
      * <p>
      * For {@link LstHandler}, the email is actually defined in a separate section, unlike other {@code UNIT3D}-based trackers.
      *
-     * @return the {@link By} selectors for email and IP addresses
+     * @return the {@link By} selectors for {@link LstHandler} email and super {@link #getElementsPotentiallyContainingSensitiveInformation()}
      */
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of(
-            By.xpath("//table[contains(@class, 'data-table')]/tbody/tr/td[2]"), // IP address, potentially multiple entries
-            By.xpath("//span[contains(@class, 'profile-hero__account-value--email')]") // Email
+        final Collection<By> allElements = new ArrayList<>(super.getElementsPotentiallyContainingSensitiveInformation());
+
+        allElements.add(
+            // Email
+            XpathBuilder
+                .from(span, withClass("profile-hero__account-value--email"))
+                .build()
         );
+
+        return allElements;
     }
 }

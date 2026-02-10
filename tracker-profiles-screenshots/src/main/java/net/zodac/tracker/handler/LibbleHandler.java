@@ -17,8 +17,20 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -41,7 +53,10 @@ public class LibbleHandler extends LuminanceHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[@id='menu']/a[2]");
+        return XpathBuilder
+            .from(div, withId("menu"))
+            .child(a, atIndex(2))
+            .build();
     }
 
     @Override
@@ -56,7 +71,9 @@ public class LibbleHandler extends LuminanceHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='login'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("login"), withType("submit"))
+            .build();
     }
 
     @Override
@@ -68,11 +85,20 @@ public class LibbleHandler extends LuminanceHandler {
 
     @Override
     protected By passkeyElementSelector() {
-        return By.xpath("//div[contains(@class, 'sidebar')]/div[4]/ul[1]/li[4]");
+        return XpathBuilder
+            .from(div, withClass("sidebar"))
+            .child(div, atIndex(4))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(4))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//ul[@id='userinfo_username']/li[3]/a[1]");
+        return XpathBuilder
+            .from(ul, withId("userinfo_username"))
+            .child(li, atIndex(3))
+            .child(a, atIndex(1))
+            .build();
     }
 }

@@ -20,11 +20,13 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Kufirc} tracker.
  */
+// TODO: Doesn't need translation anymore
 @TrackerHandler(name = "Kufirc", type = TrackerType.NON_ENGLISH, url = "https://kufirc.com/")
 public class KufircHandler extends LuminanceHandler {
 
@@ -36,6 +38,11 @@ public class KufircHandler extends LuminanceHandler {
      */
     public KufircHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
         super(driver, trackerUrls);
+    }
+
+    @Override
+    protected By postLoginSelector() {
+        return By.id("userinfo_username");
     }
 
     @Override

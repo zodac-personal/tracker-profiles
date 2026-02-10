@@ -17,8 +17,20 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -40,31 +52,46 @@ public class MetalTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='username'][@type='text']");
+        return XpathBuilder
+            .from(input, withName("username"), withType("text"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@name='go'][@type='submit']");
+        return XpathBuilder
+            .from(input, withName("go"), withType("submit"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//ul[contains(@class, 'user_data')]");
+        return XpathBuilder
+            .from(ul, withClass("user_data"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//h4[contains(@class, 'nickname')]/span[1]/a[1]");
+        return XpathBuilder
+            .from(NamedHtmlElement.of("h4"), withClass("nickname"))
+            .child(span, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[contains(@class, 'logout')]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("logout"))
+            .child(a, atIndex(1))
+            .build();
     }
 }

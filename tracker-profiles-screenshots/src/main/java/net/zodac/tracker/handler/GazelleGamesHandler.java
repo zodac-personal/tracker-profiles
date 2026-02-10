@@ -17,11 +17,25 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -59,14 +73,22 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to select correct game title, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement selectionElement = driver.findElement(By.xpath("//div[@id='tdwrap']/form[1]/table[1]"));
+        final By selectionSelector = XpathBuilder
+            .from(div, withId("tdwrap"))
+            .child(form, atIndex(1))
+            .child(table, atIndex(1))
+            .build();
+        final WebElement selectionElement = driver.findElement(selectionSelector);
         scriptExecutor.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Select the correct game");
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//td[@id='login_td']/input[1]");
+        return XpathBuilder
+            .from(td, withId("login_td"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
@@ -77,8 +99,17 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//ul[contains(@class, 'stats')]/li/a[1]"), // Email
-            By.xpath("//div[@id='copyright']//span") // Footer with last used IP address
+            // Email
+            XpathBuilder
+                .from(ul, withClass("stats"))
+                .child(li)
+                .child(a, atIndex(1))
+                .build(),
+            // Footer with last used IP address
+            XpathBuilder
+                .from(div, withId("copyright"))
+                .descendant(span)
+                .build()
         );
     }
 
@@ -104,6 +135,9 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//li[@id='nav_logout']/a[1]");
+        return XpathBuilder
+            .from(li, withId("nav_logout"))
+            .child(a, atIndex(1))
+            .build();
     }
 }

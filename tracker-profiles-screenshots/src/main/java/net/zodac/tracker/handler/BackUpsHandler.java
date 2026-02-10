@@ -17,8 +17,17 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -42,7 +51,10 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[contains(@class, 'memberArea')]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("memberArea"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
@@ -52,12 +64,17 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[contains(@class, 'inputPassword')]");
+        return XpathBuilder
+            .from(input, withClass("inputPassword"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//div[@id='main']//input[@type='submit'][1]");
+        return XpathBuilder
+            .from(div, withId("main"))
+            .descendant(input, withType("submit"), atIndex(1))
+            .build();
     }
 
     /**
@@ -79,7 +96,11 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         }
 
         LOGGER.debug("\t\t- Tracker redirected to inbox due to unread private messages, manually navigating back to the home page");
-        final WebElement homePageLink = driver.findElement(By.xpath("//div[@id='menu']//a[1]"));
+        final By homePageSelector = XpathBuilder
+            .from(div, withId("menu"))
+            .descendant(a, atIndex(1))
+            .build();
+        final WebElement homePageLink = driver.findElement(homePageSelector);
         clickButton(homePageLink);
     }
 
@@ -90,6 +111,9 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);
 
-        return By.xpath("//div[contains(@class, 'qactions')]/a[2]");
+        return XpathBuilder
+            .from(div, withClass("qactions"))
+            .descendant(a, atIndex(2))
+            .build();
     }
 }

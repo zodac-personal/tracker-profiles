@@ -17,10 +17,22 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -78,7 +90,9 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@translate='LOGIN.TITLE']");
+        return XpathBuilder
+            .from(button, withAttribute("translate", "LOGIN.TITLE"))
+            .build();
     }
 
     @Override
@@ -88,7 +102,10 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//user[1]//a[1]");
+        return XpathBuilder
+            .from(NamedHtmlElement.of("user"), atIndex(1))
+            .descendant(a, atIndex(1))
+            .build();
     }
 
     /**
@@ -104,12 +121,18 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
         driver.navigate().refresh();
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
 
-        final By selector = By.xpath("//div[@id='contentContainer']//table[1]");
+        final By selector = XpathBuilder
+            .from(div, withId("contentContainer"))
+            .descendant(table, atIndex(1))
+            .descendant(td, withAttribute("translate", "FRIENDS.LAST_SEEN"))
+            .build();
         scriptExecutor.waitForElementToAppear(selector, DEFAULT_WAIT_FOR_PAGE_LOAD);
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//span[@translate='STATUS.LOG_OUT']");
+        return XpathBuilder
+            .from(span, withAttribute("translate", "STATUS.LOG_OUT"))
+            .build();
     }
 }

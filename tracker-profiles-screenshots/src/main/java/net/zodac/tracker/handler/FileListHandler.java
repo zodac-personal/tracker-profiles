@@ -17,9 +17,17 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -45,7 +53,10 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//div[contains(@class, 'login-btn')]/input[1]");
+        return XpathBuilder
+            .from(div, withClass("login-btn"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
@@ -56,11 +67,20 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//div[contains(@class, 'status_avatar')]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("status_avatar"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[contains(@class, 'statusbar')]/div[2]/div[3]/span[4]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("statusbar"))
+            .child(div, atIndex(2))
+            .child(div, atIndex(3))
+            .child(span, atIndex(4))
+            .child(a, atIndex(1))
+            .build();
     }
 }

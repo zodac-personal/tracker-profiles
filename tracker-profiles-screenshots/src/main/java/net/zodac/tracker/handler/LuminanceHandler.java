@@ -17,9 +17,18 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -45,18 +54,19 @@ public class LuminanceHandler extends GazelleHandler {
     }
 
     @Override
-    public By loginPageSelector() {
-        return By.xpath("//div[@id='logo']/ul[1]/li[2]/a[1]");
-    }
-
-    @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//div[@id='username']/input[1]");
+        return XpathBuilder
+            .from(div, withId("username"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//div[@id='password']/input[1]");
+        return XpathBuilder
+            .from(div, withId("password"))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
@@ -100,6 +110,11 @@ public class LuminanceHandler extends GazelleHandler {
      * @return the {@link By} selector for the user's passkey
      */
     protected By passkeyElementSelector() {
-        return By.xpath("//div[contains(@class, 'sidebar')]/div[8]/ul[1]/li[4]");
+        return XpathBuilder
+            .from(div, withClass("sidebar"))
+            .child(div, atIndex(8))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(4))
+            .build();
     }
 }

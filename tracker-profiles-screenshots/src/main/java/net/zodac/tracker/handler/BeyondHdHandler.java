@@ -17,11 +17,21 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
 import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -60,7 +70,11 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
 
-        final WebElement captchaElement = driver.findElement(By.xpath("//input[@id='captcha']/ancestor::div[1]"));
+        final By captchaSelector = XpathBuilder
+            .from(input, withId("captcha"))
+            .parent(div)
+            .build();
+        final WebElement captchaElement = driver.findElement(captchaSelector);
         scriptExecutor.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
@@ -72,7 +86,10 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//img[contains(@class, 'beta-image-avatar')]/ancestor::a[1]");
+        return XpathBuilder
+            .from(img, withClass("beta-image-avatar"))
+            .parent(a)
+            .build();
     }
 
     @Override
@@ -85,11 +102,17 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = By.xpath("//div[contains(@class, 'dropmenu')]");
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withClass("dropmenu"))
+            .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
         ScriptExecutor.explicitWait(Duration.ofSeconds(1L));  // Give the dropdown menu a chance to load, it is not instant
 
-        return By.xpath("//form[@id='logout-form1']/ancestor::div[1]/a[1]");
+        return XpathBuilder
+            .from(form, withId("logout-form1"))
+            .parent(div)
+            .child(a, atIndex(1))
+            .build();
     }
 }

@@ -17,8 +17,15 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -40,6 +47,10 @@ public class OrpheusHandler extends GazelleHandler {
 
     @Override
     public By loginPageSelector() {
-        return By.xpath("//div[contains(@class, 'actions')]/span[1]/a[1]");
+        return XpathBuilder
+            .from(div, withClass("actions"))
+            .child(span, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 }

@@ -17,9 +17,25 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -42,17 +58,23 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.xpath("//input[@name='email'][@type='email']");
+        return XpathBuilder
+            .from(input, withName("email"), withType("email"))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.xpath("//input[@name='password'][@type='password']");
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
     }
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//input[@type='submit']");
+        return XpathBuilder
+            .from(input, withType("submit"))
+            .build();
     }
 
     @Override
@@ -62,28 +84,42 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        // Highlight the profile menu to make the logout button interactable
-        final By profileDropDownSelector = By.id("userMenu");
-        final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
-        scriptExecutor.moveTo(profileDropDown);
-
-        return By.xpath("//a[contains(@class, 'myInfo')]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(a, withClass("myInfo"))
+            .build();
     }
 
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(
-            By.xpath("//div[contains(@class, 'blockBodyCon')]/table[1]/tbody[1]/tr[3]/td[2]") // IP Address
+            // IP Address
+            XpathBuilder
+                .from(div, withClass("blockBodyCon"))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(3))
+                .child(td, atIndex(2))
+                .build()
         );
     }
 
     @Override
     protected By logoutButtonSelector() {
-        // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = By.id("userMenu");
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(ul, withId("menu"))
+            .child(li, atIndex(2))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(15))
+            .child(a, atIndex(1))
+            .build();
+    }
 
-        return By.xpath("//ul[@id='menu']/li[2]/ul[1]/li[15]/a[1]");
+    private void openUserDropdownMenu() {
+        // Highlight the profile menu to make the profile/logout button interactable
+        final By profileDropDownSelector = By.id("userMenu");
+        final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
+        scriptExecutor.moveTo(profileDropDown);
     }
 }

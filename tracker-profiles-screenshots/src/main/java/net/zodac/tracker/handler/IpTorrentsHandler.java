@@ -17,8 +17,22 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
@@ -43,17 +57,23 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return By.xpath("//button[@type='submit']");
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
     }
 
     @Override
     protected By postLoginSelector() {
-        return By.xpath("//div[contains(@class, 'stats')]");
+        return XpathBuilder
+            .from(div, withClass("stats"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        return By.xpath("//a[contains(@class, 'uname')]");
+        return XpathBuilder
+            .from(a, withClass("uname"))
+            .build();
     }
 
     /**
@@ -83,7 +103,14 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
      */
     @Override
     public int redactElements() {
-        final WebElement passkeyValueElement = driver.findElement(By.xpath("//table[@id='body']//table[1]/tbody[1]/tr[4]/td[1]"));
+        final By passkeySelector = XpathBuilder
+            .from(table, withId("body"))
+            .descendant(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(4))
+            .child(td, atIndex(1))
+            .build();
+        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
         scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
 
         return 1 + super.redactElements();
@@ -91,6 +118,10 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        return By.xpath("//div[contains(@class, 'stats')]//form[1]/button[1]");
+        return XpathBuilder
+            .from(div, withClass("stats"))
+            .descendant(form, atIndex(1))
+            .child(button, atIndex(1))
+            .build();
     }
 }

@@ -24,7 +24,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Extension of the {@link GazelleHandler} for the {@code AlphaRatioHandler} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code AlphaRatio} tracker.
  */
 @TrackerHandler(name = "AlphaRatio", url = "https://alpharatio.cc/")
 public class AlphaRatioHandler extends GazelleHandler {

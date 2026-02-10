@@ -17,10 +17,13 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -51,10 +54,9 @@ public class SeedPoolHandler extends Unit3dHandler {
      */
     @Override
     protected By profilePageSelector() {
-        final By profileParentSelector = By.xpath("//li[contains(@class, 'top-nav__dropdown')]");
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        scriptExecutor.moveTo(profileParent);
-
-        return By.xpath("//a[contains(@class, 'top-nav__username')]");
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(a, withClass("top-nav__username"))
+            .build();
     }
 }
