@@ -72,6 +72,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [ImmortalSeed](https://immortalseed.me/)          |
 | [IPTorrents](https://iptorrents.com/)             |
 | [ItaTorrents](https://itatorrents.xyz/)           |
+| [Kufirc](https://kufirc.com/)                     |
 | [Lat-Team](https://lat-team.com/)                 |
 | [Libble](https://libble.me/)                      |
 | [Metal-Tracker](https://en.metal-tracker.com/)    |
@@ -114,7 +115,6 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [GazelleGames](https://gazellegames.net/)     | **Manual**           |
 | [Hawke-Uno](https://hawke.uno/)               | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                 | **Cloudflare-check** |
-| [Kufirc](https://kufirc.com/)                 | **Non-English**      |
 | [LST](https://lst.gg/)                        | **Manual**           |
 | [PassThePopcorn](https://passthepopcorn.me/)  | **Manual**           |
 | [PrivateHD](https://privatehd.to/)            | **Cloudflare-check** |

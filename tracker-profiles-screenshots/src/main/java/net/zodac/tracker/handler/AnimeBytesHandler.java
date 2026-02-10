@@ -36,7 +36,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code AnimeBytes} tracker.
- * +
  */
 @TrackerHandler(name = "AnimeBytes", url = "https://animebytes.tv/")
 public class AnimeBytesHandler extends AbstractTrackerHandler {
