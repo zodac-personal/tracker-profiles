@@ -19,13 +19,15 @@ import logging
 import os
 from pathlib import Path
 from threading import Lock
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 import undetected_chromedriver as uc
 from flask import Flask, Response, jsonify, request
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from .chromeoptions_config import create_chrome_options
+
+if TYPE_CHECKING:
+    from selenium.webdriver.remote.webdriver import WebDriver
 
 sessions: dict[str, WebDriver] = {}
 lock = Lock()

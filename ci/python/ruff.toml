@@ -30,7 +30,7 @@ exclude = [
 
 line-length = 150
 indent-width = 4
-target-version = "py313"
+target-version = "py314"
 
 # Test-specific ignores
 [lint.per-file-ignores]

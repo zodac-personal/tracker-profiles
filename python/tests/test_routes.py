@@ -1,12 +1,15 @@
 # SPDX-License-Identifier: 0BSD
 # Copyright (c) 2024-2026 zodac.net
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
 from flask.testing import FlaskClient
 from selenium_manager import create_app
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 HTTP_OK = 200
 

@@ -14,12 +14,12 @@ COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
 RUN mvn clean install
 
 # Stage 2: Install Python
-FROM python:3.14.2-slim AS python_builder
+FROM python:3.14.3-slim AS python_builder
 
 # BEGIN PYTHON PACKAGES
 RUN python3 -m ensurepip && \
     pip install \
-        pip=="26.0" \
+        pip=="26.0.1" \
         wheel=="0.46.3"
 # END PYTHON PACKAGES
 
@@ -69,7 +69,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="144.0.7559.109-1~deb13u1" \
+        chromium="144.0.7559.109-2~deb13u1" \
         wmctrl="1.07+git20240228.1105759-1" \
     && \
     apt-get autoremove && \
