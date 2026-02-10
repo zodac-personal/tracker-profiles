@@ -51,6 +51,7 @@ public final class DisplayUtils {
     /**
      * The {@link Duration} the program will wait for a user to enter an input.
      */
+    // TODO: Make this optional, and just allow it to run indefinitely otherwise?
     public static final Duration INPUT_WAIT_DURATION = Duration.ofMinutes(5L);
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -63,8 +64,8 @@ public final class DisplayUtils {
     private static final int DIALOG_BOX_HEIGHT = 125;
     private static final int DIALOG_BOX_WIDTH = 500;
 
-    private static final ScheduledExecutorService TIMEOUT_SCHEDULER = Executors.newSingleThreadScheduledExecutor(r -> {
-        final Thread t = new Thread(r, "dialog-timeout");
+    private static final ScheduledExecutorService TIMEOUT_SCHEDULER = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        final Thread t = new Thread(runnable, "dialog-timeout");
         t.setDaemon(true);
         return t;
     });
@@ -125,6 +126,7 @@ public final class DisplayUtils {
         return buttonPanel;
     }
 
+    // TODO: Find old code that included a timer in the window
     private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
         final var timeoutTask = TIMEOUT_SCHEDULER.schedule(
             () -> SwingUtilities.invokeLater(() -> {

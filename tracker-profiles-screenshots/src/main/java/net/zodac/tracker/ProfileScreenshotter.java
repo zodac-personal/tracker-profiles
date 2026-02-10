@@ -40,6 +40,7 @@ import net.zodac.tracker.framework.exception.BrowserClosedException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DisabledTrackerException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
+import net.zodac.tracker.framework.exception.InvalidCsvInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
@@ -156,10 +157,10 @@ public final class ProfileScreenshotter {
 
     private static int countAllEnabled(final Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
         return TrackerType.ALL_VALUES
-                .stream()
-                .filter(trackerType -> trackerType.isEnabled(trackersByType, CONFIG))
-                .mapToInt(trackerType -> trackersByType.getOrDefault(trackerType, Set.of()).size())
-                .sum();
+            .stream()
+            .filter(trackerType -> trackerType.isEnabled(trackersByType, CONFIG))
+            .mapToInt(trackerType -> trackersByType.getOrDefault(trackerType, Set.of()).size())
+            .sum();
     }
 
     private static Map<TrackerType, Set<TrackerDefinition>> getTrackers() {
@@ -181,6 +182,9 @@ public final class ProfileScreenshotter {
             }
 
             return trackersByType;
+        } catch (final InvalidCsvInputException e) {
+            LOGGER.warn("Error with CSV input file content", e);
+            return Map.of();
         } catch (final IOException e) {
             LOGGER.warn("Unable to read CSV input file", e);
             return Map.of();

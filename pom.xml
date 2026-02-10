@@ -26,6 +26,12 @@
         <skip-sonarqube>true</skip-sonarqube>
         <skip-shade>false</skip-shade>
 
+        <!-- Test Properties -->
+        <!-- All disabled by default, activated through profiles -->
+        <skip-tests>true</skip-tests>
+        <!-- Adding so Maven plugins will not copy/compile test resources -->
+        <maven.test.skip>${skip-tests}</maven.test.skip>
+
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
         <commons-csv.version>1.14.1</commons-csv.version>
@@ -37,6 +43,10 @@
         <log4j.version>2.25.3</log4j.version>
         <selenium.version>4.40.0</selenium.version>
 
+        <!-- Test 3PP Versions -->
+        <assertj-core.version>3.27.7</assertj-core.version>
+        <junit-bom.version>6.0.2</junit-bom.version>
+
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
@@ -47,6 +57,7 @@
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <!-- Linter 3PP Versions -->
@@ -192,6 +203,21 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-support</artifactId>
                 <version>${selenium.version}</version>
+            </dependency>
+
+            <!-- Test Dependencies -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -352,6 +378,20 @@
                                 </ignoreVersion>
                             </ignoreVersions>
                         </ruleSet>
+                    </configuration>
+                </plugin>
+
+                <!-- Test Execution -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+                        <skipTests>${skip-tests}</skipTests>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
                     </configuration>
                 </plugin>
 
@@ -629,6 +669,20 @@
             <properties>
                 <skip-shade>true</skip-shade>
                 <skip-linters>false</skip-linters>
+                <skip-tests>false</skip-tests>
+            </properties>
+        </profile>
+
+        <!-- Profile used to execute each module's unit testsuite (if any) -->
+        <profile>
+            <id>activate_tests</id>
+            <activation>
+                <property>
+                    <name>tests</name>
+                </property>
+            </activation>
+            <properties>
+                <skip-tests>false</skip-tests>
             </properties>
         </profile>
 

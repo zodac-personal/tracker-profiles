@@ -17,6 +17,8 @@
 
 package net.zodac.tracker.util;
 
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
+
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
@@ -26,6 +28,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import net.zodac.tracker.framework.exception.TranslationException;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -48,8 +52,8 @@ public class ScriptExecutor {
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_CONTEXT_MENU = Duration.of(500L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(200L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(250L, ChronoUnit.MILLIS);
+    private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(400L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
@@ -314,7 +318,10 @@ public class ScriptExecutor {
             // After translation, some username elements will have been incorrectly translated
             if (mistranslatedUsername != null) {
                 LOGGER.debug("Reverting mistranslated username '{}' to original '{}'", mistranslatedUsername, username);
-                final By mistranslatedElementSelector = By.xpath(String.format("//*[contains(normalize-space(), '%s')]", mistranslatedUsername));
+
+                final By mistranslatedElementSelector = XpathBuilder
+                    .from(NamedHtmlElement.any(), withText(mistranslatedUsername))
+                    .build();
                 for (final WebElement element : driver.findElements(mistranslatedElementSelector)) {
                     LOGGER.trace("Reverting element '{}'", element);
                     driver.executeScript(String.format("arguments[0].innerText = '%s'", username), element);
@@ -339,7 +346,7 @@ public class ScriptExecutor {
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(selector));
         } catch (final TimeoutException e) {
-            LOGGER.trace("Page source: {}", driver.getPageSource());
+            LOGGER.trace("Element didn't appear, page source: {}", driver.getPageSource());
             throw e;
         }
     }
@@ -358,7 +365,7 @@ public class ScriptExecutor {
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(_ -> "complete".equals(driver.executeScript("return document.readyState")));
         } catch (final TimeoutException e) {
-            LOGGER.debug(driver.getPageSource());
+            LOGGER.debug("Page didn't load, page source: {}", driver.getPageSource());
             throw e;
         }
     }

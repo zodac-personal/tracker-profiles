@@ -97,8 +97,7 @@ public final class TrackerCsvReader {
         final CSVRecord firstRecord = records.getFirst();
         if (!isHeaderRow(firstRecord)) {
             throw new InvalidCsvInputException(
-                String.format("CSV header row in '%s' is missing or commented out, expected: '%s'", csvPath.toAbsolutePath(),
-                    String.join(", ", CSV_HEADERS)));
+                String.format("CSV header row in '%s' is missing, expected: '%s'", csvPath.toAbsolutePath(), String.join(",", CSV_HEADERS)));
         }
     }
 

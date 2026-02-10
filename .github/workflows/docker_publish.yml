@@ -128,6 +128,7 @@ jobs:
           branch: master
           tags: "true"
 
+      # TODO: Add a new file RELEASE_NOTES to allow for some optional description for a release
       - name: Create GitHub Release
         if: env.has_changes == 'true'
         uses: ncipollo/release-action@v1
