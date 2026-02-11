@@ -8,6 +8,7 @@ on:
   schedule:
     # Run at 02:00 on the first of the month
     - cron: '0 2 1 * *'
+  workflow_dispatch: # allows manual trigger
 
 jobs:
   update_versions:

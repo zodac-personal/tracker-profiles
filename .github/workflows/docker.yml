@@ -9,6 +9,7 @@ on:
       - 'docker/Dockerfile'
       - 'docker/entrypoint.sh'
       - 'docker/start.sh'
+  workflow_dispatch: # allows manual trigger
 
 jobs:
   analyze:

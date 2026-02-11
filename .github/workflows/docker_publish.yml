@@ -11,6 +11,7 @@ on:
       - 'python/requirements.txt'
       - 'tracker-profiles-screenshots/**'
       - 'pom.xml'
+  workflow_dispatch: # allows manual trigger
 
 jobs:
   build-and-publish:
