@@ -38,7 +38,6 @@ import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.BrowserClosedException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
-import net.zodac.tracker.framework.exception.DisabledTrackerException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
@@ -203,10 +202,6 @@ public final class ProfileScreenshotter {
         } catch (final CancelledInputException e) {
             LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerCredential.name());
-            return false;
-        } catch (final DisabledTrackerException e) {
-            LOGGER.debug("\t- Tracker '{}' is disabled: [{}]", trackerCredential.name(), e.getMessage(), e);
-            LOGGER.warn("\t- Tracker '{}' is disabled: [{}]", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final DriverAttachException e) {
             LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name(), e);

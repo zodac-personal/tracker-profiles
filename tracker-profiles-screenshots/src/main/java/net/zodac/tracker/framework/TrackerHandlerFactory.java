@@ -28,21 +28,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import net.zodac.tracker.framework.annotation.TrackerDisabled;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandlers;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
-import net.zodac.tracker.framework.exception.DisabledTrackerException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Factory class used to create an instance of a {@link AbstractTrackerHandler}.
@@ -73,20 +68,10 @@ public final class TrackerHandlerFactory {
      * Implementations of {@link AbstractTrackerHandler} should be annotated by at least one {@link TrackerHandler}, which contains a
      * {@link TrackerHandler#name()}, which should match the input (the match is case-insensitive).
      *
-     * <p>
-     * If the {@link AbstractTrackerHandler} also has the annotation {@link TrackerDisabled}, it will be skipped.
-     *
-     * <p>
-     * A new {@link RemoteWebDriver} is created for each {@link TrackerCredential}. Once created, the size of the browser window is set to
-     * {@link ApplicationConfiguration#browserDimensions()}. If {@link ApplicationConfiguration#forceUiBrowser()} is {@code false}, then the
-     * execution will be done in the background. Otherwise, a browser window will open for each tracker, and all UI actions will be visible for
-     * debugging.
-     *
      * @param trackerName the name of the tracker for which we want a {@link AbstractTrackerHandler}
      * @return an instance of the matching {@link AbstractTrackerHandler}
-     * @throws DisabledTrackerException thrown if a {@link AbstractTrackerHandler} exists but is annotated by {@link TrackerDisabled}
-     * @throws IllegalStateException    thrown if an error occurred when instantiating the {@link AbstractTrackerHandler}
-     * @throws NoSuchElementException   thrown if no valid {@link AbstractTrackerHandler} implementation could be found
+     * @throws IllegalStateException  thrown if an error occurred when instantiating the {@link AbstractTrackerHandler}
+     * @throws NoSuchElementException thrown if no valid {@link AbstractTrackerHandler} implementation could be found
      */
     public static AbstractTrackerHandler getHandler(final String trackerName) {
         final var matchingTrackerHandlerOptional = TRACKER_HANDLER_CLASSES.stream()
@@ -103,9 +88,6 @@ public final class TrackerHandlerFactory {
 
         final var matchingTrackerHandler = matchingTrackerHandlerOptional.get();
         final Class<?> trackerHandler = matchingTrackerHandler.getKey();
-        if (trackerHandler.isAnnotationPresent(TrackerDisabled.class)) {
-            throw new DisabledTrackerException(Objects.requireNonNull(trackerHandler.getAnnotation(TrackerDisabled.class)).reason());
-        }
 
         final TrackerHandler annotation = matchingTrackerHandler.getValue();
         final TrackerDefinition trackerDefinition = TrackerDefinition.fromAnnotation(annotation);
