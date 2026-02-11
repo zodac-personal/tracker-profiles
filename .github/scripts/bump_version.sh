@@ -41,8 +41,11 @@ echo "${next_version}" >VERSION
 # Set Maven project version to next development SNAPSHOT version
 mvn versions:set -DnewVersion="${next_version}-SNAPSHOT" -DgenerateBackupPoms=false -DprocessAllModules
 
+# Clear RELEASE_NOTES for next version
+: > RELEASE_NOTES
+
 # Push changes
-git add -- VERSION pom.xml ./*/pom.xml
+git add -- RELEASE_NOTES VERSION pom.xml ./*/pom.xml
 
 if git diff --cached --quiet; then
     echo "No changes to commit"
