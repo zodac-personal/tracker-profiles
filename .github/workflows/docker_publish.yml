@@ -113,8 +113,19 @@ jobs:
         id: changelog
         run: .github/scripts/generate_changelog.sh "${{ steps.prev_tag.outputs.prev_tag }}"
 
+      - name: Build release body
+        id: release_body
+        if: env.has_changes == 'true'
+        env:
+          CHANGELOG_CONTENT: ${{ env.changelog_content }}
+        run: .github/scripts/generate_github_release_content.sh "${{ steps.version.outputs.version }}" "${{ steps.prev_tag.outputs.prev_tag }}"
+
       - name: Bump patch version in VERSION file
         run: .github/scripts/bump_version.sh "${{ steps.version.outputs.version }}"
+
+      - name: Clear RELEASE_NOTES content
+        run: |
+          > RELEASE_NOTES
 
       - name: Tag current version in git (only if Docker build succeeds)
         if: env.has_changes == 'true'
@@ -128,7 +139,6 @@ jobs:
           branch: master
           tags: "true"
 
-      # TODO: Add a new file RELEASE_NOTES to allow for some optional description for a release
       - name: Create GitHub Release
         if: env.has_changes == 'true'
         uses: ncipollo/release-action@v1
@@ -137,13 +147,7 @@ jobs:
         with:
           name: v${{ steps.version.outputs.version }}
           tag: ${{ steps.version.outputs.version }}
-          body: |
-            Docker image pushed to Docker Hub:
-            [docker pull zodac/tracker-profiles:${{ steps.version.outputs.version }}](https://hub.docker.com/r/zodac/tracker-profiles/tags)
-            
-            ## Changes since ${{ steps.prev_tag.outputs.prev_tag }}:
-            
-            ${{ env.changelog_content }}
+          body: ${{ steps.release_body.outputs.body }}
 
       - name: Summary
         if: env.has_changes == 'true'
