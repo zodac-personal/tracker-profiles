@@ -17,49 +17,26 @@
 
 package net.zodac.tracker.framework;
 
-import java.util.Locale;
-import java.util.Objects;
-import org.apache.commons.csv.CSVRecord;
+import java.util.Arrays;
+import java.util.Collection;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
 
 /**
- * Simple class to hold the information for a given tracker.
+ * Simple class providing the defintion of a tracker for this application.
  *
- * @param name     the tracker name
- * @param username the user's username
- * @param password the user's password
+ * @param name the name of the tracker, used to retrieve a {@link TrackerHandler} implementation
+ * @param type the type of the tracker, used to define the type of {@link org.openqa.selenium.remote.RemoteWebDriver} to be used
+ * @param urls the URLs to access the tracker
  */
-public record TrackerDefinition(String name, String username, String password)
-    implements Comparable<TrackerDefinition> {
+public record TrackerDefinition(String name, TrackerType type, Collection<String> urls) {
 
     /**
-     * Converts a {@link CSVRecord} from {@link TrackerCsvReader} into a {@link TrackerDefinition} instance.
+     * Static constructor using the {@link TrackerHandler} annotation.
      *
-     * @param csvRecord the {@link CSVRecord} holding a single tracker's information
-     * @return the {@link TrackerDefinition}
+     * @param trackerHandler the {@link TrackerHandler}
+     * @return the created {@link TrackerDefinition}
      */
-    public static TrackerDefinition fromCsv(final CSVRecord csvRecord) {
-        return new TrackerDefinition(
-            csvRecord.get("trackerName").trim(),
-            csvRecord.get("username").trim(),
-            csvRecord.get("password").trim()
-        );
-    }
-
-    @Override
-    public int compareTo(final TrackerDefinition other) {
-        return name.toLowerCase(Locale.getDefault()).compareTo(other.name.toLowerCase(Locale.getDefault()));
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof TrackerDefinition(final String otherName, final String otherUsername, final String otherPassword))) {
-            return false;
-        }
-        return Objects.equals(name, otherName) && Objects.equals(username, otherUsername) && Objects.equals(password, otherPassword);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, username, password);
+    public static TrackerDefinition fromAnnotation(final TrackerHandler trackerHandler) {
+        return new TrackerDefinition(trackerHandler.name(), trackerHandler.type(), Arrays.asList(trackerHandler.url()));
     }
 }

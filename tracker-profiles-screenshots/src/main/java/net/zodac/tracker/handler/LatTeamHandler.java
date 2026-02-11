@@ -25,29 +25,17 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code Lat-Team} tracker.
  */
 @TrackerHandler(name = "Lat-Team", url = "https://lat-team.com/")
 public class LatTeamHandler extends Unit3dHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public LatTeamHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By profilePageSelector() {

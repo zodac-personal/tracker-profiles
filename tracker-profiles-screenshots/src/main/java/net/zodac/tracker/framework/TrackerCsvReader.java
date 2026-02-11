@@ -52,13 +52,13 @@ public final class TrackerCsvReader {
     }
 
     /**
-     * Reads the input file {@link ApplicationConfiguration#trackerInputFilePath()}, and converts each row into a {@link TrackerDefinition}.
+     * Reads the input file {@link ApplicationConfiguration#trackerInputFilePath()}, and converts each row into a {@link TrackerCredential}.
      *
-     * @return the {@link List} of {@link TrackerDefinition}s
+     * @return the {@link List} of {@link TrackerCredential}s
      * @throws IOException thrown if there is a problem reading the file or skipping the first record
-     * @see TrackerDefinition#fromCsv(CSVRecord)
+     * @see TrackerCredential#fromCsv(CSVRecord)
      */
-    public static List<TrackerDefinition> readTrackerInfo() throws IOException {
+    public static List<TrackerCredential> readTrackerInfo() throws IOException {
         final Path csvPath = CONFIG.trackerInputFilePath();
         validateFilePath(csvPath);
 
@@ -73,7 +73,7 @@ public final class TrackerCsvReader {
             return records
                 .stream()
                 .skip(1) // Skip header row
-                .map(TrackerDefinition::fromCsv)
+                .map(TrackerCredential::fromCsv)
                 .toList();
         }
     }

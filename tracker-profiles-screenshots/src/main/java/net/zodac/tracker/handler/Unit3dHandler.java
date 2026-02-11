@@ -38,7 +38,6 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
@@ -53,16 +52,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 public class Unit3dHandler extends AbstractTrackerHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public Unit3dHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By loginButtonSelector() {

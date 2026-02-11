@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
  * Annotation used to mark an implementation of {@link net.zodac.tracker.handler.AbstractTrackerHandler} that has been implemented, but has been
  * disabled for screenshots.
  */
+// TODO: Remove this annotation, never used
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface TrackerDisabled {

@@ -280,7 +280,7 @@
                         </annotationProcessorPaths>
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
-                            <arg>-Xdoclint:all</arg>
+                            <arg>-Xdoclint:all,-missing</arg>
                             <!-- Configuration for ErrorProne -->
                             <arg>-XDcompilePolicy=simple</arg>
                             <arg>--should-stop=ifError=FLOW</arg>
@@ -523,7 +523,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
                     <configuration>
-                        <doclint>all</doclint>
+                        <doclint>all,-missing</doclint>
                         <failOnWarnings>true</failOnWarnings>
                         <quiet>true</quiet>
                         <release>${java-release}</release>

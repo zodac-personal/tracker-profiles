@@ -26,30 +26,18 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 
 import java.time.Duration;
-import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Speed.CD} tracker.
  */
 @TrackerHandler(name = "Speed.CD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://speed.cd/")
 public class SpeedCdHandler extends AbstractTrackerHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public SpeedCdHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By cloudflareSelector() {

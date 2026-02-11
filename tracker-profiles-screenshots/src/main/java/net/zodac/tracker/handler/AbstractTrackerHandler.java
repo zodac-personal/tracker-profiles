@@ -27,6 +27,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.ProfileScreenshotter;
+import net.zodac.tracker.framework.TrackerDefinition;
+import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
+import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
@@ -49,6 +53,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Since each tracker website has its own UI and own page structure, each implementation of {@link AbstractTrackerHandler} will contain the
  * tracker-specific {@code selenium} logic to perform the UI actions.
  */
+// TODO: Can we add a private no-args constructor and make this final?
 public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
@@ -56,7 +61,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     protected static final By DEFAULT_CLOUDFLARE_SELECTOR = XpathBuilder
         .from(div, withClass("main-content"))
-        .descendant(div, atIndex(1))
+        .descendant(div, atIndex(2))
         .build();
 
     /**
@@ -85,24 +90,28 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
      */
-    protected final RemoteWebDriver driver;
+    @SuppressWarnings("NullAway") // Will be set in the configure() method
+    protected RemoteWebDriver driver;
 
     /**
      * The {@link ScriptExecutor} instance to perform specific actions for each {@link AbstractTrackerHandler} implementation.
      */
-    protected final ScriptExecutor scriptExecutor;
+    @SuppressWarnings("NullAway") // Will be set in the configure() method
+    protected ScriptExecutor scriptExecutor;
 
-    private final List<String> trackerUrls;
+    @SuppressWarnings("NullAway") // Will be set in the configure() method
+    private TrackerDefinition trackerDefinition;
 
     /**
-     * Default constructor, only for implementation classes.
+     * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
+     * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker for execution, so we overwrite the default
+     * values that were already set.
      *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls all possible URLs to connect to the tracker home page
+     * @param trackerDefinition the {@link TrackerDefinition} for this {@link AbstractTrackerHandler}
      */
-    protected AbstractTrackerHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        this.driver = driver;
-        this.trackerUrls = List.copyOf(trackerUrls);
+    public void configure(final TrackerDefinition trackerDefinition) {
+        this.trackerDefinition = trackerDefinition;
+        driver = createRemoteWebDriver(trackerDefinition.type());
         scriptExecutor = new ScriptExecutor(driver);
     }
 
@@ -111,7 +120,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void openTracker() {
         boolean unableToConnect = true;
-        for (final String trackerUrl : trackerUrls) {
+        for (final String trackerUrl : trackerDefinition.urls()) {
             try {
                 LOGGER.info("\t\t- '{}'", trackerUrl);
                 driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
@@ -140,9 +149,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
         if (unableToConnect) {
-            // TODO: This prints the CommonTrackerHandler class
             throw new IllegalStateException(
-                String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", getClass().getSimpleName(), trackerUrls));
+                String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", trackerDefinition.name(), trackerDefinition.urls()));
         }
     }
 
@@ -551,5 +559,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
         ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS);
+    }
+
+    private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {
+        return trackerType == TrackerType.CLOUDFLARE_CHECK ? PythonWebDriverFactory.createDriver() : JavaWebDriverFactory.createDriver(trackerType);
     }
 }

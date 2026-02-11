@@ -23,27 +23,15 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link GazelleHandler} for the {@code Orpheus} tracker.
  */
 @TrackerHandler(name = "Orpheus", url = "https://orpheus.network/")
 public class OrpheusHandler extends GazelleHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public OrpheusHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     public By loginPageSelector() {

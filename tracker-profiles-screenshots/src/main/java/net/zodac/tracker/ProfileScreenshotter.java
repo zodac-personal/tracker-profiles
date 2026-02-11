@@ -29,8 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import net.zodac.tracker.framework.ExitState;
+import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerCsvReader;
-import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
@@ -67,7 +67,7 @@ public final class ProfileScreenshotter {
 
     /**
      * Parses the {@link ApplicationConfiguration#trackerInputFilePath()} file using {@link TrackerCsvReader}, then iterates through each
-     * {@link TrackerDefinition}. For each tracker a {@link AbstractTrackerHandler} is retrieved and used to navigate to the tracker's profile page
+     * {@link TrackerCredential}. For each tracker a {@link AbstractTrackerHandler} is retrieved and used to navigate to the tracker's profile page
      * (after logging in and any other required actions). At this point, any sensitive information is redacted, and then a screenshot is taken by
      * {@link ScreenshotTaker}, then saved in the {@link ApplicationConfiguration#outputDirectory()}.
      *
@@ -75,7 +75,7 @@ public final class ProfileScreenshotter {
      * @see ScreenshotTaker
      */
     public static ExitState executeProfileScreenshotter() {
-        final Map<TrackerType, Set<TrackerDefinition>> trackersByType = getTrackers();
+        final Map<TrackerType, Set<TrackerCredential>> trackersByType = getTrackers();
         final int numberOfTrackers = countAllEnabled(trackersByType);
         final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
 
@@ -106,12 +106,12 @@ public final class ProfileScreenshotter {
 
             LOGGER.info("");
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
-            for (final TrackerDefinition trackerDefinition : trackersByType.getOrDefault(trackerType, Set.of())) {
-                final boolean successfullyTakenScreenshot = isAbleToTakeScreenshot(trackerDefinition);
+            for (final TrackerCredential trackerCredential : trackersByType.getOrDefault(trackerType, Set.of())) {
+                final boolean successfullyTakenScreenshot = isAbleToTakeScreenshot(trackerCredential);
                 if (successfullyTakenScreenshot) {
-                    successfulTrackers.add(trackerDefinition.name());
+                    successfulTrackers.add(trackerCredential.name());
                 } else {
-                    unsuccessfulTrackers.add(trackerDefinition.name());
+                    unsuccessfulTrackers.add(trackerCredential.name());
                 }
             }
         }
@@ -147,7 +147,7 @@ public final class ProfileScreenshotter {
         }
     }
 
-    private static void printTrackersInfo(final Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
+    private static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
                 trackerType.printSummary(trackersByType, CONFIG);
@@ -155,7 +155,7 @@ public final class ProfileScreenshotter {
         }
     }
 
-    private static int countAllEnabled(final Map<TrackerType, Set<TrackerDefinition>> trackersByType) {
+    private static int countAllEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
         return TrackerType.ALL_VALUES
             .stream()
             .filter(trackerType -> trackerType.isEnabled(trackersByType, CONFIG))
@@ -163,21 +163,21 @@ public final class ProfileScreenshotter {
             .sum();
     }
 
-    private static Map<TrackerType, Set<TrackerDefinition>> getTrackers() {
+    private static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
         try {
-            final List<TrackerDefinition> trackerDefinitions = TrackerCsvReader.readTrackerInfo();
-            final Map<TrackerType, Set<TrackerDefinition>> trackersByType = new EnumMap<>(TrackerType.class);
+            final List<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
+            final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
 
-            for (final TrackerDefinition trackerDefinition : trackerDefinitions) {
-                final Optional<TrackerHandler> trackerHandler = TrackerHandlerFactory.findMatchingHandler(trackerDefinition.name());
+            for (final TrackerCredential trackerCredential : trackerCredentials) {
+                final Optional<TrackerHandler> trackerHandler = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
 
                 if (trackerHandler.isPresent()) {
                     final TrackerType trackerType = trackerHandler.get().type();
-                    final Set<TrackerDefinition> existingTrackerDefinitionsOfType = trackersByType.getOrDefault(trackerType, new TreeSet<>());
-                    existingTrackerDefinitionsOfType.add(trackerDefinition);
+                    final Set<TrackerCredential> existingTrackerDefinitionsOfType = trackersByType.getOrDefault(trackerType, new TreeSet<>());
+                    existingTrackerDefinitionsOfType.add(trackerCredential);
                     trackersByType.put(trackerType, existingTrackerDefinitionsOfType);
                 } else {
-                    LOGGER.warn("No {} implemented for tracker '{}'", AbstractTrackerHandler.class.getSimpleName(), trackerDefinition.name());
+                    LOGGER.warn("No {} implemented for tracker '{}'", AbstractTrackerHandler.class.getSimpleName(), trackerCredential.name());
                 }
             }
 
@@ -191,80 +191,80 @@ public final class ProfileScreenshotter {
         }
     }
 
-    private static boolean isAbleToTakeScreenshot(final TrackerDefinition trackerDefinition) {
+    private static boolean isAbleToTakeScreenshot(final TrackerCredential trackerCredential) {
         LOGGER.info("");
-        LOGGER.info("[{}]", trackerDefinition.name());
+        LOGGER.info("[{}]", trackerCredential.name());
 
         // TODO: Add a retry option
         // TODO: On failure, take a screenshot and add to a subdirectory
-        try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerDefinition.name())) {
-            screenshotProfile(trackerHandler, trackerDefinition);
+        try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name())) {
+            screenshotProfile(trackerHandler, trackerCredential);
             return true;
         } catch (final CancelledInputException e) {
-            LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerDefinition.name(), e);
-            LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerDefinition.name());
+            LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerCredential.name());
             return false;
         } catch (final DisabledTrackerException e) {
-            LOGGER.debug("\t- Tracker '{}' is disabled: [{}]", trackerDefinition.name(), e.getMessage(), e);
-            LOGGER.warn("\t- Tracker '{}' is disabled: [{}]", trackerDefinition.name(), e.getMessage());
+            LOGGER.debug("\t- Tracker '{}' is disabled: [{}]", trackerCredential.name(), e.getMessage(), e);
+            LOGGER.warn("\t- Tracker '{}' is disabled: [{}]", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final DriverAttachException e) {
-            LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerDefinition.name(), e);
-            LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerDefinition.name());
+            LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name());
             return false;
         } catch (final FileNotFoundException e) {
-            LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerDefinition.name());
-            LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerDefinition.name(), e.getMessage());
+            LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerCredential.name());
+            LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final NoSuchElementException e) {
-            LOGGER.debug("\t- No implementation for tracker '{}'", trackerDefinition.name(), e);
-            LOGGER.warn("\t- No implementation for tracker '{}'", trackerDefinition.name());
+            LOGGER.debug("\t- No implementation for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- No implementation for tracker '{}'", trackerCredential.name());
             return false;
         } catch (final NoUserInputException e) {
-            LOGGER.debug("\t- User provided no manual input for tracker '{}'", trackerDefinition.name(), e);
-            LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerDefinition.name());
+            LOGGER.debug("\t- User provided no manual input for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerCredential.name());
             return false;
         } catch (final TimeoutException e) {
-            LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerDefinition.name(), e);
+            LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
             if (e.getMessage() == null) {
-                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerDefinition.name());
+                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name());
             } else {
                 final String errorMessage = e.getMessage().split("\n")[0];
-                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerDefinition.name(), errorMessage);
+                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), errorMessage);
             }
             return false;
         } catch (final TranslationException e) {
-            LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerDefinition.name(), e);
-            LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerDefinition.name(), e.getMessage());
+            LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
+            LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final NoSuchSessionException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
             throw new BrowserClosedException(e);
         } catch (final Exception e) {
-            LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerDefinition.name(), e);
+            LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
             if (e.getMessage() == null) {
-                LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerDefinition.name());
+                LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name());
             } else {
                 final String errorMessage = e.getMessage().split("\n")[0];
-                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerDefinition.name(), errorMessage);
+                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), errorMessage);
             }
 
             return false;
         }
     }
 
-    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerDefinition trackerDefinition) throws IOException {
-        if (doesScreenshotExistAndSkipSelected(trackerDefinition.name())) {
+    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
+        if (doesScreenshotExistAndSkipSelected(trackerCredential.name())) {
             return;
         }
 
         LOGGER.info("\t- Opening tracker");
         trackerHandler.openTracker();
-        trackerHandler.navigateToLoginPage(trackerDefinition.name());
+        trackerHandler.navigateToLoginPage(trackerCredential.name());
 
-        LOGGER.info("\t- Logging in as '{}'", trackerDefinition.username());
-        trackerHandler.login(trackerDefinition.username(), trackerDefinition.password(), trackerDefinition.name());
+        LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
+        trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
 
         if (trackerHandler.canBannerBeCleared()) {
             LOGGER.info("\t- Banner has been cleared");
@@ -287,11 +287,11 @@ public final class ProfileScreenshotter {
             LOGGER.info("\t- Header has been updated to not be fixed");
         }
 
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler.isNotEnglish(trackerDefinition.username())) {
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler.isNotEnglish(trackerCredential.username())) {
             LOGGER.info("\t- Profile page has been translated to English");
         }
 
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerDefinition.name());
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name());
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
 
         trackerHandler.logout();

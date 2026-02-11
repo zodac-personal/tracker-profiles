@@ -26,28 +26,16 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Nebulance} tracker.
  */
 @TrackerHandler(name = "Nebulance", url = "https://nebulance.io/")
 public class NebulanceHandler extends LuminanceHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public NebulanceHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By usernameFieldSelector() {

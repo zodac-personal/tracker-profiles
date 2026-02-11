@@ -20,27 +20,15 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code SeedPool} tracker.
  */
 @TrackerHandler(name = "SeedPool", url = "https://seedpool.org/")
 public class SeedPoolHandler extends Unit3dHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public SeedPoolHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     /**
      * {@inheritDoc}

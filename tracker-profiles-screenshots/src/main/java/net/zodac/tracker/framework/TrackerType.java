@@ -85,7 +85,7 @@ public enum TrackerType {
      * @param config         the {@link ApplicationConfiguration}
      * @return {@code true} if the {@link TrackerType} is enabled
      */
-    public boolean isEnabled(final Map<TrackerType, Set<TrackerDefinition>> trackersByType, final ApplicationConfiguration config) {
+    public boolean isEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
         return trackersByType.containsKey(this) && config.trackerExecutionOrder().contains(this);
     }
 
@@ -95,14 +95,14 @@ public enum TrackerType {
      * @param trackersByType all user-defined trackers by the {@link TrackerType}
      * @param config         the {@link ApplicationConfiguration}
      */
-    public void printSummary(final Map<TrackerType, Set<TrackerDefinition>> trackersByType, final ApplicationConfiguration config) {
-        final Set<TrackerDefinition> trackers = trackersByType.getOrDefault(this, Set.of());
+    public void printSummary(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
+        final Set<TrackerCredential> trackers = trackersByType.getOrDefault(this, Set.of());
         final int numberOfTrackers = isEnabled(trackersByType, config) ? trackers.size() : 0;
 
         if (numberOfTrackers != 0) {
             LOGGER.debug(String.format("- %-12s: %d", formattedName(), numberOfTrackers));
-            for (final TrackerDefinition trackerDefinition : trackers) {
-                LOGGER.debug(String.format("\t- %-16s", trackerDefinition.name()));
+            for (final TrackerCredential trackerCredential : trackers) {
+                LOGGER.debug(String.format("\t- %-16s", trackerCredential.name()));
             }
         }
     }

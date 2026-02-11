@@ -11,11 +11,12 @@ PREV_TAG="${2}"
 
   # Prepend RELEASE_NOTES if present and non-empty
   if [ -s RELEASE_NOTES ]; then
-    echo "Including RELEASE_NOTES content..." >&2
+    echo "Including RELEASE_NOTES content" >&2
     cat RELEASE_NOTES
-    echo ""
+    echo
+    echo
     echo "---"
-    echo ""
+    echo
   fi
 
   cat <<EOF2

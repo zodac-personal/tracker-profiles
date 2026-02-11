@@ -37,7 +37,6 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
@@ -46,16 +45,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 @TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
 @TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
 public class TsSpecialEditionHandler extends AbstractTrackerHandler {
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public TsSpecialEditionHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By usernameFieldSelector() {

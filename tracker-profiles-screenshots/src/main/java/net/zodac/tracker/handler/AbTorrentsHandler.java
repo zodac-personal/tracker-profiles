@@ -41,7 +41,6 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code ABTorrents} tracker.
@@ -52,16 +51,6 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     // Tab title is in the format `ABTorrents :(1): Home`, where `1` is the number of unread messages
     private static final Pattern TITLE_UNREAD_MESSAGES_COUNT_PATTERN = Pattern.compile("\\((\\d+)\\)");
     private static final Duration WAIT_FOR_TAB_TITLE_UPDATE = Duration.of(2L, ChronoUnit.SECONDS);
-
-    /**
-     * Default constructor.
-     *
-     * @param driver      a {@link RemoteWebDriver} used to load web pages and perform UI actions
-     * @param trackerUrls the URLs to the tracker
-     */
-    public AbTorrentsHandler(final RemoteWebDriver driver, final Collection<String> trackerUrls) {
-        super(driver, trackerUrls);
-    }
 
     @Override
     protected By usernameFieldSelector() {

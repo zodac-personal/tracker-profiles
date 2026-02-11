@@ -19,16 +19,13 @@ package net.zodac.tracker.framework;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -42,8 +39,6 @@ import net.zodac.tracker.framework.annotation.TrackerDisabled;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandlers;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
-import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
-import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.exception.DisabledTrackerException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import org.jspecify.annotations.Nullable;
@@ -82,7 +77,7 @@ public final class TrackerHandlerFactory {
      * If the {@link AbstractTrackerHandler} also has the annotation {@link TrackerDisabled}, it will be skipped.
      *
      * <p>
-     * A new {@link RemoteWebDriver} is created for each {@link TrackerDefinition}. Once created, the size of the browser window is set to
+     * A new {@link RemoteWebDriver} is created for each {@link TrackerCredential}. Once created, the size of the browser window is set to
      * {@link ApplicationConfiguration#browserDimensions()}. If {@link ApplicationConfiguration#forceUiBrowser()} is {@code false}, then the
      * execution will be done in the background. Otherwise, a browser window will open for each tracker, and all UI actions will be visible for
      * debugging.
@@ -102,7 +97,7 @@ public final class TrackerHandlerFactory {
             .findAny();
 
         if (matchingTrackerHandlerOptional.isEmpty()) {
-            final String errorMessage = String.format("Unable to find %s with name '%s'", AbstractTrackerHandler.class.getSimpleName(), trackerName);
+            final String errorMessage = String.format("Unable to find %s with name '%s'", TrackerHandler.class.getSimpleName(), trackerName);
             throw new NoSuchElementException(errorMessage);
         }
 
@@ -113,26 +108,22 @@ public final class TrackerHandlerFactory {
         }
 
         final TrackerHandler annotation = matchingTrackerHandler.getValue();
-        return makeNewInstance(trackerHandler, Arrays.asList(annotation.url()), annotation.type());
+        final TrackerDefinition trackerDefinition = TrackerDefinition.fromAnnotation(annotation);
+        return makeNewInstance(trackerHandler, trackerDefinition);
     }
 
-    private static AbstractTrackerHandler makeNewInstance(final Class<?> trackerHandler, final List<String> urls, final TrackerType trackerType) {
+    private static AbstractTrackerHandler makeNewInstance(final Class<?> trackerHandler, final TrackerDefinition trackerDefinition) {
         try {
-            // TODO: Should the constructor handle the creation of a driver instead of here?
-            final Constructor<?> constructorWithDriverAndUrls = trackerHandler.getDeclaredConstructor(RemoteWebDriver.class, Collection.class);
-            final RemoteWebDriver driver = getRemoteWebDriver(trackerType);
-            return (AbstractTrackerHandler) constructorWithDriverAndUrls.newInstance(driver, urls);
+            final AbstractTrackerHandler abstractTrackerHandler = (AbstractTrackerHandler) trackerHandler.getDeclaredConstructor().newInstance();
+            abstractTrackerHandler.configure(trackerDefinition);
+            return abstractTrackerHandler;
         } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(String.format("Error instantiating an instance of '%s'", trackerHandler), e);
         }
     }
 
-    private static RemoteWebDriver getRemoteWebDriver(final TrackerType trackerType) {
-        return trackerType == TrackerType.CLOUDFLARE_CHECK ? PythonWebDriverFactory.createDriver() : JavaWebDriverFactory.createDriver(trackerType);
-    }
-
     private static Set<Class<?>> findAllClassesUsingClassLoader(final String packageName) {
-        final String packagePath = packageName.replace('.', '/'); // Package path
+        final String packagePath = packageName.replace('.', '/');
 
         try {
             final URL resource = Thread.currentThread().getContextClassLoader().getResource(packagePath);

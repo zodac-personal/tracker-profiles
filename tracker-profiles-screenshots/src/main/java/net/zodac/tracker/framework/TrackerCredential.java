@@ -1,0 +1,65 @@
+/*
+ * BSD Zero Clause License
+ *
+ * Copyright (c) 2024-2026 zodac.net
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package net.zodac.tracker.framework;
+
+import java.util.Locale;
+import java.util.Objects;
+import org.apache.commons.csv.CSVRecord;
+
+/**
+ * Simple class to hold the information for a given tracker.
+ *
+ * @param name     the tracker name
+ * @param username the user's username
+ * @param password the user's password
+ */
+public record TrackerCredential(String name, String username, String password)
+    implements Comparable<TrackerCredential> {
+
+    /**
+     * Converts a {@link CSVRecord} from {@link TrackerCsvReader} into a {@link TrackerCredential} instance.
+     *
+     * @param csvRecord the {@link CSVRecord} holding a single tracker's information
+     * @return the {@link TrackerCredential}
+     */
+    public static TrackerCredential fromCsv(final CSVRecord csvRecord) {
+        return new TrackerCredential(
+            csvRecord.get("trackerName").trim(),
+            csvRecord.get("username").trim(),
+            csvRecord.get("password").trim()
+        );
+    }
+
+    @Override
+    public int compareTo(final TrackerCredential other) {
+        return name.toLowerCase(Locale.getDefault()).compareTo(other.name.toLowerCase(Locale.getDefault()));
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof TrackerCredential(final String otherName, final String otherUsername, final String otherPassword))) {
+            return false;
+        }
+        return Objects.equals(name, otherName) && Objects.equals(username, otherUsername) && Objects.equals(password, otherPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, username, password);
+    }
+}

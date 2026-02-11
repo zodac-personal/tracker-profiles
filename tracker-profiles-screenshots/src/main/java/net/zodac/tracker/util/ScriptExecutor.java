@@ -109,6 +109,7 @@ public class ScriptExecutor {
      *
      * @param sleepTime the time to wait
      */
+    // TODO: Add a reason for logging
     public static void explicitWait(final Duration sleepTime) {
         try {
             LOGGER.trace("Sleeping for {}", sleepTime);

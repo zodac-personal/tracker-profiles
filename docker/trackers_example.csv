@@ -20,6 +20,7 @@ HDUnited,username,password
 ImmortalSeed,username,password
 IPTorrents,username,password
 ItaTorrents,username,password
+Kufirc,username,password
 Lat-Team,username,password
 Libble,username,password
 Metal-Tracker,username,password
@@ -43,7 +44,6 @@ TVChaosUK,username,password
 UHDBits,username,password
 Unwalled,username,password
 #,Non-english trackers,UI required to translate
-Kufirc,username,password
 RUTracker,username,password
 #,Manual trackers,UI required for user input
 BeyondHD,username,password

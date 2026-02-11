@@ -1,0 +1,2 @@
+Another refactoring release. Changed the way tracker implementations are instantiated, removed some boiler-plate code for each new tracker. Should
+reduce the code for simple trackers going forward.
