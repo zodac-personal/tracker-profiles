@@ -88,7 +88,7 @@ public class EmporniumHandler extends LuminanceHandler {
                 if (sectionToggle.getText().contains("Hide")) {
                     LOGGER.debug("\t\t- Closing section {}", toggleSelector);
                     clickButton(sectionToggle);
-                    ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS);
+                    ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS, "section to close");
                 }
             }
         }

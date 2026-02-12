@@ -61,7 +61,7 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
             .build();
         final WebElement usernameNextButton = driver.findElement(usernameNextButtonSelector);
         clickButton(usernameNextButton);
-        ScriptExecutor.explicitWait(Duration.ofSeconds(2L));
+        ScriptExecutor.explicitWait(Duration.ofSeconds(2L), "username to be accepted and password field to appear");
 
         return XpathBuilder
             .from(input, withName("pwd"))

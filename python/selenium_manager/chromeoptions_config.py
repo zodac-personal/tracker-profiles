@@ -7,10 +7,13 @@ This module defines helper functions to create and configure ChromeOptions
 for use with undetected-chromedriver.
 """
 
+import logging
 import uuid
 from pathlib import Path
 
 import undetected_chromedriver as uc
+
+logger = logging.getLogger(__name__)
 
 
 def create_chrome_options(browser_data_storage_path: str, browser_dimensions: str) -> uc.ChromeOptions:
@@ -45,4 +48,5 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
     }
     options.add_experimental_option("prefs", prefs)
 
+    logger.debug("Creating driver with following options: %s", options)
     return options

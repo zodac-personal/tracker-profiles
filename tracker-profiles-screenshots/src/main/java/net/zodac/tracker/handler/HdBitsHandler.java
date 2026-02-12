@@ -29,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
@@ -37,7 +36,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -126,11 +124,6 @@ public class HdBitsHandler extends AbstractTrackerHandler {
             .child(NamedHtmlElement.of("b"), atIndex(1))
             .child(a, atIndex(1))
             .build();
-    }
-
-    @Override
-    protected void additionalActionOnProfilePage() {
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L));
     }
 
     /**

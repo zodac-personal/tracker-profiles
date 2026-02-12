@@ -56,8 +56,8 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        LOGGER.trace("Waiting {} for the login pop-up to disappear", DEFAULT_WAIT_FOR_PAGE_LOAD);
-        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD, "login popup to disappear");
+
         openUserDropdownMenu();
         return XpathBuilder
             .from(ul, withClass("dropdown-menu"))

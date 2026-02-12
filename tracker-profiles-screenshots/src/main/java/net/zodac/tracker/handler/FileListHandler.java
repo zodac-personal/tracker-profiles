@@ -49,7 +49,7 @@ public class FileListHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        ScriptExecutor.explicitWait(Duration.ofSeconds(2L));
+        ScriptExecutor.explicitWait(Duration.ofSeconds(2L), "page content to load");
         return By.id("maincolumn");
     }
 

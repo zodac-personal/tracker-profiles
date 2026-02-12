@@ -79,6 +79,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * The standard wait {@link Duration} to let the login page load.
      */
+    // TODO: Need both this and DEFAULT_WAIT_FOR_PAGE_LOAD?
     protected static final Duration WAIT_FOR_LOGIN_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS);
 
     /**
@@ -244,7 +245,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      */
     public void login(final String username, final String password, final String trackerName) {
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        LOGGER.trace("Logging in to tracker '{}'", trackerName);
+        scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
         usernameField.clear();
@@ -266,7 +268,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
         manualCheckAfterLoginClick(trackerName);
 
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "page to load after login");
         scriptExecutor.waitForElementToAppear(postLoginSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
     }
 
@@ -359,7 +361,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * loading.
      */
     public void openProfilePage() {
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        LOGGER.trace("Opening profile page");
+        scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         scriptExecutor.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
@@ -417,6 +420,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @see Redactor
      */
     public int redactElements() {
+        LOGGER.trace("Redacting elements");
         final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
         if (selectors.isEmpty()) {
             LOGGER.trace("\t\t- No defined elements to redact");
@@ -504,6 +508,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public void logout() {
+        LOGGER.trace("Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
         scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
@@ -528,6 +533,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     @Override
     public void close() {
+        LOGGER.trace("Closing driver");
         driver.quit();
     }
 
@@ -562,6 +568,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     protected void clickButton(final WebElement buttonToClick, final Duration clickResolutionDuration) {
         try {
+            LOGGER.trace("Clicking: {}", buttonToClick);
             driver.manage().timeouts().pageLoadTimeout(clickResolutionDuration);
             buttonToClick.click();
         } catch (final TimeoutException e) {
@@ -575,7 +582,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
 
         driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
-        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS);
+        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS, "button click");
     }
 
     private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {

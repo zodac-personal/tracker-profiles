@@ -124,17 +124,17 @@ public class TeamOsHandler extends AbstractTrackerHandler {
     }
 
     private void navigateToUserPage() {
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "page to load before clicking navbar");
         // Click the nav bar to make the profile button interactable
         final By profileParentSelector = XpathBuilder
             .from(a, withClass("p-navgroup-link--user"))
             .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "first navbar click");
 
         clickButton(profileParent);
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "second navbar click");
     }
 
     // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?

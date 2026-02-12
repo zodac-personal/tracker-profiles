@@ -22,6 +22,8 @@ import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -32,6 +34,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public final class JavaWebDriverFactory {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private JavaWebDriverFactory() {
 
@@ -58,6 +61,7 @@ public final class JavaWebDriverFactory {
      * @return the {@link RemoteWebDriver} instance
      */
     public static RemoteWebDriver createDriver(final TrackerType trackerType) {
+        LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
         // User-defined options
@@ -88,6 +92,7 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--ignore-certificate-errors");
 
+        LOGGER.debug("Creating driver with following options: {}", chromeOptions);
         return new ChromeDriver(chromeOptions);
     }
 

@@ -95,7 +95,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         scriptExecutor.moveTo(logoutParent);
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L));  // Give the dropdown menu a chance to load, it is not instant
+        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "dropdown menu for logout button to appear");
 
         return XpathBuilder
             .from(form, withId("logout-form1"))

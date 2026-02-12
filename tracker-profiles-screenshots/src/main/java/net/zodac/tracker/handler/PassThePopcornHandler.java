@@ -26,7 +26,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
@@ -45,7 +44,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        ScriptExecutor.explicitWait(Duration.of(1L, ChronoUnit.SECONDS)); // Wait for the hidden captcha to load
+        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "hidden captcha to load");
         return By.id("login-button");
     }
 

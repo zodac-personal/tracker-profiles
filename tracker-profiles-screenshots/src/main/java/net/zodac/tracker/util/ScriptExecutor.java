@@ -106,11 +106,11 @@ public class ScriptExecutor {
      * Performs a {@link Thread#sleep(Duration)} for the specified {@link Duration}.
      *
      * @param sleepTime the time to wait
+     * @param reason the reason for sleeping
      */
-    // TODO: Add a reason for logging
-    public static void explicitWait(final Duration sleepTime) {
+    public static void explicitWait(final Duration sleepTime, final String reason) {
         try {
-            LOGGER.trace("Sleeping for {}", sleepTime);
+            LOGGER.trace("Sleeping for {}, waiting for {}", sleepTime, reason);
             Thread.sleep(sleepTime);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -151,7 +151,7 @@ public class ScriptExecutor {
         LOGGER.trace("Moving cursor to element {}", element);
         final Actions actions = new Actions(driver);
         actions.moveToElement(element).perform();
-        explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE);
+        explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE, "cursor to move to element");
     }
 
     /**
@@ -164,7 +164,7 @@ public class ScriptExecutor {
         LOGGER.trace("Moving cursor to ({},{})", x, y);
         final Actions actions = new Actions(driver);
         actions.moveToLocation(x, y).perform();
-        explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE);
+        explicitWait(DEFAULT_WAIT_FOR_MOUSE_MOVE, "cursor to move to coordinates");
     }
 
     /**
@@ -190,9 +190,8 @@ public class ScriptExecutor {
      * Scrolls the page back to the top of the screen.
      */
     public void scrollToTheTop() {
-        LOGGER.trace("Scrolling to top of page");
         driver.executeScript("window.scrollTo(0, 0);");
-        explicitWait(Duration.ofSeconds(1L)); // Wait 1 second to scroll back to the top
+        explicitWait(Duration.ofSeconds(1L), "page to scroll to the top");
     }
 
     /**
@@ -243,7 +242,7 @@ public class ScriptExecutor {
             final Actions actions = new Actions(driver);
             LOGGER.trace("Performing right-click");
             actions.contextClick(bodyElement).perform();
-            explicitWait(DEFAULT_WAIT_FOR_CONTEXT_MENU);
+            explicitWait(DEFAULT_WAIT_FOR_CONTEXT_MENU, "right-click menu to open");
 
             // Press "Up" key 3 times to select 'Translate to English' option from bottom of the menu
             final Robot robot = new Robot();
@@ -252,7 +251,7 @@ public class ScriptExecutor {
                 LOGGER.trace("Pressing UP key");
                 robot.keyPress(KeyEvent.VK_UP);
                 robot.keyRelease(KeyEvent.VK_UP);
-                explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS);
+                explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS, "key press to activate");
             }
 
             // Press "Enter" to select the "Translate to English" option
@@ -260,7 +259,7 @@ public class ScriptExecutor {
             robot.keyPress(KeyEvent.VK_ENTER);
             robot.keyRelease(KeyEvent.VK_ENTER);
 
-            explicitWait(DEFAULT_WAIT_FOR_TRANSLATION);
+            explicitWait(DEFAULT_WAIT_FOR_TRANSLATION, "translation to complete");
 
             // After translation, some username elements will have been incorrectly translated
             if (mistranslatedUsername != null) {
@@ -273,7 +272,7 @@ public class ScriptExecutor {
                     LOGGER.trace("Reverting element '{}'", element);
                     driver.executeScript(String.format("arguments[0].innerText = '%s'", username), element);
                 }
-                explicitWait(DEFAULT_WAIT_FOR_TRANSLATION);
+                explicitWait(DEFAULT_WAIT_FOR_TRANSLATION, "username translation to be reverted");
             }
         } catch (final AWTException e) {
             throw new TranslationException(e);
@@ -305,7 +304,7 @@ public class ScriptExecutor {
      * @param timeout the maximum {@link Duration} to wait
      */
     public void waitForPageToLoad(final Duration timeout) {
-        explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD, "page to load");
 
         try {
             LOGGER.trace("Waiting {} for page to load", timeout);

@@ -83,7 +83,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     // TODO: Remove this step, no longer needed for this tracker
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        ScriptExecutor.explicitWait(WAIT_FOR_TAB_TITLE_UPDATE); // Waiting for tab to update with unread private messages count
+        ScriptExecutor.explicitWait(WAIT_FOR_TAB_TITLE_UPDATE, "tab to update with private messages count");
 
         if (!hasUserAnyUnreadPrivateMessages()) {
             LOGGER.debug("\t- No unread private messages");
@@ -165,7 +165,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L)); // Wait for the logout button to become visible and clickable again after scrolling
+        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "logout button to become visible and clickable"); // TODO: might not be needed now?
         return By.id("logoff");
     }
 }

@@ -36,8 +36,7 @@ public class BlutopiaHandler extends Unit3dHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
-        LOGGER.trace("Waiting {} for the login pop-up to disappear", WAIT_FOR_LOGIN_PAGE_LOAD);
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD);
+        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "login pop-up to disappear");
         return false;
     }
 }

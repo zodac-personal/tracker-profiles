@@ -60,6 +60,7 @@ public final class PythonWebDriverFactory {
      * @return the {@link RemoteWebDriver} instance
      */
     public static RemoteWebDriver createDriver() {
+        LOGGER.trace("Creating Python driver");
         final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(CONFIG.browserDataStoragePath(), CONFIG.browserDimensions());
 
         final RemoteWebDriver driver = AttachedRemoteWebDriver.create(seleniumSession);
