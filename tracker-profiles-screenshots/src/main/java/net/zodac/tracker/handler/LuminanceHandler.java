@@ -28,8 +28,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
-import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -67,17 +65,15 @@ public class LuminanceHandler extends GazelleHandler {
      *
      * <p>
      * For {@link LuminanceHandler}, we also need to redact a passkey {@link WebElement}. We find the element defining the user's passkey in the
-     * stats element on the profile page. We redact this element by replacing all text with the prefix and
-     * {@value TextReplacer#DEFAULT_REDACTION_TEXT}.
+     * stats element on the profile page.
      *
      * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
+     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
      */
     @Override
     public int redactElements() {
         final WebElement passkeyElement = driver.findElement(passkeyElementSelector());
-        final String passkeyRedactionText = "Passkey: " + TextReplacer.DEFAULT_REDACTION_TEXT;
-        scriptExecutor.redactInnerTextOf(passkeyElement, passkeyRedactionText);
+        redactor.redactPasskey(passkeyElement, "Passkey: ");
 
         return 1 + super.redactElements();
     }

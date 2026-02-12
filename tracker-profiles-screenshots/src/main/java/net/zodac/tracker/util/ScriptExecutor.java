@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -55,7 +54,6 @@ public class ScriptExecutor {
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(400L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
-    private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;
@@ -174,58 +172,6 @@ public class ScriptExecutor {
      */
     public void moveToOrigin() {
         moveTo(0, 0);
-    }
-
-    /**
-     * Updates the text of the provided {@link WebElement} and replaces the value with {@code #redactionText}. This can be valuable when trying to
-     * hide/redact sensitive information like IP addresses.
-     *
-     * @param element       the {@link WebElement} to redact
-     * @param redactionText the text to replace the existing text in the {@link WebElement}
-     */
-    public void redactInnerTextOf(final WebElement element, final String redactionText) {
-        LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
-        driver.executeScript(String.format("arguments[0].innerText = '%s'", redactionText), element);
-    }
-
-    /**
-     * Reads the HTML of the provided {@link WebElement} and replaces the email and IP addresses using
-     * {@link TextReplacer#replaceEmailAndIpAddresses(String)}. This can be valuable when trying to hide/redact sensitive information. This will
-     * attempt to retain all other text and HTML elements in the provided {@link WebElement}.
-     *
-     * @param element the {@link WebElement} to redact
-     * @see TextReplacer#replaceEmailAndIpAddresses(String)
-     */
-    public void redactHtmlOf(final WebElement element) {
-        LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
-
-        String htmlContent = (String) driver.executeScript("return arguments[0].outerHTML", element);
-        if (htmlContent == null) {
-            htmlContent = "";
-        }
-
-        final String substitutionText = createSubstitutionText(htmlContent);
-        driver.executeScript(String.format("arguments[0].outerHTML = '%s'", substitutionText), element);
-        LOGGER.trace(""); // Add a blank line when trace logging to make logs easier to read through
-    }
-
-    private static String createSubstitutionText(final String elementText) {
-        if (elementText == null) {
-            return "";
-        }
-
-        return escapeForJavaScriptString(TextReplacer.replaceEmailAndIpAddresses(elementText));
-    }
-
-    private static String escapeForJavaScriptString(final String input) {
-        final String escapedString = input
-            .replace("\\", "\\\\")
-            .replace("'", "\\'")
-            .replace("\"", "\\\"")
-            .replace("\r", "")
-            .replace("\n", "\\n");
-        LOGGER.trace("Escaped input '{}' to '{}'", input, escapedString);
-        return escapedString;
     }
 
     /**

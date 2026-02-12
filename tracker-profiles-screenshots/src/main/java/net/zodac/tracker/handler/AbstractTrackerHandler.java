@@ -33,8 +33,10 @@ import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.redaction.Redactor;
+import net.zodac.tracker.redaction.RedactorImpl;
 import net.zodac.tracker.util.ScriptExecutor;
-import net.zodac.tracker.util.TextReplacer;
+import net.zodac.tracker.util.TextSearcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -103,6 +105,12 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     private TrackerDefinition trackerDefinition;
 
     /**
+     * The {@link Redactor} instance to redact sensitive information on user profile pages.
+     */
+    @SuppressWarnings("NullAway") // Will be set in the configure() method
+    protected Redactor redactor;
+
+    /**
      * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
      * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker for execution, so we overwrite the default
      * values that were already set.
@@ -113,6 +121,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         this.trackerDefinition = trackerDefinition;
         driver = createRemoteWebDriver(trackerDefinition.type());
         scriptExecutor = new ScriptExecutor(driver);
+        redactor = new RedactorImpl(driver);
     }
 
     /**
@@ -405,9 +414,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * in the {@link WebElement}s is redacted.
      *
      * @return the number of {@link WebElement}s where the text has been redacted
-     * @see ScriptExecutor#redactHtmlOf(WebElement)
+     * @see Redactor
      */
-    // TODO: Rather than manipulating the text, maybe put a solid red block over the content to hide it more explicitly?
     public int redactElements() {
         final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
         if (selectors.isEmpty()) {
@@ -416,24 +424,33 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
 
         // TODO: Test all trackers when not connectable/no torrents being seeded, and ensure screenshots work as expected
-        final Collection<WebElement> elementsToBeRedacted = selectors
+        // TODO: Define which elements to redact?
+        final Collection<WebElement> emailElements = selectors
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            // TODO: Define which elements to redact?
-            .filter(element -> TextReplacer.containsEmailAddress(element.getText()) || TextReplacer.containsIpAddress(element.getText()))
+            .filter(element -> TextSearcher.containsEmailAddress(element.getText()))
             .toList();
 
-        if (elementsToBeRedacted.isEmpty()) {
+        final Collection<WebElement> ipElements = selectors
+            .stream()
+            .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
+            .filter(element -> TextSearcher.containsIpAddress(element.getText()))
+            .toList();
+
+        if (emailElements.isEmpty() && ipElements.isEmpty()) {
             LOGGER.warn("\t\t- Unexpectedly found no elements to redact");
             return 0;
         }
 
-        for (final WebElement element : elementsToBeRedacted) {
-            LOGGER.trace("\t\t- Redacting: {}", element);
-            scriptExecutor.redactHtmlOf(element);
+        for (final WebElement element : emailElements) {
+            redactor.redactEmail(element);
         }
 
-        return elementsToBeRedacted.size();
+        for (final WebElement element : ipElements) {
+            redactor.redactIpAddress(element);
+        }
+
+        return emailElements.size() + ipElements.size();
     }
 
     /**

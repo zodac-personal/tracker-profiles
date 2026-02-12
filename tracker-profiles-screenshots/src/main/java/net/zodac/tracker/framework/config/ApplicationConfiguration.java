@@ -44,6 +44,7 @@ import org.apache.logging.log4j.Logger;
  * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
+ * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the  user profile page
  * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
@@ -55,6 +56,7 @@ public record ApplicationConfiguration(
     boolean enableTranslationToEnglish,
     boolean forceUiBrowser,
     Path outputDirectory,
+    RedactionType redactionType,
     ExistingScreenshotAction existingScreenshotAction,
     List<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
@@ -69,6 +71,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
+    private static final RedactionType DEFAULT_REDACTION_TYPE = RedactionType.TEXT;
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.OVERWRITE;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,non-english,cloudflare-check";
@@ -101,6 +104,7 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
             getOutputDirectory(),
+            getRedactionType(),
             getScreenshotExistsAction(),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
@@ -167,14 +171,24 @@ public record ApplicationConfiguration(
         }
     }
 
-    private static ExistingScreenshotAction getScreenshotExistsAction() {
-        final String screenshotExistsAction = getOrDefault("SCREENSHOT_EXISTS_ACTION", DEFAULT_SCREENSHOT_EXISTS_ACTION.toString());
-        final ExistingScreenshotAction inputExistingScreenshotAction = ExistingScreenshotAction.get(screenshotExistsAction);
-        if (inputExistingScreenshotAction == null) {
-            throw new IllegalArgumentException(String.format("[SCREENSHOT_EXISTS_ACTION] Invalid action '%s'", screenshotExistsAction));
+    private static RedactionType getRedactionType() {
+        final String redactionTypeRaw = getOrDefault("REDACTION_TYPE", DEFAULT_REDACTION_TYPE.toString());
+        final RedactionType redactionTypeInput = RedactionType.get(redactionTypeRaw);
+        if (redactionTypeInput == null) {
+            throw new IllegalArgumentException(String.format("[REDACTION_TYPE] Invalid value: '%s'", redactionTypeRaw));
         }
 
-        return inputExistingScreenshotAction;
+        return redactionTypeInput;
+    }
+
+    private static ExistingScreenshotAction getScreenshotExistsAction() {
+        final String existingScreenshotActionRaw = getOrDefault("SCREENSHOT_EXISTS_ACTION", DEFAULT_SCREENSHOT_EXISTS_ACTION.toString());
+        final ExistingScreenshotAction existingScreenshotActionInput = ExistingScreenshotAction.get(existingScreenshotActionRaw);
+        if (existingScreenshotActionInput == null) {
+            throw new IllegalArgumentException(String.format("[SCREENSHOT_EXISTS_ACTION] Invalid value: '%s'", existingScreenshotActionRaw));
+        }
+
+        return existingScreenshotActionInput;
     }
 
     private static Path getTrackerInputFilePath() {

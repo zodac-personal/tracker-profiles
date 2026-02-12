@@ -34,8 +34,6 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
-import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -82,7 +80,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
      * {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs its content redacted.
      *
      * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
+     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
      */
     @Override
     public int redactElements() {
@@ -94,7 +92,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
             .child(td, atIndex(2))
             .build();
         final WebElement passkeyValueElement = driver.findElement(passkeySelector);
-        scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
+        redactor.redactPasskey(passkeyValueElement);
 
         return 1 + super.redactElements();
     }

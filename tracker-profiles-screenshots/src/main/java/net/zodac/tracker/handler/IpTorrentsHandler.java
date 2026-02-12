@@ -32,8 +32,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
-import net.zodac.tracker.util.TextReplacer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -87,7 +85,7 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
      * its content redacted.
      *
      * @see AbstractTrackerHandler#redactElements()
-     * @see ScriptExecutor#redactInnerTextOf(WebElement, String)
+     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
      */
     @Override
     public int redactElements() {
@@ -99,7 +97,7 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
             .child(td, atIndex(1))
             .build();
         final WebElement passkeyValueElement = driver.findElement(passkeySelector);
-        scriptExecutor.redactInnerTextOf(passkeyValueElement, TextReplacer.DEFAULT_REDACTION_TEXT);
+        redactor.redactPasskey(passkeyValueElement);
 
         return 1 + super.redactElements();
     }
