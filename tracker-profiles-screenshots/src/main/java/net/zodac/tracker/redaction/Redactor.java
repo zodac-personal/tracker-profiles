@@ -26,6 +26,14 @@ import org.openqa.selenium.WebElement;
 public interface Redactor {
 
     /**
+     * Redacts the entire {@link WebElement}.
+     *
+     * @param element     the {@link WebElement} to redact
+     * @param description the {@link String} to describe what the sensitive information is
+     */
+    void redact(WebElement element, String description);
+
+    /**
      * Redacts the user's passkey.
      *
      * @param element the {@link WebElement} containing the user's passkey

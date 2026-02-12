@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Enum defining the options for what to do when a screenshot already exists.
  */
+// TODO: Add create_another and append index to filename
 public enum ExistingScreenshotAction {
 
     /**

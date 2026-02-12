@@ -90,7 +90,7 @@ public class FunFileHandler extends AbstractTrackerHandler {
             .child(td, atIndex(2))
             .build();
         final WebElement ipAndIspElement = driver.findElement(ipAndIspSelector);
-        redactor.redactPasskey(ipAndIspElement);
+        redactor.redact(ipAndIspElement, "IP and ISP");
 
         return 1 + super.redactElements();
     }

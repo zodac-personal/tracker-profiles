@@ -49,6 +49,11 @@ class TextRedactor implements Redactor {
     }
 
     @Override
+    public void redact(final WebElement element, final String description) {
+        driver.executeScript(String.format("arguments[0].innerText = '%s'", DEFAULT_REDACTION_TEXT), element);
+    }
+
+    @Override
     public void redactPasskey(final WebElement element) {
         redactPasskey(element, null);
     }
