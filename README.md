@@ -32,9 +32,9 @@ or becomes otherwise unavailable.
 - Opens the selected trackers and logs in, navigating to the user's profile page
 - Requests user input for trackers with manual inputs (like Captcha, 2FA, etc.)
 - Redacts the user's sensitive information (either replacing the text, or drawing a box over the text):
-  - Email address
-  - IP address
-  - Passkey
+    - Email address
+    - IP address
+    - Passkey
 - Takes a full-page screenshot of the redacted user profile
 
 ## Trackers
@@ -249,7 +249,7 @@ The following are all possible configuration options, defined as environment var
 | *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                         | INFO                                         |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                      | yyyy-MM-dd                                   |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                         | /tmp/screenshots                             |
-| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                                         | 
+| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                                         |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [OVERWRITE, SKIP]                               | OVERWRITE                                    |
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                             | UTC                                          |
 | *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, and unwanted execution types can be excluded (case-insensitive) | headless,manual,non-english,cloudflare-check |
