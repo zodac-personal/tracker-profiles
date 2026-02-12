@@ -1,4 +1,0 @@
-Provided the option to redact by drawing a solid box over sensitive information instead of replacing the text. The default will
-still be text-based redaction, but you can try the new feature by setting the `REDACTION_TYPE` environment variable to *OVERLAY*.
-
-These are still being tested and may not be as accurate as the current text-based redaction, but I'll hopefully improve that over time.
