@@ -47,6 +47,7 @@ import net.zodac.tracker.util.ScreenshotTaker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 
@@ -232,7 +233,7 @@ public final class ProfileScreenshotter {
             LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
             LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
             return false;
-        } catch (final NoSuchSessionException | UnreachableBrowserException e) {
+        } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
             throw new BrowserClosedException(e);
         } catch (final Exception e) {
