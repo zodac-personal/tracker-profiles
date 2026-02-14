@@ -1,6 +1,0 @@
-## Breaking Change
-
-### Removal of 'non-english' value for `TRACKER_EXECUTION_ORDER` environment variable
-
-I've removed the need translation to be done in a UI-based browser, so non-english trackers can now be treated as if they are 'headless'. Any web page
-not in english will automatically be translated, assuming the `ENABLE_TRANSLATION_TO_ENGLISH` environment variable is set.
