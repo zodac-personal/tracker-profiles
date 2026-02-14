@@ -76,83 +76,6 @@ update_requirements() {
     done
 }
 
-update_python_packages() {
-    dockerfile="${1}"
-
-    PYTHON_START_MARKER="# BEGIN PYTHON PACKAGES"
-    PYTHON_END_MARKER="# END PYTHON PACKAGES"
-
-    if ! grep -q "${PYTHON_START_MARKER}" "${dockerfile}" || ! grep -q "${PYTHON_END_MARKER}" "${dockerfile}"; then
-        echo "❌ Could not find Python marker lines in ${dockerfile}"
-        exit 1
-    fi
-
-    # Extract the lines between the start and end markers
-    python_block=$(awk "/${PYTHON_START_MARKER}/,/^${PYTHON_END_MARKER}$/" "${dockerfile}")
-
-    # Extract the package names before '=='
-    mapfile -t package_names < <(echo "${python_block}" | grep -oP '^\s*[a-zA-Z0-9_.-]+(?===)' | sed 's/^[[:space:]]*//')
-
-    if [[ "${#package_names[@]}" -eq 0 ]]; then
-        echo "❌ No Python packages found in block"
-        exit 1
-    fi
-
-    declare -A python_versions
-
-    echo
-    echo "🔍 Fetching latest Dockerfile Python versions from PyPI..."
-    for package in "${package_names[@]}"; do
-        version=$(get_pypi_version "${package}")
-        if [[ -z "${version}" ]]; then
-            echo "❌ Failed to get version for: ${package}"
-            exit 1
-        fi
-        python_versions["${package}"]="${version}"
-        echo "  ${package}=${version}"
-    done
-
-    # Build the updated install block safely into a temp file
-    {
-        echo "${PYTHON_START_MARKER}"
-        echo "RUN python3 -m ensurepip && \\"
-        echo "    pip install \\"
-        count=${#package_names[@]}
-        for i in "${!package_names[@]}"; do
-            pkg="${package_names[$i]}"
-            ver="${python_versions[$pkg]}"
-            if ((i == count - 1)); then
-                # last package → no trailing backslash
-                echo "        ${pkg}==\"${ver}\""
-            else
-                echo "        ${pkg}==\"${ver}\" \\"
-            fi
-        done
-        echo "${PYTHON_END_MARKER}"
-    } >python_block.txt
-
-    # Replace the old block with the new one
-    awk -v start_marker="${PYTHON_START_MARKER}" \
-        -v end_marker="${PYTHON_END_MARKER}" '
-    BEGIN {
-        block = ""
-        while ((getline line < "python_block.txt") > 0) {
-            block = block line "\n"
-        }
-        close("python_block.txt")
-        sub(/\n$/, "", block)   # 🔥 remove trailing newline
-    }
-    $0 ~ start_marker { print block; in_block = 1; next }
-    $0 ~ end_marker { in_block = 0; next }
-    !in_block { print }
-    ' "${dockerfile}" >"${dockerfile}.tmp"
-
-    mv "${dockerfile}.tmp" "${dockerfile}"
-    rm -f python_block.txt
-
-    echo "✅ ${dockerfile#./} updated successfully with latest Python packages"
-}
-
 update_debian_packages() {
     dockerfile="${1}"
 
@@ -265,6 +188,5 @@ if [[ ! -f "${requirements_dev}" ]]; then
 fi
 
 update_debian_packages "${dockerfile}"
-update_python_packages "${dockerfile}"
 update_requirements "${requirements}" "${requirements_dev}"
 update_pom_versions

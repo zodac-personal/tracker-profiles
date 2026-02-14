@@ -16,13 +16,6 @@ RUN mvn clean install
 # Stage 2: Install Python
 FROM python:3.14.3-slim AS python_builder
 
-# BEGIN PYTHON PACKAGES
-RUN python3 -m ensurepip && \
-    pip install \
-        pip=="26.0.1" \
-        wheel=="0.46.3"
-# END PYTHON PACKAGES
-
 # Copy Python requirements
 COPY ./python/requirements.txt .
 
@@ -30,6 +23,12 @@ COPY ./python/requirements.txt .
 RUN python3 -m venv /app/venv && \
     /app/venv/bin/pip install --upgrade pip && \
     /app/venv/bin/pip install -r ./requirements.txt
+
+# Strip the python binary \
+RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
+    strip -p --strip-unneeded /usr/local/bin/python3 && \
+    strip -p --strip-unneeded /usr/local/bin/python3.14 && \
+    apt-get purge -yqq binutils && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Stage 3: Install java
 FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
@@ -60,6 +59,9 @@ FROM debian:13.3-slim
 # Set the working directory
 WORKDIR /app
 
+# Suppress 'dbind-WARNING' error logs
+ENV NO_AT_BRIDGE=1
+
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)
@@ -86,11 +88,15 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip &&
     chmod -R 0777 /usr/local/chromium
 
 # Copy Python installation
-COPY --from=python_builder /usr/local /usr/local
+COPY --from=python_builder /usr/local/bin/python3 /usr/local/bin/python3
+COPY --from=python_builder /usr/local/bin/python3.14 /usr/local/bin/python3.14
+COPY --from=python_builder /usr/local/lib/python3.14 /usr/local/lib/python3.14
+COPY --from=python_builder /usr/local/lib/libpython3.14.so.1.0 /usr/local/lib
 COPY --from=python_builder /app/venv /app/venv
 COPY ./python/selenium_manager/ ./selenium_manager/
-ENV PATH="/usr/local/bin:${PATH}"
-ENV PATH="/app/venv/bin:/usr/local/bin:${PATH}"
+ENV PATH=/app/venv/bin:/usr/local/bin:${PATH}
+ENV PYTHONPATH="${PATH}"
+ENV PYTHONUNBUFFERED=1
 
 # Copy JDK & JAR
 COPY --from=java_builder /opt/jdk /opt/jdk
@@ -98,34 +104,29 @@ ENV JAVA_HOME="/opt/jdk"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
 
-# Copy scripts
-COPY --from=scripts_builder /start.sh /app/start.sh
+# Configure HEALTHCHECK
 COPY --from=shell_builder /bin/busybox /bin/wget
-
 HEALTHCHECK --interval=30s \
             --timeout=5s \
             --start-period=10s \
             --retries=3 \
             CMD [ "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/ping" ]
 
-# Define non-root user UID and GID
+# Copy application script
+COPY --from=scripts_builder /start.sh /app/start.sh
+
+# Configure nonroot user
 ENV PUID=1000
 ENV PGID=1000
-
 # Create user and group
 RUN groupadd -g ${PGID} nonroot && \
     useradd -u ${PUID} -g nonroot -d /tmp/chrome-home -m nonroot
-
 # Ensure the home directory has proper ownership
 RUN chown -R nonroot:nonroot /tmp/chrome-home
-
 # Set environment and user
 ENV HOME=/tmp/chrome-home
 USER nonroot
 VOLUME /tmp/chrome-home
-
-# Suppress 'dbind-WARNING' error logs
-ENV NO_AT_BRIDGE=1
 
 # Start application
 CMD ["/app/start.sh"]
