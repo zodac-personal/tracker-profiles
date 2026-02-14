@@ -76,12 +76,12 @@ public final class ProfileScreenshotter {
     public static ExitState executeProfileScreenshotter() {
         final Map<TrackerType, Set<TrackerCredential>> trackersByType = getTrackers();
         final int numberOfTrackers = countAllEnabled(trackersByType);
-        final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
-
         if (numberOfTrackers == 0) {
             LOGGER.error("No trackers selected!");
             return ExitState.FAILURE;
         }
+
+        final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
         LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, trackersPlural);
 
         final File outputDirectory = CONFIG.outputDirectory().toFile();

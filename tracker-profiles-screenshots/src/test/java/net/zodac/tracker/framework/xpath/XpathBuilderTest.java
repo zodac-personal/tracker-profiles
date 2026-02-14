@@ -49,13 +49,13 @@ import org.openqa.selenium.By;
 class XpathBuilderTest {
 
     @Test
-    void buildShouldReturnByXpathUsingCurrentQuery() {
+    void testBuildShouldReturnByXpathUsingCurrentQuery() {
         final By by = XpathBuilder
             .from(div, withId("test"))
             .build();
 
-        assertThat(by.toString())
-            .isEqualTo("By.xpath: //div[@id='test']");
+        assertThat(by)
+            .hasToString("By.xpath: //div[@id='test']");
     }
 
     @ParameterizedTest
@@ -63,7 +63,7 @@ class XpathBuilderTest {
         "div,1,//div[1]",
         "span,2,//span[2]"
     })
-    void fromAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
+    void testFromAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
         final String actual = XpathBuilder
             .from(element, atIndex(index))
             .toString();
@@ -76,7 +76,7 @@ class XpathBuilderTest {
         "div,//div[1]",
         "span,//span[1]"
     })
-    void fromAtFirstIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final String expected) {
+    void testFromAtFirstIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final String expected) {
         final String actual = XpathBuilder
             .from(element, atFirstIndex())
             .toString();
@@ -90,7 +90,7 @@ class XpathBuilderTest {
         "span,//div//span",
         "a,//div//a"
     })
-    void descendantShouldAppendAnywhereSelector(final HtmlElement element, final String expected) {
+    void testDescendantShouldAppendAnywhereSelector(final HtmlElement element, final String expected) {
         final String actual = XpathBuilder
             .from(div)
             .descendant(element)
@@ -104,7 +104,7 @@ class XpathBuilderTest {
         "div,1,//div//div[1]",
         "span,2,//div//span[2]"
     })
-    void descentantAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
+    void testDescentantAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
         final String actual = XpathBuilder
             .from(div)
             .descendant(element, atIndex(index))
@@ -118,7 +118,7 @@ class XpathBuilderTest {
         "div,//root/div",
         "span,//root/span"
     })
-    void childSelector(final HtmlElement element, final String expected) {
+    void testChildSelector(final HtmlElement element, final String expected) {
         final String actual = XpathBuilder
             .from(NamedHtmlElement.of("root"))
             .child(element)
@@ -132,7 +132,7 @@ class XpathBuilderTest {
         "div,1,//root/div[1]",
         "span,2,//root/span[2]"
     })
-    void childAtIndexSelector(final HtmlElement element, final int index, final String expected) {
+    void testChildAtIndexSelector(final HtmlElement element, final int index, final String expected) {
         final String actual = XpathBuilder
             .from(NamedHtmlElement.of("root"))
             .child(element, atIndex(index))
@@ -142,7 +142,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void findParentShouldAppendAncestorSelector() {
+    void testFindParentShouldAppendAncestorSelector() {
         final String actual = XpathBuilder
             .from(input)
             .parent(div)
@@ -153,7 +153,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void withTextShouldAppendContainsNormalizeSpacePredicate() {
+    void testWithTextShouldAppendContainsNormalizeSpacePredicate() {
         final String actual = XpathBuilder
             .from(span, withText("hello world"))
             .toString();
@@ -163,7 +163,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void withNameShouldAppendNameSelector() {
+    void testWithNameShouldAppendNameSelector() {
         final String actual = XpathBuilder
             .from(span, withName("my-name"))
             .toString();
@@ -173,7 +173,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void withTypeShouldAppendNameSelector() {
+    void testWithTypeShouldAppendNameSelector() {
         final String actual = XpathBuilder
             .from(span, withType("type-value"))
             .toString();
@@ -183,7 +183,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void withIdShouldAppendIdPredicate() {
+    void testWithIdShouldAppendIdPredicate() {
         final String actual = XpathBuilder
             .from(div, withId("main"))
             .toString();
@@ -193,7 +193,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void withClassShouldAppendContainsClassPredicate() {
+    void testWithClassShouldAppendContainsClassPredicate() {
         final String actual = XpathBuilder
             .from(div, withClass("active"))
             .toString();
@@ -207,7 +207,7 @@ class XpathBuilderTest {
         "data-test|value|//div[contains(@data-test, 'value')]",
         "aria-label|label|//div[contains(@aria-label, 'label')]"
     })
-    void containsAttributeShouldAppendPredicate(final String attributeName, final String attributeValue, final String expected) {
+    void testContainsAttributeShouldAppendPredicate(final String attributeName, final String attributeValue, final String expected) {
         final String actual = XpathBuilder
             .from(div, containsAttribute(attributeName, attributeValue))
             .toString();
@@ -220,7 +220,7 @@ class XpathBuilderTest {
         "data-test()|value|//div[contains(data-test(), 'value')]",
         "aria-label()|label|//div[contains(aria-label(), 'label')]"
     })
-    void containsAttributeFunctionShouldAppendPredicate(final String attributeName, final String attributeValue, final String expected) {
+    void testContainsAttributeFunctionShouldAppendPredicate(final String attributeName, final String attributeValue, final String expected) {
         final String actual = XpathBuilder
             .from(div, containsAttributeFunction(attributeName, attributeValue))
             .toString();
@@ -233,7 +233,7 @@ class XpathBuilderTest {
         "data-test,value,//div[@data-test='value']",
         "aria-label,label,//div[@aria-label='label']"
     })
-    void withAttributeShouldAppendExactAttributePredicate(final String attributeName, final String attributeValue, final String expected) {
+    void testWithAttributeShouldAppendExactAttributePredicate(final String attributeName, final String attributeValue, final String expected) {
         final String actual = XpathBuilder
             .from(div, withAttribute(attributeName, attributeValue))
             .toString();
@@ -246,7 +246,8 @@ class XpathBuilderTest {
         "data-test(),value,//div[data-test()='value']",
         "aria-label(),label,//div[aria-label()='label']"
     })
-    void withAttributeFunctionShouldAppendExactAttributePredicate(final String attributeName, final String attributeValue, final String expected) {
+    void testWithAttributeFunctionShouldAppendExactAttributePredicate(final String attributeName, final String attributeValue,
+                                                                      final String expected) {
         final String actual = XpathBuilder
             .from(div, withAttributeFunction(attributeName, attributeValue))
             .toString();
@@ -256,7 +257,7 @@ class XpathBuilderTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 5, 10})
-    void atIndexShouldAppendIndexPredicate(final int index) {
+    void testAtIndexShouldAppendIndexPredicate(final int index) {
         final String actual = XpathBuilder
             .from(li, atIndex(index))
             .toString();
@@ -266,7 +267,7 @@ class XpathBuilderTest {
     }
 
     @Test
-    void complexChainingShouldBeHandledCorrectly() {
+    void testComplexChainingShouldBeHandledCorrectly() {
         final String actual = XpathBuilder
             .from(div, withId("container"))
             .descendant(table)

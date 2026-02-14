@@ -170,10 +170,10 @@ public final class DisplayUtils {
         // Get the screen the dialog will appear on
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
-        final int margin = 40;
+        final int leftMargin = 40;
 
         // X is left + margin, Y is vertically centered
-        final int x = bounds.x + margin;
+        final int x = bounds.x + leftMargin;
         final int y = bounds.y + (bounds.height - dialog.getHeight()) / 2;
         dialog.setLocation(x, y);
     }

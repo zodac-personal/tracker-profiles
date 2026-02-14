@@ -32,7 +32,7 @@ RUN python3 -m venv /app/venv && \
     /app/venv/bin/pip install -r ./requirements.txt
 
 # Stage 3: Install java
-FROM eclipse-temurin:25-jdk AS java_builder
+FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
 
 # Copy JAR so we can extract jdeps dependencies
 COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar /tmp/tracker-profiles.jar
@@ -57,7 +57,6 @@ FROM busybox:1.37.0-musl AS shell_builder
 
 # Runtime
 FROM debian:13.3-slim
-
 # Set the working directory
 WORKDIR /app
 

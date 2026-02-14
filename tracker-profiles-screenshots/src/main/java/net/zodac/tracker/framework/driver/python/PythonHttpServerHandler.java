@@ -127,8 +127,8 @@ final class PythonHttpServerHandler {
             LOGGER.trace("Request to close session successfully completed");
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
-            LOGGER.debug("Error closing Python browser session", e);
-            LOGGER.warn("Error closing Python browser session: {}", e.getMessage());
+            LOGGER.debug("Interrupted when closing Python browser session", e);
+            LOGGER.warn("Interrupted when closing Python browser session: {}", e.getMessage());
         } catch (final IOException e) {
             LOGGER.debug("Error closing Python browser session", e);
             LOGGER.warn("Error closing Python browser session: {}", e.getMessage());

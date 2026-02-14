@@ -80,6 +80,7 @@ def register_routes(app: Flask) -> None:
             'browser_data_storage_path': str, writable path for browser profile and cache.
             'browser_dimensions': str, format 'WIDTH,HEIGHT' for window size.
             'enable_translation': bool, whether to translate the page to English or not
+
         Returns:
             200 OK with session ID and local session URL on success.
             400 Bad Request for missing/invalid input.

@@ -101,13 +101,13 @@ public final class TrackerCsvReader {
         }
     }
 
-    private static boolean isHeaderRow(final CSVRecord record) {
-        if (record.size() != CSV_HEADERS.length) {
+    private static boolean isHeaderRow(final CSVRecord csvRecord) {
+        if (csvRecord.size() != CSV_HEADERS.length) {
             return false;
         }
 
         for (int i = 0; i < CSV_HEADERS.length; i++) {
-            if (!CSV_HEADERS[i].equalsIgnoreCase(record.get(i).trim())) {
+            if (!CSV_HEADERS[i].equalsIgnoreCase(csvRecord.get(i).trim())) {
                 return false;
             }
         }

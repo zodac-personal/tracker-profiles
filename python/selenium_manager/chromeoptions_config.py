@@ -24,6 +24,7 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
         browser_data_storage_path (str): Path to store user data and cache.
         browser_dimensions (str): Browser window size in the format 'WIDTH,HEIGHT'.
         enable_translation (bool): Whether to translate web pages into English
+
     Returns:
         uc.ChromeOptions: Configured Chrome options.
     """
@@ -46,7 +47,7 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
     driver_preferences: dict[str, Any] = {
         # Disable password manager pop-ups
         "credentials_enable_service": False,
-        "profile.password_manager_enabled": False
+        "profile.password_manager_enabled": False,
     }
 
     if enable_translation:  # Adjust to match your config method
@@ -70,7 +71,7 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
             "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr",
             "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw",
             "sv", "tg", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi",
-            "cy", "xh", "yi", "yo", "zu"
+            "cy", "xh", "yi", "yo", "zu",
         ]
 
         for base_language in base_languages:

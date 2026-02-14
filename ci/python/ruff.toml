@@ -52,6 +52,8 @@ ignore = [
     "D213",     # Docstrings on second line (incompatible with D212)    https://docs.astral.sh/ruff/rules/multi-line-summary-second-line/
     "D413",     # Missing blank line after last section                 https://docs.astral.sh/ruff/rules/missing-blank-line-after-last-section/
     "EXE002",   # Shebang missing (false positives)                     https://docs.astral.sh/ruff/rules/shebang-missing-executable-file/
+    "FBT001",   # Boolean positional argument                           https://docs.astral.sh/ruff/rules/boolean-type-hint-positional-argument/
+    "FBT003",   # Boolean positional value                              https://docs.astral.sh/ruff/rules/boolean-positional-value-in-call/
     "PLR0911",  # Too many return statements                            https://docs.astral.sh/ruff/rules/too-many-return-statements/
     "PLR0915",  # Too many statements                                   https://docs.astral.sh/ruff/rules/too-many-statements/
     "S404",     # 'subprocess' is insecure                              https://docs.astral.sh/ruff/rules/suspicious-subprocess-import/

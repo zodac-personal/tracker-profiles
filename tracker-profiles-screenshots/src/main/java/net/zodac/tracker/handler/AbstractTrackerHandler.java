@@ -536,32 +536,20 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Same as {@link #clickButton(WebElement, Duration)}, but the click resolution time is {@link #MAXIMUM_CLICK_RESOLUTION_TIME}.
-     *
-     * @param buttonToClick the {@link WebElement} to {@link WebElement#click()}
-     * @see #clickButton(WebElement)
-     * @see ScriptExecutor#stopPageLoad()
-     */
-    protected void clickButton(final WebElement buttonToClick) {
-        clickButton(buttonToClick, MAXIMUM_CLICK_RESOLUTION_TIME);
-    }
-
-    /**
      * Sometimes when clicking the login button or the profile page button, the page won't load correctly. If a {@link TimeoutException} occurs due to
      * the web page, not loading within {@code clickResolutionDuration} it is simply ignored. We then force the web page to stop loading before
      * proceeding.
      *
-     * @param buttonToClick           the {@link WebElement} to {@link WebElement#click()}
-     * @param clickResolutionDuration the {@link Duration} to wait for the click to action a change (like a page load)
+     * @param buttonToClick the {@link WebElement} to {@link WebElement#click()}
      * @see ScriptExecutor#stopPageLoad()
      */
-    protected void clickButton(final WebElement buttonToClick, final Duration clickResolutionDuration) {
+    protected void clickButton(final WebElement buttonToClick) {
         try {
             LOGGER.trace("Clicking: {}", buttonToClick);
-            driver.manage().timeouts().pageLoadTimeout(clickResolutionDuration);
+            driver.manage().timeouts().pageLoadTimeout(MAXIMUM_CLICK_RESOLUTION_TIME);
             buttonToClick.click();
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page still loading after {}, force stopping page load", clickResolutionDuration);
+            LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
             LOGGER.trace(e);
             scriptExecutor.stopPageLoad();
         } catch (final Exception e) {

@@ -60,7 +60,7 @@ class TextRedactor implements Redactor {
 
     @Override
     public void redactPasskey(final WebElement element, final @Nullable String replacementTextPrefix) {
-        final String replacementText = replacementTextPrefix == null ? DEFAULT_REDACTION_TEXT : replacementTextPrefix + DEFAULT_REDACTION_TEXT;
+        final String replacementText = replacementTextPrefix == null ? DEFAULT_REDACTION_TEXT : (replacementTextPrefix + DEFAULT_REDACTION_TEXT);
         driver.executeScript(String.format("arguments[0].innerText = '%s'", replacementText), element);
     }
 

@@ -40,6 +40,7 @@ def test_open_and_close_session(mock_chrome: MagicMock, client: FlaskClient, tmp
     res_open = client.post("/open", json={
         "browser_data_storage_path": str(data_dir),
         "browser_dimensions": "1024,768",
+        "enable_translation": "true",
     })
 
     assert res_open.status_code == HTTP_OK
