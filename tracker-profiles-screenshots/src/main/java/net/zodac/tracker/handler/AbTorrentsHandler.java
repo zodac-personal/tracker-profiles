@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
@@ -164,8 +165,16 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     }
 
     @Override
+    public boolean hasFixedHeader() {
+        final By headerSelector = By.id("navbar");
+        final WebElement headerElement = driver.findElement(headerSelector);
+        scriptExecutor.makeUnfixed(headerElement);
+        return true;
+    }
+
+    @Override
     protected By logoutButtonSelector() {
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "logout button to become visible and clickable"); // TODO: might not be needed now?
+        ScriptExecutor.explicitWait(Duration.ofMillis(500L), "logout button to become visible and clickable");
         return By.id("logoff");
     }
 }
