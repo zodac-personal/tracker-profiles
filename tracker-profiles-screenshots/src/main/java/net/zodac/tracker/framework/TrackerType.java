@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
 public enum TrackerType {
 
     /**
-     * The tracker has a Cloudflare verification check on login (overrides {@link #MANUAL} and {@link #NON_ENGLISH}).
+     * The tracker has a Cloudflare verification check on login (overrides {@link #MANUAL}).
      */
     CLOUDFLARE_CHECK,
 
@@ -45,12 +45,7 @@ public enum TrackerType {
     /**
      * The tracker requires some manual input (like a Captcha or 2FA login), requiring a browser with the UI enabled.
      */
-    MANUAL,
-
-    /**
-     * The tracker is not in English and can be manually translated, but this requires a browser with the UI enabled.
-     */
-    NON_ENGLISH;
+    MANUAL;
 
     /**
      * All available {@link TrackerType}s.

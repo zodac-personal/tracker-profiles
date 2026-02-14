@@ -49,7 +49,8 @@ final class PythonHttpServerHandler {
     private static final String OPEN_REQUEST_PAYLOAD_FORMAT = """
         {
             "browser_data_storage_path": "%s",
-            "browser_dimensions": "%s"
+            "browser_dimensions": "%s",
+            "enable_translation": "%s"
         }""";
 
     // Header names and values
@@ -68,12 +69,13 @@ final class PythonHttpServerHandler {
      *
      * @param browserDataStoragePath the file path in which to store browser data (profiles, caches, etc.)
      * @param browserDimensions      the dimensions in the format {@code width,height} for the {@code Selenium} web browser
+     * @param enableTranslation      whether to translate web pages to English
      * @return the {@link SeleniumSession} of the Python browser session
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDataStoragePath()
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDimensions()
      */
-    static SeleniumSession openSession(final String browserDataStoragePath, final String browserDimensions) {
-        final String jsonPayload = OPEN_REQUEST_PAYLOAD_FORMAT.formatted(browserDataStoragePath, browserDimensions);
+    static SeleniumSession openSession(final String browserDataStoragePath, final String browserDimensions, final boolean enableTranslation) {
+        final String jsonPayload = OPEN_REQUEST_PAYLOAD_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation);
 
         try {
             final HttpRequest request = HttpRequest.newBuilder()

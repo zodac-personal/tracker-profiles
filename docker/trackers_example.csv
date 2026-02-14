@@ -34,6 +34,7 @@ PolishTorrent,username,password
 PornBay,username,password
 Redacted,username,password
 ReelFlix,username,password
+RUTracker,username,password
 SecretCinema,username,password
 SeedPool,username,password
 SportsCult,username,password
@@ -43,8 +44,6 @@ TorrentLeech,username,password
 TVChaosUK,username,password
 UHDBits,username,password
 Unwalled,username,password
-#,Non-english trackers,UI required to translate
-RUTracker,username,password
 #,Manual trackers,UI required for user input
 BeyondHD,username,password
 CGPeers,username,password

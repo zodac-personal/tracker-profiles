@@ -74,7 +74,7 @@ public record ApplicationConfiguration(
     private static final RedactionType DEFAULT_REDACTION_TYPE = RedactionType.TEXT;
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.OVERWRITE;
     private static final String DEFAULT_TIMEZONE = "UTC";
-    private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,non-english,cloudflare-check";
+    private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
 
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(

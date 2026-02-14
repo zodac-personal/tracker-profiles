@@ -61,7 +61,8 @@ public final class PythonWebDriverFactory {
      */
     public static RemoteWebDriver createDriver() {
         LOGGER.trace("Creating Python driver");
-        final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(CONFIG.browserDataStoragePath(), CONFIG.browserDimensions());
+        final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(
+            CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(), CONFIG.enableTranslationToEnglish());
 
         final RemoteWebDriver driver = AttachedRemoteWebDriver.create(seleniumSession);
         LOGGER.debug("Successfully attached to existing session");

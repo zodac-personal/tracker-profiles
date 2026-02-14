@@ -43,8 +43,7 @@ The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
-- Non-English: If the tracker is not in English, a UI browser is required to translate the page
-- Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides **Manual** and **Non-English**)
+- Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides **Manual**)
 
 **Note:** Any tracker not listed in any section below has not been tested (most likely due to lack of an account).
 
@@ -89,6 +88,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [PornBay](https://pornbay.org/)                   |
 | [Redacted](https://redacted.sh/)                  |
 | [ReelFlix](https://reelflix.cc/)                  |
+| [RUTracker](https://rutracker.org/)               |
 | [SecretCinema](https://secret-cinema.pw/)         |
 | [SeedPool](https://seedpool.org/)                 |
 | [SportsCult](https://sportscult.org/)             |
@@ -121,7 +121,6 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [LST](https://lst.gg/)                        | **Manual**           |
 | [PassThePopcorn](https://passthepopcorn.me/)  | **Manual**           |
 | [PrivateHD](https://privatehd.to/)            | **Cloudflare-check** |
-| [RUTracker](https://rutracker.org/)           | **Non-English**      |
 | [SceneTime](https://www.scenetime.com/)       | **Cloudflare-check** |
 | [Speed.CD](https://speed.cd/)                 | **Cloudflare-check** |
 | [TheEmpire](https://theempire.click/)         | **Manual**           |
@@ -162,7 +161,7 @@ docker run \
     --env REDACTION_TYPE=TEXT \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \
@@ -189,7 +188,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env REDACTION_TYPE=TEXT \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /c/tmp/screenshots:/app/screenshots \
     --name tracker-profiles \
@@ -207,7 +206,6 @@ execute [trackers that require a UI](#non-headless), so the UI will need to be c
 run through Docker. A UI browser is needed for trackers that:
 
 - Require some user input during login, like a Captcha or 2FA (if `TRACKER_EXECUTION_ORDER` includes **manual**)
-- Need to be translated (if `ENABLE_TRANSLATION_TO_ENGLISH` is set to **true** and `TRACKER_EXECUTION_ORDER` includes **non-english**)
 - Have a Cloudflare verification check (if `TRACKER_EXECUTION_ORDER` includes **cloudflare-check**)
 
 Below will define how to do this for your host system.
@@ -232,28 +230,28 @@ I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VxC
 #### Disable UI
 
 To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and `ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and
-exclude **manual**, **non-english** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You can also remove `--env DISPLAY` and/or
+exclude **manual** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You can also remove `--env DISPLAY` and/or
 `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
 ### Configuration Options
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable            | Description                                                                                                                    | Default Value                                |
-|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                             | 1050                                         |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                              | 1680                                         |
-| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed (only first character used) | #                                            |
-| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                           | true                                         |
-| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                         | false                                        |
-| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                         | INFO                                         |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                      | yyyy-MM-dd                                   |
-| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                         | /tmp/screenshots                             |
-| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                                         |
-| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [OVERWRITE, SKIP]                               | OVERWRITE                                    |
-| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                             | UTC                                          |
-| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, and unwanted execution types can be excluded (case-insensitive) | headless,manual,non-english,cloudflare-check |
-| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                | /tmp/screenshots/trackers.csv                |
+| Environment Variable            | Description                                                                                                                    | Default Value                    |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                             | 1050                             |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                              | 1680                             |
+| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed (only first character used) | #                                |
+| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                           | true                             |
+| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                         | false                            |
+| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                         | INFO                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                      | yyyy-MM-dd                       |
+| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                         | /tmp/screenshots                 |
+| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                             |
+| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [OVERWRITE, SKIP]                               | OVERWRITE                        |
+| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                             | UTC                              |
+| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, and unwanted execution types can be excluded (case-insensitive) | headless,manual,cloudflare-check |
+| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                | /tmp/screenshots/trackers.csv    |
 
 ## Contributing
 
@@ -314,7 +312,7 @@ docker run \
     --env REDACTION_TYPE=TEXT \
     --env SCREENSHOT_EXISTS_ACTION=OVERWRITE \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,non-english,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \

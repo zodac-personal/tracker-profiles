@@ -17,21 +17,11 @@
 
 package net.zodac.tracker.util;
 
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
-
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
-import net.zodac.tracker.framework.exception.TranslationException;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
-import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -49,11 +39,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ScriptExecutor {
 
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
-    private static final Duration DEFAULT_WAIT_FOR_CONTEXT_MENU = Duration.of(500L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(400L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.of(5_000L, ChronoUnit.MILLIS);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1_000L, ChronoUnit.MILLIS);
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;
@@ -83,7 +70,7 @@ public class ScriptExecutor {
     }
 
     /**
-     * Disables scrolling on the current webpage, to remove the scrollbar from the screenshot.
+     * Disables scrolling on the current web page, to remove the scrollbar from the screenshot.
      */
     public void disableScrolling() {
         LOGGER.trace("Disabling scrolling on page to remove scrollbar");
@@ -195,88 +182,11 @@ public class ScriptExecutor {
     }
 
     /**
-     * Sets the {@code Chromium} web browser window to the active window. This may be needed when an action needs to be performed on the window (such
-     * as a key press), but we need to ensure the browser is not in the background.
-     */
-    public static void setBrowserAsActiveWindow() {
-        try {
-            LOGGER.trace("Setting Chromium browser as active window");
-            new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start();
-        } catch (final IOException e) {
-            LOGGER.debug("Error setting browser as active window", e);
-            LOGGER.error("Error setting browser as active window: {}", e.getMessage());
-        }
-    }
-
-    /**
      * Stops the loading of the current web page.
      */
     public void stopPageLoad() {
         LOGGER.trace("Stopping page load");
         driver.executeScript("window.stop();");
-    }
-
-    /**
-     * Translates the web page into English. Performs the following actions:
-     * <ol>
-     *     <li>Forces the web browser to be the active window</li>
-     *     <li>Loads a non-interactive element on the web page to right-click</li>
-     *     <li>Performs a right-click</li>
-     *     <li>Using {@link Robot}, performs 3 'UP' keyboard presses to highlight the 'Translate to English' option</li>
-     *     <li>Presses 'ENTER'</li>
-     *     <li>Optionally resets the username {@link WebElement} that may have been incorrectly translated</li>
-     * </ol>
-     *
-     * @param username              the username
-     * @param mistranslatedUsername the text (can be partial text) that the username is incorrectly translated into, in order to find and replace it
-     */
-    public void translatePage(final String username, final @Nullable String mistranslatedUsername) {
-        LOGGER.debug("Translating page to English");
-        setBrowserAsActiveWindow();
-
-        try {
-            // Find a non-interactive element to right-click
-            final WebElement bodyElement = driver.findElement(By.tagName("body"));
-
-            // Simulate right-click on the page, then wait for it to appear
-            final Actions actions = new Actions(driver);
-            LOGGER.trace("Performing right-click");
-            actions.contextClick(bodyElement).perform();
-            explicitWait(DEFAULT_WAIT_FOR_CONTEXT_MENU, "right-click menu to open");
-
-            // Press "Up" key 3 times to select 'Translate to English' option from bottom of the menu
-            final Robot robot = new Robot();
-            final int numberOfUpPressesToSelectTranslateButton = 3;
-            for (int i = 0; i < numberOfUpPressesToSelectTranslateButton; i++) {
-                LOGGER.trace("Pressing UP key");
-                robot.keyPress(KeyEvent.VK_UP);
-                robot.keyRelease(KeyEvent.VK_UP);
-                explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS, "key press to activate");
-            }
-
-            // Press "Enter" to select the "Translate to English" option
-            LOGGER.trace("Pressing ENTER key");
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-
-            explicitWait(DEFAULT_WAIT_FOR_TRANSLATION, "translation to complete");
-
-            // After translation, some username elements will have been incorrectly translated
-            if (mistranslatedUsername != null) {
-                LOGGER.debug("Reverting mistranslated username '{}' to original '{}'", mistranslatedUsername, username);
-
-                final By mistranslatedElementSelector = XpathBuilder
-                    .from(NamedHtmlElement.any(), withText(mistranslatedUsername))
-                    .build();
-                for (final WebElement element : driver.findElements(mistranslatedElementSelector)) {
-                    LOGGER.trace("Reverting element '{}'", element);
-                    driver.executeScript(String.format("arguments[0].innerText = '%s'", username), element);
-                }
-                explicitWait(DEFAULT_WAIT_FOR_TRANSLATION, "username translation to be reverted");
-            }
-        } catch (final AWTException e) {
-            throw new TranslationException(e);
-        }
     }
 
     /**

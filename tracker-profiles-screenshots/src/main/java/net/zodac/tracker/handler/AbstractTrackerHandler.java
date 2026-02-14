@@ -183,6 +183,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      */
     public void navigateToLoginPage(final String trackerName) {
+        LOGGER.debug("Navigating to login page");
         final By loginLinkSelector = loginPageSelector();
 
         if (loginLinkSelector != null) {
@@ -214,6 +215,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             return;
         }
 
+        LOGGER.debug("Performing Cloudflare verification check");
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification, for {} seconds",
             DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
@@ -245,7 +247,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      */
     public void login(final String username, final String password, final String trackerName) {
-        LOGGER.trace("Logging in to tracker '{}'", trackerName);
+        LOGGER.debug("Logging in to tracker '{}'", trackerName);
         scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
@@ -259,7 +261,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         manualCheckBeforeLoginClick(trackerName);
 
-        // TODO: Check if the webpage has changed (user clicked login during manual operation), and skip this
+        // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
             final WebElement loginButton = driver.findElement(loginButtonSelector);
@@ -361,7 +363,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * loading.
      */
     public void openProfilePage() {
-        LOGGER.trace("Opening profile page");
+        LOGGER.debug("Opening profile page");
         scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
@@ -420,7 +422,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @see Redactor
      */
     public int redactElements() {
-        LOGGER.trace("Redacting elements");
+        LOGGER.debug("Redacting elements");
         final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
         if (selectors.isEmpty()) {
             LOGGER.trace("\t\t- No defined elements to redact");
@@ -484,19 +486,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Checks if the web page is using a non-English language, and translates it to English.
-     *
-     * <p>
-     * By default, we assume there is no header to update, so this method returns {@code false}. Should be overridden otherwise.
-     *
-     * @param username the username, to be re-applied to the web page in case of accidental translation
-     * @return {@code true} if the site is not in English, and it was successfully translated
-     */
-    public boolean isNotEnglish(final String username) {
-        return false;
-    }
-
-    /**
      * Retrieves the {@link WebElement} of the logout button.
      *
      * @return the logout button {@link WebElement}
@@ -508,7 +497,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public void logout() {
-        LOGGER.trace("Logging out of tracker");
+        LOGGER.debug("Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
         scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
@@ -559,7 +548,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * Sometimes when clicking the login button or the profile page button, the page won't load correctly. If a {@link TimeoutException} occurs due to
-     * the webpage, not loading within {@code clickResolutionDuration} it is simply ignored. We then force the web page to stop loading before
+     * the web page, not loading within {@code clickResolutionDuration} it is simply ignored. We then force the web page to stop loading before
      * proceeding.
      *
      * @param buttonToClick           the {@link WebElement} to {@link WebElement#click()}

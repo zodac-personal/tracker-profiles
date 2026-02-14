@@ -38,7 +38,7 @@ import org.openqa.selenium.By;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code RUTracker} tracker.
  */
-@TrackerHandler(name = "RUTracker", type = TrackerType.NON_ENGLISH, url = {
+@TrackerHandler(name = "RUTracker", url = {
     "https://rutracker.org/",
     "https://rutracker.net/"
 })
@@ -87,12 +87,6 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         return By.id("logged-in-username");
-    }
-
-    @Override
-    public boolean isNotEnglish(final String username) {
-        scriptExecutor.translatePage(username, null);
-        return true;
     }
 
     @Override

@@ -41,7 +41,6 @@ import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
-import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.util.ScreenshotTaker;
 import org.apache.logging.log4j.LogManager;
@@ -196,7 +195,7 @@ public final class ProfileScreenshotter {
         LOGGER.info("[{}]", trackerCredential.name());
 
         // TODO: Add a retry option
-        // TODO: On failure, take a screenshot and add to a subdirectory
+        // TODO: On failure, take a screenshot and add to a subdirectory?
         try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name())) {
             screenshotProfile(trackerHandler, trackerCredential);
             return true;
@@ -228,10 +227,6 @@ public final class ProfileScreenshotter {
                 final String errorMessage = e.getMessage().split("\n")[0];
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), errorMessage);
             }
-            return false;
-        } catch (final TranslationException e) {
-            LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
-            LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
@@ -281,10 +276,6 @@ public final class ProfileScreenshotter {
 
         if (trackerHandler.hasFixedHeader()) {
             LOGGER.info("\t- Header has been updated to not be fixed");
-        }
-
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler.isNotEnglish(trackerCredential.username())) {
-            LOGGER.info("\t- Profile page has been translated to English");
         }
 
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name());

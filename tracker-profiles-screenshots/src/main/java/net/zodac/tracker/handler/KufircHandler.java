@@ -30,10 +30,4 @@ public class KufircHandler extends LuminanceHandler {
     protected By postLoginSelector() {
         return By.id("userinfo_username");
     }
-
-    @Override
-    public boolean isNotEnglish(final String username) {
-        scriptExecutor.translatePage(username, null);
-        return true;
-    }
 }

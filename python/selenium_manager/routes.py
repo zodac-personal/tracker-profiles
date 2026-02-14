@@ -40,9 +40,11 @@ class OpenRequestData(TypedDict):
     Attributes:
         browser_data_storage_path (str): Filesystem path where browser session data will be stored.
         browser_dimensions (str): Comma-separated dimensions for the browser window, e.g., "1920,1080".
+        enable_translation (bool): Whether to translate the page to English or not
     """
     browser_data_storage_path: str
     browser_dimensions: str
+    enable_translation: bool
 
 
 class CloseRequestData(TypedDict):
@@ -77,7 +79,7 @@ def register_routes(app: Flask) -> None:
         Expects JSON payload with:
             'browser_data_storage_path': str, writable path for browser profile and cache.
             'browser_dimensions': str, format 'WIDTH,HEIGHT' for window size.
-
+            'enable_translation': bool, whether to translate the page to English or not
         Returns:
             200 OK with session ID and local session URL on success.
             400 Bad Request for missing/invalid input.
@@ -94,6 +96,7 @@ def register_routes(app: Flask) -> None:
             request_data: OpenRequestData = {
                 "browser_data_storage_path": data["browser_data_storage_path"],
                 "browser_dimensions": data["browser_dimensions"],
+                "enable_translation": data["enable_translation"].lower() == "true",
             }
         except KeyError as e:
             return jsonify({"error": f"Missing required key: {e.args[0]}"}), 400
@@ -111,8 +114,10 @@ def register_routes(app: Flask) -> None:
         if not isinstance(browser_dimensions, str) or "," not in browser_dimensions:
             return jsonify({"error": f"Invalid 'browser_dimensions' format, expected 'WIDTH,HEIGHT', found: '{browser_dimensions}'"}), 400
 
+        enable_translation = request_data["enable_translation"]
+
         try:
-            options = create_chrome_options(browser_data_storage_path, browser_dimensions)
+            options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation)
             driver = uc.Chrome(
                 headless=False,
                 use_subprocess=False,
