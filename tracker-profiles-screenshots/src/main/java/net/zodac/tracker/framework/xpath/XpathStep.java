@@ -36,14 +36,14 @@ import org.openqa.selenium.By;
  */
 public final class XpathStep {
 
+    private final StringBuilder xpath = new StringBuilder();  // NOPMD: AvoidStringBufferField - Fine here
+
     /**
      * Default constructor.
      */
     XpathStep() {
 
     }
-
-    private final StringBuilder xpath = new StringBuilder();  // NOPMD: AvoidStringBufferField - Fine here
 
     /**
      * Begin the XPATH query to find an element anywhere in the DOM under the current position, with the provided {@link XpathPredicate}s.
@@ -100,9 +100,7 @@ public final class XpathStep {
      * @return this {@link XpathBuilder}
      */
     public XpathStep descendant(final Element element, final XpathPredicate... predicates) {
-        xpath.append("//").append(element.tagName());
-        applyPredicates(predicates);
-        return this;
+        return from(element, predicates);
     }
 
     /**

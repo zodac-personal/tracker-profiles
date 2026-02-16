@@ -61,8 +61,9 @@ public final class DisplayUtils {
     private static final String BUTTON_EXIT_TEXT = "Exit";
     private static final String LABEL_SUFFIX = String.format(", then click '%s' below", BUTTON_CONTINUE_TEXT);
     private static final String TITLE_SUFFIX = " Manual Input";
-    private static final int DIALOG_BOX_HEIGHT = 125;
-    private static final int DIALOG_BOX_WIDTH = 500;
+    private static final int DIALOG_HEIGHT = 125;
+    private static final int DIALOG_WIDTH = 500;
+    private static final int DIALOG_POSITION_LEFT_MARGIN = 40;
 
     private static final ScheduledExecutorService TIMEOUT_SCHEDULER = Executors.newSingleThreadScheduledExecutor(runnable -> {
         final Thread t = new Thread(runnable, "dialog-timeout");
@@ -102,7 +103,7 @@ public final class DisplayUtils {
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(createButtons(dialog, userProvidedInput), BorderLayout.PAGE_END);
 
-        dialog.setPreferredSize(new Dimension(DIALOG_BOX_WIDTH, DIALOG_BOX_HEIGHT));
+        dialog.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
         dialog.pack();  // Respects preferredSize but allows it to be larger if needed based on the text
         dialog.setLocationRelativeTo(null);
 
@@ -170,10 +171,9 @@ public final class DisplayUtils {
         // Get the screen the dialog will appear on
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
-        final int leftMargin = 40;
 
         // X is left + margin, Y is vertically centered
-        final int x = bounds.x + leftMargin;
+        final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN;
         final int y = bounds.y + (bounds.height - dialog.getHeight()) / 2;
         dialog.setLocation(x, y);
     }

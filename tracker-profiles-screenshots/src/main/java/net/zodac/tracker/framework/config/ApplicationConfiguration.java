@@ -72,7 +72,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
     private static final RedactionType DEFAULT_REDACTION_TYPE = RedactionType.TEXT;
-    private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.OVERWRITE;
+    private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";

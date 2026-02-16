@@ -129,8 +129,14 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * Navigates to the home page of the tracker. Waits {@link #DEFAULT_WAIT_FOR_PAGE_LOAD} for the page to finish loading.
      */
     public void openTracker() {
-        boolean unableToConnect = true;
+        boolean successfulConnection = false;
+
         for (final String trackerUrl : trackerDefinition.urls()) {
+            if (successfulConnection) {
+                // A previous URL successfully connected, no need to try another
+                break;
+            }
+
             try {
                 LOGGER.info("\t\t- '{}'", trackerUrl);
                 driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
@@ -140,12 +146,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
                 final String bodyText = driver.findElement(By.tagName("body")).getText();
                 if (bodyText.contains("HTTP ERROR 523") || bodyText.contains("Error code 523")) {
                     LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
-                    continue;
+                } else {
+                    successfulConnection = true;
+                    scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
                 }
-
-                unableToConnect = false;
-                scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-                break; // No need to load another page
             } catch (final WebDriverException e) {
                 // If website can't be resolved, assume the site is down and attempt the next URL (if any), else rethrow exception
                 if (e.getMessage() != null && e.getMessage().contains("ERR_NAME_NOT_RESOLVED")) {
@@ -158,7 +162,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
-        if (unableToConnect) {
+        if (!successfulConnection) {
             throw new IllegalStateException(
                 String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", trackerDefinition.name(), trackerDefinition.urls()));
         }

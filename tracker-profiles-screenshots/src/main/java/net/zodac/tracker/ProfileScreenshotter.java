@@ -246,7 +246,8 @@ public final class ProfileScreenshotter {
     }
 
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
-        if (doesScreenshotExistAndSkipSelected(trackerCredential.name())) {
+        final int screenshotAppendValue = doesScreenshotExistAndSkipSelected(trackerCredential.name());
+        if (screenshotAppendValue == -1) {
             return;
         }
 
@@ -264,7 +265,6 @@ public final class ProfileScreenshotter {
         LOGGER.info("\t- Opening user profile page");
         trackerHandler.openProfilePage();
 
-        // TODO: Take both redacted and non-redacted screenshots?
         if (trackerHandler.hasElementsNeedingRedaction()) {
             LOGGER.info("\t- Redacting elements with sensitive information");
             final int numberOfRedactedElements = trackerHandler.redactElements();
@@ -278,26 +278,31 @@ public final class ProfileScreenshotter {
             LOGGER.info("\t- Header has been updated to not be fixed");
         }
 
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name());
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name(), screenshotAppendValue);
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
     }
 
-    private static boolean doesScreenshotExistAndSkipSelected(final String trackerName) {
-        if (!ScreenshotTaker.doesScreenshotAlreadyExist(trackerName)) {
-            return false;
+    private static int doesScreenshotExistAndSkipSelected(final String trackerName) {
+        final int numberOfExistingScreenshots = ScreenshotTaker.howManyScreenshotsAlreadyExist(trackerName);
+        if (numberOfExistingScreenshots == 0) {
+            return numberOfExistingScreenshots;
         }
 
         return switch (CONFIG.existingScreenshotAction()) {
+            case CREATE_ANOTHER -> {
+                LOGGER.debug("\t- Screenshot already exists for tracker '{}', taking a new one and appending index to name", trackerName);
+                yield numberOfExistingScreenshots;
+            }
             case OVERWRITE -> {
                 LOGGER.debug("\t- Screenshot already exists for tracker '{}', overwriting with new screenshot", trackerName);
-                yield false;
+                yield 0;
             }
             case SKIP -> {
                 LOGGER.warn("\t- Screenshot already exists for tracker '{}', skipping", trackerName);
-                yield true;
+                yield -1;
             }
         };
     }
