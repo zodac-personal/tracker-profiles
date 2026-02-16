@@ -1,3 +1,0 @@
-## New option for `SCREENSHOT_EXISTS_ACTION`
-
-Added the option **CREATE_ANOTHER**, which allows multiple screenshots for a tracker if a screenshot already exists. The first screenshot will still be called `trackerName.png` (to retain the same filename as existing flows), then subsequent ones will be named `trackerName_1.png`, `trackerName_2.png`, etc.
