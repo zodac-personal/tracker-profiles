@@ -26,7 +26,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import net.zodac.tracker.ProfileScreenshotter;
+import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
@@ -47,8 +47,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Abstract class used to define a {@link AbstractTrackerHandler}. All implementations will be used by {@link ProfileScreenshotter},
- * if the tracker is included in the tracker input file. This class lists the high-level methods required for {@link ProfileScreenshotter} to be able
+ * Abstract class used to define a {@link AbstractTrackerHandler}. All implementations will be used by {@link ScreenshotOrchestrator},
+ * if the tracker is included in the tracker input file. This class lists the high-level methods required for {@link ScreenshotOrchestrator} to be able
  * to successfully generate a screenshot for a given tracker.
  *
  * <p>

@@ -1,0 +1,177 @@
+/*
+ * BSD Zero Clause License
+ *
+ * Copyright (c) 2024-2026 zodac.net
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package net.zodac.tracker.app;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import net.zodac.tracker.util.Pair;
+import net.zodac.tracker.framework.TrackerCredential;
+import net.zodac.tracker.framework.TrackerHandlerFactory;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.config.ExistingScreenshotAction;
+import net.zodac.tracker.framework.exception.BrowserClosedException;
+import net.zodac.tracker.framework.exception.CancelledInputException;
+import net.zodac.tracker.framework.exception.DriverAttachException;
+import net.zodac.tracker.framework.exception.NoUserInputException;
+import net.zodac.tracker.handler.AbstractTrackerHandler;
+import net.zodac.tracker.util.ScreenshotTaker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.remote.UnreachableBrowserException;
+
+/**
+ * Handles the execution of taking a screenshot for a single tracker.
+ */
+public final class ProfileScreenshotExecutor {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
+
+    private ProfileScreenshotExecutor() {
+
+    }
+
+    /**
+     * Attempts to take a screenshot for the given tracker credential.
+     *
+     * @param trackerCredential the tracker to screenshot
+     * @return true if screenshot was successful, false otherwise
+     */
+    public static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
+        LOGGER.info("");
+        LOGGER.info("[{}]", trackerCredential.name());
+
+        // TODO: Add a retry option, then return number of attempts needed
+        // TODO: On failure, take a screenshot and add to a subdirectory?
+        try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name())) {
+            screenshotProfile(trackerHandler, trackerCredential);
+            return true;
+        } catch (final CancelledInputException e) {
+            LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerCredential.name());
+            return false;
+        } catch (final DriverAttachException e) {
+            LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name());
+            return false;
+        } catch (final FileNotFoundException e) {
+            LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerCredential.name());
+            LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerCredential.name(), e.getMessage());
+            return false;
+        } catch (final NoSuchElementException e) {
+            LOGGER.debug("\t- No implementation for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- No implementation for tracker '{}'", trackerCredential.name());
+            return false;
+        } catch (final NoUserInputException e) {
+            LOGGER.debug("\t- User provided no manual input for tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerCredential.name());
+            return false;
+        } catch (final TimeoutException e) {
+            LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
+            if (e.getMessage() == null) {
+                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name());
+            } else {
+                final String errorMessage = e.getMessage().split("\n")[0];
+                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), errorMessage);
+            }
+            return false;
+        } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
+            LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
+            throw new BrowserClosedException(e);
+        } catch (final Exception e) {
+            LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
+
+            if (e.getMessage() == null) {
+                LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name());
+            } else {
+                final String errorMessage = e.getMessage().split("\n")[0];
+                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), errorMessage);
+            }
+
+            return false;
+        }
+    }
+
+    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
+        final Pair<ExistingScreenshotAction, Integer> existingScreenshotValue = doesScreenshotExistAndSkipSelected(trackerCredential.name());
+        if (existingScreenshotValue.first() == ExistingScreenshotAction.SKIP) {
+            return;
+        }
+
+        LOGGER.info("\t- Opening tracker");
+        trackerHandler.openTracker();
+        trackerHandler.navigateToLoginPage(trackerCredential.name());
+
+        LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
+        trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
+
+        if (trackerHandler.canBannerBeCleared()) {
+            LOGGER.info("\t- Banner has been cleared");
+        }
+
+        LOGGER.info("\t- Opening user profile page");
+        trackerHandler.openProfilePage();
+
+        if (trackerHandler.hasElementsNeedingRedaction()) {
+            LOGGER.info("\t- Redacting elements with sensitive information");
+            final int numberOfRedactedElements = trackerHandler.redactElements();
+            if (numberOfRedactedElements != 0) {
+                final String redactedElementsPlural = numberOfRedactedElements == 1 ? "" : "s";
+                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, redactedElementsPlural);
+            }
+        }
+
+        if (trackerHandler.hasFixedHeader()) {
+            LOGGER.info("\t- Header has been updated to not be fixed");
+        }
+
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name(), existingScreenshotValue.second());
+        LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+        trackerHandler.logout();
+        LOGGER.info("\t- Logged out");
+    }
+
+    private static Pair<ExistingScreenshotAction, Integer> doesScreenshotExistAndSkipSelected(final String trackerName) {
+        final int numberOfExistingScreenshots = ScreenshotTaker.howManyScreenshotsAlreadyExist(trackerName);
+        if (numberOfExistingScreenshots == 0) {
+            return Pair.of(ExistingScreenshotAction.OVERWRITE, numberOfExistingScreenshots);
+        }
+
+        return switch (CONFIG.existingScreenshotAction()) {
+            case CREATE_ANOTHER -> {
+                LOGGER.debug("\t- Screenshot already exists for tracker '{}', taking a new one and appending index to name", trackerName);
+                yield Pair.of(ExistingScreenshotAction.CREATE_ANOTHER, numberOfExistingScreenshots);
+            }
+            case OVERWRITE -> {
+                LOGGER.debug("\t- Screenshot already exists for tracker '{}', overwriting with new screenshot", trackerName);
+                yield Pair.of(ExistingScreenshotAction.OVERWRITE, 0);
+            }
+            case SKIP -> {
+                LOGGER.warn("\t- Screenshot already exists for tracker '{}', skipping", trackerName);
+                yield Pair.of(ExistingScreenshotAction.SKIP, numberOfExistingScreenshots);
+            }
+        };
+    }
+}

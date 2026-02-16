@@ -42,7 +42,7 @@ public @interface TrackerHandler {
     String name();
 
     /**
-     * Defines how the tracker is executed - whether a UI is needed or not.
+     * Defines the type of the tracker, to allow for certain types not to be run.
      *
      * @return the {@link TrackerType}
      */

@@ -92,6 +92,8 @@ public enum TrackerType {
      */
     public void printSummary(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
         final Set<TrackerCredential> trackers = trackersByType.getOrDefault(this, Set.of());
+
+        // TODO: Why check for enabled? Shouldn't these have been filtered out by now?
         final int numberOfTrackers = isEnabled(trackersByType, config) ? trackers.size() : 0;
 
         if (numberOfTrackers != 0) {
