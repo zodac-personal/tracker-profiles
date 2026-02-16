@@ -94,8 +94,8 @@ public final class ProfileScreenshotter {
         }
 
         printTrackersInfo(trackersByType);
-        final Collection<String> successfulTrackers = new TreeSet<>();
-        final Collection<String> unsuccessfulTrackers = new TreeSet<>();
+        final Map<TrackerType, Collection<String>> successfulTrackers = new EnumMap<>(TrackerType.class);
+        final Map<TrackerType, Collection<String>> unsuccessfulTrackers = new EnumMap<>(TrackerType.class);
 
         // Execute in the order specified
         for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
@@ -107,43 +107,62 @@ public final class ProfileScreenshotter {
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
             for (final TrackerCredential trackerCredential : trackersByType.getOrDefault(trackerType, Set.of())) {
                 final boolean successfullyTakenScreenshot = isAbleToTakeScreenshot(trackerCredential);
-                if (successfullyTakenScreenshot) {
-                    successfulTrackers.add(trackerCredential.name());
-                } else {
-                    unsuccessfulTrackers.add(trackerCredential.name());
-                }
+                final Map<TrackerType, Collection<String>> targetMap = successfullyTakenScreenshot ? successfulTrackers : unsuccessfulTrackers;
+
+                targetMap
+                    .computeIfAbsent(trackerType, _ -> new TreeSet<>())
+                    .add(trackerCredential.name());
             }
         }
 
         return returnResultSummary(successfulTrackers, unsuccessfulTrackers);
     }
 
-    private static ExitState returnResultSummary(final Collection<String> successfulTrackers, final Collection<String> unsuccessfulTrackers) {
-        if (successfulTrackers.isEmpty()) {
-            final String trackersPlural = unsuccessfulTrackers.size() == 1 ? "" : "s";
+    private static ExitState returnResultSummary(final Map<TrackerType, Collection<String>> successfulTrackers,
+                                                 final Map<TrackerType, Collection<String>> unsuccessfulTrackers) {
+        final int totalSuccessful = successfulTrackers.values()
+            .stream()
+            .mapToInt(Collection::size)
+            .sum();
+
+        final int totalUnsuccessful = unsuccessfulTrackers.values()
+            .stream()
+            .mapToInt(Collection::size)
+            .sum();
+
+
+        if (totalSuccessful == 0) {
+            final String trackersPlural = totalUnsuccessful == 1 ? "" : "s";
             LOGGER.error("");
-            LOGGER.error("All {} selected tracker{} failed:", unsuccessfulTrackers.size(), trackersPlural);
-            for (final String unsuccessfulTracker : unsuccessfulTrackers) {
-                LOGGER.error("\t- {}", unsuccessfulTracker);
-            }
+            LOGGER.error("All {} selected tracker{} failed:", totalUnsuccessful, trackersPlural);
+
+            unsuccessfulTrackers.forEach((type, trackers) -> {
+                LOGGER.error("  {}:", type.formattedName());
+                trackers.forEach(name -> LOGGER.error("\t- {}", name));
+            });
+
             return ExitState.FAILURE;
         }
 
-        if (unsuccessfulTrackers.isEmpty()) {
-            final String trackersPlural = successfulTrackers.size() == 1 ? "" : "s";
+        if (totalUnsuccessful == 0) {
+            final String trackersPlural = totalSuccessful == 1 ? "" : "s";
             LOGGER.info("");
-            LOGGER.info("{} tracker{} successfully screenshot", successfulTrackers.size(), trackersPlural);
+            LOGGER.info("{} tracker{} successfully screenshot", totalSuccessful, trackersPlural);
+
+            successfulTrackers.forEach((type, trackers) -> LOGGER.info("  {} ({}): {}", type.formattedName(), trackers.size(), trackers));
+
             return ExitState.SUCCESS;
-        } else {
-            final String trackersPlural = unsuccessfulTrackers.size() == 1 ? "" : "s";
-            LOGGER.warn("");
-            // TODO: Print these by type
-            LOGGER.warn("Failures for following tracker{}:", trackersPlural);
-            for (final String unsuccessfulTracker : unsuccessfulTrackers) {
-                LOGGER.warn("\t- {}", unsuccessfulTracker);
-            }
-            return ExitState.PARTIAL_FAILURE;
         }
+
+        final String trackersPlural = totalUnsuccessful == 1 ? "" : "s";
+        LOGGER.warn("");
+        LOGGER.warn("Failures for following tracker{}:", trackersPlural);
+
+        unsuccessfulTrackers.forEach((type, trackers) -> {
+            LOGGER.warn("  {}:", type.formattedName());
+            trackers.forEach(name -> LOGGER.warn("\t- {}", name));
+        });
+        return ExitState.PARTIAL_FAILURE;
     }
 
     private static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
