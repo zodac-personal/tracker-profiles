@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -114,14 +115,14 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
             .child(a, atIndex(1))
             .build();
         final List<WebElement> unreadPrivateMessages = driver.findElements(unreadPrivateMessagesSelector);
-        LOGGER.debug("\t- {} unread private message{}", unreadPrivateMessages.size(), unreadPrivateMessages.size() == 1 ? "" : "s");
+        LOGGER.debug("\t- {} unread private message{} to clear", unreadPrivateMessages.size(), StringUtils.pluralise(unreadPrivateMessages));
 
         for (final WebElement unreadPrivateMessage : unreadPrivateMessages) {
             clickButton(unreadPrivateMessage);
             driver.navigate().back();
         }
 
-        LOGGER.debug("\t\t- Unread private messages cleared");
+        LOGGER.debug("\t\t- Unread private message{} cleared", StringUtils.pluralise(unreadPrivateMessages));
     }
 
     private boolean hasUserAnyUnreadPrivateMessages() {

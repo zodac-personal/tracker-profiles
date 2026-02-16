@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Handles retrieving and organizing trackers from the CSV input file.
  */
-public final class TrackerRetriever {
+final class TrackerRetriever {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -51,7 +51,7 @@ public final class TrackerRetriever {
      *
      * @return map of tracker types to their credentials
      */
-    public static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
+    static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
         try {
             final List<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
             final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
@@ -80,13 +80,13 @@ public final class TrackerRetriever {
     }
 
     /**
-     * Counts all enabled trackers across all types.
+     * Counts all enabled trackers across all {@link TrackerType}s.
      *
      * @param trackersByType the map of trackers organized by type
-     * @param config the application configuration
-     * @return total count of enabled trackers
+     * @param config         the application configuration
+     * @return total number of enabled trackers
      */
-    public static int countAllEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
+    static int countAllEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
         return TrackerType.ALL_VALUES
             .stream()
             .filter(trackerType -> trackerType.isEnabled(trackersByType, config))
@@ -95,12 +95,12 @@ public final class TrackerRetriever {
     }
 
     /**
-     * Prints summary information about all trackers (debug level only).
+     * Prints summary information about all trackers, if {@link Logger#isDebugEnabled()} is {@code true}.
      *
      * @param trackersByType the map of trackers organized by type
-     * @param config the application configuration
+     * @param config         the application configuration
      */
-    public static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
+    static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : config.trackerExecutionOrder()) {
                 trackerType.printSummary(trackersByType, config);

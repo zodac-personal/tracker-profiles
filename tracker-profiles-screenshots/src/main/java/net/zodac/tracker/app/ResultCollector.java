@@ -23,13 +23,14 @@ import java.util.Map;
 import java.util.TreeSet;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * Collects and reports on the results of screenshot attempts.
  */
-public final class ResultCollector {
+final class ResultCollector {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -43,7 +44,7 @@ public final class ResultCollector {
      * @param trackerName the name of the tracker
      * @param wasSuccessful whether the screenshot was successful
      */
-    public void addResult(final TrackerType trackerType, final String trackerName, final boolean wasSuccessful) {
+    void addResult(final TrackerType trackerType, final String trackerName, final boolean wasSuccessful) {
         final Map<TrackerType, Collection<String>> targetMap = wasSuccessful ? successfulTrackers : unsuccessfulTrackers;
         targetMap
             .computeIfAbsent(trackerType, _ -> new TreeSet<>())
@@ -55,7 +56,7 @@ public final class ResultCollector {
      *
      * @return the exit state based on success/failure counts
      */
-    public ExitState generateSummary() {
+    ExitState generateSummary() {
         final int totalSuccessful = successfulTrackers.values()
             .stream()
             .mapToInt(Collection::size)
@@ -68,9 +69,8 @@ public final class ResultCollector {
 
 
         if (totalSuccessful == 0) {
-            final String trackersPlural = totalUnsuccessful == 1 ? "" : "s";
             LOGGER.error("");
-            LOGGER.error("All {} selected tracker{} failed:", totalUnsuccessful, trackersPlural);
+            LOGGER.error("All {} selected tracker{} failed:", totalUnsuccessful, StringUtils.pluralise(totalUnsuccessful));
 
             unsuccessfulTrackers.forEach((type, trackers) -> {
                 LOGGER.error("  {}:", type.formattedName());
@@ -81,18 +81,16 @@ public final class ResultCollector {
         }
 
         if (totalUnsuccessful == 0) {
-            final String trackersPlural = totalSuccessful == 1 ? "" : "s";
             LOGGER.info("");
-            LOGGER.info("{} tracker{} successfully screenshot", totalSuccessful, trackersPlural);
+            LOGGER.info("{} tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
 
             successfulTrackers.forEach((type, trackers) -> LOGGER.info("  {} ({}): {}", type.formattedName(), trackers.size(), trackers));
 
             return ExitState.SUCCESS;
         }
 
-        final String trackersPlural = totalUnsuccessful == 1 ? "" : "s";
         LOGGER.warn("");
-        LOGGER.warn("Failures for following tracker{}:", trackersPlural);
+        LOGGER.warn("Failures for following tracker{}:", StringUtils.pluralise(totalUnsuccessful));
 
         unsuccessfulTrackers.forEach((type, trackers) -> {
             LOGGER.warn("  {}:", type.formattedName());

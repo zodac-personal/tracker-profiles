@@ -33,6 +33,7 @@ import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.util.ScreenshotTaker;
+import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchSessionException;
@@ -43,7 +44,7 @@ import org.openqa.selenium.remote.UnreachableBrowserException;
 /**
  * Handles the execution of taking a screenshot for a single tracker.
  */
-public final class ProfileScreenshotExecutor {
+final class ProfileScreenshotExecutor {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ApplicationConfiguration CONFIG = Configuration.get();
@@ -58,7 +59,7 @@ public final class ProfileScreenshotExecutor {
      * @param trackerCredential the tracker to screenshot
      * @return true if screenshot was successful, false otherwise
      */
-    public static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
+    static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
         LOGGER.info("");
         LOGGER.info("[{}]", trackerCredential.name());
 
@@ -137,8 +138,7 @@ public final class ProfileScreenshotExecutor {
             LOGGER.info("\t- Redacting elements with sensitive information");
             final int numberOfRedactedElements = trackerHandler.redactElements();
             if (numberOfRedactedElements != 0) {
-                final String redactedElementsPlural = numberOfRedactedElements == 1 ? "" : "s";
-                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, redactedElementsPlural);
+                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
             }
         }
 

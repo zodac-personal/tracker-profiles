@@ -25,6 +25,7 @@ import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,8 +61,7 @@ public final class ScreenshotOrchestrator {
             return ExitState.FAILURE;
         }
 
-        final String trackersPlural = numberOfTrackers == 1 ? "" : "s";
-        LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, trackersPlural);
+        LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, StringUtils.pluralise(numberOfTrackers));
         ensureOutputDirectoryExists();
 
         TrackerRetriever.printTrackersInfo(trackersByType, CONFIG);
