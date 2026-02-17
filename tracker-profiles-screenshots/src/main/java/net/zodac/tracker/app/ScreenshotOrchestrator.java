@@ -51,7 +51,7 @@ public final class ScreenshotOrchestrator {
      *   <li>Collecting and reporting results</li>
      * </ol>
      *
-     * @return the exit code
+     * @return the {@link ExitState} of the execution
      */
     public static ExitState start() {
         final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();

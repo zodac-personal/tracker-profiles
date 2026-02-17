@@ -40,8 +40,8 @@ final class ResultCollector {
     /**
      * Records the result of a screenshot attempt.
      *
-     * @param trackerType the type of tracker
-     * @param trackerName the name of the tracker
+     * @param trackerType   the type of tracker
+     * @param trackerName   the name of the tracker
      * @param wasSuccessful whether the screenshot was successful
      */
     void addResult(final TrackerType trackerType, final String trackerName, final boolean wasSuccessful) {
@@ -52,9 +52,9 @@ final class ResultCollector {
     }
 
     /**
-     * Generates a summary of all results and returns the appropriate exit state.
+     * Generates a summary of all results and returns the appropriate {@link ExitState}.
      *
-     * @return the exit state based on success/failure counts
+     * @return the {@link ExitState} based on success/failure counts
      */
     ExitState generateSummary() {
         final int totalSuccessful = successfulTrackers.values()
@@ -67,6 +67,11 @@ final class ResultCollector {
             .mapToInt(Collection::size)
             .sum();
 
+        if (totalSuccessful == 0 && totalUnsuccessful == 0) {
+            LOGGER.error("");
+            LOGGER.error("Unexpectedly had no trackers execute");
+            return ExitState.FAILURE;
+        }
 
         if (totalSuccessful == 0) {
             LOGGER.error("");
