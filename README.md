@@ -2,6 +2,7 @@
 
 - [Overview](#overview)
 - [Features](#features)
+    - [Screenshots](#screenshots)
 - [Trackers](#trackers)
     - [Headless](#headless)
     - [Non-Headless](#non-headless)
@@ -36,6 +37,34 @@ or becomes otherwise unavailable.
     - IP address
     - Passkey
 - Takes a full-page screenshot of the redacted user profile
+
+### Screenshots
+
+Below are examples of the different types of redaction.
+
+<details>
+  <summary>Example Screenshots</summary>
+  <table>
+
+    <tr>
+      <td>
+
+#### Overlay
+
+![Overlay Redaction](./doc/redaction_overlay.png)
+
+      </td>
+      <td>
+
+#### Text
+
+![Text Redaction](./doc/redaction_text.png)
+
+      </td>
+    </tr>
+
+  </table>
+</details>
 
 ## Trackers
 
@@ -141,9 +170,13 @@ remember where it is saved and what it is named.
 
 The application is run using Docker, and below are the commands to run the `latest` docker image.
 
-<table>
-<tr>
-<td>
+
+<details>
+  <summary>Docker Commands</summary>
+  <table>
+
+    <tr>
+      <td>
 
 #### Debian
 
@@ -169,8 +202,8 @@ docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
-</td>
-<td>
+      </td>
+      <td>
 
 #### Windows
 
@@ -195,9 +228,11 @@ MSYS_NO_PATHCONV=1 docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
-</td>
-</tr>
-</table>
+      </td>
+    </tr>
+
+  </table>
+</details>
 
 ### Browser UI
 
