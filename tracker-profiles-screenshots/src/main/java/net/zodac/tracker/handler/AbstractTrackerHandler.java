@@ -48,8 +48,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Abstract class used to define a {@link AbstractTrackerHandler}. All implementations will be used by {@link ScreenshotOrchestrator},
- * if the tracker is included in the tracker input file. This class lists the high-level methods required for {@link ScreenshotOrchestrator} to be able
- * to successfully generate a screenshot for a given tracker.
+ * if the tracker is included in the tracker input file. This class lists the high-level methods required for {@link ScreenshotOrchestrator} to be
+ * able to successfully generate a screenshot for a given tracker.
  *
  * <p>
  * Since each tracker website has its own UI and own page structure, each implementation of {@link AbstractTrackerHandler} will contain the

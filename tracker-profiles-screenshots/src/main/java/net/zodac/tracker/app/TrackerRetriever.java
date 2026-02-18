@@ -19,6 +19,7 @@ package net.zodac.tracker.app;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,8 +31,9 @@ import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
-import net.zodac.tracker.handler.AbstractTrackerHandler;
+import net.zodac.tracker.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +42,7 @@ import org.apache.logging.log4j.Logger;
  */
 final class TrackerRetriever {
 
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
     private TrackerRetriever() {
@@ -51,21 +54,36 @@ final class TrackerRetriever {
      *
      * @return map of tracker types to their credentials
      */
-    static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
+    static Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> getTrackers() {
+        LOGGER.trace("Retrieving trackers to execute");
+        final Set<TrackerType> trackerExecutionOrder = EnumSet.copyOf(CONFIG.trackerExecutionOrder());
+        LOGGER.debug("Tracker execution order: {}", trackerExecutionOrder);
+
         try {
             final List<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
-            final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
+            final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = new EnumMap<>(TrackerType.class);
 
             for (final TrackerCredential trackerCredential : trackerCredentials) {
                 final Optional<TrackerHandler> trackerHandler = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
+                if (trackerHandler.isEmpty()) {
+                    LOGGER.warn("No implementation found for tracker '{}'", trackerCredential.name());
+                    continue;
+                }
 
-                if (trackerHandler.isPresent()) {
-                    final TrackerType trackerType = trackerHandler.get().type();
-                    final Set<TrackerCredential> existingTrackerDefinitionsOfType = trackersByType.getOrDefault(trackerType, new TreeSet<>());
-                    existingTrackerDefinitionsOfType.add(trackerCredential);
-                    trackersByType.put(trackerType, existingTrackerDefinitionsOfType);
+                final TrackerHandler handler = trackerHandler.get();
+                final TrackerType trackerType = handler.type();
+                if (!trackerExecutionOrder.contains(trackerType)) {
+                    LOGGER.debug("Skipping {} ({})", handler.name(), trackerType);
+                    continue;
+                }
+
+                final Pair<TrackerHandler, Set<TrackerCredential>> existingPair = trackersByType.get(trackerType);
+                if (existingPair == null) {
+                    final Set<TrackerCredential> trackerSet = new TreeSet<>();
+                    trackerSet.add(trackerCredential);
+                    trackersByType.put(trackerType, Pair.of(handler, trackerSet));
                 } else {
-                    LOGGER.warn("No {} implemented for tracker '{}'", AbstractTrackerHandler.class.getSimpleName(), trackerCredential.name());
+                    existingPair.second().add(trackerCredential);
                 }
             }
 
@@ -80,30 +98,16 @@ final class TrackerRetriever {
     }
 
     /**
-     * Counts all enabled trackers across all {@link TrackerType}s.
-     *
-     * @param trackersByType the map of trackers organized by type
-     * @param config         the application configuration
-     * @return total number of enabled trackers
-     */
-    static int countAllEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
-        return TrackerType.ALL_VALUES
-            .stream()
-            .filter(trackerType -> trackerType.isEnabled(trackersByType, config))
-            .mapToInt(trackerType -> trackersByType.getOrDefault(trackerType, Set.of()).size())
-            .sum();
-    }
-
-    /**
      * Prints summary information about all trackers, if {@link Logger#isDebugEnabled()} is {@code true}.
      *
      * @param trackersByType the map of trackers organized by type
-     * @param config         the application configuration
      */
-    static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
+    static void printTrackersInfo(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType,
+                                  final List<TrackerType> trackerExecutionOrder
+    ) {
         if (LOGGER.isDebugEnabled()) {
-            for (final TrackerType trackerType : config.trackerExecutionOrder()) {
-                trackerType.printSummary(trackersByType, config);
+            for (final TrackerType trackerType : trackerExecutionOrder) {
+                trackerType.printSummary(trackersByType);
             }
         }
     }

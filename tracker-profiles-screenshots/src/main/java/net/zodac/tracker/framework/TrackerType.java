@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -74,30 +75,20 @@ public enum TrackerType {
     }
 
     /**
-     * Whether the {@link TrackerType} is enabled for the application.
-     *
-     * @param trackersByType all user-defined trackers by the {@link TrackerType}
-     * @param config         the {@link ApplicationConfiguration}
-     * @return {@code true} if the {@link TrackerType} is enabled
-     */
-    public boolean isEnabled(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
-        return trackersByType.containsKey(this) && config.trackerExecutionOrder().contains(this);
-    }
-
-    /**
      * Prints the information on the user-defined trackers for this {@link TrackerType}.
      *
      * @param trackersByType all user-defined trackers by the {@link TrackerType}
-     * @param config         the {@link ApplicationConfiguration}
      */
-    public void printSummary(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final ApplicationConfiguration config) {
-        final Set<TrackerCredential> trackers = trackersByType.getOrDefault(this, Set.of());
+    public void printSummary(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType) {
+        final Pair<TrackerHandler, Set<TrackerCredential>> entry = trackersByType.get(this);
+        if (entry == null) {
+            LOGGER.trace("Tracker type {} not in execution order", this);
+            return;
+        }
 
-        // TODO: Why check for enabled? Shouldn't these have been filtered out by now?
-        final int numberOfTrackers = isEnabled(trackersByType, config) ? trackers.size() : 0;
-
-        if (numberOfTrackers != 0) {
-            LOGGER.debug(String.format("- %-12s: %d", formattedName(), numberOfTrackers));
+        final Set<TrackerCredential> trackers = entry.second();
+        if (!trackers.isEmpty()) {
+            LOGGER.info(String.format("- %-12s: %d", formattedName(), trackers.size()));
             for (final TrackerCredential trackerCredential : trackers) {
                 LOGGER.debug(String.format("\t- %-16s", trackerCredential.name()));
             }

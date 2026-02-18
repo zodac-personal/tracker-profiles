@@ -23,8 +23,10 @@ import java.util.Set;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,8 +56,8 @@ public final class ScreenshotOrchestrator {
      * @return the {@link ExitState} of the execution
      */
     public static ExitState start() {
-        final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();
-        final int numberOfTrackers = TrackerRetriever.countAllEnabled(trackersByType, CONFIG);
+        final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = TrackerRetriever.getTrackers();
+        final int numberOfTrackers = trackersByType.values().stream().flatMap(pair -> pair.second().stream()).toList().size();
         if (numberOfTrackers == 0) {
             LOGGER.error("No trackers selected!");
             return ExitState.FAILURE;
@@ -64,18 +66,19 @@ public final class ScreenshotOrchestrator {
         LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, StringUtils.pluralise(numberOfTrackers));
         ensureOutputDirectoryExists();
 
-        TrackerRetriever.printTrackersInfo(trackersByType, CONFIG);
+        TrackerRetriever.printTrackersInfo(trackersByType, CONFIG.trackerExecutionOrder());
         final ResultCollector resultCollector = new ResultCollector();
 
         // Execute in the order specified
         for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
-            if (!trackerType.isEnabled(trackersByType, CONFIG)) {
+            if (!trackersByType.containsKey(trackerType)) {
+                LOGGER.trace("No trackers of type {}", trackerType);
                 continue;
             }
 
             LOGGER.info("");
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
-            for (final TrackerCredential trackerCredential : trackersByType.getOrDefault(trackerType, Set.of())) {
+            for (final TrackerCredential trackerCredential : trackersByType.get(trackerType).second()) {
                 final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.isSuccessfullyScreenshot(trackerCredential);
                 resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
             }
