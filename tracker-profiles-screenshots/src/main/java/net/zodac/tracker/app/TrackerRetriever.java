@@ -64,16 +64,21 @@ final class TrackerRetriever {
             final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = new EnumMap<>(TrackerType.class);
 
             for (final TrackerCredential trackerCredential : trackerCredentials) {
-                final Optional<TrackerHandler> trackerHandler = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
-                if (trackerHandler.isEmpty()) {
+                final Optional<TrackerHandler> trackerHandlerOptional = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
+                if (trackerHandlerOptional.isEmpty()) {
                     LOGGER.warn("No implementation found for tracker '{}'", trackerCredential.name());
                     continue;
                 }
 
-                final TrackerHandler handler = trackerHandler.get();
-                final TrackerType trackerType = handler.type();
+                final TrackerHandler trackerHandler = trackerHandlerOptional.get();
+                final TrackerType trackerType = trackerHandler.type();
                 if (!trackerExecutionOrder.contains(trackerType)) {
-                    LOGGER.debug("Skipping {} ({})", handler.name(), trackerType);
+                    LOGGER.debug("Skipping {} ({})", trackerHandler.name(), trackerType);
+                    continue;
+                }
+
+                if (!CONFIG.enableAdultContent() && trackerHandler.adult()) {
+                    LOGGER.debug("Skipping adult tracker {}", trackerHandler.name());
                     continue;
                 }
 
@@ -81,7 +86,7 @@ final class TrackerRetriever {
                 if (existingPair == null) {
                     final Set<TrackerCredential> trackerSet = new TreeSet<>();
                     trackerSet.add(trackerCredential);
-                    trackersByType.put(trackerType, Pair.of(handler, trackerSet));
+                    trackersByType.put(trackerType, Pair.of(trackerHandler, trackerSet));
                 } else {
                     existingPair.second().add(trackerCredential);
                 }

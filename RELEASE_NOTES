@@ -5,3 +5,7 @@ When a user-input is required (for manual inputs like Captchas, or a Cloudflare 
 ## New option `INPUT_TIMEOUT_SECONDS`
 
 If `INPUT_TIMEOUT_ENABLED` is set to **true**, this new value allows the user to specify how many seconds they want the prompt to wait before timing out and failing execution. Unused if `INPUT_TIMEOUT_ENABLED` is set to **false**.
+
+## New option `ENABLE_ADULT_TRACKERS`
+
+If set to **false**, this will disable screenshots for trackers that *primarily* host adult content.

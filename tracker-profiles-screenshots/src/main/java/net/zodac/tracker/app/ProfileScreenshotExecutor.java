@@ -65,6 +65,7 @@ final class ProfileScreenshotExecutor {
 
         // TODO: Add a retry option, then return number of attempts needed
         // TODO: On failure, take a screenshot and add to a subdirectory?
+        // TODO: Are CTRL+C events being handled here correctly here when running in Docker?
         try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name())) {
             screenshotProfile(trackerHandler, trackerCredential);
             return true;

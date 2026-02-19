@@ -23,7 +23,7 @@ import org.openqa.selenium.By;
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Kufirc} tracker.
  */
-@TrackerHandler(name = "Kufirc", url = "https://kufirc.com/")
+@TrackerHandler(name = "Kufirc", adult = true, url = "https://kufirc.com/")
 public class KufircHandler extends LuminanceHandler {
 
     @Override

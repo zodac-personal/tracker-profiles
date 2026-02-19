@@ -37,7 +37,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link AvistazNetworkTrackerHandler} for the {@code ExoticaZ} tracker.
  */
-@TrackerHandler(name = "ExoticaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://exoticaz.to/")
+@TrackerHandler(name = "ExoticaZ", adult = true, type = TrackerType.CLOUDFLARE_CHECK, url = "https://exoticaz.to/")
 public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override

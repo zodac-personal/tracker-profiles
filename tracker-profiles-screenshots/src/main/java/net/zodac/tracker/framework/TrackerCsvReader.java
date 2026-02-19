@@ -39,7 +39,7 @@ import org.apache.commons.csv.CSVRecord;
 public final class TrackerCsvReader {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
-    private static final String[] CSV_HEADERS = {"trackerName", "username", "password"};  // TODO: 2FA?
+    private static final String[] CSV_HEADERS = {"trackerName", "username", "password"};
     private static final CSVFormat DEFAULT_FORMAT = CSVFormat.DEFAULT
         .builder()
         .setHeader(CSV_HEADERS)

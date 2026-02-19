@@ -34,14 +34,13 @@ import net.zodac.tracker.framework.TrackerType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: Add ability to enable/disable XXX trackers
-
 /**
  * Utility file that loads the application configuration from environment variables.
  *
  * @param browserDataStoragePath     the file path in which to store browser data (profiles, caches, etc.)
  * @param browserDimensions          the dimensions in the format {@code width,height} for the {@code Selenium} web browser
  * @param csvCommentSymbol           the {@code char} defining a comment row in the CSV file
+ * @param enableAdultContent         whether to enable screenshots for trackers primarily hosting adult content
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
  * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
  * @param forceUiBrowser             whether to use a UI-based browser or not
@@ -56,6 +55,7 @@ public record ApplicationConfiguration(
     String browserDataStoragePath,
     String browserDimensions,
     char csvCommentSymbol,
+    boolean enableAdultContent,
     boolean enableTranslationToEnglish,
     ExistingScreenshotAction existingScreenshotAction,
     boolean forceUiBrowser,
@@ -106,6 +106,7 @@ public record ApplicationConfiguration(
             BROWSER_DATA_STORAGE_PATH,
             getBrowserDimensions(),
             getCsvCommentSymbol(),
+            getBooleanEnvironmentVariable("ENABLE_ADULT_TRACKERS", true),
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
             getScreenshotExistsAction(),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
@@ -237,6 +238,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- browserDataStoragePath={}", browserDataStoragePath);
         LOGGER.debug("\t- browserDimensions={}", browserDimensions);
         LOGGER.debug("\t- csvCommentSymbol={}", csvCommentSymbol);
+        LOGGER.debug("\t- enableAdultContent={}", enableAdultContent);
         LOGGER.debug("\t- enableTranslationToEnglish={}", enableTranslationToEnglish);
         LOGGER.debug("\t- existingScreenshotAction={}", existingScreenshotAction);
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);

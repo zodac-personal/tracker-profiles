@@ -43,27 +43,25 @@ or becomes otherwise unavailable.
 Below are examples of the different types of redaction.
 
 <details>
-  <summary>Example Screenshots</summary>
-  <table>
-
-    <tr>
-      <td>
+<summary>Example Screenshots</summary>
+<table>
+<tr>
+<td>
 
 #### Overlay
 
 ![Overlay Redaction](./doc/redaction_overlay.png)
 
-      </td>
-      <td>
+</td>
+<td>
 
 #### Text
 
 ![Text Redaction](./doc/redaction_text.png)
 
-      </td>
-    </tr>
-
-  </table>
+</td>
+</tr>
+</table>
 </details>
 
 ## Trackers
@@ -172,11 +170,11 @@ The application is run using Docker, and below are the commands to run the `late
 
 
 <details>
-  <summary>Docker Commands</summary>
-  <table>
+<summary>Docker Commands</summary>
+<table>
 
-    <tr>
-      <td>
+<tr>
+<td>
 
 #### Debian
 
@@ -186,6 +184,7 @@ docker run \
     --env BROWSER_HEIGHT=1050 \
     --env BROWSER_WIDTH=1680 \
     --env CSV_COMMENT_SYMBOL='#' \
+    --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
@@ -204,8 +203,8 @@ docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
-      </td>
-      <td>
+</td>
+<td>
 
 #### Windows
 
@@ -215,6 +214,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env BROWSER_HEIGHT=1050 \
     --env BROWSER_WIDTH=1680 \
     --env CSV_COMMENT_SYMBOL='#' \
+    --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
@@ -232,10 +232,9 @@ MSYS_NO_PATHCONV=1 docker run \
     --rm zodac/tracker-profiles:latest
 ```
 
-      </td>
-    </tr>
-
-  </table>
+</td>
+</tr>
+</table>
 </details>
 
 ### Browser UI
@@ -281,6 +280,7 @@ The following are all possible configuration options, defined as environment var
 | *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                                  | 1050                             |
 | *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                                   | 1680                             |
 | *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed (only first character used)      | #                                |
+| *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                           | true                             |
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                | true                             |
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                              | false                            |
 | *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required (for manual or cloudflare-checkk trackers), otherwise waits indefinitely | false                            |
@@ -345,6 +345,7 @@ docker run \
     --env BROWSER_HEIGHT=1050 \
     --env BROWSER_WIDTH=1680 \
     --env CSV_COMMENT_SYMBOL='#' \
+    --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=true \
     --env INPUT_TIMEOUT_ENABLED=true \

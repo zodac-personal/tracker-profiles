@@ -35,7 +35,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Empornium} tracker.
  */
-@TrackerHandler(name = "Empornium", url = {
+@TrackerHandler(name = "Empornium", adult = true, url = {
     "https://www.empornium.sx/",
     "https://www.emparadise.rs/"
 })
