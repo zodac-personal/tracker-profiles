@@ -45,7 +45,7 @@
 
         <!-- Test 3PP Versions -->
         <assertj-core.version>3.27.7</assertj-core.version>
-        <junit-bom.version>6.0.2</junit-bom.version>
+        <junit-bom.version>6.0.3</junit-bom.version>
 
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
