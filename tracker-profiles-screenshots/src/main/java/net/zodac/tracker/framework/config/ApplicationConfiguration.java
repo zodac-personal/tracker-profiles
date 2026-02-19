@@ -220,7 +220,7 @@ public record ApplicationConfiguration(
             }
             return integer;
         } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("[%s] Invalid input '%s', must be a valid number", environmentVariableName, input));
+            throw new IllegalArgumentException(String.format("[%s] Invalid input '%s', must be a valid number", environmentVariableName, input), e);
         }
     }
 

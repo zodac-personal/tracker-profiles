@@ -30,12 +30,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
@@ -110,14 +112,34 @@ public final class DisplayUtils {
     }
 
     private static JPanel createButtons(final JDialog dialog, final AtomicBoolean userProvidedInput) {
-        final JButton continueButton = new JButton(BUTTON_CONTINUE_TEXT);
+        final JButton continueButton = new JButton();
+        final AtomicLong remainingSeconds = new AtomicLong(CONFIG.inputTimeoutEnabled() ? CONFIG.inputTimeoutDuration().getSeconds() : 0);
+
+        // Initial text
+        if (CONFIG.inputTimeoutEnabled()) {
+            continueButton.setText(BUTTON_CONTINUE_TEXT + " (" + remainingSeconds.get() + ")");
+        } else {
+            continueButton.setText(BUTTON_CONTINUE_TEXT);
+        }
+
+        // Countdown timer (Swing timer = EDT safe)
+        final Timer countdownTimer = startCountdownTimer(remainingSeconds, continueButton);
+
         continueButton.addActionListener(_ -> {
+            if (countdownTimer != null) {
+                countdownTimer.stop();
+            }
             userProvidedInput.set(true);
             dialog.dispose();
         });
 
         final JButton exitButton = new JButton(BUTTON_EXIT_TEXT);
-        exitButton.addActionListener(_ -> dialog.dispose());
+        exitButton.addActionListener(_ -> {
+            if (countdownTimer != null) {
+                countdownTimer.stop();
+            }
+            dialog.dispose();
+        });
 
         final JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
         buttonPanel.add(continueButton);
@@ -125,7 +147,25 @@ public final class DisplayUtils {
         return buttonPanel;
     }
 
-    // TODO: Find old code that included a timer in the window
+    private static @Nullable Timer startCountdownTimer(final AtomicLong remainingSeconds, final JButton continueButton) {
+        if (!CONFIG.inputTimeoutEnabled()) {
+            return null;
+        }
+
+        final Timer countdownTimer = new Timer(1000, event -> {
+            final long value = remainingSeconds.decrementAndGet();
+            if (value > 0) {
+                continueButton.setText(BUTTON_CONTINUE_TEXT + " (" + value + ")");
+            } else {
+                continueButton.setText(BUTTON_CONTINUE_TEXT);
+                ((Timer) event.getSource()).stop();
+            }
+        });
+        countdownTimer.setInitialDelay(1000);
+        countdownTimer.start();
+        return countdownTimer;
+    }
+
     private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
         final ScheduledFuture<?> timeoutTask = getTimeoutTask(dialog, timedOut);
 
