@@ -43,12 +43,12 @@ import org.apache.logging.log4j.Logger;
  * @param browserDimensions          the dimensions in the format {@code width,height} for the {@code Selenium} web browser
  * @param csvCommentSymbol           the {@code char} defining a comment row in the CSV file
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
+ * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
+ * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
- * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the  user profile page
- * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
  */
@@ -57,12 +57,12 @@ public record ApplicationConfiguration(
     String browserDimensions,
     char csvCommentSymbol,
     boolean enableTranslationToEnglish,
+    ExistingScreenshotAction existingScreenshotAction,
     boolean forceUiBrowser,
     Duration inputTimeoutDuration,
     boolean inputTimeoutEnabled,
     Path outputDirectory,
     RedactionType redactionType,
-    ExistingScreenshotAction existingScreenshotAction,
     List<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
 ) {
@@ -107,12 +107,12 @@ public record ApplicationConfiguration(
             getBrowserDimensions(),
             getCsvCommentSymbol(),
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
+            getScreenshotExistsAction(),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
             getInputTimeoutDuration(),
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
             getOutputDirectory(),
             getRedactionType(),
-            getScreenshotExistsAction(),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
         );
@@ -238,9 +238,12 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- browserDimensions={}", browserDimensions);
         LOGGER.debug("\t- csvCommentSymbol={}", csvCommentSymbol);
         LOGGER.debug("\t- enableTranslationToEnglish={}", enableTranslationToEnglish);
-        LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
-        LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- existingScreenshotAction={}", existingScreenshotAction);
+        LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
+        LOGGER.debug("\t- inputTimeoutDuration={}", inputTimeoutDuration);
+        LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
+        LOGGER.debug("\t- outputDirectory={}", outputDirectory);
+        LOGGER.debug("\t- redactionType={}", redactionType);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);
     }
