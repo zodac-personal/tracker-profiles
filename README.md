@@ -168,7 +168,6 @@ remember where it is saved and what it is named.
 
 The application is run using Docker, and below are the commands to run the `latest` docker image.
 
-
 <details>
 <summary>Docker Commands</summary>
 <table>

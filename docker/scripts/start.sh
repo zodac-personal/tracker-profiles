@@ -62,7 +62,10 @@ main() {
     chromium --display=:0 >/dev/null 2>&1 &
     BROWSER_PID=$!
 
-    java -jar /app/tracker-profiles.jar
+    java -jar /app/tracker-profiles.jar &
+    JAVA_PID=$!
+
+    wait "${JAVA_PID}"
     JAVA_EXIT_CODE=$?
 
     if [ "${JAVA_EXIT_CODE}" -eq 1 ]; then
@@ -98,9 +101,20 @@ _convert_to_natural_time() {
 
 cleanup() {
     printf '\n\033[33mCleaning up...\033[0m\n'
-    kill -TERM "${BROWSER_PID:-}" 2>/dev/null || true
-    wait "${BROWSER_PID:-}" 2>/dev/null || true
 
+    # Stop Java process
+    if [ -n "${JAVA_PID:-}" ]; then
+        kill -TERM "${JAVA_PID}" 2>/dev/null || true
+        wait "${JAVA_PID}" 2>/dev/null || true
+    fi
+
+    # Stop browser
+    if [ -n "${BROWSER_PID:-}" ]; then
+        kill -TERM "${BROWSER_PID:-}" 2>/dev/null || true
+        wait "${BROWSER_PID:-}" 2>/dev/null || true
+    fi
+
+    # Stop Python service
     if [ -n "${PYTHON_PID:-}" ]; then
         kill -TERM "${PYTHON_PID}" 2>/dev/null || true
         wait "${PYTHON_PID}" 2>/dev/null || true
