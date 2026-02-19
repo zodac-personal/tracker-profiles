@@ -19,7 +19,8 @@
 #   - Writes the new version to the `VERSION` file
 #   - Updates all Maven modules to the new `-SNAPSHOT` version
 #   - Stages the updated files (`VERSION`, all `pom.xml` files)
-#   - Commits the changes if any were made
+#   - Clears the value of RELEASE_NOTES, since the Github release has been generated
+#   - Commits the changes if any were made, along with any updates to README.md and RELEASE_NOTES
 #   - Outputs a GitHub Actions environment variable (`has_changes=true`) if changes were committed
 #
 # Exit Codes:
@@ -42,10 +43,10 @@ echo "${next_version}" >VERSION
 mvn versions:set -DnewVersion="${next_version}-SNAPSHOT" -DgenerateBackupPoms=false -DprocessAllModules
 
 # Clear RELEASE_NOTES for next version
-: > RELEASE_NOTES
+: >RELEASE_NOTES
 
 # Push changes
-git add -- RELEASE_NOTES VERSION pom.xml ./*/pom.xml
+git add -- README.md RELEASE_NOTES VERSION pom.xml ./*/pom.xml
 
 if git diff --cached --quiet; then
     echo "No changes to commit"
