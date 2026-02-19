@@ -45,8 +45,8 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link BeyondHdHandler}, prior to clicking the login button with a successful username/password there is another field where a
-     * Captcha needs to be entered. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * For {@link BeyondHdHandler}, prior to clicking the login button with a successful username/password there is another field where a Captcha
+     * needs to be entered.
      *
      * <p>
      * Manual user interaction:
@@ -56,7 +56,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = XpathBuilder
             .from(input, withId("captcha"))

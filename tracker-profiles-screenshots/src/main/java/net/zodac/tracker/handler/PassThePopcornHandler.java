@@ -54,7 +54,6 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
      * <p>
      * For {@link PassThePopcornHandler}, after clicking the login button with a successful username/password, another section pops up. There is a
      * multiple-choice question, where the correct movie title must be chosen that matches the poster, and the login button pressed again.
-     * This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
      *
      * <p>
      * Manual user interactions:
@@ -66,8 +65,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
         final String initialUrl = driver.getCurrentUrl();
-        LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button, for {} seconds",
-            DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button");
 
         final WebElement selectionElement = driver.findElement(By.id("captcha_container"));
         scriptExecutor.highlightElement(selectionElement);
@@ -93,8 +91,8 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
     protected By profilePageSelector() {
         return XpathBuilder
             .from(li, withId("nav_userinfo"))
-                .child(a, atIndex(1))
-                .build();
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override

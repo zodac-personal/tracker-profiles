@@ -73,7 +73,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link HdBitsHandler}, prior to clicking the login button with a successful username/password there is another field where an image needs
-     * to be selected based on a text hint. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * to be selected based on a text hint.
      *
      * <p>
      * Manual user interaction:
@@ -95,8 +95,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
             .descendant(NamedHtmlElement.of("strong"), atIndex(1))
             .build();
         final WebElement captchaTextElement = driver.findElement(captchaSelector);
-        LOGGER.info("\t\t >>> Waiting for user to select the '{}' image, for {} seconds", captchaTextElement.getText(),
-            DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to select the '{}' image", captchaTextElement.getText());
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         scriptExecutor.highlightElement(captchaElement);

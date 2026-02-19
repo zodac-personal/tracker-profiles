@@ -43,7 +43,6 @@ public class LstHandler extends Unit3dHandler {
      * <p>
      * For {@link LstHandler}, after clicking the login button with a successful username/password, another section pops up. There is a
      * multiple-choice question, where the correct movie poster must be chosen that matches the title, and the login button pressed again.
-     * This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
      *
      * <p>
      * Manual user interactions:
@@ -55,8 +54,7 @@ public class LstHandler extends Unit3dHandler {
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
         final String initialUrl = driver.getCurrentUrl();
-        LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button, for {} seconds",
-            DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button");
 
         final By selectionSelector = XpathBuilder
             .from(div, withClass("auth-form__text-input-group"))

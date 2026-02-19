@@ -20,6 +20,7 @@ package net.zodac.tracker.framework.config;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -41,8 +42,10 @@ import org.apache.logging.log4j.Logger;
  * @param browserDataStoragePath     the file path in which to store browser data (profiles, caches, etc.)
  * @param browserDimensions          the dimensions in the format {@code width,height} for the {@code Selenium} web browser
  * @param csvCommentSymbol           the {@code char} defining a comment row in the CSV file
- * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
+ * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
+ * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
+ * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the  user profile page
  * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
@@ -55,6 +58,8 @@ public record ApplicationConfiguration(
     char csvCommentSymbol,
     boolean enableTranslationToEnglish,
     boolean forceUiBrowser,
+    Duration inputTimeoutDuration,
+    boolean inputTimeoutEnabled,
     Path outputDirectory,
     RedactionType redactionType,
     ExistingScreenshotAction existingScreenshotAction,
@@ -103,6 +108,8 @@ public record ApplicationConfiguration(
             getCsvCommentSymbol(),
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
+            getInputTimeoutDuration(),
+            getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
             getOutputDirectory(),
             getRedactionType(),
             getScreenshotExistsAction(),
@@ -131,28 +138,10 @@ public record ApplicationConfiguration(
         return getOrDefault("CSV_COMMENT_SYMBOL", DEFAULT_CSV_COMMENT_SYMBOL).charAt(0);
     }
 
-    private static List<TrackerType> getTrackerExecutionOrder() {
-        final String executionOrderRaw = getOrDefault("TRACKER_EXECUTION_ORDER", DEFAULT_TRACKER_EXECUTION_ORDER);
-        final String[] executionOrderTokens = executionOrderRaw.split(",");
-        if (executionOrderTokens.length == 0 || executionOrderTokens.length > TrackerType.ALL_VALUES.size()) {
-            throw new IllegalArgumentException(
-                String.format("[TRACKER_EXECUTION_ORDER] 1-%d tracker types required, found: %s", TrackerType.ALL_VALUES.size(),
-                    Arrays.toString(executionOrderTokens)));
-        }
-
-        final Collection<TrackerType> trackerExecutionOrder = new LinkedHashSet<>();
-        for (final String executionOrderToken : executionOrderTokens) {
-            final TrackerType trackerType = TrackerType.find(executionOrderToken);
-            if (trackerType == null) {
-                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Invalid tracker found: '%s'", executionOrderToken));
-            }
-
-            if (!trackerExecutionOrder.add(trackerType)) {
-                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Duplicate tracker found: '%s'", executionOrderToken));
-            }
-        }
-
-        return List.copyOf(trackerExecutionOrder);
+    private static Duration getInputTimeoutDuration() {
+        final String inputTimeoutSeconds = getOrDefault("INPUT_TIMEOUT_SECONDS", "300");
+        final int inputTimeoutSecondsValidated = parsePositiveInteger(inputTimeoutSeconds, "INPUT_TIMEOUT_SECONDS");
+        return Duration.ofSeconds(inputTimeoutSecondsValidated);
     }
 
     private static Path getOutputDirectory() {
@@ -191,12 +180,48 @@ public record ApplicationConfiguration(
         return existingScreenshotActionInput;
     }
 
+    private static List<TrackerType> getTrackerExecutionOrder() {
+        final String executionOrderRaw = getOrDefault("TRACKER_EXECUTION_ORDER", DEFAULT_TRACKER_EXECUTION_ORDER);
+        final String[] executionOrderTokens = executionOrderRaw.split(",");
+        if (executionOrderTokens.length == 0 || executionOrderTokens.length > TrackerType.ALL_VALUES.size()) {
+            throw new IllegalArgumentException(
+                String.format("[TRACKER_EXECUTION_ORDER] 1-%d tracker types required, found: %s", TrackerType.ALL_VALUES.size(),
+                    Arrays.toString(executionOrderTokens)));
+        }
+
+        final Collection<TrackerType> trackerExecutionOrder = new LinkedHashSet<>();
+        for (final String executionOrderToken : executionOrderTokens) {
+            final TrackerType trackerType = TrackerType.find(executionOrderToken);
+            if (trackerType == null) {
+                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Invalid tracker found: '%s'", executionOrderToken));
+            }
+
+            if (!trackerExecutionOrder.add(trackerType)) {
+                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Duplicate tracker found: '%s'", executionOrderToken));
+            }
+        }
+
+        return List.copyOf(trackerExecutionOrder);
+    }
+
     private static Path getTrackerInputFilePath() {
         return Paths.get(getOrDefault("TRACKER_INPUT_FILE_PATH", DEFAULT_TRACKER_INPUT_FILE_PATH));
     }
 
     private static boolean getBooleanEnvironmentVariable(final String environmentVariableName, final boolean defaultValue) {
         return Boolean.parseBoolean(getOrDefault(environmentVariableName, Boolean.toString(defaultValue)));
+    }
+
+    private static int parsePositiveInteger(final String input, final String environmentVariableName) {
+        try {
+            final int integer = Integer.parseInt(input);
+            if (integer <= 0) {
+                throw new IllegalArgumentException(String.format("[%s] Invalid input '%s', must be greater than 0", environmentVariableName, input));
+            }
+            return integer;
+        } catch (final NumberFormatException e) {
+            throw new IllegalArgumentException(String.format("[%s] Invalid input '%s', must be a valid number", environmentVariableName, input));
+        }
     }
 
     private static String getOrDefault(final String environmentVariableName, final String defaultValue) {

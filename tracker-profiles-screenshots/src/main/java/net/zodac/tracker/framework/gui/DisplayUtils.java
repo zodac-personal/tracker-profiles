@@ -25,9 +25,9 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
-import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JButton;
@@ -38,22 +38,20 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Utility class used to display pop-up windows and confirmation boxes to the user.
  */
 public final class DisplayUtils {
 
-    /**
-     * The {@link Duration} the program will wait for a user to enter an input.
-     */
-    // TODO: Make this optional, and just allow it to run indefinitely otherwise?
-    public static final Duration INPUT_WAIT_DURATION = Duration.ofMinutes(5L);
-
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
     // UI element constants
@@ -129,17 +127,7 @@ public final class DisplayUtils {
 
     // TODO: Find old code that included a timer in the window
     private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
-        final var timeoutTask = TIMEOUT_SCHEDULER.schedule(
-            () -> SwingUtilities.invokeLater(() -> {
-                if (dialog.isShowing()) {
-                    timedOut.set(true);
-                    dialog.dispose();
-                }
-            }),
-            INPUT_WAIT_DURATION.getSeconds(),
-            TimeUnit.SECONDS
-        );
-        LOGGER.trace("Waiting {} for user input", INPUT_WAIT_DURATION);
+        final ScheduledFuture<?> timeoutTask = getTimeoutTask(dialog, timedOut);
 
         try {
             SwingUtilities.invokeAndWait(() -> dialog.setVisible(true));
@@ -149,22 +137,44 @@ public final class DisplayUtils {
                 return;
             }
 
-            if (timedOut.get()) {
+            if (CONFIG.inputTimeoutEnabled() && timedOut.get()) {
                 LOGGER.trace("Dialog timed out and no input received");
-                throw new NoUserInputException(INPUT_WAIT_DURATION, new IllegalStateException());
+                throw new NoUserInputException(CONFIG.inputTimeoutDuration(), new IllegalStateException());
             }
 
             LOGGER.trace("Dialog still running and no timeout received, assuming the user cancelled execution");
             throw new CancelledInputException();
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new NoUserInputException(INPUT_WAIT_DURATION, e);
+            throw new NoUserInputException(CONFIG.inputTimeoutDuration(), e);
         } catch (final InvocationTargetException e) {
-            throw new NoUserInputException(INPUT_WAIT_DURATION, e.getCause() == null ? e : e.getCause());
+            throw new NoUserInputException(CONFIG.inputTimeoutDuration(), e.getCause() == null ? e : e.getCause());
         } finally {
-            timeoutTask.cancel(true);
+            if (timeoutTask != null) {
+                timeoutTask.cancel(true);
+            }
             dialog.dispose();
         }
+    }
+
+    private static @Nullable ScheduledFuture<?> getTimeoutTask(final JDialog dialog, final AtomicBoolean timedOut) {
+        if (!CONFIG.inputTimeoutEnabled()) {
+            LOGGER.trace("Dialog timeouts disabled via TIMEOUT_DIALOGS=false");
+            return null;
+        }
+
+        final ScheduledFuture<?> timeoutTask = TIMEOUT_SCHEDULER.schedule(
+            () -> SwingUtilities.invokeLater(() -> {
+                if (dialog.isShowing()) {
+                    timedOut.set(true);
+                    dialog.dispose();
+                }
+            }), CONFIG.inputTimeoutDuration().getSeconds(), TimeUnit.SECONDS
+        );
+
+        LOGGER.trace("Waiting {} for user input", CONFIG.inputTimeoutDuration());
+
+        return timeoutTask;
     }
 
     private static void setDialogPosition(final JDialog dialog) {

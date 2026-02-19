@@ -188,6 +188,8 @@ docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
+    --env INPUT_TIMEOUT_ENABLED=false \
+    --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=INFO \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
@@ -215,6 +217,8 @@ MSYS_NO_PATHCONV=1 docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=false \
+    --env INPUT_TIMEOUT_ENABLED=false \
+    --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=INFO \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
@@ -272,21 +276,23 @@ exclude **manual** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You 
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable            | Description                                                                                                                    | Default Value                    |
-|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                             | 1050                             |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                              | 1680                             |
-| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed (only first character used) | #                                |
-| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                           | true                             |
-| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                         | false                            |
-| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                         | INFO                             |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                      | yyyy-MM-dd                       |
-| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                         | /tmp/screenshots                 |
-| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                             |
-| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]               | CREATE_ANOTHER                   |
-| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                             | UTC                              |
-| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, and unwanted execution types can be excluded (case-insensitive) | headless,manual,cloudflare-check |
-| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                | /tmp/screenshots/trackers.csv    |
+| Environment Variable            | Description                                                                                                                         | Default Value                    |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                                  | 1050                             |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                                   | 1680                             |
+| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed (only first character used)      | #                                |
+| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                | true                             |
+| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                              | false                            |
+| *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required (for manual or cloudflare-checkk trackers), otherwise waits indefinitely | false                            |
+| *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input, in seconds                                                | 300                              |
+| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                              | INFO                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                                           | yyyy-MM-dd                       |
+| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of for the new directory created for the screenshots, relative to the project root                              | /tmp/screenshots                 |
+| *REDACTION_TYPE*                | Whether to redact by replacing the text with '----', or overlaying a solid box over the sensitive information [OVERLAY, TEXT]       | TEXT                             |
+| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                    | CREATE_ANOTHER                   |
+| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                  | UTC                              |
+| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, and unwanted execution types can be excluded (case-insensitive)      | headless,manual,cloudflare-check |
+| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                     | /tmp/screenshots/trackers.csv    |
 
 ## Contributing
 
@@ -341,6 +347,8 @@ docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
     --env FORCE_UI_BROWSER=true \
+    --env INPUT_TIMEOUT_ENABLED=true \
+    --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=TRACE \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \

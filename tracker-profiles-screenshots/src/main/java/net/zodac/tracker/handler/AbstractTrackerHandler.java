@@ -55,7 +55,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Since each tracker website has its own UI and own page structure, each implementation of {@link AbstractTrackerHandler} will contain the
  * tracker-specific {@code selenium} logic to perform the UI actions.
  */
-// TODO: Can we add a private no-args constructor and make this final?
 public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
@@ -77,10 +76,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     protected static final Duration DEFAULT_WAIT_FOR_TRANSITIONS = Duration.of(500L, ChronoUnit.MILLIS);
 
     /**
-     * The standard wait {@link Duration} to let the login page load.
+     * The standard wait {@link Duration} to when waiting for pop-ups to disappear, elements to open, etc.
      */
-    // TODO: Need both this and DEFAULT_WAIT_FOR_PAGE_LOAD?
-    protected static final Duration WAIT_FOR_LOGIN_PAGE_LOAD = Duration.of(1L, ChronoUnit.SECONDS);
+    protected static final Duration WAIT_FOR_PAGE_UPDATES = Duration.of(1L, ChronoUnit.SECONDS);
 
     /**
      * The logger instance.
@@ -202,7 +200,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * For this {@link AbstractTrackerHandler} implementation, there is a Cloudflare check protecting the login page. This verification check must be
-     * passed to proceed. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * passed to proceed.
      *
      * <p>
      * Manual user interactions:
@@ -221,8 +219,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         LOGGER.debug("Performing Cloudflare verification check");
         scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification, for {} seconds",
-            DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
         final WebElement cloudflareElement = driver.findElement(cloudflareSelector);
         scriptExecutor.highlightElement(cloudflareElement);
@@ -252,7 +249,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void login(final String username, final String password, final String trackerName) {
         LOGGER.debug("Logging in to tracker '{}'", trackerName);
-        scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(WAIT_FOR_PAGE_UPDATES);
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
         usernameField.clear();
@@ -274,7 +271,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
         manualCheckAfterLoginClick(trackerName);
 
-        ScriptExecutor.explicitWait(WAIT_FOR_LOGIN_PAGE_LOAD, "page to load after login");
+        ScriptExecutor.explicitWait(WAIT_FOR_PAGE_UPDATES, "page to load after login");
         scriptExecutor.waitForElementToAppear(postLoginSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
     }
 
@@ -368,7 +365,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void openProfilePage() {
         LOGGER.debug("Opening profile page");
-        scriptExecutor.waitForPageToLoad(WAIT_FOR_LOGIN_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(WAIT_FOR_PAGE_UPDATES);
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         scriptExecutor.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab

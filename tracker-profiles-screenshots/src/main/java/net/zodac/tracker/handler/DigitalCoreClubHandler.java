@@ -59,7 +59,7 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link DigitalCoreClubHandler}, prior to clicking the login button with a successful username/password there is another field where a
-     * Captcha needs to be entered. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * Captcha needs to be entered.
      *
      * <p>
      * Manual user interaction:
@@ -69,7 +69,7 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        LOGGER.info("\t\t >>> Waiting for user to enter captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         scriptExecutor.highlightElement(captchaElement);

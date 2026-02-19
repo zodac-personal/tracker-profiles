@@ -92,7 +92,7 @@ public class CgPeersHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link CgPeersHandler}, after clicking the login button with a successful username/password, an 2FA screen appears requesting a code
-     * that was sent to your email. This must be entered within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * that was sent to your email.
      *
      * <p>
      * Manual user interactions:
@@ -104,8 +104,7 @@ public class CgPeersHandler extends AbstractTrackerHandler {
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
         final String initialUrl = driver.getCurrentUrl();
-        LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button, for {} seconds",
-            DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button");
 
         final By selectionSelector = XpathBuilder
             .from(input, withClass("form-input"), withName("code"))

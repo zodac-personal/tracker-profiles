@@ -50,7 +50,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
      *
      * <p>
      * For {@link GazelleGamesHandler}, prior to clicking the login button with a successful username/password there is a multiple-choice question,
-     * where the correct game title must be chosen that matches the picture. This must be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * where the correct game title must be chosen that matches the picture.
      *
      * <p>
      * Manual user interaction:
@@ -60,7 +60,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        LOGGER.info("\t\t >>> Waiting for user to select correct game title, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to select correct game title");
 
         final By selectionSelector = XpathBuilder
             .from(div, withId("tdwrap"))

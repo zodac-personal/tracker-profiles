@@ -1,0 +1,7 @@
+## New option `INPUT_TIMEOUT_ENABLED`
+
+When a user-input is required (for manual inputs like Captchas, or a Cloudflare verification that needs to be clicked), currently the application waits 5 minutes for an input, then fails. This option allows for the user-input prompt to wait indefinitely if set to **false**.
+
+## New option `INPUT_TIMEOUT_SECONDS`
+
+If `INPUT_TIMEOUT_ENABLED` is set to **true**, this new value allows the user to specify how many seconds they want the prompt to wait before timing out and failing execution. Unused if `INPUT_TIMEOUT_ENABLED` is set to **false**.

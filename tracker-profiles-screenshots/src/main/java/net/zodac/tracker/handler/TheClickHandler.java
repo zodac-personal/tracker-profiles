@@ -67,8 +67,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link TheClickHandler}, prior to clicking the login button with a captcha that needs to be clicked (and verified if necessary). This must
-     * be done within {@link DisplayUtils#INPUT_WAIT_DURATION}.
+     * For {@link TheClickHandler}, prior to clicking the login button with a captcha that needs to be clicked (and verified if necessary).
      *
      * <p>
      * Manual user interaction:
@@ -78,7 +77,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckBeforeLoginClick(final String trackerName) {
-        LOGGER.info("\t\t >>> Waiting for user to solve the captcha, for {} seconds", DisplayUtils.INPUT_WAIT_DURATION.getSeconds());
+        LOGGER.info("\t\t >>> Waiting for user to solve the captcha");
 
         final By captchaSelector = XpathBuilder
             .from(div, withClass("h-captcha"))

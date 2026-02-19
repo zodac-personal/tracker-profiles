@@ -155,10 +155,12 @@ final class ProfileScreenshotExecutor {
 
     private static Pair<ExistingScreenshotAction, Integer> doesScreenshotExistAndSkipSelected(final String trackerName) {
         final int numberOfExistingScreenshots = ScreenshotTaker.howManyScreenshotsAlreadyExist(trackerName);
+        // If no screenshots already exist, no need to handle anything
         if (numberOfExistingScreenshots == 0) {
             return Pair.of(ExistingScreenshotAction.OVERWRITE, numberOfExistingScreenshots);
         }
 
+        // Otherwise, we need to decide how to handle the case with an existing screenshot
         return switch (CONFIG.existingScreenshotAction()) {
             case CREATE_ANOTHER -> {
                 LOGGER.debug("\t- Screenshot already exists for tracker '{}', taking a new one and appending index to name", trackerName);
