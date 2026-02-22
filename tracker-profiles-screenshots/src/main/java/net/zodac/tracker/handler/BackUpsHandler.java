@@ -91,7 +91,13 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         clickButton(homePageLink);
     }
 
-    // TODO: Unfix header
+    @Override
+    public boolean hasFixedHeader() {
+        final By headerSelector = By.id("menu");
+        final WebElement headerElement = driver.findElement(headerSelector);
+        scriptExecutor.makeUnfixed(headerElement);
+        return true;
+    }
 
     @Override
     protected By logoutButtonSelector() {
