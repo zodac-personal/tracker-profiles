@@ -474,6 +474,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
+     * Reload the current page (should be the user profile page) to clear any redactions.
+     */
+    public void reloadProfilePage() {
+        // Reload page to clear redacted elements
+        driver.navigate().refresh();
+        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+    }
+
+    /**
      * Checks if there is a header on the tracker's user profile, and updates it to not be fixed. This is to avoid the banner appearing multiple times
      * in the user profile screenshot as we scroll through the page.
      *

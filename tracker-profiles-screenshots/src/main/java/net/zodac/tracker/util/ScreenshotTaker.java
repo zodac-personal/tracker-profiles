@@ -20,6 +20,7 @@ package net.zodac.tracker.util;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import javax.imageio.ImageIO;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
@@ -64,28 +65,30 @@ public final class ScreenshotTaker {
      * Once the screenshot is saved, the page is scrolled back to the top. This is to ensure that any elements at the top of the page are clickable
      * after scrolling.
      *
-     * @param driver      the {@link RemoteWebDriver} with the loaded web page
-     * @param trackerName the name of the tracker having a screenshot taken (used as the file name)
-     * @param index       how many screenshots already exist for this tracker
+     * @param driver          the {@link RemoteWebDriver} with the loaded web page
+     * @param outputDirectory the directory in which the screenshot should be saved
+     * @param trackerName     the name of the tracker having a screenshot taken (used as the file name)
+     * @param index           how many screenshots already exist for this tracker
      * @return the {@link File} instance of the saved screenshot
      * @throws IOException thrown if an error occurs saving the screenshot to the file system
      * @see ScriptExecutor#scrollToTheTop()
      */
-    public static File takeScreenshot(final RemoteWebDriver driver, final String trackerName, final int index) throws IOException {
+    public static File takeScreenshot(final RemoteWebDriver driver, final Path outputDirectory, final String trackerName, final int index)
+        throws IOException {
         final ScriptExecutor scriptExecutor = new ScriptExecutor(driver);
         final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, scriptExecutor);
-        final File screenshot = createOutputFileHandle(trackerName, index);
+        final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), trackerName, index);
         ImageIO.write(screenshotImage, "PNG", screenshot);
         scriptExecutor.scrollToTheTop();
         return screenshot;
     }
 
-    private static File createOutputFileHandle(final String trackerName, final int index) {
+    private static File createOutputFileHandle(final Path outputDirectory, final String trackerName, final int index) {
         if (index == 0) {
-            return new File(CONFIG.outputDirectory().toAbsolutePath() + File.separator + trackerName + ".png");
+            return new File(outputDirectory + File.separator + trackerName + ".png");
         }
 
-        return new File(CONFIG.outputDirectory().toAbsolutePath() + File.separator + trackerName + "_" + index + ".png");
+        return new File(outputDirectory + File.separator + trackerName + "_" + index + ".png");
     }
 
     private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final ScriptExecutor scriptExecutor) {

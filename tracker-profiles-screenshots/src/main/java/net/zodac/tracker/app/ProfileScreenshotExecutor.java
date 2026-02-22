@@ -20,6 +20,7 @@ package net.zodac.tracker.app;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
@@ -146,8 +147,10 @@ final class ProfileScreenshotExecutor {
             LOGGER.info("\t- Header has been updated to not be fixed");
         }
 
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), trackerCredential.name(), existingScreenshotValue.second());
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),
+            existingScreenshotValue.second());
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+        trackerHandler.reloadProfilePage();
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
