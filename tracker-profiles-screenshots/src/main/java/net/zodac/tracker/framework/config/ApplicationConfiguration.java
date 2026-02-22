@@ -56,7 +56,7 @@ public record ApplicationConfiguration(
     String browserDimensions,
     char csvCommentSymbol,
     boolean enableAdultContent,
-    boolean enableTranslationToEnglish, // TODO: Set language instead?
+    boolean enableTranslationToEnglish,
     ExistingScreenshotAction existingScreenshotAction,
     boolean forceUiBrowser,
     Duration inputTimeoutDuration,

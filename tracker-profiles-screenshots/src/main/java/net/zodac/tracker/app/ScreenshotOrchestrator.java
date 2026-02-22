@@ -88,7 +88,7 @@ public final class ScreenshotOrchestrator {
             }
         }
 
-        return resultCollector.generateSummary();
+        return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
     }
 
     private static void ensureOutputDirectoryExists() {

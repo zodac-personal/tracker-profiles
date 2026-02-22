@@ -19,6 +19,7 @@ package net.zodac.tracker.app;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import net.zodac.tracker.framework.ExitState;
@@ -54,9 +55,10 @@ final class ResultCollector {
     /**
      * Generates a summary of all results and returns the appropriate {@link ExitState}.
      *
+     * @param trackerExecutionOrder the execution order of the different {@link TrackerType}s
      * @return the {@link ExitState} based on success/failure counts
      */
-    ExitState generateSummary() {
+    ExitState generateSummary(final List<TrackerType> trackerExecutionOrder) {
         final int totalSuccessful = successfulTrackers.values()
             .stream()
             .mapToInt(Collection::size)
@@ -97,11 +99,16 @@ final class ResultCollector {
         LOGGER.warn("");
         LOGGER.warn("Failures for following tracker{}:", StringUtils.pluralise(totalUnsuccessful));
 
-        // TODO: Print in execution order
-        unsuccessfulTrackers.forEach((type, trackers) -> {
-            LOGGER.warn("  {}:", type.formattedName());
+        for (final TrackerType trackerType : trackerExecutionOrder) {
+            final Collection<String> trackers = unsuccessfulTrackers.get(trackerType);
+            if (trackers == null || trackers.isEmpty()) {
+                continue;
+            }
+
+            LOGGER.warn("  {}:", trackerType.formattedName());
             trackers.forEach(name -> LOGGER.warn("\t- {}", name));
-        });
+        }
+
         return ExitState.PARTIAL_FAILURE;
     }
 }
