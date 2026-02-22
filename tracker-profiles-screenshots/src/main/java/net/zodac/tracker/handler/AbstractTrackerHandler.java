@@ -222,6 +222,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
         final WebElement cloudflareElement = driver.findElement(cloudflareSelector);
+        // TODO Use cloudflareElement.getShadowRoot()?
         scriptExecutor.highlightElement(cloudflareElement);
         DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
     }
@@ -430,7 +431,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             return 0;
         }
 
-        // TODO: Test all trackers when not connectable/no torrents being seeded, and ensure screenshots work as expected
         // TODO: Define which elements to redact, and whether to print a non-redacted version too
         final Collection<WebElement> emailElements = selectors
             .stream()

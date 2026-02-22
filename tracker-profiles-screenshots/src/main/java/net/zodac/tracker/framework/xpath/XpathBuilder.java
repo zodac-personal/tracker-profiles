@@ -67,13 +67,20 @@ package net.zodac.tracker.framework.xpath;
  *}
  *
  * <p>
- * Resulting XPath: {@code //root//table//td[contains(normalize-space(), 'Total')]/ancestor::tr[1]/td[2]}
+ * Resulting XPath: {@code //root//table[1]//td[contains(normalize-space(), 'Total')]/ancestor::tr[1]/td[2]}
  *
  * <p>
  * These examples can be a little cleaner if you statically import the required classes, to something a bit more readable:
  *
  * <p>
- * {@snippet id = 'example3':
+ * {@snippet id = 'example4':
+ * import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+ * import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+ * import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+ * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atFirstIndex;
+ * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+ * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
+ *
  * final By selector = XpathBuilder
  *     .from(NamedHtmlElement.of("root"))
  *     .descendant(table, atFirstIndex())

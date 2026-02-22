@@ -91,6 +91,8 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
         clickButton(homePageLink);
     }
 
+    // TODO: Unfix header
+
     @Override
     protected By logoutButtonSelector() {
         // Click the user dropdown menu bar to make the logout button interactable

@@ -20,10 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
-import static net.zodac.tracker.framework.xpath.HtmlElement.td;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -31,15 +28,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
-import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -48,10 +41,6 @@ import org.openqa.selenium.WebElement;
  */
 @TrackerHandler(name = "ABTorrents", url = "https://usefultrash.net/")
 public class AbTorrentsHandler extends AbstractTrackerHandler {
-
-    // Tab title is in the format `ABTorrents :(1): Home`, where `1` is the number of unread messages
-    private static final Pattern TITLE_UNREAD_MESSAGES_COUNT_PATTERN = Pattern.compile("\\((\\d+)\\)");
-    private static final Duration WAIT_FOR_TAB_TITLE_UPDATE = Duration.of(2L, ChronoUnit.SECONDS);
 
     @Override
     protected By usernameFieldSelector() {
@@ -74,71 +63,6 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link AbTorrentsHandler}, having any unread private messages means you are unable to search for any torrents. While this doesn't block
-     * the profile page, we'll click the link to the inbox then open any unread private messages before continuing.
-     */
-    // TODO: Remove this step, no longer needed for this tracker
-    @Override
-    protected void manualCheckAfterLoginClick(final String trackerName) {
-        ScriptExecutor.explicitWait(WAIT_FOR_TAB_TITLE_UPDATE, "tab to update with private messages count");
-
-        if (!hasUserAnyUnreadPrivateMessages()) {
-            LOGGER.debug("\t- No unread private messages");
-            return;
-        }
-
-        LOGGER.trace("\t- Found some unread private messages, opening inbox");
-        // Highlight the user menu to make the logout button interactable
-        final By messagesParentSelector = By.id("user");
-        final WebElement messagesParent = driver.findElement(messagesParentSelector);
-        scriptExecutor.moveTo(messagesParent);
-
-        final By messagesSelector = XpathBuilder
-            .from(li, withId("user"))
-            .child(li, atIndex(1))
-            .child(li, atIndex(1))
-            .child(a, atIndex(1))
-            .build();
-        final WebElement messagesElement = driver.findElement(messagesSelector);
-        clickButton(messagesElement);
-
-        // Assuming that all 'Unread' <span> elements have the 'has-text-red' class to indicate they are unread, and that can be used instead of text
-        final By unreadPrivateMessagesSelector = XpathBuilder
-            .from(tr)
-            .child(td, atIndex(2))
-            .child(span, withClass("has-text-red"))
-            .parent(td)
-            .child(a, atIndex(1))
-            .build();
-        final List<WebElement> unreadPrivateMessages = driver.findElements(unreadPrivateMessagesSelector);
-        LOGGER.debug("\t- {} unread private message{} to clear", unreadPrivateMessages.size(), StringUtils.pluralise(unreadPrivateMessages));
-
-        for (final WebElement unreadPrivateMessage : unreadPrivateMessages) {
-            clickButton(unreadPrivateMessage);
-            driver.navigate().back();
-        }
-
-        LOGGER.debug("\t\t- Unread private message{} cleared", StringUtils.pluralise(unreadPrivateMessages));
-    }
-
-    private boolean hasUserAnyUnreadPrivateMessages() {
-        final String currentTitle = driver.getTitle() == null ? "" : driver.getTitle();
-        LOGGER.trace("\t- Browser title: '{}'", currentTitle);
-        final Matcher matcher = TITLE_UNREAD_MESSAGES_COUNT_PATTERN.matcher(currentTitle);
-
-        if (matcher.find()) {
-            final int numberOfUnreadPrivateMessages = Integer.parseInt(matcher.group(1));
-            return numberOfUnreadPrivateMessages > 0;
-        }
-
-        // No number found, assume 0
-        return false;
-    }
-
     @Override
     protected By postLoginSelector() {
         return By.id("base_usermenu");
@@ -154,6 +78,7 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
             .build();
     }
 
+    // TODO: Optional, may not be seeding torrents
     @Override
     public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
         return List.of(

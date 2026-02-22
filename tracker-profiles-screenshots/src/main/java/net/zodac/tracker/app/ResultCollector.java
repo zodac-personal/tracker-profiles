@@ -97,6 +97,7 @@ final class ResultCollector {
         LOGGER.warn("");
         LOGGER.warn("Failures for following tracker{}:", StringUtils.pluralise(totalUnsuccessful));
 
+        // TODO: Print in execution order
         unsuccessfulTrackers.forEach((type, trackers) -> {
             LOGGER.warn("  {}:", type.formattedName());
             trackers.forEach(name -> LOGGER.warn("\t- {}", name));
