@@ -66,7 +66,7 @@ Below are examples of the different types of redaction.
 
 ## Trackers
 
-There are currently 65 supported trackers listed below. The available trackers come in the following types:
+There are currently **<u>65</u>** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -276,25 +276,25 @@ exclude **manual** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You 
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable            | Description                                                                                                        | Default Value                    |
-|---------------------------------|--------------------------------------------------------------------------------------------------------------------|----------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                 | 1050                             |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                  | 1680                             |
-| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                 | #                                |
-| *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                          | true                             |
-| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                               | true                             |
-| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                             | false                            |
-| *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                        | false                            |
-| *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                              | 300                              |
-| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                             | INFO                             |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots                                          | yyyy-MM-dd                       |
-| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                 | /tmp/screenshots                 |
-| *REDACTION_TYPE*                | Whether to redact by replacing the text, or overlaying a solid box over the sensitive information [OVERLAY, TEXT]  | TEXT                             |
-| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]   | CREATE_ANOTHER                   |
-| *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`) | false                            |
-| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                 | UTC                              |
-| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)    | headless,manual,cloudflare-check |
-| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                    | /tmp/screenshots/trackers.csv    |
+| Environment Variable            | Description                                                                                                                                                                                              | Default Value                    |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                             |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                             |
+| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                                |
+| *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                             |
+| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                             |
+| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                            |
+| *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                            |
+| *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                              |
+| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                       |
+| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                 |
+| *REDACTION_TYPE*                | Whether to redact by replacing the text, or overlaying a solid box over the sensitive information [OVERLAY, TEXT]                                                                                        | TEXT                             |
+| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                   |
+| *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                            |
+| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                              |
+| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | headless,manual,cloudflare-check |
+| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv    |
 
 ## Contributing
 

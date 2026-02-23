@@ -65,7 +65,7 @@ done <<<"${commit_messages}"
 changelog_content=$(mktemp)
 
 {
-    preferred=("ci" "deployment" "doc" "framework" "python")
+    preferred=("ci" "deployment" "documentation" "framework" "python")
     declare -A printed
 
     # Print preferred categories

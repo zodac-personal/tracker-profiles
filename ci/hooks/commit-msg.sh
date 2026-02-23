@@ -6,7 +6,7 @@
 static_categories=(
   "CI"
   "Deployment"
-  "Doc"
+  "Documentation"
   "Framework"
   "Python"
 )
