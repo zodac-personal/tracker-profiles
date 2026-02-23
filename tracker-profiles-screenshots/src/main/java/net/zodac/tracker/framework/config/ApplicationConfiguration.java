@@ -47,7 +47,8 @@ import org.apache.logging.log4j.Logger;
  * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
- * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the  user profile page
+ * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the user profile page
+ * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
  */
@@ -63,6 +64,7 @@ public record ApplicationConfiguration(
     boolean inputTimeoutEnabled,
     Path outputDirectory,
     RedactionType redactionType,
+    boolean takeScreenshotOnError,
     List<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
 ) {
@@ -114,6 +116,7 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
             getOutputDirectory(),
             getRedactionType(),
+            getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
         );
@@ -246,6 +249,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- redactionType={}", redactionType);
+        LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);
     }

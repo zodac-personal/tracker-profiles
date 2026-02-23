@@ -1,0 +1,3 @@
+## New option `TAKE_SCREENSHOT_ON_ERROR`
+
+Allows for a screenshot to be taken of the last page the execution is on if an error occurs when screenshotting a specific tracker. Mostly used for debugging, so default value is set to **false**.

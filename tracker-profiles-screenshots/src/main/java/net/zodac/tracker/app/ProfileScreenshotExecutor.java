@@ -37,6 +37,7 @@ import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.TimeoutException;
@@ -65,8 +66,9 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("[{}]", trackerCredential.name());
 
         // TODO: Add a retry option, then return number of attempts needed
-        // TODO: On failure, take a screenshot and add to a subdirectory?
-        try (final AbstractTrackerHandler trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name())) {
+        AbstractTrackerHandler trackerHandler = null;
+        try {
+            trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name());
             screenshotProfile(trackerHandler, trackerCredential);
             return true;
         } catch (final CancelledInputException e) {
@@ -90,7 +92,9 @@ final class ProfileScreenshotExecutor {
             LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerCredential.name());
             return false;
         } catch (final TimeoutException e) {
+            screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
+
             if (e.getMessage() == null) {
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name());
             } else {
@@ -102,6 +106,7 @@ final class ProfileScreenshotExecutor {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
             throw new BrowserClosedException(e);
         } catch (final Exception e) {
+            screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
             if (e.getMessage() == null) {
@@ -112,10 +117,48 @@ final class ProfileScreenshotExecutor {
             }
 
             return false;
+        } finally {
+            if (trackerHandler != null) {
+                trackerHandler.close();
+            }
+        }
+    }
+
+    private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName) {
+        if (!CONFIG.takeScreenshotOnError()) {
+            LOGGER.trace("Error occurred, but screenshots for errors are not enabled");
+            return;
+        }
+
+        if (trackerHandler == null) {
+            LOGGER.warn("\t- Unable to take failure screenshot, trackerHandler is unexpectedly null");
+            return;
+        }
+
+        try {
+            final Path failureOutputDirectory = CONFIG.outputDirectory().resolve("errors");
+            ensureDirectoryExists(failureOutputDirectory);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, 0);
+            LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
+        } catch (final IOException e) {
+            LOGGER.debug("\t- Unable to take failure screenshot of '{}'", trackerName, e);
+            LOGGER.warn("\t- Unable to take failure screenshot of '{}': {}", trackerName, e.getMessage());
+        }
+    }
+
+    private static void ensureDirectoryExists(final Path directory) {
+        final File directoryHandle = directory.toFile();
+        if (!directoryHandle.exists()) {
+            LOGGER.trace("Creating directory: '{}'", directoryHandle);
+            final boolean wasDirectoryCreated = directoryHandle.mkdirs();
+            if (!wasDirectoryCreated) {
+                LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
+            }
         }
     }
 
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
+        LOGGER.trace("\t- Starting to take screenshot of profile");
         final Pair<ExistingScreenshotAction, Integer> existingScreenshotValue = doesScreenshotExistAndSkipSelected(trackerCredential.name());
         if (existingScreenshotValue.first() == ExistingScreenshotAction.SKIP) {
             return;

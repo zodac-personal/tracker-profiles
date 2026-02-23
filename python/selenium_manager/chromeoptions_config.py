@@ -81,5 +81,5 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
 
     chrome_options.add_experimental_option("prefs", driver_preferences)
 
-    logger.debug("Creating driver with following options: %s", chrome_options)
+    logger.trace("Creating driver with following options: %s", chrome_options)
     return chrome_options

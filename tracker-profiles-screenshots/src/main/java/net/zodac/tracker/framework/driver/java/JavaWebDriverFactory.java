@@ -100,7 +100,7 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--ignore-certificate-errors");
 
-        LOGGER.debug("Creating driver with following options: {}", chromeOptions);
+        LOGGER.trace("Creating driver with following options: {}", chromeOptions);
         return new ChromeDriver(chromeOptions);
     }
 
