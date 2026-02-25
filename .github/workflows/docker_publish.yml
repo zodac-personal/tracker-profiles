@@ -131,7 +131,7 @@ jobs:
         if: env.has_changes == 'true'
         run: |
           tracker_count=$(grep -R --include='*.java' '^@TrackerHandler(' . | cut -d '"' -f2 | sort -u | wc -l)
-          sed -i -E "s/(There are currently \*\*<u>)[0-9]+(<\/u>\*\* supported trackers listed below\.)/\1${tracker_count}\2/" README.md
+          sed -i -E "s/(There are currently \*\*)[0-9]+(\*\* supported trackers listed below\.)/\1${tracker_count}\2/" README.md
 
       - name: Push commit and tag if there were changes
         if: env.has_changes == 'true'
