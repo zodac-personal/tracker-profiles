@@ -24,8 +24,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
-import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -60,9 +58,7 @@ public class BroadcasTheNetHandler extends GazelleHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
-        driver.navigate().refresh();
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        reloadPage(); // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
 
         final By infoTabSelector = XpathBuilder
             .from(div, withId("slider"))
@@ -79,8 +75,8 @@ public class BroadcasTheNetHandler extends GazelleHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        return List.of();
+    public boolean hasSensitiveInformation() {
+        return false;
     }
 
     @Override

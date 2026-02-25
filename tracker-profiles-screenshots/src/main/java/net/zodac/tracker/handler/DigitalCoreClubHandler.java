@@ -96,6 +96,11 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
             .build();
     }
 
+    @Override
+    public boolean hasSensitiveInformation() {
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -105,16 +110,14 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        // Reload the page in case it was cancelled
-        driver.navigate().refresh();
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        reloadPage(); // Reload the page in case it was cancelled
 
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))
             .descendant(td, withAttribute("translate", "FRIENDS.LAST_SEEN"))
             .build();
-        scriptExecutor.waitForElementToAppear(selector, DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForElementToAppear(selector, waitForPageLoadDuration());
     }
 
     @Override

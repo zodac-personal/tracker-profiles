@@ -48,11 +48,6 @@ class OverlayRedactor implements Redactor {
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final String replacementTextPrefix) {
-        redactPasskey(element);
-    }
-
-    @Override
     public void redactEmail(final WebElement element) {
         final String script = """
             var element = arguments[0]

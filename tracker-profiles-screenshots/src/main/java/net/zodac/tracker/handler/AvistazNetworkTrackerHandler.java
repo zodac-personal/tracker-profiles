@@ -125,13 +125,28 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
-                .from(table)
+                .from(NamedHtmlElement.of("section"), withId("content-area"))
+                .child(div, atIndex(2))
+                .child(table, atIndex(2))
                 .child(tbody, atIndex(1))
-                .child(tr)
+                .child(tr, atIndex(3))
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            XpathBuilder
+                .from(NamedHtmlElement.of("section"), withId("content-area"))
+                .child(div, atIndex(2))
+                .child(table, atIndex(2))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(4))
                 .child(td, atIndex(2))
                 .build()
         );
@@ -149,15 +164,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = XpathBuilder
-            .from(div, withClass("navbar"))
-            .child(ul, atIndex(2))
-            .child(li, atIndex(3))
-            .build();
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        clickButton(logoutParent);
-
+        openUserDropdownMenu();
         return XpathBuilder
             .from(div, withClass("navbar"))
             .child(ul, atIndex(2))
@@ -165,5 +172,19 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
             .child(ul, atIndex(1))
             .child(li, atIndex(16))
             .build();
+    }
+
+    /**
+     * Opens the user's dropdown menu to expose links to the user profile and the logout button.
+     */
+    protected void openUserDropdownMenu() {
+        // Click the user dropdown menu bar to make the profile/logout button interactable
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withClass("navbar"))
+            .child(ul, atIndex(2))
+            .child(li, atIndex(3))
+            .build();
+        final WebElement logoutParent = driver.findElement(logoutParentSelector);
+        clickButton(logoutParent);
     }
 }

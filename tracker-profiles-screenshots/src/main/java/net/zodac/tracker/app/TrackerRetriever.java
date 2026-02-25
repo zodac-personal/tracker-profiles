@@ -57,7 +57,7 @@ final class TrackerRetriever {
     static Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
         final Set<TrackerType> trackerExecutionOrder = EnumSet.copyOf(CONFIG.trackerExecutionOrder());
-        LOGGER.debug("Tracker execution order: {}", trackerExecutionOrder);
+        LOGGER.debug("Tracker execution order: {}", CONFIG.trackerExecutionOrder());
 
         try {
             final List<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();

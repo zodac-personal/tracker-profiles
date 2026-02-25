@@ -23,9 +23,9 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
@@ -66,27 +66,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         .build();
 
     /**
-     * The default wait {@link Duration} when waiting for a web page load.
-     */
-    protected static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(5L, ChronoUnit.SECONDS);
-
-    /**
-     * The default wait {@link Duration} when waiting for an element to be clicked or a page load to begin.
-     */
-    protected static final Duration DEFAULT_WAIT_FOR_TRANSITIONS = Duration.of(500L, ChronoUnit.MILLIS);
-
-    /**
-     * The standard wait {@link Duration} to when waiting for pop-ups to disappear, elements to open, etc.
-     */
-    protected static final Duration WAIT_FOR_PAGE_UPDATES = Duration.of(1L, ChronoUnit.SECONDS);
-
-    /**
      * The logger instance.
      */
     protected static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Duration MAXIMUM_LINK_RESOLUTION_TIME = Duration.of(2L, ChronoUnit.MINUTES);
-    private static final Duration MAXIMUM_CLICK_RESOLUTION_TIME = Duration.of(15L, ChronoUnit.SECONDS);
+    private static final Duration DEFAULT_MAXIMUM_CLICK_RESOLUTION_DURATION = Duration.ofSeconds(15L);
+    private static final Duration DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME = Duration.ofMinutes(2L);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD_DURATION = Duration.ofSeconds(5L);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_UPDATES_DURATION = Duration.ofSeconds(1L);
+    private static final Duration DEFAULT_WAIT_FOR_TRANSITIONS_DURATION = Duration.ofMillis(500L);
 
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
@@ -124,7 +112,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Navigates to the home page of the tracker. Waits {@link #DEFAULT_WAIT_FOR_PAGE_LOAD} for the page to finish loading.
+     * Navigates to the home page of the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish loading.
      */
     public void openTracker() {
         boolean successfulConnection = false;
@@ -137,7 +125,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
             try {
                 LOGGER.info("\t\t- '{}'", trackerUrl);
-                driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
+                driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
                 driver.navigate().to(trackerUrl);
 
                 // Explicit check for Cloudflare Error 523 if a site is unavailable
@@ -146,7 +134,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
                     LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
                 } else {
                     successfulConnection = true;
-                    scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+                    scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
                 }
             } catch (final WebDriverException e) {
                 // If website can't be resolved, assume the site is down and attempt the next URL (if any), else rethrow exception
@@ -185,14 +173,14 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      */
     public void navigateToLoginPage(final String trackerName) {
-        LOGGER.debug("Navigating to login page");
+        LOGGER.debug("\t- Navigating to login page");
         final By loginLinkSelector = loginPageSelector();
 
         if (loginLinkSelector != null) {
             final WebElement loginLink = driver.findElement(loginLinkSelector);
             clickButton(loginLink);
             cloudflareCheck(trackerName);
-            scriptExecutor.waitForElementToAppear(usernameFieldSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
+            scriptExecutor.waitForElementToAppear(usernameFieldSelector(), waitForPageLoadDuration());
         } else {
             cloudflareCheck(trackerName);
         }
@@ -217,8 +205,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             return;
         }
 
-        LOGGER.debug("Performing Cloudflare verification check");
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        LOGGER.debug("\t- Performing Cloudflare verification check");
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
         final WebElement cloudflareElement = driver.findElement(cloudflareSelector);
@@ -242,15 +230,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Enters the user's credential and logs in to the tracker. Waits {@link #DEFAULT_WAIT_FOR_PAGE_LOAD} for the page to finish loading.
+     * Enters the user's credential and logs in to the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish loading.
      *
      * @param username    the user's username for the tracker
      * @param password    the user's password for the tracker
      * @param trackerName the name of the tracker
      */
     public void login(final String username, final String password, final String trackerName) {
-        LOGGER.debug("Logging in to tracker '{}'", trackerName);
-        scriptExecutor.waitForPageToLoad(WAIT_FOR_PAGE_UPDATES);
+        LOGGER.debug("\t- Logging in to tracker '{}'", trackerName);
+        scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
         usernameField.clear();
@@ -272,8 +260,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         }
         manualCheckAfterLoginClick(trackerName);
 
-        ScriptExecutor.explicitWait(WAIT_FOR_PAGE_UPDATES, "page to load after login");
-        scriptExecutor.waitForElementToAppear(postLoginSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
+        final By postLoginSelector = postLoginSelector();
+        LOGGER.trace("Logged in, waiting for post login selector: {}", postLoginSelector);
+        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        scriptExecutor.waitForElementToAppear(postLoginSelector, waitForPageLoadDuration());
     }
 
     /**
@@ -361,19 +351,20 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #DEFAULT_WAIT_FOR_PAGE_LOAD} for the page to finish
+     * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish
      * loading.
      */
+    // TODO: Add a postProfilePageSelector() to confirm the user profile has been loaded?
     public void openProfilePage() {
         LOGGER.debug("Opening profile page");
-        scriptExecutor.waitForPageToLoad(WAIT_FOR_PAGE_UPDATES);
+        scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         scriptExecutor.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
         // TODO: Move this to TRY block of clickButton()? Test against RuTracker
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
         scriptExecutor.moveToOrigin();
         additionalActionOnProfilePage();
     }
@@ -403,16 +394,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Checks if the {@link AbstractTrackerHandler} requires redaction of any elements.
-     *
-     * <p>
-     * By default, it will check the result of {@link #getElementsPotentiallyContainingSensitiveInformation()}, and only return <code>true</code> if
-     * it is not {@link Collection#isEmpty()}.
+     * Checks if the {@link AbstractTrackerHandler} has any sensitive information that requires redaction of any elements.
      *
      * @return <code>true</code> if there are elements in need of redaction
      */
-    public boolean hasElementsNeedingRedaction() {
-        return !getElementsPotentiallyContainingSensitiveInformation().isEmpty();
+    public boolean hasSensitiveInformation() {
+        return !emailElements().isEmpty()
+            || !ipAddressElements().isEmpty()
+            || !passkeyElements().isEmpty()
+            || !sensitiveElements().isEmpty();
     }
 
     /**
@@ -424,62 +414,114 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @see Redactor
      */
     public int redactElements() {
-        LOGGER.debug("Redacting elements");
-        final Collection<By> selectors = getElementsPotentiallyContainingSensitiveInformation();
-        if (selectors.isEmpty()) {
-            LOGGER.trace("\t\t- No defined elements to redact");
-            return 0;
-        }
+        LOGGER.trace("Redacting elements");
+        return redactEmailElements()
+            + redactIpAddressElements()
+            + redactPasskeyElements()
+            + redactSensitiveElements();
+    }
 
-        // TODO: Define which elements to redact, and whether to print a non-redacted version too
-        final Collection<WebElement> emailElements = selectors
+    /**
+     * A {@link Collection} of {@link By} selectors for the user's visible email address on the profile page.
+     *
+     * @return {@link By} selectors for email HTML elements
+     */
+    protected Collection<By> emailElements() {
+        return List.of();
+    }
+
+    private int redactEmailElements() {
+        LOGGER.debug("\t\t- Redacting email elements");
+        final Collection<WebElement> emailElements = emailElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.containsEmailAddress(element.getText()))
             .toList();
 
-        final Collection<WebElement> ipElements = selectors
+        for (final WebElement element : emailElements) {
+            redactor.redactEmail(element);
+        }
+
+        return emailElements.size();
+    }
+
+    /**
+     * A {@link Collection} of {@link By} selectors for the user's visible IP address on the profile page.
+     *
+     * @return {@link By} selectors for IP address HTML elements
+     */
+    protected Collection<By> ipAddressElements() {
+        return List.of();
+    }
+
+    private int redactIpAddressElements() {
+        LOGGER.debug("\t\t- Redacting IP address elements");
+        final Collection<WebElement> ipAddressElements = ipAddressElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.containsIpAddress(element.getText()))
             .toList();
 
-        if (emailElements.isEmpty() && ipElements.isEmpty()) {
-            LOGGER.warn("\t\t- Unexpectedly found no elements to redact");
-            return 0;
-        }
-
-        for (final WebElement element : emailElements) {
-            redactor.redactEmail(element);
-        }
-
-        for (final WebElement element : ipElements) {
+        for (final WebElement element : ipAddressElements) {
             redactor.redactIpAddress(element);
         }
 
-        return emailElements.size() + ipElements.size();
+        return ipAddressElements.size();
     }
 
     /**
-     * Returns a {@link Collection} of {@link By} selectors that define all possible HTML elements that may contain sensitive data to be redacted.
+     * A {@link Collection} of {@link By} selectors for the user's visible passkey on the profile page.
      *
-     * <p>
-     * By default, we assume that there are no elements to redact, so this method returns an empty {@link List}. Should be overridden
-     * otherwise.
-     *
-     * @return the {@link By} selectors for elements that may contain sensitive information
+     * @return {@link By} selectors for passkey HTML elements
      */
-    protected Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> passkeyElements() {
         return List.of();
+    }
+
+    private int redactPasskeyElements() {
+        LOGGER.debug("\t\t- Redacting passkey elements");
+        final Collection<WebElement> passkeyElements = passkeyElements()
+            .stream()
+            .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
+            .toList();
+
+        for (final WebElement element : passkeyElements) {
+            redactor.redactPasskey(element);
+        }
+
+        return passkeyElements.size();
+    }
+
+    /**
+     * A {@link Map} of {@link By} selectors for any miscellaneous sensitive elements visible on the profile page, keyed by a description.
+     *
+     * @return {@link By} selectors for sensitive HTML elements, with a {@link String} describing the content
+     */
+    protected Map<String, By> sensitiveElements() {
+        return Map.of();
+    }
+
+    private int redactSensitiveElements() {
+        LOGGER.debug("\t\t- Redacting remaining sensitive elements");
+        for (final Map.Entry<String, By> entry : sensitiveElements().entrySet()) {
+            final String description = entry.getKey();
+            final By selector = entry.getValue();
+
+            for (final WebElement element : driver.findElements(selector)) {
+                redactor.redact(element, description);
+            }
+        }
+
+        return sensitiveElements().size();
     }
 
     /**
      * Reload the current page (should be the user profile page) to clear any redactions.
      */
-    public void reloadProfilePage() {
+    public void reloadPage() {
         // Reload page to clear redacted elements
         driver.navigate().refresh();
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
     }
 
     /**
@@ -503,18 +545,18 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     protected abstract By logoutButtonSelector();
 
     /**
-     * Logs out of the tracker, ending the user's session. Waits {@link #DEFAULT_WAIT_FOR_PAGE_LOAD} for the {@link #postLogoutElementSelector()} to
+     * Logs out of the tracker, ending the user's session. Waits {@link #waitForPageLoadDuration()} for the {@link #postLogoutElementSelector()} to
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public void logout() {
         LOGGER.debug("Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), DEFAULT_WAIT_FOR_TRANSITIONS);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
+        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), waitForTransitionsDuration());
     }
 
     /**
@@ -556,10 +598,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     protected void clickButton(final WebElement buttonToClick) {
         try {
             LOGGER.trace("Clicking: {}", buttonToClick);
-            driver.manage().timeouts().pageLoadTimeout(MAXIMUM_CLICK_RESOLUTION_TIME);
+            driver.manage().timeouts().pageLoadTimeout(maximumClickResolutionDuration());
             buttonToClick.click();
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page still loading after {}, force stopping page load", MAXIMUM_CLICK_RESOLUTION_TIME);
+            LOGGER.debug("Page still loading after {}, force stopping page load", maximumClickResolutionDuration());
             LOGGER.trace(e);
             scriptExecutor.stopPageLoad();
         } catch (final Exception e) {
@@ -568,8 +610,55 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             throw e;
         }
 
-        driver.manage().timeouts().pageLoadTimeout(MAXIMUM_LINK_RESOLUTION_TIME);
-        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS, "button click");
+        driver.manage().timeouts().pageLoadTimeout(DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME);
+        ScriptExecutor.explicitWait(waitForTransitionsDuration(), "button click");
+    }
+
+    // TODO: Move timers to an interface out of this class?
+    /**
+     * The maximum {@link Duration} for a click to complete its action.
+     *
+     * @return the maximum click resolution {@link Duration}
+     */
+    protected Duration maximumClickResolutionDuration() {
+        return DEFAULT_MAXIMUM_CLICK_RESOLUTION_DURATION;
+    }
+
+    /**
+     * The maximum {@link Duration} for a link to complete loading.
+     *
+     * @return the maximum load resolution {@link Duration}
+     */
+    protected Duration maximumLinkResolutionDuration() {
+        return DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME;
+    }
+
+    /**
+     * The {@link Duration} to wait for a page load.
+     *
+     * @return the page load wait {@link Duration}
+     */
+    protected Duration waitForPageLoadDuration() {
+        return DEFAULT_WAIT_FOR_PAGE_LOAD_DURATION;
+    }
+
+    /**
+     * The {@link Duration} to wait for a page/element transition.
+     *
+     * @return the transition wait {@link Duration}
+     */
+    protected Duration waitForTransitionsDuration() {
+        return DEFAULT_WAIT_FOR_TRANSITIONS_DURATION;
+    }
+
+    /**
+     * The {@link Duration} to wait for a page updates.
+     *
+     * @return the page updates wait {@link Duration}
+     */
+    // TODO: Use waitForTransitionsDuration() instead?
+    protected Duration waitForPageUpdateDuration() {
+        return DEFAULT_WAIT_FOR_PAGE_UPDATES_DURATION;
     }
 
     private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {

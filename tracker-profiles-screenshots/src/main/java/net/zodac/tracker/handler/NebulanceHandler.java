@@ -26,6 +26,8 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
@@ -74,12 +76,14 @@ public class NebulanceHandler extends LuminanceHandler {
     }
 
     @Override
-    protected By passkeyElementSelector() {
-        return XpathBuilder
-            .from(div, withClass("sidebar"))
-            .child(div, atIndex(8))
-            .child(ul, atIndex(1))
-            .child(li, atIndex(7))
-            .build();
+    protected Collection<By> passkeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withClass("sidebar"))
+                .child(div, atIndex(8))
+                .child(ul, atIndex(1))
+                .child(li, atIndex(7))
+                .build()
+        );
     }
 }

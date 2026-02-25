@@ -21,10 +21,12 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -59,52 +61,37 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        return By.id("Statusdiv");
+        return XpathBuilder
+            .from(div, withClass("st-status-user-info"))
+            .build();
     }
 
     @Override
     protected By profilePageSelector() {
         return XpathBuilder
-            .from(div, withId("Statusdiv"))
-            .child(div, atIndex(1))
-            .child(a, atIndex(1))
+            .from(a, withClass("st-status-username"))
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link SceneTimeHandler}, there is also a table entry with our passkey. We find the {@literal <}{@code tr}{@literal >} {@link WebElement}s
-     * which has a {@literal <}{@code td}{@literal >} {@link WebElement} with the text value <b>Pass Key</b>. From this
-     * {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs its content redacted.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
-     */
     @Override
-    public int redactElements() {
-        final By passkeySelector = XpathBuilder
-            .from(table, withClass("main"))
-            .descendant(table, atIndex(1))
-            .child(tbody, atIndex(1))
-            .child(tr, atIndex(4))
-            .child(td, atIndex(2))
-            .build();
-        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
-        redactor.redactPasskey(passkeyValueElement);
-
-        return 1 + super.redactElements();
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
-                .from(table)
+                .from(table, withClass("desc-table"))
                 .child(tbody, atIndex(1))
-                .child(tr)
+                .child(tr, atIndex(3))
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> passkeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(table, withClass("desc-table"))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(4))
                 .child(td, atIndex(2))
                 .build()
         );
@@ -112,10 +99,17 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
+        // Highlight the user profile button to make the logout button interactable
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withClass("st-status-avatar-wrapper"))
+            .build();
+        final WebElement logoutParent = driver.findElement(logoutParentSelector);
+        scriptExecutor.moveTo(logoutParent);
+
         return XpathBuilder
-            .from(div, withId("Statusdiv"))
-            .child(div, atIndex(1))
-            .child(a, atIndex(2))
+            .from(ul, withClass("st-nav-dropdown"))
+            .child(li, atIndex(7))
+            .child(a, atIndex(1))
             .build();
     }
 }

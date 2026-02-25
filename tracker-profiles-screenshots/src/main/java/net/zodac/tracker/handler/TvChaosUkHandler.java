@@ -77,9 +77,8 @@ public class TvChaosUkHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(table)
                 .child(tbody)

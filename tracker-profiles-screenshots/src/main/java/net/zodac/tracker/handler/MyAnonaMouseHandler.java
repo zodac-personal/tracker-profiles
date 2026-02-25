@@ -80,9 +80,8 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> ipAddressElements() {
         return List.of(
-            // IP Address
             XpathBuilder
                 .from(div, withClass("blockBodyCon"))
                 .child(table, atIndex(1))

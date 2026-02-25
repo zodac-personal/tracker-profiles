@@ -76,9 +76,8 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(table, withClass("userstats"))
                 .descendant(tr, atIndex(3))

@@ -93,9 +93,20 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email and IP address
+            XpathBuilder
+                .from(tbody)
+                .child(tr, atIndex(1))
+                .child(td, atIndex(1))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            // IP address in profile sidebar
             XpathBuilder
                 .from(tbody)
                 .child(tr, atIndex(1))
@@ -119,15 +130,15 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
         // After clicking logout, an alert appears - find and click 'Yes'
         scriptExecutor.acceptAlert();
 
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
+        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
     }
 
     @Override

@@ -111,9 +111,8 @@ public class TheClickHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> ipAddressElements() {
         return List.of(
-            // IP address
             XpathBuilder
                 .from(td, withClass("embedded"))
                 .child(table)

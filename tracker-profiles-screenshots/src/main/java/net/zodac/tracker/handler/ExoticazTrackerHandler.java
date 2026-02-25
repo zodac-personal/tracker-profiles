@@ -89,15 +89,7 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
 
     @Override
     protected By logoutButtonSelector() {
-        // Click the user dropdown menu bar to make the logout button interactable
-        final By logoutParentSelector = XpathBuilder
-            .from(div, withId("topNavBar"))
-            .child(ul, atIndex(2))
-            .child(li, atIndex(3))
-            .build();
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        clickButton(logoutParent);
-
+        openUserDropdownMenu();
         return XpathBuilder
             .from(div, withId("topNavBar"))
             .child(ul, atIndex(2))

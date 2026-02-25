@@ -71,9 +71,7 @@ public class EmporniumHandler extends LuminanceHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
-        driver.navigate().refresh();
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
+        reloadPage();  // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
 
         final List<By> toggleSelectors = List.of(
             By.id("recentsnatchesbutton"),  // Recent snatches
@@ -88,14 +86,14 @@ public class EmporniumHandler extends LuminanceHandler {
                 if (sectionToggle.getText().contains("Hide")) {
                     LOGGER.debug("\t\t- Closing section {}", toggleSelector);
                     clickButton(sectionToggle);
-                    ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_TRANSITIONS, "section to close");
+                    ScriptExecutor.explicitWait(waitForTransitionsDuration(), "section to close");
                 }
             }
         }
     }
 
     @Override
-    public int redactElements() {
-        return super.originalRedactElements();
+    protected Collection<By> passkeyElements() {
+        return List.of();
     }
 }

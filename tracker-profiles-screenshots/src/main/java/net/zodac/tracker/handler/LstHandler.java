@@ -96,19 +96,18 @@ public class LstHandler extends Unit3dHandler {
      * <p>
      * For {@link LstHandler}, the email is actually defined in a separate section, unlike other {@code UNIT3D}-based trackers.
      *
-     * @return the {@link By} selectors for {@link LstHandler} email and super {@link #getElementsPotentiallyContainingSensitiveInformation()}
+     * @return the {@link By} selectors for {@link LstHandler} email and super {@link #emailElements()}
      */
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
-        final Collection<By> allElements = new ArrayList<>(super.getElementsPotentiallyContainingSensitiveInformation());
+    protected Collection<By> emailElements() {
+        final Collection<By> allEmailElements = new ArrayList<>(super.emailElements());
 
-        allElements.add(
-            // Email
+        allEmailElements.add(
             XpathBuilder
                 .from(span, withClass("profile-hero__account-value--email"))
                 .build()
         );
 
-        return allElements;
+        return allEmailElements;
     }
 }

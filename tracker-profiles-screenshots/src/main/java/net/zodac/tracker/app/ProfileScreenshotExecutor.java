@@ -67,7 +67,7 @@ final class ProfileScreenshotExecutor {
 
         // TODO: Add a retry option, then return number of attempts needed
         AbstractTrackerHandler trackerHandler = null;
-        try {
+        try { // NOPMD: UseTryWithResources - need access to the trackerHandler to take a screenshot on error
             trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name());
             screenshotProfile(trackerHandler, trackerCredential);
             return true;
@@ -95,11 +95,12 @@ final class ProfileScreenshotExecutor {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
 
-            if (e.getMessage() == null) {
+            final String errorMessage = e.getMessage() == null ? "" : e.getMessage();
+            if (errorMessage.isEmpty()) {
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name());
             } else {
-                final String errorMessage = e.getMessage().split("\n")[0];
-                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), errorMessage);
+                final String cleanedErrorMessage = errorMessage.split("\n")[0];
+                LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
             return false;
         } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
@@ -109,11 +110,12 @@ final class ProfileScreenshotExecutor {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
-            if (e.getMessage() == null) {
+            final String errorMessage = e.getMessage() == null ? "" : e.getMessage();
+            if (errorMessage.isEmpty()) {
                 LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name());
             } else {
-                final String errorMessage = e.getMessage().split("\n")[0];
-                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), errorMessage);
+                final String cleanedErrorMessage = errorMessage.split("\n")[0];
+                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
 
             return false;
@@ -136,6 +138,7 @@ final class ProfileScreenshotExecutor {
         }
 
         try {
+            LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             final Path failureOutputDirectory = CONFIG.outputDirectory().resolve("errors");
             ensureDirectoryExists(failureOutputDirectory);
             final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, 0);
@@ -178,7 +181,7 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Opening user profile page");
         trackerHandler.openProfilePage();
 
-        if (trackerHandler.hasElementsNeedingRedaction()) {
+        if (trackerHandler.hasSensitiveInformation()) {
             LOGGER.info("\t- Redacting elements with sensitive information");
             final int numberOfRedactedElements = trackerHandler.redactElements();
             if (numberOfRedactedElements != 0) {
@@ -193,7 +196,7 @@ final class ProfileScreenshotExecutor {
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),
             existingScreenshotValue.second());
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
-        trackerHandler.reloadProfilePage();
+        // TODO: Only do this when taking multiple screenshots: trackerHandler.reloadPage();
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");

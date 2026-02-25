@@ -78,11 +78,9 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    // TODO: Optional, may not be seeding torrents
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> ipAddressElements() {
         return List.of(
-            // Last connected IP address
             XpathBuilder
                 .from(span, withClass("has-text-green"))
                 .build()

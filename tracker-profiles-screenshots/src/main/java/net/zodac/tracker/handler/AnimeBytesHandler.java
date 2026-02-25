@@ -55,6 +55,11 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         return By.id("content");
     }
 
+    @Override
+    public boolean hasSensitiveInformation() {
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -64,7 +69,7 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
@@ -72,12 +77,12 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
         final By logoutConfirmationSelector = XpathBuilder
             .from(input, withName("yes"), withType("submit"))
             .build();
-        scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, DEFAULT_WAIT_FOR_TRANSITIONS);
+        scriptExecutor.waitForElementToAppear(logoutConfirmationSelector, waitForTransitionsDuration());
         final WebElement logoutConfirmation = driver.findElement(logoutConfirmationSelector);
         clickButton(logoutConfirmation);
 
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
+        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
     }
 
     @Override

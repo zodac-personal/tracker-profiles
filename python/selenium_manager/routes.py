@@ -119,6 +119,7 @@ def register_routes(app: Flask) -> None:
 
         try:
             options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation)
+            logger.trace("Creating driver with following options: %s", options)
             driver = uc.Chrome(
                 headless=False,
                 use_subprocess=False,

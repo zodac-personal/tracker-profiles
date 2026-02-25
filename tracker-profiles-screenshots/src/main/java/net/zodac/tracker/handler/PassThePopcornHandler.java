@@ -96,14 +96,19 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(div, withId("content"))
                 .descendant(ul, withClass("list"))
                 .descendant(a)
-                .build(),
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
             // Footer with last used IP address
             XpathBuilder
                 .from(div, withId("footer"))

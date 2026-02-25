@@ -25,6 +25,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -117,7 +118,7 @@ public final class DisplayUtils {
 
         // Initial text
         if (CONFIG.inputTimeoutEnabled()) {
-            continueButton.setText(BUTTON_CONTINUE_TEXT + " (" + remainingSeconds.get() + ")");
+            continueButton.setText(String.format("%s (%s)", BUTTON_CONTINUE_TEXT, remainingSeconds.get()));
         } else {
             continueButton.setText(BUTTON_CONTINUE_TEXT);
         }
@@ -152,16 +153,17 @@ public final class DisplayUtils {
             return null;
         }
 
-        final Timer countdownTimer = new Timer(1000, event -> {
+        final int timerDelay = ((Long) Duration.ofSeconds(1L).toMillis()).intValue();
+        final Timer countdownTimer = new Timer(timerDelay, event -> {
             final long value = remainingSeconds.decrementAndGet();
             if (value > 0) {
-                continueButton.setText(BUTTON_CONTINUE_TEXT + " (" + value + ")");
+                continueButton.setText(String.format("%s (%s)", BUTTON_CONTINUE_TEXT, value));
             } else {
                 continueButton.setText(BUTTON_CONTINUE_TEXT);
                 ((Timer) event.getSource()).stop();
             }
         });
-        countdownTimer.setInitialDelay(1000);
+        countdownTimer.setInitialDelay(timerDelay);
         countdownTimer.start();
         return countdownTimer;
     }

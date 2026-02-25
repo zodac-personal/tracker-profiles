@@ -139,14 +139,18 @@ public class CgPeersHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(ul, withClass("stats"))
                 .child(li)
-                .build(),
-            // IP addresses
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
             XpathBuilder
                 .from(table, withClass("cgp-table-main"))
                 .child(tbody)

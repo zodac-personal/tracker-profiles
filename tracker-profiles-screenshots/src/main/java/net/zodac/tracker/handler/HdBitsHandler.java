@@ -124,33 +124,8 @@ public class HdBitsHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link HdBitsHandler}, there is also a table entry with our passkey. We find the {@literal <}{@code tr}{@literal >} {@link WebElement}s
-     * which has a {@literal <}{@code td}{@literal >} {@link WebElement} with the text value <b>Passkey</b>. From this
-     * {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs its content redacted.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
-     */
     @Override
-    public int redactElements() {
-        final By passkeySelector = XpathBuilder
-            .from(tr, withId("seclog"))
-            .parent(tbody)
-            .child(tr, atIndex(4))
-            .child(td, atIndex(2))
-            .build();
-        final WebElement passkeyValueElement = driver.findElement(passkeySelector);
-        redactor.redactPasskey(passkeyValueElement);
-
-        return 1 + super.redactElements();
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> ipAddressElements() {
         return List.of(
             // IP address
             XpathBuilder
@@ -162,6 +137,18 @@ public class HdBitsHandler extends AbstractTrackerHandler {
             XpathBuilder
                 .from(tr, withId("seclog"))
                 .descendant(tr)
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> passkeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(tr, withId("seclog"))
+                .parent(tbody)
+                .child(tr, atIndex(4))
                 .child(td, atIndex(2))
                 .build()
         );

@@ -17,38 +17,23 @@
 
 package net.zodac.tracker.handler;
 
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
- * Extension of the {@link LuminanceHandler} for the {@code Cathode-Ray.Tube} tracker.
+ * Extension of the {@link Unit3dHandler} for the {@code ReelFlix} tracker.
  */
-@TrackerHandler(name = "Cathode-Ray.Tube", url = "https://www.cathode-ray.tube/")
-public class CathodeRayTubeHandler extends LuminanceHandler {
+@TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
+public class ReelFlixHandler extends Unit3dHandler {
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("stats_block");
-    }
-
-    @Override
-    protected Collection<By> passkeyElements() {
-        return List.of(
-            XpathBuilder
-                .from(div, withClass("sidebar"))
-                .child(div, atIndex(10))
-                .child(ul, atIndex(1))
-                .child(li, atIndex(4))
-                .build()
-        );
+    protected By loginButtonSelector() {
+        return XpathBuilder
+            .from(button, withClass("auth-card__primary-btn"))
+            .build();
     }
 }

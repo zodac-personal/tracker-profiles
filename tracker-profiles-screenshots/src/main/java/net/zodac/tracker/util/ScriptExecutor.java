@@ -40,7 +40,6 @@ public class ScriptExecutor {
 
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD = Duration.of(1_000L, ChronoUnit.MILLIS);
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;
@@ -214,8 +213,6 @@ public class ScriptExecutor {
      * @param timeout the maximum {@link Duration} to wait
      */
     public void waitForPageToLoad(final Duration timeout) {
-        explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD, "page to load");
-
         try {
             LOGGER.trace("Waiting {} for page to load", timeout);
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);

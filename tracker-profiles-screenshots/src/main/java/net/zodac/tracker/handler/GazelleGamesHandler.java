@@ -86,14 +86,19 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(ul, withClass("stats"))
                 .child(li)
                 .child(a, atIndex(1))
-                .build(),
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
             // Footer with last used IP address
             XpathBuilder
                 .from(div, withId("copyright"))
@@ -111,15 +116,15 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        scriptExecutor.waitForElementToAppear(logoutButtonSelector, DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
         // After clicking logout, an alert appears - find and click 'Yes'
         scriptExecutor.acceptAlert();
 
-        scriptExecutor.waitForPageToLoad(DEFAULT_WAIT_FOR_PAGE_LOAD);
-        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), DEFAULT_WAIT_FOR_PAGE_LOAD);
+        scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
+        scriptExecutor.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
     }
 
     @Override

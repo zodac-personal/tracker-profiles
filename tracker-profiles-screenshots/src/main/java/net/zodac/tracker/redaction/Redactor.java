@@ -41,14 +41,6 @@ public interface Redactor {
     void redactPasskey(WebElement element);
 
     /**
-     * Redacts the user's passkey, and in some implementations will retain the {@code replacementTextPrefix}.
-     *
-     * @param element               the {@link WebElement} containing the user's passkey
-     * @param replacementTextPrefix the prefix to the passkey on the page, which may be left un-redacted
-     */
-    void redactPasskey(WebElement element, String replacementTextPrefix);
-
-    /**
      * Redacts the user's email address.
      *
      * @param element the {@link WebElement} containing the user's email

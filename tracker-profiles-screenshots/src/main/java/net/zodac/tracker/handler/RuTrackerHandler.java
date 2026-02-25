@@ -17,19 +17,14 @@
 
 package net.zodac.tracker.handler;
 
-import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.time.Duration;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -38,21 +33,11 @@ import org.openqa.selenium.By;
  * Implementation of {@link AbstractTrackerHandler} for the {@code RUTracker} tracker.
  */
 @TrackerHandler(name = "RUTracker", url = {
-    "https://rutracker.org/",
-    "https://rutracker.net/"
+    // Link direct to the tracker page
+    "https://rutracker.org/forum/tracker.php",
+    "https://rutracker.net/forum/tracker.php"
 })
 public class RuTrackerHandler extends AbstractTrackerHandler {
-
-    @Override
-    public By loginPageSelector() {
-        // Main page actually is not the tracker, so we navigate to the tracker link, which will prompt us to log in
-        return XpathBuilder
-            .from(div, withId("main-nav"))
-            .child(ul, atIndex(1))
-            .child(li, atIndex(2))
-            .child(a, atIndex(1))
-            .build();
-    }
 
     @Override
     protected By usernameFieldSelector() {
@@ -89,9 +74,29 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
+    public boolean hasSensitiveInformation() {
+        return false;
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(img, withClass("log-out-icon"))
             .build();
+    }
+
+    @Override
+    protected By postLogoutElementSelector() {
+        return By.id("quick-search-guest");
+    }
+
+    @Override
+    protected Duration maximumClickResolutionDuration() {
+        return Duration.ofMinutes(3L);
+    }
+
+    @Override
+    protected Duration waitForPageLoadDuration() {
+        return Duration.ofSeconds(90L);
     }
 }

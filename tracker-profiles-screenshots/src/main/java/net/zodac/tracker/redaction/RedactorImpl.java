@@ -64,13 +64,6 @@ public class RedactorImpl implements Redactor {
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final String replacementTextPrefix) {
-        logElementToBeRedacted(element);
-        redactor.redactPasskey(element, replacementTextPrefix);
-        LOGGER.trace("");
-    }
-
-    @Override
     public void redactEmail(final WebElement element) {
         logElementToBeRedacted(element);
         redactor.redactEmail(element);

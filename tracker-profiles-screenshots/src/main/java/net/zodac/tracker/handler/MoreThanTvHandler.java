@@ -17,6 +17,8 @@
 
 package net.zodac.tracker.handler;
 
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -28,8 +30,8 @@ import org.openqa.selenium.WebElement;
 public class MoreThanTvHandler extends LuminanceHandler {
 
     @Override
-    public int redactElements() {
-        return super.originalRedactElements();
+    protected Collection<By> passkeyElements() {
+        return List.of();
     }
 
     @Override

@@ -28,6 +28,8 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -72,13 +74,15 @@ public class LibbleHandler extends LuminanceHandler {
     }
 
     @Override
-    protected By passkeyElementSelector() {
-        return XpathBuilder
-            .from(div, withClass("sidebar"))
-            .child(div, atIndex(4))
-            .child(ul, atIndex(1))
-            .child(li, atIndex(4))
-            .build();
+    protected Collection<By> passkeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withClass("sidebar"))
+                .child(div, atIndex(4))
+                .child(ul, atIndex(1))
+                .child(li, atIndex(4))
+                .build()
+        );
     }
 
     @Override

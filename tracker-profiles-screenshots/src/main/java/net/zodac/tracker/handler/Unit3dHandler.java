@@ -49,7 +49,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
-@TrackerHandler(name = "ReelFlix", url = "https://reelflix.cc/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 public class Unit3dHandler extends AbstractTrackerHandler {
 
@@ -101,14 +100,18 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(div, withClass("key-value__group"))
                 .child(NamedHtmlElement.of("dd"))
-                .build(),
-            // IP address, potentially multiple entries
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
             XpathBuilder
                 .from(table, withClass("data-table"))
                 .child(tbody)

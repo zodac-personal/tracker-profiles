@@ -56,7 +56,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        ScriptExecutor.explicitWait(DEFAULT_WAIT_FOR_PAGE_LOAD, "login pop-up to disappear");
+        ScriptExecutor.explicitWait(waitForPageLoadDuration(), "login pop-up to disappear");
 
         openUserDropdownMenu();
         return XpathBuilder
@@ -67,9 +67,8 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(table, withClass("user-info"))
                 .child(tbody)

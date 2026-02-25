@@ -73,7 +73,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        scriptExecutor.waitForPageToLoad(WAIT_FOR_PAGE_UPDATES);
+        scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
 
         final String currentTitle = driver.getTitle();
         // TODO: Find a way to not use the title text, and be generic to language

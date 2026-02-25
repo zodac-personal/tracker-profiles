@@ -37,23 +37,18 @@ import org.openqa.selenium.By;
 @TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 public class FearNoPeerHandler extends Unit3dHandler {
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link FearNoPeerHandler}, the email is actually defined in a separate section, unlike other {@code UNIT3D}-based trackers. And the IP
-     * address table has a different class.
-     *
-     * @return the {@link By} selectors for {@link FearNoPeerHandler} email IP addresses
-     */
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(span, withClass("profile-hero-2026__info-value--email"))
-                .build(),
-            // IP address, potentially multiple entries
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
             XpathBuilder
                 .from(table, withClass("profile-table-2026"))
                 .child(tbody)

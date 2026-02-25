@@ -80,6 +80,4 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
         driver_preferences["translate_whitelists"] = translate_whitelists
 
     chrome_options.add_experimental_option("prefs", driver_preferences)
-
-    logger.trace("Creating driver with following options: %s", chrome_options)
     return chrome_options

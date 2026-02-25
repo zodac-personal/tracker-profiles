@@ -24,7 +24,6 @@ import static net.zodac.tracker.util.TextSearcher.IPV6;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -55,12 +54,7 @@ class TextRedactor implements Redactor {
 
     @Override
     public void redactPasskey(final WebElement element) {
-        redactPasskey(element, null);
-    }
-
-    @Override
-    public void redactPasskey(final WebElement element, final @Nullable String replacementTextPrefix) {
-        final String replacementText = replacementTextPrefix == null ? DEFAULT_REDACTION_TEXT : (replacementTextPrefix + DEFAULT_REDACTION_TEXT);
+        final String replacementText = "Passkey: " + DEFAULT_REDACTION_TEXT;
         driver.executeScript(String.format("arguments[0].innerText = '%s'", replacementText), element);
     }
 

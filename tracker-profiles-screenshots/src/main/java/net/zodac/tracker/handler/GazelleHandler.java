@@ -71,20 +71,25 @@ public class GazelleHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> emailElements() {
         return List.of(
-            // Email
             XpathBuilder
                 .from(ul, withClass("stats"))
                 .child(li)
                 .child(a)
-                .build(),
-            // Footer with last used IP address
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            // Last connected IP address
             XpathBuilder
                 .from(div, withId("footer"))
                 .descendant(a)
                 .build(),
-            // IP address
+            // IP address in profile sidebar
             By.id("statuscont0")
         );
     }

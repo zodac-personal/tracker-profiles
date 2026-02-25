@@ -102,42 +102,27 @@ public class DocspediaHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link DocspediaHandler}, there is a table with our passkey. We
-     * find the {@literal <}{@code tr}{@literal >} {@link WebElement} which has a {@literal <}{@code td}{@literal >} {@link WebElement} with the text
-     * value <b>Passkey</b>. From this {@literal <}{@code tr}{@literal >}, we find the child {@literal <}{@code td}{@literal >}, which needs
-     * its content redacted.
-     *
-     * @see AbstractTrackerHandler#redactElements()
-     * @see net.zodac.tracker.redaction.Redactor#redactPasskey(WebElement)
-     */
     @Override
-    public int redactElements() {
-        final By passkeyValueSelector = XpathBuilder
-            .from(div, withId("maincolumn"))
-            .descendant(table, atIndex(2))
-            .child(tbody, atIndex(1))
-            .child(tr, atIndex(3))
-            .child(td, atIndex(2))
-            .build();
-        final WebElement passkeyValueElement = driver.findElement(passkeyValueSelector);
-        redactor.redactPasskey(passkeyValueElement);
-
-        return 1 + super.redactElements();
-    }
-
-    @Override
-    public Collection<By> getElementsPotentiallyContainingSensitiveInformation() {
+    protected Collection<By> ipAddressElements() {
         return List.of(
-            // IP address
             XpathBuilder
                 .from(div, withId("maincolumn"))
                 .descendant(table, atIndex(2))
                 .child(tbody, atIndex(1))
                 .child(tr, atIndex(4))
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> passkeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withId("maincolumn"))
+                .descendant(table, atIndex(2))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(3))
                 .child(td, atIndex(2))
                 .build()
         );
