@@ -87,6 +87,9 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip &&
     apt-get purge -yqq curl unzip && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod -R 0777 /usr/local/chromium
 
+# Copy Google Chrome extensions
+COPY ./docker/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphecmpfh_2026_2_22.crx /app/ublock_origin_lite.crx
+
 # Copy Python installation
 COPY --from=python_builder /usr/local/bin/python3 /usr/local/bin/python3
 COPY --from=python_builder /usr/local/bin/python3.14 /usr/local/bin/python3.14

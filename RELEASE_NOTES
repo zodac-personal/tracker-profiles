@@ -5,3 +5,7 @@ Allows for a screenshot to be taken of the last page the execution is on if an e
 ## Planning for optional redaction items
 
 I've refactored the way each tracker defines its 'sensitive' information, with a plan to allow users to select which information they want redacted (if any).
+
+## Support for extensions
+
+Added the ability to load extensions into the bundled instance of Chromium, and enabling an ad-blocker for troublesome trackers.

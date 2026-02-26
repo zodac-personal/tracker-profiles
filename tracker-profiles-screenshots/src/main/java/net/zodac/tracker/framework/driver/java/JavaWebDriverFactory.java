@@ -23,6 +23,8 @@ import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -56,10 +58,11 @@ public final class JavaWebDriverFactory {
      * <p>
      * Otherwise it will run in full UI mode.
      *
-     * @param trackerType whether {@link TrackerType} defining the execution method for this tracker.
+     * @param trackerType      whether {@link TrackerType} defining the execution method for this tracker
+     * @param installAdBlocker whether to install and configure an ad-blocker for the {@link RemoteWebDriver}
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final TrackerType trackerType) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType, final boolean installAdBlocker) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
@@ -100,28 +103,32 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--ignore-certificate-errors");
 
+        if (installAdBlocker) {
+            final Extension adBlockerExtension = new UblockOriginLiteExtension();
+            LOGGER.trace("Installing ad-blocker extension: '{}'", adBlockerExtension.path());
+            final File extension = new File(adBlockerExtension.path());
+            chromeOptions.addExtensions(extension);
+        }
+
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);
         return new ChromeDriver(chromeOptions);
     }
 
     private static Map<String, String> getTranslationWhitelist() {
-        final Map<String, String> translateWhitelists = new HashMap<>();
-
-        // Base languages
         final String[] baseLanguages = {
-            "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs",
-            "bg", "ca", "ceb", "ny", "zh", "co", "hr", "cs",
-            "da", "nl", "eo", "et", "tl", "fi", "fr", "fy", "gl", "ka",
-            "de", "el", "gu", "ht", "ha", "haw", "he", "iw", "hi", "hmn",
-            "hu", "is", "ig", "id", "ga", "it", "ja", "jw", "kn", "kk",
-            "km", "ko", "ku", "ky", "lo", "la", "lv", "lt", "lb", "mk",
-            "mg", "ms", "ml", "mt", "mi", "mr", "mn", "my", "ne", "no",
-            "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr",
-            "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw",
-            "sv", "tg", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi",
-            "cy", "xh", "yi", "yo", "zu"
+            "af", "am", "ar", "az", "be", "bg", "bn", "bs", "ca", "co",
+            "cs", "cy", "da", "de", "el", "eo", "es", "et", "eu", "fa",
+            "fi", "fr", "fy", "ga", "gd", "gl", "gu", "ha", "he", "hi",
+            "hr", "hu", "hy", "id", "ig", "is", "it", "iw", "ja", "jw",
+            "ka", "kk", "km", "kn", "ko", "ku", "ky", "la", "lb", "lo",
+            "lt", "lv", "mg", "mi", "mk", "ml", "mn", "mr", "ms", "mt",
+            "my", "ne", "nl", "no", "ny", "pa", "pl", "ps", "pt", "ro",
+            "ru", "sd", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr",
+            "st", "su", "sv", "sw", "ta", "te", "tg", "th", "tr", "uk",
+            "ur", "uz", "vi", "xh", "yi", "yo", "zh", "zu"
         };
 
+        final Map<String, String> translateWhitelists = new HashMap<>(baseLanguages.length);
         for (final String baseLanguage : baseLanguages) {
             translateWhitelists.put(baseLanguage, "en");
         }

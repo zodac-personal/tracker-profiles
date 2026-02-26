@@ -92,11 +92,16 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
 
     @Override
     protected Duration maximumClickResolutionDuration() {
-        return Duration.ofMinutes(3L);
+        return Duration.ofMinutes(2L);
     }
 
     @Override
     protected Duration waitForPageLoadDuration() {
-        return Duration.ofSeconds(90L);
+        return Duration.ofMinutes(1L);
+    }
+
+    @Override
+    protected boolean installAdBlocker() {
+        return true;
     }
 }

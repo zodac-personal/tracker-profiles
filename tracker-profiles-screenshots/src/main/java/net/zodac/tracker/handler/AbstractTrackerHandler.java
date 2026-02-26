@@ -29,6 +29,8 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -109,6 +111,11 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         driver = createRemoteWebDriver(trackerDefinition.type());
         scriptExecutor = new ScriptExecutor(driver);
         redactor = new RedactorImpl(driver);
+
+        if (installAdBlocker()) {
+            final Extension adBlockerExtension = new UblockOriginLiteExtension();
+            adBlockerExtension.configure(driver, scriptExecutor);
+        }
     }
 
     /**
@@ -237,7 +244,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      */
     public void login(final String username, final String password, final String trackerName) {
-        LOGGER.debug("\t- Logging in to tracker '{}'", trackerName);
+        LOGGER.trace("Logging in to tracker '{}'", trackerName);
         scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
@@ -356,7 +363,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     // TODO: Add a postProfilePageSelector() to confirm the user profile has been loaded?
     public void openProfilePage() {
-        LOGGER.debug("Opening profile page");
+        LOGGER.trace("Opening profile page");
         scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
@@ -549,7 +556,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public void logout() {
-        LOGGER.debug("Logging out of tracker");
+        LOGGER.debug("\t\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
         scriptExecutor.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
@@ -615,6 +622,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     // TODO: Move timers to an interface out of this class?
+
     /**
      * The maximum {@link Duration} for a click to complete its action.
      *
@@ -661,7 +669,20 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         return DEFAULT_WAIT_FOR_PAGE_UPDATES_DURATION;
     }
 
-    private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {
-        return trackerType == TrackerType.CLOUDFLARE_CHECK ? PythonWebDriverFactory.createDriver() : JavaWebDriverFactory.createDriver(trackerType);
+    /**
+     * Whether the {@link AbstractTrackerHandler} requires an ad-blocker to be installed. By default this is {@code false} to avoid needing to
+     * configure the ad-blocker.
+     *
+     * @return whether to install an ad-blocker for the {@link AbstractTrackerHandler}
+     */
+    protected boolean installAdBlocker() {
+        return false;
+    }
+
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {
+        final boolean installAdBlocker = installAdBlocker();
+        return trackerType == TrackerType.CLOUDFLARE_CHECK
+            ? PythonWebDriverFactory.createDriver(installAdBlocker)
+            : JavaWebDriverFactory.createDriver(trackerType, installAdBlocker);
     }
 }

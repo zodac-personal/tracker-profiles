@@ -17,13 +17,17 @@ import undetected_chromedriver as uc
 logger = logging.getLogger(__name__)
 
 
-def create_chrome_options(browser_data_storage_path: str, browser_dimensions: str, enable_translation: bool) -> uc.ChromeOptions:
+def create_chrome_options(browser_data_storage_path: str,
+                          browser_dimensions: str,
+                          enable_translation: bool,
+                          install_ad_blocker: bool) -> uc.ChromeOptions:
     """Create and configure ChromeOptions for launching an undetected Chrome browser.
 
     Args:
         browser_data_storage_path (str): Path to store user data and cache.
         browser_dimensions (str): Browser window size in the format 'WIDTH,HEIGHT'.
         enable_translation (bool): Whether to translate web pages into English
+        install_ad_blocker (bool): Whether to install and configure an ad-blocker or not
 
     Returns:
         uc.ChromeOptions: Configured Chrome options.
@@ -80,4 +84,8 @@ def create_chrome_options(browser_data_storage_path: str, browser_dimensions: st
         driver_preferences["translate_whitelists"] = translate_whitelists
 
     chrome_options.add_experimental_option("prefs", driver_preferences)
+
+    if install_ad_blocker:
+        chrome_options.add_extension("/app/ublock_origin_lite.crx")
+
     return chrome_options

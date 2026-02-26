@@ -57,12 +57,13 @@ public final class PythonWebDriverFactory {
      * <p>
      * Currently it only runs in headful mode.
      *
+     * @param installAdBlocker whether to install and configure an ad-blocker for the {@link RemoteWebDriver}
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver() {
+    public static RemoteWebDriver createDriver(final boolean installAdBlocker) {
         LOGGER.trace("Creating Python driver");
         final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(
-            CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(), CONFIG.enableTranslationToEnglish());
+            CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(), CONFIG.enableTranslationToEnglish(), installAdBlocker);
 
         final RemoteWebDriver driver = AttachedRemoteWebDriver.create(seleniumSession);
         LOGGER.debug("Successfully attached to existing session");

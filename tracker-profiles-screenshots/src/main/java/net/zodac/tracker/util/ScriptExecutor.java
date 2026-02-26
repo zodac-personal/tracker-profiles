@@ -60,12 +60,8 @@ public class ScriptExecutor {
         final Wait<WebDriver> wait = new WebDriverWait(driver, DEFAULT_WAIT_FOR_ALERT)
             .ignoring(NoSuchElementException.class);
         final Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-        if (alert != null) {
-            LOGGER.trace("Accepting alert pop-up");
-            alert.accept();
-        } else {
-            LOGGER.warn("Expected alert not found, not attempting to click anything");
-        }
+        LOGGER.trace("Accepting alert pop-up");
+        alert.accept();
     }
 
     /**
@@ -92,7 +88,7 @@ public class ScriptExecutor {
      * Performs a {@link Thread#sleep(Duration)} for the specified {@link Duration}.
      *
      * @param sleepTime the time to wait
-     * @param reason the reason for sleeping
+     * @param reason    the reason for sleeping
      */
     public static void explicitWait(final Duration sleepTime, final String reason) {
         try {
@@ -170,6 +166,29 @@ public class ScriptExecutor {
         LOGGER.trace("Removing attribute '{}' from {}", attributeName, element);
         final String script = String.format("arguments[0].removeAttribute('%s');", attributeName);
         driver.executeScript(script, element);
+    }
+
+    /**
+     * Scrolls the page to by the provided number of pixels in both the X and Y axis.
+     *
+     * @param x pixels to scroll left/right
+     * @param y pixels to scroll up/down
+     */
+    public void scroll(final int x, final int y) {
+        LOGGER.trace("Scrolling up/down {}, left/right {}", x, y);
+        driver.executeScript(String.format("window.scrollBy(%s, %s);", x, y));
+        explicitWait(Duration.ofMillis(100L), "page to scroll");
+    }
+
+    /**
+     * Scrolls the page to the provided {@link WebElement}.
+     *
+     * @param element the {@link WebElement} to scroll to
+     */
+    public void scrollToElement(final WebElement element) {
+        LOGGER.trace("Scrolling to {}", element);
+        driver.executeScript("arguments[0].scrollIntoView(true);", element);
+        explicitWait(Duration.ofMillis(250L), "page to scroll to the element");
     }
 
     /**

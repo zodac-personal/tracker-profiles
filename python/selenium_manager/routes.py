@@ -41,10 +41,12 @@ class OpenRequestData(TypedDict):
         browser_data_storage_path (str): Filesystem path where browser session data will be stored.
         browser_dimensions (str): Comma-separated dimensions for the browser window, e.g., "1920,1080".
         enable_translation (bool): Whether to translate the page to English or not
+        install_ad_blocker (bool): Whether to install and configure an ad-blocker or not
     """
     browser_data_storage_path: str
     browser_dimensions: str
     enable_translation: bool
+    install_ad_blocker: bool
 
 
 class CloseRequestData(TypedDict):
@@ -98,6 +100,7 @@ def register_routes(app: Flask) -> None:
                 "browser_data_storage_path": data["browser_data_storage_path"],
                 "browser_dimensions": data["browser_dimensions"],
                 "enable_translation": data["enable_translation"].lower() == "true",
+                "install_ad_blocker": data["install_ad_blocker"].lower() == "true",
             }
         except KeyError as e:
             return jsonify({"error": f"Missing required key: {e.args[0]}"}), 400
@@ -116,9 +119,10 @@ def register_routes(app: Flask) -> None:
             return jsonify({"error": f"Invalid 'browser_dimensions' format, expected 'WIDTH,HEIGHT', found: '{browser_dimensions}'"}), 400
 
         enable_translation = request_data["enable_translation"]
+        install_ad_blocker = request_data["install_ad_blocker"]
 
         try:
-            options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation)
+            options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation, install_ad_blocker)
             logger.trace("Creating driver with following options: %s", options)
             driver = uc.Chrome(
                 headless=False,

@@ -80,7 +80,7 @@ final class ResultCollector {
             LOGGER.error("All {} selected tracker{} failed:", totalUnsuccessful, StringUtils.pluralise(totalUnsuccessful));
 
             unsuccessfulTrackers.forEach((type, trackers) -> {
-                LOGGER.error("  {}:", type.formattedName());
+                LOGGER.error("- {}:", type.formattedName());
                 trackers.forEach(name -> LOGGER.error("\t- {}", name));
             });
 
@@ -89,9 +89,9 @@ final class ResultCollector {
 
         if (totalUnsuccessful == 0) {
             LOGGER.info("");
-            LOGGER.info("{} tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
+            LOGGER.info("All {} selected tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
 
-            successfulTrackers.forEach((type, trackers) -> LOGGER.info("  {} ({}): {}", type.formattedName(), trackers.size(), trackers));
+            successfulTrackers.forEach((type, trackers) -> LOGGER.info("- {} ({}): {}", type.formattedName(), trackers.size(), trackers));
 
             return ExitState.SUCCESS;
         }
@@ -105,7 +105,7 @@ final class ResultCollector {
                 continue;
             }
 
-            LOGGER.warn("  {}:", trackerType.formattedName());
+            LOGGER.warn("- {}:", trackerType.formattedName());
             trackers.forEach(name -> LOGGER.warn("\t- {}", name));
         }
 

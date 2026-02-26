@@ -157,4 +157,9 @@ public class TeamOsHandler extends AbstractTrackerHandler {
             .from(a, withClass("p-navgroup-link--logIn"))
             .build();
     }
+
+    @Override
+    protected boolean installAdBlocker() {
+        return true;
+    }
 }

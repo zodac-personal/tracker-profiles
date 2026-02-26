@@ -41,16 +41,17 @@ final class PythonHttpServerHandler {
     private static final String OPEN_URL = BASE_URL + "/open";
 
     // JSON payloads
-    private static final String CLOSE_REQUEST_PAYLOAD_FORMAT = """
+    private static final String CLOSE_REQUEST_FORMAT = """
         {
             "session_id": "%s"
         }
         """;
-    private static final String OPEN_REQUEST_PAYLOAD_FORMAT = """
+    private static final String OPEN_REQUEST_FORMAT = """
         {
             "browser_data_storage_path": "%s",
             "browser_dimensions": "%s",
-            "enable_translation": "%s"
+            "enable_translation": "%s",
+            "install_ad_blocker": "%s"
         }""";
 
     // Header names and values
@@ -70,12 +71,17 @@ final class PythonHttpServerHandler {
      * @param browserDataStoragePath the file path in which to store browser data (profiles, caches, etc.)
      * @param browserDimensions      the dimensions in the format {@code width,height} for the {@code Selenium} web browser
      * @param enableTranslation      whether to translate web pages to English
+     * @param installAdBlocker       whether to install and configure an ad-blocker
      * @return the {@link SeleniumSession} of the Python browser session
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDataStoragePath()
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDimensions()
      */
-    static SeleniumSession openSession(final String browserDataStoragePath, final String browserDimensions, final boolean enableTranslation) {
-        final String jsonPayload = OPEN_REQUEST_PAYLOAD_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation);
+    static SeleniumSession openSession(final String browserDataStoragePath,
+                                       final String browserDimensions,
+                                       final boolean enableTranslation,
+                                       final boolean installAdBlocker
+    ) {
+        final String jsonPayload = OPEN_REQUEST_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation, installAdBlocker);
 
         try {
             final HttpRequest request = HttpRequest.newBuilder()
@@ -109,7 +115,7 @@ final class PythonHttpServerHandler {
      * @param seleniumSession the {@link SeleniumSession} to close
      */
     static void closeSession(final SeleniumSession seleniumSession) {
-        final String jsonPayload = CLOSE_REQUEST_PAYLOAD_FORMAT.formatted(seleniumSession.sessionId());
+        final String jsonPayload = CLOSE_REQUEST_FORMAT.formatted(seleniumSession.sessionId());
 
         try {
             final HttpRequest request = HttpRequest.newBuilder()
