@@ -24,6 +24,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,8 +54,8 @@ final class PythonHttpServerHandler {
         {
             "browser_data_storage_path": "%s",
             "browser_dimensions": "%s",
-            "enable_translation": "%s",
-            "install_ad_blocker": "%s"
+            "enable_translation": %s,
+            "extension_paths": %s
         }""";
 
     // Header names and values
@@ -71,7 +75,7 @@ final class PythonHttpServerHandler {
      * @param browserDataStoragePath the file path in which to store browser data (profiles, caches, etc.)
      * @param browserDimensions      the dimensions in the format {@code width,height} for the {@code Selenium} web browser
      * @param enableTranslation      whether to translate web pages to English
-     * @param installAdBlocker       whether to install and configure an ad-blocker
+     * @param extensions             any {@link Extension}s to be installed
      * @return the {@link SeleniumSession} of the Python browser session
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDataStoragePath()
      * @see net.zodac.tracker.framework.config.ApplicationConfiguration#browserDimensions()
@@ -79,9 +83,10 @@ final class PythonHttpServerHandler {
     static SeleniumSession openSession(final String browserDataStoragePath,
                                        final String browserDimensions,
                                        final boolean enableTranslation,
-                                       final boolean installAdBlocker
+                                       final Collection<Extension> extensions
     ) {
-        final String jsonPayload = OPEN_REQUEST_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation, installAdBlocker);
+        final String extensionFilePaths = toJsonArrayOfPaths(extensions);
+        final String jsonPayload = OPEN_REQUEST_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation, extensionFilePaths);
 
         try {
             final HttpRequest request = HttpRequest.newBuilder()
@@ -91,6 +96,7 @@ final class PythonHttpServerHandler {
                 .build();
 
             LOGGER.debug("Sending request to open session to '{}'", OPEN_URL);
+            LOGGER.trace("Sending JSON payload: {}", jsonPayload);
             final HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
@@ -107,6 +113,13 @@ final class PythonHttpServerHandler {
         } catch (final IOException e) {
             throw new DriverAttachException(e);
         }
+    }
+
+    private static String toJsonArrayOfPaths(final Collection<Extension> extensions) {
+        final List<String> extensionFilePaths = extensions.stream().map(Extension::path).toList();
+        return extensionFilePaths.stream()
+            .map(v -> "\"" + v.replace("\"", "\\\"") + "\"")
+            .collect(Collectors.joining(",", "[", "]"));
     }
 
     /**

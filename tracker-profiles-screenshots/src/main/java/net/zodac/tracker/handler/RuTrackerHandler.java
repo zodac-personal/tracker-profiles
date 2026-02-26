@@ -25,7 +25,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -101,7 +105,9 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected boolean installAdBlocker() {
-        return true;
+    protected Collection<Extension> requiredExtentions() {
+        return List.of(
+            new UblockOriginLiteExtension()
+        );
     }
 }

@@ -18,13 +18,13 @@
 package net.zodac.tracker.framework.driver.java;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.Extension;
-import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -58,11 +58,11 @@ public final class JavaWebDriverFactory {
      * <p>
      * Otherwise it will run in full UI mode.
      *
-     * @param trackerType      whether {@link TrackerType} defining the execution method for this tracker
-     * @param installAdBlocker whether to install and configure an ad-blocker for the {@link RemoteWebDriver}
+     * @param trackerType whether {@link TrackerType} defining the execution method for this tracker
+     * @param extensions  any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final TrackerType trackerType, final boolean installAdBlocker) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType, final Collection<Extension> extensions) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
@@ -103,11 +103,10 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--ignore-certificate-errors");
 
-        if (installAdBlocker) {
-            final Extension adBlockerExtension = new UblockOriginLiteExtension();
-            LOGGER.trace("Installing ad-blocker extension: '{}'", adBlockerExtension.path());
-            final File extension = new File(adBlockerExtension.path());
-            chromeOptions.addExtensions(extension);
+        for (final Extension extension : extensions) {
+            LOGGER.trace("Installing extension {} from '{}'", extension.getClass().getSimpleName(), extension.path());
+            final File extensionFile = new File(extension.path());
+            chromeOptions.addExtensions(extensionFile);
         }
 
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);

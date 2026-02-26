@@ -14,8 +14,6 @@
 # Behavior:
 #   - Runs `ruff` inside a container with optional arguments for linting the
 #     `python/selenium_manager` directory using a custom config file
-#   - Caches Ruff results in `.ruff_cache`
-#   - If in CI, sets the container user to the host user ID for file permissions
 #   - Runs `pytest` inside a container after installing dev requirements
 #
 # Exit Codes:
@@ -25,7 +23,7 @@
 
 set -euo pipefail
 
-LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.15.1"
+LINT_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.15.2"
 TEST_DOCKER_IMAGE="python:3.14.3-slim"
 
 # Linting

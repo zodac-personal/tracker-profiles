@@ -17,8 +17,10 @@
 
 package net.zodac.tracker.framework.driver.python;
 
+import java.util.Collection;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,13 +59,14 @@ public final class PythonWebDriverFactory {
      * <p>
      * Currently it only runs in headful mode.
      *
-     * @param installAdBlocker whether to install and configure an ad-blocker for the {@link RemoteWebDriver}
+     * @param extensions any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final boolean installAdBlocker) {
+    public static RemoteWebDriver createDriver(final Collection<Extension> extensions) {
         LOGGER.trace("Creating Python driver");
-        final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(
-            CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(), CONFIG.enableTranslationToEnglish(), installAdBlocker);
+        final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(),
+            CONFIG.enableTranslationToEnglish(), extensions);
+        LOGGER.trace("Received session: {}", seleniumSession);
 
         final RemoteWebDriver driver = AttachedRemoteWebDriver.create(seleniumSession);
         LOGGER.debug("Successfully attached to existing session");

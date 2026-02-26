@@ -69,7 +69,7 @@ public class UblockOriginLiteExtension implements Extension {
     @Override
     public void configure(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
         try {
-            LOGGER.info("\t- Configuring ad-blocker");
+            LOGGER.info("\t- Configuring {}", getClass().getSimpleName());
             openExtensionConfigurationPage(driver, id());
 
             LOGGER.debug("\t\t- Setting filtering mode");

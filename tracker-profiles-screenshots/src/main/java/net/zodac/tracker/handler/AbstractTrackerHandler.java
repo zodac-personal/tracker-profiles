@@ -30,7 +30,6 @@ import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.driver.extension.Extension;
-import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -108,14 +107,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         this.trackerDefinition = trackerDefinition;
-        driver = createRemoteWebDriver(trackerDefinition.type());
+        driver = createRemoteWebDriver(trackerDefinition.type(), requiredExtentions());
         scriptExecutor = new ScriptExecutor(driver);
         redactor = new RedactorImpl(driver);
-
-        if (installAdBlocker()) {
-            final Extension adBlockerExtension = new UblockOriginLiteExtension();
-            adBlockerExtension.configure(driver, scriptExecutor);
-        }
     }
 
     /**
@@ -670,19 +664,35 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Whether the {@link AbstractTrackerHandler} requires an ad-blocker to be installed. By default this is {@code false} to avoid needing to
-     * configure the ad-blocker.
+     * The {@link Extension}s required for the {@link AbstractTrackerHandler}. If any are provided, they will be installed in the
+     * {@link RemoteWebDriver}, and then {@link Extension#configure(RemoteWebDriver, ScriptExecutor)} will be run prior to the main execution for the
+     * {@link AbstractTrackerHandler}.
+     *
+     * <p>
+     * By default this is empty to avoid needing to configure any {@link Extension}s unnecessarily.
      *
      * @return whether to install an ad-blocker for the {@link AbstractTrackerHandler}
      */
-    protected boolean installAdBlocker() {
-        return false;
+    protected Collection<Extension> requiredExtentions() {
+        return List.of();
     }
 
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType) {
-        final boolean installAdBlocker = installAdBlocker();
-        return trackerType == TrackerType.CLOUDFLARE_CHECK
-            ? PythonWebDriverFactory.createDriver(installAdBlocker)
-            : JavaWebDriverFactory.createDriver(trackerType, installAdBlocker);
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final Collection<Extension> requiredExtentions) {
+        if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
+            if (!requiredExtentions.isEmpty()) {
+                LOGGER.trace("Attempting to create python driver with extentions; extenstions will be installed but cannot be configured: {}",
+                    requiredExtentions);
+            }
+            return PythonWebDriverFactory.createDriver(requiredExtentions);
+        }
+
+        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, requiredExtentions);
+        final ScriptExecutor configurationScriptExecution = new ScriptExecutor(configurationDriver);
+
+        for (final Extension extension : requiredExtentions) {
+            extension.configure(configurationDriver, configurationScriptExecution);
+        }
+
+        return configurationDriver;
     }
 }

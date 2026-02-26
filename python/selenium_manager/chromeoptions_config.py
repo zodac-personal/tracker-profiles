@@ -20,14 +20,14 @@ logger = logging.getLogger(__name__)
 def create_chrome_options(browser_data_storage_path: str,
                           browser_dimensions: str,
                           enable_translation: bool,
-                          install_ad_blocker: bool) -> uc.ChromeOptions:
+                          extension_paths: list[str]) -> uc.ChromeOptions:
     """Create and configure ChromeOptions for launching an undetected Chrome browser.
 
     Args:
         browser_data_storage_path (str): Path to store user data and cache.
         browser_dimensions (str): Browser window size in the format 'WIDTH,HEIGHT'.
         enable_translation (bool): Whether to translate web pages into English
-        install_ad_blocker (bool): Whether to install and configure an ad-blocker or not
+        extension_paths (list[str]): A list of the filepaths for extenstions to install
 
     Returns:
         uc.ChromeOptions: Configured Chrome options.
@@ -85,7 +85,9 @@ def create_chrome_options(browser_data_storage_path: str,
 
     chrome_options.add_experimental_option("prefs", driver_preferences)
 
-    if install_ad_blocker:
-        chrome_options.add_extension("/app/ublock_origin_lite.crx")
+    for extension_path in extension_paths:
+        extension = Path(extension_path)
+        if extension.exists():
+            chrome_options.add_extension(str(extension))
 
     return chrome_options

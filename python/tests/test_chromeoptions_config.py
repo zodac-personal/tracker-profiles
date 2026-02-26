@@ -9,7 +9,7 @@ from selenium_manager.chromeoptions_config import create_chrome_options
 
 
 def test_chrome_options_arguments(tmp_path: Path) -> None:
-    options: uc.ChromeOptions = create_chrome_options(str(tmp_path), "1200,800", True, False)
+    options: uc.ChromeOptions = create_chrome_options(str(tmp_path), "1200,800", True, [])
 
     args: list[str] = options.arguments
     assert "--window-size=1200,800" in args
@@ -26,7 +26,7 @@ def test_chrome_options_arguments(tmp_path: Path) -> None:
 
 
 def test_chrome_options_prefs(tmp_path: Path) -> None:
-    options: uc.ChromeOptions = create_chrome_options(str(tmp_path), "800,600", True, False)
+    options: uc.ChromeOptions = create_chrome_options(str(tmp_path), "800,600", True, [])
     prefs: dict[str, Any] = options.experimental_options["prefs"]
     assert prefs["credentials_enable_service"] is False
     assert prefs["profile.password_manager_enabled"] is False

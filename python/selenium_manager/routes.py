@@ -19,7 +19,7 @@ import logging
 import os
 from pathlib import Path
 from threading import Lock
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import undetected_chromedriver as uc
 from flask import Flask, Response, jsonify, request
@@ -41,12 +41,12 @@ class OpenRequestData(TypedDict):
         browser_data_storage_path (str): Filesystem path where browser session data will be stored.
         browser_dimensions (str): Comma-separated dimensions for the browser window, e.g., "1920,1080".
         enable_translation (bool): Whether to translate the page to English or not
-        install_ad_blocker (bool): Whether to install and configure an ad-blocker or not
+        extension_paths (list[str]): List of Chrome extension .crx file paths to install.
     """
     browser_data_storage_path: str
     browser_dimensions: str
     enable_translation: bool
-    install_ad_blocker: bool
+    extension_paths: list[str]
 
 
 class CloseRequestData(TypedDict):
@@ -89,7 +89,7 @@ def register_routes(app: Flask) -> None:
             500 Internal Server Error for unexpected issues during browser startup.
         """
         logger.debug("\t- /open request received")
-        data: dict[str, str] | None = request.get_json()
+        data: dict[str, Any] | None = request.get_json()
 
         # Validation of input data
         logger.debug("\t- Request payload: %s", data)
@@ -99,8 +99,8 @@ def register_routes(app: Flask) -> None:
             request_data: OpenRequestData = {
                 "browser_data_storage_path": data["browser_data_storage_path"],
                 "browser_dimensions": data["browser_dimensions"],
-                "enable_translation": data["enable_translation"].lower() == "true",
-                "install_ad_blocker": data["install_ad_blocker"].lower() == "true",
+                "enable_translation": data["enable_translation"],
+                "extension_paths": data.get("extension_paths"),
             }
         except KeyError as e:
             return jsonify({"error": f"Missing required key: {e.args[0]}"}), 400
@@ -119,10 +119,10 @@ def register_routes(app: Flask) -> None:
             return jsonify({"error": f"Invalid 'browser_dimensions' format, expected 'WIDTH,HEIGHT', found: '{browser_dimensions}'"}), 400
 
         enable_translation = request_data["enable_translation"]
-        install_ad_blocker = request_data["install_ad_blocker"]
+        extension_paths = request_data["extension_paths"]
 
         try:
-            options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation, install_ad_blocker)
+            options = create_chrome_options(browser_data_storage_path, browser_dimensions, enable_translation, extension_paths)
             logger.trace("Creating driver with following options: %s", options)
             driver = uc.Chrome(
                 headless=False,
