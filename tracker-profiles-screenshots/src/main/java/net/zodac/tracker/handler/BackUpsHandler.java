@@ -20,11 +20,13 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -75,10 +77,13 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
     protected void manualCheckAfterLoginClick(final String trackerName) {
         scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
 
-        final String currentTitle = driver.getTitle();
-        // TODO: Find a way to not use the title text, and be generic to language
-        if (currentTitle == null || !currentTitle.contains("Private Messages in Folder: Inbox")) {
-            LOGGER.debug("\t- No unread private messages");
+        final By messagesSelector = XpathBuilder
+            .from(tbody, withId("collapseobj_messages"))
+            .build();
+        final Collection<WebElement> messages = driver.findElements(messagesSelector);
+
+        if (messages.isEmpty()) {
+            LOGGER.trace("Found no element {}, assuming we're not in the message inbox", messagesSelector);
             return;
         }
 
