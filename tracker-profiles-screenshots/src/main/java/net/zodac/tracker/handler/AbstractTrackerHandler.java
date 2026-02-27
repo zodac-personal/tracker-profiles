@@ -366,6 +366,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         LOGGER.trace("Opening profile page");
         browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
 
+        // TODO: Add a debug mode to highlight elements on click, to aid in identifying issues?
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);

@@ -96,6 +96,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [DICMusic](https://dicmusic.com/)                 |
 | [Empornium](https://www.empornium.sx/)            |
 | [F1Carreras](https://f1carreras.xyz/)             |
+| [Fappaizuri](https://fappaizuri.me/)              |
 | [FearNoPeer](https://fearnopeer.com/)             |
 | [FileList](https://filelist.io/)                  |
 | [FunFile](https://www.funfile.org/)               |

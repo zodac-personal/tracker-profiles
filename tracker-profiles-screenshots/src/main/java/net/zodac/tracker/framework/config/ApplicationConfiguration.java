@@ -67,7 +67,7 @@ public record ApplicationConfiguration(
     boolean takeScreenshotOnError,
     List<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
-) {
+) { // TODO: Invalid LOG_LEVEL?
 
     private static final Logger LOGGER = LogManager.getLogger();
 

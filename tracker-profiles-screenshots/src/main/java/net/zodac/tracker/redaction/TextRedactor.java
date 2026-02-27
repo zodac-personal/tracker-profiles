@@ -49,13 +49,13 @@ class TextRedactor implements Redactor {
 
     @Override
     public void redact(final WebElement element, final String description) {
-        driver.executeScript(String.format("arguments[0].innerText = '%s'", DEFAULT_REDACTION_TEXT), element);
+        final String redactionText = String.format("%s: %s", description, DEFAULT_REDACTION_TEXT);
+        driver.executeScript(String.format("arguments[0].innerText = '%s'", redactionText), element);
     }
 
     @Override
     public void redactPasskey(final WebElement element) {
-        final String replacementText = "Passkey: " + DEFAULT_REDACTION_TEXT;
-        driver.executeScript(String.format("arguments[0].innerText = '%s'", replacementText), element);
+        redact(element, "Passkey");
     }
 
     @Override

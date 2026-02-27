@@ -20,7 +20,6 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -77,9 +76,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
     protected void manualCheckAfterLoginClick(final String trackerName) {
         browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
 
-        final By messagesSelector = XpathBuilder
-            .from(tbody, withId("collapseobj_messages"))
-            .build();
+        final By messagesSelector = By.id("collapseobj_messages");
         final Collection<WebElement> messages = driver.findElements(messagesSelector);
 
         if (messages.isEmpty()) {
