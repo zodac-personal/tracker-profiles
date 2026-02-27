@@ -88,6 +88,11 @@ public class EmporniumHandler extends LuminanceHandler {
     }
 
     @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of();
+    }
+
+    @Override
     protected Collection<By> passkeyElements() {
         return List.of();
     }
