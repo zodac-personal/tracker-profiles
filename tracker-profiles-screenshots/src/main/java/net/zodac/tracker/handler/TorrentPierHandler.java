@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
@@ -36,14 +37,14 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code RUTracker} tracker.
+ * Common implementation of {@link AbstractTrackerHandler} for {@code TorrentPier}-based trackers.
  */
+@CommonTrackerHandler("TorrentPier")
 @TrackerHandler(name = "RUTracker", url = {
-    // Link direct to the tracker page
     "https://rutracker.org/forum/tracker.php",
     "https://rutracker.net/forum/tracker.php"
 })
-public class RuTrackerHandler extends AbstractTrackerHandler {
+public class TorrentPierHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {

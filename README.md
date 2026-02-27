@@ -78,58 +78,59 @@ There are currently **65** supported trackers listed below. The available tracke
 
 The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the background:
 
-| Tracker Name                                      |
-|---------------------------------------------------|
-| [ABTorrents](https://usefultrash.net/)            |
-| [Aither](https://aither.cc/)                      |
-| [AlphaRatio](https://alpharatio.cc/)              |
-| [AnimeBytes](https://animebytes.tv/)              |
-| [Anthelion](https://anthelion.me/)                |
-| [ArabP2P](https://www.arabp2p.net/)               |
-| [AsianCinema](https://eiga.moi/)                  |
-| [BackUps](https://back-ups.me/)                   |
-| [BakaBT](https://bakabt.me/)                      |
-| [Blutopia](https://blutopia.cc/)                  |
-| [BwTorrents](https://bwtorrents.tv/)              |
-| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) |
-| [DarkPeers](https://darkpeers.org/)               |
-| [DICMusic](https://dicmusic.com/)                 |
-| [Empornium](https://www.empornium.sx/)            |
-| [F1Carreras](https://f1carreras.xyz/)             |
-| [Fappaizuri](https://fappaizuri.me/)              |
-| [FearNoPeer](https://fearnopeer.com/)             |
-| [FileList](https://filelist.io/)                  |
-| [FunFile](https://www.funfile.org/)               |
-| [HappyFappy](https://www.happyfappy.net/)         |
-| [HDUnited](https://hd-united.vn/)                 |
-| [ImmortalSeed](https://immortalseed.me/)          |
-| [IPTorrents](https://iptorrents.com/)             |
-| [ItaTorrents](https://itatorrents.xyz/)           |
-| [Kufirc](https://kufirc.com/)                     |
-| [Lat-Team](https://lat-team.com/)                 |
-| [Libble](https://libble.me/)                      |
-| [Metal-Tracker](https://en.metal-tracker.com/)    |
-| [Milkie](https://milkie.cc/)                      |
-| [MoreThanTV](https://www.morethantv.me/)          |
-| [MyAnonaMouse](https://www.myanonamouse.net/)     |
-| [Nebulance](https://nebulance.io/)                |
-| [OnlyEncodes](https://onlyencodes.cc/)            |
-| [Orpheus](https://orpheus.network/)               |
-| [PixelCove](https://www.pixelcove.me/)            |
-| [PolishTorrent](https://polishtorrent.top/)       |
-| [PornBay](https://pornbay.org/)                   |
-| [Redacted](https://redacted.sh/)                  |
-| [ReelFlix](https://reelflix.cc/)                  |
-| [RUTracker](https://rutracker.org/)               |
-| [SecretCinema](https://secret-cinema.pw/)         |
-| [SeedPool](https://seedpool.org/)                 |
-| [SportsCult](https://sportscult.org/)             |
-| [Tasmanites](https://tasmanit.es/)                |
-| [TeamOS](https://teamos.xyz/)                     |
-| [TorrentLeech](https://www.torrentleech.org/)     |
-| [TVChaosUK](https://tvchaosuk.com/)               |
-| [UHDBits](https://uhdbits.org/)                   |
-| [Unwalled](https://unwalled.cc/)                  |
+| Tracker Name                                         |
+|------------------------------------------------------|
+| [ABTorrents](https://usefultrash.net/)               |
+| [Aither](https://aither.cc/)                         |
+| [AlphaRatio](https://alpharatio.cc/)                 |
+| [AnimeBytes](https://animebytes.tv/)                 |
+| [Anthelion](https://anthelion.me/)                   |
+| [ArabP2P](https://www.arabp2p.net/)                  |
+| [AsianCinema](https://eiga.moi/)                     |
+| [BackUps](https://back-ups.me/)                      |
+| [BakaBT](https://bakabt.me/)                         |
+| [Blutopia](https://blutopia.cc/)                     |
+| [BwTorrents](https://bwtorrents.tv/)                 |
+| [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
+| [DarkPeers](https://darkpeers.org/)                  |
+| [DICMusic](https://dicmusic.com/)                    |
+| [Empornium](https://www.empornium.sx/)               |
+| [F1Carreras](https://f1carreras.xyz/)                |
+| [Fappaizuri](https://fappaizuri.me/)                 |
+| [FearNoPeer](https://fearnopeer.com/)                |
+| [FileList](https://filelist.io/)                     |
+| [FunFile](https://www.funfile.org/)                  |
+| [HappyFappy](https://www.happyfappy.net/)            |
+| [HDUnited](https://hd-united.vn/)                    |
+| [ImmortalSeed](https://immortalseed.me/)             |
+| [IPTorrents](https://iptorrents.com/)                |
+| [ItaTorrents](https://itatorrents.xyz/)              |
+| [Kufirc](https://kufirc.com/)                        |
+| [Lat-Team](https://lat-team.com/)                    |
+| [Libble](https://libble.me/)                         |
+| [Metal-Tracker](https://en.metal-tracker.com/)       |
+| [Milkie](https://milkie.cc/)                         |
+| [MoreThanTV](https://www.morethantv.me/)             |
+| [MyAnonaMouse](https://www.myanonamouse.net/)        |
+| [Nebulance](https://nebulance.io/)                   |
+| [OnlyEncodes](https://onlyencodes.cc/)               |
+| [Orpheus](https://orpheus.network/)                  |
+| [PixelCove](https://www.pixelcove.me/)               |
+| [PolishTorrent](https://polishtorrent.top/)          |
+| [PornBay](https://pornbay.org/)                      |
+| [PornoLab](https://pornolab.net/forum/tracker.php)   |
+| [Redacted](https://redacted.sh/)                     |
+| [ReelFlix](https://reelflix.cc/)                     |
+| [RUTracker](https://rutracker.org/forum/tracker.php) |
+| [SecretCinema](https://secret-cinema.pw/)            |
+| [SeedPool](https://seedpool.org/)                    |
+| [SportsCult](https://sportscult.org/)                |
+| [Tasmanites](https://tasmanit.es/)                   |
+| [TeamOS](https://teamos.xyz/)                        |
+| [TorrentLeech](https://www.torrentleech.org/)        |
+| [TVChaosUK](https://tvchaosuk.com/)                  |
+| [UHDBits](https://uhdbits.org/)                      |
+| [Unwalled](https://unwalled.cc/)                     |
 
 ### Non-Headless
 
