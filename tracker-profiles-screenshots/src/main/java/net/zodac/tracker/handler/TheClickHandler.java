@@ -83,7 +83,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
             .from(div, withClass("h-captcha"))
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 

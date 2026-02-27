@@ -37,7 +37,7 @@ public class MoreThanTvHandler extends LuminanceHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.cssSelector("#menu, .main-menu"));
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 }

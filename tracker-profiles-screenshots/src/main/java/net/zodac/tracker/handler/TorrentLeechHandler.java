@@ -88,7 +88,7 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
-        scriptExecutor.moveToOrigin();
+        browserInteractionHelper.moveToOrigin();
         return true;
     }
 

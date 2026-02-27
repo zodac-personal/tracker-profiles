@@ -36,7 +36,7 @@ import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -80,7 +80,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        scriptExecutor.stopPageLoad();
+        browserInteractionHelper.stopPageLoad();
 
         final String title = driver.getTitle();
         // TODO: Test this again to be language agnostic
@@ -92,15 +92,15 @@ public class TeamOsHandler extends AbstractTrackerHandler {
                 .build();
             final WebElement threadRedirect = driver.findElement(threadRedirectSelector);
 
-            scriptExecutor.removeAttribute(threadRedirect, "target"); // Stop forcing the link to open in a new tab
+            browserInteractionHelper.removeAttribute(threadRedirect, "target"); // Stop forcing the link to open in a new tab
             clickButton(threadRedirect);
-            scriptExecutor.stopPageLoad();
+            browserInteractionHelper.stopPageLoad();
         }
     }
 
     @Override
     protected By postLoginSelector() {
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
         return XpathBuilder
             .from(div, withClass("focus-wrap-user"))
             .build();
@@ -108,7 +108,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
         navigateToUserPage();
         return XpathBuilder
             .from(div, withClass("p-body-sideNavContent"))
@@ -137,17 +137,17 @@ public class TeamOsHandler extends AbstractTrackerHandler {
     }
 
     private void navigateToUserPage() {
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "page to load before clicking navbar");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load before clicking navbar");
         // Click the nav bar to make the profile button interactable
         final By profileParentSelector = XpathBuilder
             .from(a, withClass("p-navgroup-link--user"))
             .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "first navbar click");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "first navbar click");
 
         clickButton(profileParent);
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "second navbar click");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "second navbar click");
     }
 
     // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?

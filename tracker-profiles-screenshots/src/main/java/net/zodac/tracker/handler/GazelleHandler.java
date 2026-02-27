@@ -106,7 +106,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
             .from(a, withClass("username"))
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
+        browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder
             .from(li, withId("nav_logout"))

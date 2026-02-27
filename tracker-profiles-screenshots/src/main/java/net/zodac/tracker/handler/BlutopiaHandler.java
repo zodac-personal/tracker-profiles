@@ -18,7 +18,7 @@
 package net.zodac.tracker.handler;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code Blutopia} tracker.
@@ -36,7 +36,7 @@ public class BlutopiaHandler extends Unit3dHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "login pop-up to disappear");
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "login pop-up to disappear");
         return false;
     }
 }

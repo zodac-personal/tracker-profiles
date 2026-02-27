@@ -97,7 +97,7 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
             .from(div, withClass("st-status-avatar-wrapper"))
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
+        browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder
             .from(ul, withClass("st-nav-dropdown"))

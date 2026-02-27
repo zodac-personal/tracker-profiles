@@ -71,7 +71,7 @@ public class BroadcasTheNetHandler extends GazelleHandler {
         clickButton(infoTabLink);
 
         // Move the cursor out of the way, to avoid highlighting a tooltip for a badge
-        scriptExecutor.moveToOrigin();
+        browserInteractionHelper.moveToOrigin();
     }
 
     @Override

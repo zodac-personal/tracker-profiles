@@ -32,7 +32,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -73,7 +73,7 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
@@ -106,14 +106,14 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        ScriptExecutor.explicitWait(waitForTransitionsDuration(), "user details to load");
+        BrowserInteractionHelper.explicitWait(waitForTransitionsDuration(), "user details to load");
 
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))
             .descendant(td, withAttribute("translate", "FRIENDS.LAST_SEEN"))
             .build();
-        scriptExecutor.waitForElementToAppear(selector, waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(selector, waitForPageLoadDuration());
     }
 
     @Override

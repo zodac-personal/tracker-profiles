@@ -83,7 +83,7 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
     protected By logoutButtonSelector() {
         // Highlight the nav bar to make the logout button interactable
         final WebElement logoutParent = driver.findElement(profilePageSelector());
-        scriptExecutor.moveTo(logoutParent);
+        browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder
             .from(li, withClass("welcomeback"))

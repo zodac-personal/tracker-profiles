@@ -108,6 +108,6 @@ public class MyAnonaMouseHandler extends AbstractTrackerHandler {
         // Highlight the profile menu to make the profile/logout button interactable
         final By profileDropDownSelector = By.id("userMenu");
         final WebElement profileDropDown = driver.findElement(profileDropDownSelector);
-        scriptExecutor.moveTo(profileDropDown);
+        browserInteractionHelper.moveTo(profileDropDown);
     }
 }

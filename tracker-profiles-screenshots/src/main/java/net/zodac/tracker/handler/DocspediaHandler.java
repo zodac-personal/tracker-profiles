@@ -78,7 +78,7 @@ public class DocspediaHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 

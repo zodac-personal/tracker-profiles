@@ -34,7 +34,7 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -56,7 +56,7 @@ public class HawkeUnoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        ScriptExecutor.explicitWait(waitForPageLoadDuration(), "login pop-up to disappear");
+        BrowserInteractionHelper.explicitWait(waitForPageLoadDuration(), "login pop-up to disappear");
 
         openUserDropdownMenu();
         return XpathBuilder

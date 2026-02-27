@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -86,13 +86,13 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     public boolean hasFixedHeader() {
         final By headerSelector = By.id("navbar");
         final WebElement headerElement = driver.findElement(headerSelector);
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 
     @Override
     protected By logoutButtonSelector() {
-        ScriptExecutor.explicitWait(Duration.ofMillis(500L), "logout button to become visible and clickable");
+        BrowserInteractionHelper.explicitWait(Duration.ofMillis(500L), "logout button to become visible and clickable");
         return By.id("logoff");
     }
 }

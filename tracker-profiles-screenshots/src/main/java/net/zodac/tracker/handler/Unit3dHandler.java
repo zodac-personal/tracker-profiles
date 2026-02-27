@@ -83,7 +83,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
         clickButton(cookieButton);
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
-        scriptExecutor.moveToOrigin();
+        browserInteractionHelper.moveToOrigin();
         return true;
     }
 
@@ -124,7 +124,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.tagName("header"));
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 
@@ -149,6 +149,6 @@ public class Unit3dHandler extends AbstractTrackerHandler {
             .descendant(li, withClass("top-nav__dropdown"))
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
+        browserInteractionHelper.moveTo(logoutParent);
     }
 }

@@ -32,7 +32,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -44,7 +44,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "hidden captcha to load");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "hidden captcha to load");
         return By.id("login-button");
     }
 
@@ -68,7 +68,7 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button");
 
         final WebElement selectionElement = driver.findElement(By.id("captcha_container"));
-        scriptExecutor.highlightElement(selectionElement);
+        browserInteractionHelper.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Select the correct movie and click the login button");
 
         // If the user didn't click 'login', do it for them

@@ -29,7 +29,7 @@ import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -61,7 +61,7 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
             .build();
         final WebElement usernameNextButton = driver.findElement(usernameNextButtonSelector);
         clickButton(usernameNextButton);
-        ScriptExecutor.explicitWait(Duration.ofSeconds(2L), "username to be accepted and password field to appear");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "username to be accepted and password field to appear");
 
         return XpathBuilder
             .from(input, withName("pwd"))

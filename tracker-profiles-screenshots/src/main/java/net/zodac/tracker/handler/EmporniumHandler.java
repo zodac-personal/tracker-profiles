@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -81,7 +81,7 @@ public class EmporniumHandler extends LuminanceHandler {
                 if (sectionToggle.getText().contains("Hide")) {
                     LOGGER.debug("\t\t- Closing section {}", toggleSelector);
                     clickButton(sectionToggle);
-                    ScriptExecutor.explicitWait(waitForTransitionsDuration(), "section to close");
+                    BrowserInteractionHelper.explicitWait(waitForTransitionsDuration(), "section to close");
                 }
             }
         }

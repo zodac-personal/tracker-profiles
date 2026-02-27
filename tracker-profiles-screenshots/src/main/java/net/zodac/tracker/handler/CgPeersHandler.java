@@ -110,7 +110,7 @@ public class CgPeersHandler extends AbstractTrackerHandler {
             .from(input, withClass("form-input"), withName("code"))
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
-        scriptExecutor.highlightElement(selectionElement);
+        browserInteractionHelper.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Enter the 2FA code and click the 'Verify Code' button");
 
         // If the user didn't click 'Verify Code', do it for them (it shares the same HTML ID as the login button from the previous page)

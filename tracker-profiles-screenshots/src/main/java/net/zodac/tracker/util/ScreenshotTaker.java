@@ -71,15 +71,15 @@ public final class ScreenshotTaker {
      * @param index           how many screenshots already exist for this tracker
      * @return the {@link File} instance of the saved screenshot
      * @throws IOException thrown if an error occurs saving the screenshot to the file system
-     * @see ScriptExecutor#scrollToTheTop()
+     * @see BrowserInteractionHelper#scrollToTheTop()
      */
     public static File takeScreenshot(final RemoteWebDriver driver, final Path outputDirectory, final String trackerName, final int index)
         throws IOException {
-        final ScriptExecutor scriptExecutor = new ScriptExecutor(driver);
-        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, scriptExecutor);
+        final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
+        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, browserInteractionHelper);
         final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), trackerName, index);
         ImageIO.write(screenshotImage, "PNG", screenshot);
-        scriptExecutor.scrollToTheTop();
+        browserInteractionHelper.scrollToTheTop();
         return screenshot;
     }
 
@@ -91,14 +91,14 @@ public final class ScreenshotTaker {
         return new File(outputDirectory + File.separator + trackerName + "_" + index + ".png");
     }
 
-    private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final ScriptExecutor scriptExecutor) {
-        scriptExecutor.disableScrolling();
+    private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
+        browserInteractionHelper.disableScrolling();
         final BufferedImage screenshot = new AShot()
             .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
             .takeScreenshot(driver)
             .getImage();
 
-        scriptExecutor.enableScrolling("body");
+        browserInteractionHelper.enableScrolling("body");
         return screenshot;
     }
 }

@@ -17,7 +17,7 @@
 
 package net.zodac.tracker.framework.driver.extension;
 
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -46,7 +46,7 @@ public interface Extension<E extends Enum<E>> {
      *
      * @param extensionSettings the {@link ExtensionSettings} for this {@link Extension}
      * @param driver            the {@link RemoteWebDriver}
-     * @param scriptExecutor    the {@link ScriptExecutor}
+     * @param browserInteractionHelper    the {@link BrowserInteractionHelper}
      */
-    void configure(ExtensionSettings<E> extensionSettings, RemoteWebDriver driver, ScriptExecutor scriptExecutor);
+    void configure(ExtensionSettings<E> extensionSettings, RemoteWebDriver driver, BrowserInteractionHelper browserInteractionHelper);
 }

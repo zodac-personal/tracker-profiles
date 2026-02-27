@@ -98,7 +98,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
             .child(img, atIndex(1))
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
@@ -151,7 +151,7 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
             .from(NamedHtmlElement.of("nav"), withClass("navbar-fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 

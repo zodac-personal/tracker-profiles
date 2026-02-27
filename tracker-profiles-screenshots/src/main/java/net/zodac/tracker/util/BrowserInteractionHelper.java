@@ -36,8 +36,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * Utility class used to execute scripts on a web page.
  */
-// TODO: Name this something else? Does more than just scripts now
-public class ScriptExecutor {
+public class BrowserInteractionHelper {
 
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
@@ -50,7 +49,7 @@ public class ScriptExecutor {
      *
      * @param driver the {@link RemoteWebDriver}
      */
-    public ScriptExecutor(final RemoteWebDriver driver) {
+    public BrowserInteractionHelper(final RemoteWebDriver driver) {
         this.driver = driver;
     }
 

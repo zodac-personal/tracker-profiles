@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -90,7 +90,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
      */
     @Override
     public void configure(final ExtensionSettings<UblockSettings> extensionSettings, final RemoteWebDriver driver,
-                          final ScriptExecutor scriptExecutor) {
+                          final BrowserInteractionHelper browserInteractionHelper) {
         try {
             final Map<UblockSettings, Boolean> settings = extensionSettings.settings();
             LOGGER.info("\t- Configuring {}", getClass().getSimpleName());
@@ -104,19 +104,19 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
 
             if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS) || getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
                 LOGGER.debug("\t\t- Opening filter lists page");
-                openFilterListsPage(driver, scriptExecutor);
+                openFilterListsPage(driver, browserInteractionHelper);
 
                 if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS)) {
                     LOGGER.debug("\t\t- Enabling all miscellaneous filters");
-                    enableAllMiscellaneousFilters(driver, scriptExecutor);
+                    enableAllMiscellaneousFilters(driver, browserInteractionHelper);
                 }
 
                 if (getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
                     LOGGER.debug("\t\t- Expanding region filter lists");
-                    expandRegionFiltersList(driver, scriptExecutor);
+                    expandRegionFiltersList(driver, browserInteractionHelper);
 
                     LOGGER.debug("\t\t- Enabling all region filters");
-                    enableAllRegionFilters(driver, scriptExecutor);
+                    enableAllRegionFilters(driver, browserInteractionHelper);
                 }
             }
         } catch (final Exception e) {
@@ -131,7 +131,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
 
     private static void openExtensionConfigurationPage(final RemoteWebDriver driver, final String id) {
         driver.navigate().to(String.format("chrome-extension://%s/dashboard.html", id));
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "configuration page to open");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "configuration page to open");
     }
 
     // Set filtering mode to 'Complete' option
@@ -145,17 +145,17 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
         filteringMode.click();
     }
 
-    private static void openFilterListsPage(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
+    private static void openFilterListsPage(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         final By filterListSelector = XpathBuilder
             .from(NamedHtmlElement.of("nav"), withId("dashboard-nav"))
             .child(button, atIndex(2))
             .build();
         final WebElement filterList = driver.findElement(filterListSelector);
         filterList.click();
-        scriptExecutor.waitForPageToLoad(Duration.ofSeconds(1L));
+        browserInteractionHelper.waitForPageToLoad(Duration.ofSeconds(1L));
     }
 
-    private static void enableAllMiscellaneousFilters(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
+    private static void enableAllMiscellaneousFilters(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         final By miscFilterCheckboxesSelector = XpathBuilder
             .from(div, withId("lists"))
             .child(div, atIndex(1))
@@ -168,10 +168,10 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
             .descendant(input, withType("checkbox"))
             .build();
 
-        enableAllCheckBoxes(driver, scriptExecutor, miscFilterCheckboxesSelector);
+        enableAllCheckBoxes(driver, browserInteractionHelper, miscFilterCheckboxesSelector);
     }
 
-    private static void expandRegionFiltersList(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
+    private static void expandRegionFiltersList(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         final By regionsListSelector = XpathBuilder
             .from(div, withId("lists"))
             .child(div, atIndex(1))
@@ -180,13 +180,13 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
             .child(span, atIndex(2))
             .build();
         final WebElement regionsList = driver.findElement(regionsListSelector);
-        scriptExecutor.scrollToElement(regionsList);
+        browserInteractionHelper.scrollToElement(regionsList);
         regionsList.click();
         LOGGER.trace("Clicking {} to expand list", regionsList);
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "region filter lists to expand");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "region filter lists to expand");
     }
 
-    private static void enableAllRegionFilters(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
+    private static void enableAllRegionFilters(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         final By regionFilterCheckboxesSelector = XpathBuilder
             .from(div, withId("lists"))
             .child(div, atIndex(1))
@@ -199,18 +199,21 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
             .descendant(input, withType("checkbox"))
             .build();
 
-        enableAllCheckBoxes(driver, scriptExecutor, regionFilterCheckboxesSelector);
+        enableAllCheckBoxes(driver, browserInteractionHelper, regionFilterCheckboxesSelector);
     }
 
-    private static void enableAllCheckBoxes(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor, final By checkboxesSelector) {
+    private static void enableAllCheckBoxes(final RemoteWebDriver driver,
+                                            final BrowserInteractionHelper browserInteractionHelper,
+                                            final By checkboxesSelector
+    ) {
         final List<WebElement> checkboxes = driver.findElements(checkboxesSelector).stream().toList();
         final int numberOfCheckboxes = checkboxes.size();
         LOGGER.debug("\t\t\t- Found {} checkboxes", numberOfCheckboxes);
 
         for (int i = 0; i < numberOfCheckboxes; i++) {
             final WebElement checkbox = checkboxes.get(i);
-            scriptExecutor.scrollToElement(checkbox);
-            scriptExecutor.scroll(0, Y_PIXELS_TO_SCROLL_TO_MAKE_CHECKBOXES_VISIBLE);
+            browserInteractionHelper.scrollToElement(checkbox);
+            browserInteractionHelper.scroll(0, Y_PIXELS_TO_SCROLL_TO_MAKE_CHECKBOXES_VISIBLE);
 
             LOGGER.trace("Clicking checkbox {}: {}", (i + 1), checkbox.getText());
             checkbox.click();

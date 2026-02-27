@@ -75,7 +75,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        scriptExecutor.waitForPageToLoad(waitForPageUpdateDuration());
+        browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
 
         final By messagesSelector = XpathBuilder
             .from(tbody, withId("collapseobj_messages"))
@@ -100,7 +100,7 @@ public class BackUpsHandler extends TsSpecialEditionHandler {
     public boolean hasFixedHeader() {
         final By headerSelector = By.id("menu");
         final WebElement headerElement = driver.findElement(headerSelector);
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 

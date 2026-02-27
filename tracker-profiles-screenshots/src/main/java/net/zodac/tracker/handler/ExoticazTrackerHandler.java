@@ -115,7 +115,7 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
             .from(NamedHtmlElement.of("nav"), withClass("fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 

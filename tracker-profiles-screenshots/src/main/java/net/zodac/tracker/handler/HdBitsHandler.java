@@ -88,7 +88,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
             .parent(td)
             .build();
         final WebElement twoFactorPasscodeElement = driver.findElement(twoFactorPasscodeSelector);
-        scriptExecutor.highlightElement(twoFactorPasscodeElement);
+        browserInteractionHelper.highlightElement(twoFactorPasscodeElement);
 
         final By captchaSelector = XpathBuilder
             .from(div, withClass("captchaIntro"))
@@ -98,7 +98,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
         LOGGER.info("\t\t >>> Waiting for user to select the '{}' image", captchaTextElement.getText());
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
 
         DisplayUtils.userInputConfirmation(trackerName, String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
             captchaTextElement.getText()));

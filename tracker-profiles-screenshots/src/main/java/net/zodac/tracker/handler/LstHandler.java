@@ -60,7 +60,7 @@ public class LstHandler extends Unit3dHandler {
             .from(div, withClass("auth-form__text-input-group"))
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
-        scriptExecutor.highlightElement(selectionElement);
+        browserInteractionHelper.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerName, "Select the correct movie and click the login button");
 
         // If the user didn't click 'login', do it for them

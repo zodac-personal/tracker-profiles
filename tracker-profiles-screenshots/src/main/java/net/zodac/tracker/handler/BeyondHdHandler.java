@@ -31,7 +31,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.ScriptExecutor;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -63,7 +63,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
             .parent(div)
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
-        scriptExecutor.highlightElement(captchaElement);
+        browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
 
@@ -83,7 +83,7 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
-        scriptExecutor.makeUnfixed(headerElement);
+        browserInteractionHelper.makeUnfixed(headerElement);
         return true;
     }
 
@@ -94,8 +94,8 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
             .from(div, withClass("dropmenu"))
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        scriptExecutor.moveTo(logoutParent);
-        ScriptExecutor.explicitWait(Duration.ofSeconds(1L), "dropdown menu for logout button to appear");
+        browserInteractionHelper.moveTo(logoutParent);
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "dropdown menu for logout button to appear");
 
         return XpathBuilder
             .from(form, withId("logout-form1"))
