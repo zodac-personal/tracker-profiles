@@ -86,6 +86,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [AnimeBytes](https://animebytes.tv/)              |
 | [Anthelion](https://anthelion.me/)                |
 | [ArabP2P](https://www.arabp2p.net/)               |
+| [AsianCinema](https://eiga.moi/)                  |
 | [BackUps](https://back-ups.me/)                   |
 | [BakaBT](https://bakabt.me/)                      |
 | [Blutopia](https://blutopia.cc/)                  |

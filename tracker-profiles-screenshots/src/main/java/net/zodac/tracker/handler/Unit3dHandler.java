@@ -44,6 +44,7 @@ import org.openqa.selenium.WebElement;
  */
 @CommonTrackerHandler("UNIT3D")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
+@TrackerHandler(name = "AsianCinema", url = "https://eiga.moi/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
