@@ -28,6 +28,7 @@ import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.StringUtils;
+import net.zodac.tracker.util.TimingUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,12 +84,19 @@ public final class ScreenshotOrchestrator {
             LOGGER.info("");
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
             for (final TrackerCredential trackerCredential : trackersByType.get(trackerType).second()) {
+                final long startNanos = System.nanoTime();
                 final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.isSuccessfullyScreenshot(trackerCredential);
                 resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
+                printExecutionTime(trackerCredential.name(), startNanos);
             }
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
+    }
+
+    private static void printExecutionTime(final String trackerName, final long startNanos) {
+        final long elapsedNanos = System.nanoTime() - startNanos;
+        LOGGER.debug("\t- Execution time for {}: {}", trackerName, TimingUtils.toNaturalTime(elapsedNanos));
     }
 
     private static void ensureOutputDirectoryExists() {
