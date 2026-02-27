@@ -36,6 +36,7 @@ import org.openqa.selenium.By;
  * Common implementation of {@link GazelleHandler} for {@code Luminance}-based trackers.
  */
 @CommonTrackerHandler("Luminance")
+@TrackerHandler(name = "Kufirc", adult = true, url = "https://kufirc.com/")
 @TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
 @TrackerHandler(name = "PornBay", adult = true, url = "https://pornbay.org/")
 public class LuminanceHandler extends GazelleHandler {
