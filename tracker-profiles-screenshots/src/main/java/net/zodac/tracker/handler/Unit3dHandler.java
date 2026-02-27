@@ -51,6 +51,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
 @TrackerHandler(name = "MalayaBits", url = "https://malayabits.cc/")
+@TrackerHandler(name = "OldToons.World", url = "https://oldtoons.world/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")

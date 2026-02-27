@@ -117,6 +117,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [MoreThanTV](https://www.morethantv.me/)             |
 | [MyAnonaMouse](https://www.myanonamouse.net/)        |
 | [Nebulance](https://nebulance.io/)                   |
+| [OldToons.World](https://oldtoons.world/)            |
 | [OnlyEncodes](https://onlyencodes.cc/)               |
 | [Orpheus](https://orpheus.network/)                  |
 | [PixelCove](https://www.pixelcove.me/)               |
