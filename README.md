@@ -111,6 +111,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Lat-Team](https://lat-team.com/)                    |
 | [Libble](https://libble.me/)                         |
 | [Luminarr](https://luminarr.me/)                     |
+| [MalayaBits](https://malayabits.cc/)                 |
 | [Metal-Tracker](https://en.metal-tracker.com/)       |
 | [Milkie](https://milkie.cc/)                         |
 | [MoreThanTV](https://www.morethantv.me/)             |
