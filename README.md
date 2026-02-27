@@ -92,6 +92,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Blutopia](https://blutopia.cc/)                     |
 | [BrokenStones](https://brokenstones.is/)             |
 | [BwTorrents](https://bwtorrents.tv/)                 |
+| [CanalStreet](https://canal-street.org/)             |
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
 | [Concertos](https://concertos.live/)                 |
 | [DarkPeers](https://darkpeers.org/)                  |
