@@ -94,6 +94,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
 | [Concertos](https://concertos.live/)                 |
 | [DarkPeers](https://darkpeers.org/)                  |
+| [DesiTorrents](https://desitorrents.tv/)             |
 | [DICMusic](https://dicmusic.com/)                    |
 | [Empornium](https://www.empornium.sx/)               |
 | [F1Carreras](https://f1carreras.xyz/)                |
