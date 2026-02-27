@@ -83,11 +83,6 @@ public class PassThePopcornHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(li, withId("nav_userinfo"))

@@ -22,8 +22,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Interface defining a web browser extension.
+ *
+ * @param <E> the type of the {@link ExtensionSettings}
  */
-public interface Extension {
+public interface Extension<E extends Enum<E>> {
 
     /**
      * The ID of the {@link Extension}.
@@ -42,8 +44,9 @@ public interface Extension {
     /**
      * Performs any configuration needed for the {@link Extension}.
      *
-     * @param driver         the {@link RemoteWebDriver}
-     * @param scriptExecutor the {@link ScriptExecutor}
+     * @param extensionSettings the {@link ExtensionSettings} for this {@link Extension}
+     * @param driver            the {@link RemoteWebDriver}
+     * @param scriptExecutor    the {@link ScriptExecutor}
      */
-    void configure(RemoteWebDriver driver, ScriptExecutor scriptExecutor);
+    void configure(ExtensionSettings<E> extensionSettings, RemoteWebDriver driver, ScriptExecutor scriptExecutor);
 }

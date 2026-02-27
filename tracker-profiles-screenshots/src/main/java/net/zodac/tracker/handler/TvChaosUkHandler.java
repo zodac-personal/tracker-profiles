@@ -44,13 +44,6 @@ import org.openqa.selenium.WebElement;
 public class TvChaosUkHandler extends AbstractTrackerHandler {
 
     @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("ratio-bar"))
-            .build();
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withClass("ratio-bar"))

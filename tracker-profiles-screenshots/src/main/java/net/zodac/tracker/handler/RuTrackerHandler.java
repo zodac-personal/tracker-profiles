@@ -25,10 +25,12 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
-import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
+import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -68,11 +70,6 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("logged-in-username");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return By.id("logged-in-username");
     }
@@ -105,9 +102,19 @@ public class RuTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Collection<Extension> requiredExtentions() {
+    protected List<ExtensionBinding<?>> requiredExtensions() {
+        final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
+            () -> {
+                final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =
+                    new EnumMap<>(UblockOriginLiteExtension.UblockSettings.class);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANOUS_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_REGION_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.SET_FILTERING_MODE, true);
+                return settings;
+            };
+
         return List.of(
-            new UblockOriginLiteExtension()
+            ExtensionBinding.of(new UblockOriginLiteExtension(), ublockOriginLiteExtensionSettings)
         );
     }
 }

@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
@@ -91,7 +92,7 @@ public class HdBitsHandler extends AbstractTrackerHandler {
 
         final By captchaSelector = XpathBuilder
             .from(div, withClass("captchaIntro"))
-            .descendant(NamedHtmlElement.of("strong"), atIndex(1))
+            .descendant(span, withClass("captchaText"))
             .build();
         final WebElement captchaTextElement = driver.findElement(captchaSelector);
         LOGGER.info("\t\t >>> Waiting for user to select the '{}' image", captchaTextElement.getText());
@@ -108,11 +109,6 @@ public class HdBitsHandler extends AbstractTrackerHandler {
         return XpathBuilder
             .from(input, withType("submit"))
             .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return By.id("news");
     }
 
     @Override

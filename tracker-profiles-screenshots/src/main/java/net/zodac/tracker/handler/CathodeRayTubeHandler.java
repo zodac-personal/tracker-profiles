@@ -36,11 +36,6 @@ import org.openqa.selenium.By;
 public class CathodeRayTubeHandler extends LuminanceHandler {
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("stats_block");
-    }
-
-    @Override
     protected Collection<By> passkeyElements() {
         return List.of(
             XpathBuilder

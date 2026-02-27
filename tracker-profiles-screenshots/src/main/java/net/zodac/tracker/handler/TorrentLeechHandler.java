@@ -18,7 +18,6 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -69,13 +68,6 @@ public class TorrentLeechHandler extends AbstractTrackerHandler {
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(button, withType("submit"))
-            .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("loggedin"))
             .build();
     }
 

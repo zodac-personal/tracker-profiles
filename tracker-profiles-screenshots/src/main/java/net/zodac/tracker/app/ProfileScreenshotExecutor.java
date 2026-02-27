@@ -68,6 +68,7 @@ final class ProfileScreenshotExecutor {
         // TODO: Add a retry option, then return number of attempts needed
         AbstractTrackerHandler trackerHandler = null;
         try { // NOPMD: UseTryWithResources - need access to the trackerHandler to take a screenshot on error
+            // TODO: Time each tracker
             trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name());
             screenshotProfile(trackerHandler, trackerCredential);
             return true;

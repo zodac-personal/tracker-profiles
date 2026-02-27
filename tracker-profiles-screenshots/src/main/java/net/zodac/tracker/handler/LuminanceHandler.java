@@ -62,11 +62,6 @@ public class LuminanceHandler extends GazelleHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo_major");
-    }
-
-    @Override
     protected Collection<By> passkeyElements() {
         return List.of(
             XpathBuilder

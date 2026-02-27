@@ -81,11 +81,6 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("userinfo");
-    }
-
-    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder

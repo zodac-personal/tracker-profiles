@@ -22,6 +22,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
@@ -109,18 +110,10 @@ public class AvistazNetworkTrackerHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("navbar");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
-            .from(div, withClass("ratio-bar"))
-            .child(div, atIndex(1))
-            .child(ul, atIndex(1))
-            .child(li, atIndex(1))
-            .child(a, atIndex(1))
+            .from(span, withClass("badge-user"))
+            .parent(a)
             .build();
     }
 

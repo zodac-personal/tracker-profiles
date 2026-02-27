@@ -78,11 +78,6 @@ public class SpeedCdHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("S_mailBtn");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withClass("tSta"))

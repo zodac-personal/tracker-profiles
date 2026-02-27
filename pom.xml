@@ -547,6 +547,7 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${maven-shade-plugin.version}</version>
                     <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
                         <skip>${skip-shade}</skip>
                     </configuration>
                 </plugin>
@@ -591,6 +592,7 @@
                     <artifactId>sortpom-maven-plugin</artifactId>
                     <version>${sortpom-maven-plugin.version}</version>
                     <configuration>
+                        <createBackupFile>false</createBackupFile>
                         <expandEmptyElements>false</expandEmptyElements>
                         <indentAttribute>schemaLocation</indentAttribute>
                         <nrOfIndentSpace>4</nrOfIndentSpace>

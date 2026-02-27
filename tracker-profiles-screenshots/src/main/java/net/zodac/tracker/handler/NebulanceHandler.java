@@ -56,11 +56,6 @@ public class NebulanceHandler extends LuminanceHandler {
             .build();
     }
 
-    @Override
-    protected By postLoginSelector() {
-        return By.id("major_stats_left");
-    }
-
     /**
      * {@inheritDoc}
      *

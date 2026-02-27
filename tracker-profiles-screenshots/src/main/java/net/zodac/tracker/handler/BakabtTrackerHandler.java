@@ -19,7 +19,6 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
@@ -65,13 +64,6 @@ public class BakabtTrackerHandler extends AbstractTrackerHandler {
         return XpathBuilder
             .from(form, withId("loginForm"))
             .child(button, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("stats"))
             .build();
     }
 

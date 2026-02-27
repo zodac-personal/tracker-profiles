@@ -60,13 +60,6 @@ public class SceneTimeHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("st-status-user-info"))
-            .build();
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(a, withClass("st-status-username"))

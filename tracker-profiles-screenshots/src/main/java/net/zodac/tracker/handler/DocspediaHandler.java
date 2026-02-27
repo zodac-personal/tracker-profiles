@@ -90,11 +90,6 @@ public class DocspediaHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("navigation");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withClass("status_avatar"))

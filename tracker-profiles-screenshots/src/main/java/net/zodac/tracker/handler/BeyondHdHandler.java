@@ -68,11 +68,6 @@ public class BeyondHdHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("main");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(img, withClass("beta-image-avatar"))

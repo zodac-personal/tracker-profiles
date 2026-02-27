@@ -58,11 +58,6 @@ public class FunFileHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("clock");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withId("avatar"))

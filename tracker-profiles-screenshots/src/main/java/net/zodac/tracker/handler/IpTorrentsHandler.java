@@ -50,13 +50,6 @@ public class IpTorrentsHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("stats"))
-            .build();
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(a, withClass("uname"))

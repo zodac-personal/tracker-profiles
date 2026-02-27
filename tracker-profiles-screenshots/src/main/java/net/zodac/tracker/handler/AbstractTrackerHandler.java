@@ -30,6 +30,8 @@ import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
+import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -107,7 +109,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         this.trackerDefinition = trackerDefinition;
-        driver = createRemoteWebDriver(trackerDefinition.type(), requiredExtentions());
+        driver = createRemoteWebDriver(trackerDefinition.type(), requiredExtensions());
         scriptExecutor = new ScriptExecutor(driver);
         redactor = new RedactorImpl(driver);
     }
@@ -263,7 +265,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         final By postLoginSelector = postLoginSelector();
         LOGGER.trace("Logged in, waiting for post login selector: {}", postLoginSelector);
-        ScriptExecutor.explicitWait(waitForPageUpdateDuration(), "page to load after login");
         scriptExecutor.waitForElementToAppear(postLoginSelector, waitForPageLoadDuration());
     }
 
@@ -333,10 +334,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * Defines the {@link By} selector of the {@link WebElement} used to confirm that the user has successfully logged in.
      *
+     * <p>
+     * By default this will use {@link #profilePageSelector()}, but if that selector requires some additional work (reloading the page, or
+     * hovering/clicking another element to open a drop-down menu), then a simpler one should be used for this check.
+     *
      * @return the post-login {@link By} selector
      */
-    protected abstract By postLoginSelector();
-    // TODO: Shouldn't this usually be the profile selector?
+    protected By postLoginSelector() {
+        return profilePageSelector();
+    }
 
     /**
      * Checks if there is a banner on the tracker web page, and closes it. This may be a cookie banner, or some other warning banner that can
@@ -364,7 +370,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         scriptExecutor.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
-        // TODO: Move this to TRY block of clickButton()? Test against RuTracker
         scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
         scriptExecutor.moveToOrigin();
         additionalActionOnProfilePage();
@@ -414,6 +419,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see Redactor
      */
+    // TODO: Add other redaction types (country, flag, avatar, gender)
     public int redactElements() {
         LOGGER.trace("Redacting elements");
         return redactEmailElements()
@@ -520,7 +526,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * Reload the current page (should be the user profile page) to clear any redactions.
      */
     public void reloadPage() {
-        // Reload page to clear redacted elements
+        // TODO: Move to scriptExecutor
         driver.navigate().refresh();
         scriptExecutor.waitForPageToLoad(waitForPageLoadDuration());
     }
@@ -665,22 +671,22 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * The {@link Extension}s required for the {@link AbstractTrackerHandler}. If any are provided, they will be installed in the
-     * {@link RemoteWebDriver}, and then {@link Extension#configure(RemoteWebDriver, ScriptExecutor)} will be run prior to the main execution for the
-     * {@link AbstractTrackerHandler}.
+     * {@link RemoteWebDriver}, and then {@link Extension#configure(ExtensionSettings, RemoteWebDriver, ScriptExecutor)}  will be run prior to the
+     * main execution for the {@link AbstractTrackerHandler}.
      *
      * <p>
      * By default this is empty to avoid needing to configure any {@link Extension}s unnecessarily.
      *
      * @return whether to install an ad-blocker for the {@link AbstractTrackerHandler}
      */
-    protected Collection<Extension> requiredExtentions() {
+    protected List<ExtensionBinding<?>> requiredExtensions() {
         return List.of();
     }
 
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final Collection<Extension> requiredExtentions) {
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtentions) {
         if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
             if (!requiredExtentions.isEmpty()) {
-                LOGGER.trace("Attempting to create python driver with extentions; extenstions will be installed but cannot be configured: {}",
+                LOGGER.trace("Attempting to create python driver with extentions; extensions will be installed but cannot be configured: {}",
                     requiredExtentions);
             }
             return PythonWebDriverFactory.createDriver(requiredExtentions);
@@ -689,10 +695,17 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, requiredExtentions);
         final ScriptExecutor configurationScriptExecution = new ScriptExecutor(configurationDriver);
 
-        for (final Extension extension : requiredExtentions) {
-            extension.configure(configurationDriver, configurationScriptExecution);
+        for (final ExtensionBinding<?> extensionBinding : requiredExtentions) {
+            configureExtensionWithBinding(extensionBinding, configurationDriver, configurationScriptExecution);
         }
 
         return configurationDriver;
+    }
+
+    private <E extends Enum<E>> void configureExtensionWithBinding(final ExtensionBinding<E> binding,
+                                                                   final RemoteWebDriver driver,
+                                                                   final ScriptExecutor executor
+    ) {
+        binding.extension().configure(binding.settings(), driver, executor);
     }
 }

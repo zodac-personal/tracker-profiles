@@ -17,10 +17,11 @@
 
 package net.zodac.tracker.framework.driver.python;
 
-import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +63,7 @@ public final class PythonWebDriverFactory {
      * @param extensions any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final Collection<Extension> extensions) {
+    public static RemoteWebDriver createDriver(final List<ExtensionBinding<?>> extensions) {
         LOGGER.trace("Creating Python driver");
         final SeleniumSession seleniumSession = PythonHttpServerHandler.openSession(CONFIG.browserDataStoragePath(), CONFIG.browserDimensions(),
             CONFIG.enableTranslationToEnglish(), extensions);

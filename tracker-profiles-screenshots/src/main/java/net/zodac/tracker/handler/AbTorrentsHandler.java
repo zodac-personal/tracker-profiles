@@ -64,11 +64,6 @@ public class AbTorrentsHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("base_usermenu");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withId("base_usermenu"))

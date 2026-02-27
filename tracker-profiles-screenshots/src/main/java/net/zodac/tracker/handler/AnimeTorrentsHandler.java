@@ -71,11 +71,6 @@ public class AnimeTorrentsHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("UserPanel");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(div, withId("UserPanel"))

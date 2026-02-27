@@ -51,11 +51,6 @@ public class AnimeBytesHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("content");
-    }
-
-    @Override
     public boolean hasSensitiveInformation() {
         return false;
     }

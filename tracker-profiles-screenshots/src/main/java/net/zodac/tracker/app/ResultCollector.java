@@ -91,7 +91,7 @@ final class ResultCollector {
             LOGGER.info("");
             LOGGER.info("All {} selected tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
 
-            successfulTrackers.forEach((type, trackers) -> LOGGER.info("- {} ({}): {}", type.formattedName(), trackers.size(), trackers));
+            successfulTrackers.forEach((type, trackers) -> LOGGER.debug("- {} ({}): {}", type.formattedName(), trackers.size(), trackers));
 
             return ExitState.SUCCESS;
         }

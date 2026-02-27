@@ -95,13 +95,6 @@ public class TheClickHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(span, withClass("statuslink"))
-            .build();
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(span, withClass("statuslink"))

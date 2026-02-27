@@ -27,6 +27,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.ScriptExecutor;
@@ -39,9 +40,30 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Google Chrome {@link Extension} for {@code uBlock Origin Lite}, used as an ad-blocker for websites.
  */
-public class UblockOriginLiteExtension implements Extension {
+public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExtension.UblockSettings> {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final int Y_PIXELS_TO_SCROLL_TO_MAKE_CHECKBOXES_VISIBLE = -150;
+
+    /**
+     * The settings for the {@link UblockSettings} {@link Extension}.
+     */
+    public enum UblockSettings {
+        /**
+         * Whether to enable the miscellanous filter lists.
+         */
+        ENABLE_MISCELLANOUS_FILTERS,
+
+        /**
+         * Whether to enable the regional filter lists.
+         */
+        ENABLE_REGION_FILTERS,
+
+        /**
+         * Whether to change the default filtering mode from 'optimal' to 'complete.
+         */
+        SET_FILTERING_MODE
+    }
 
     @Override
     public String id() {
@@ -67,29 +89,44 @@ public class UblockOriginLiteExtension implements Extension {
      * </ol>
      */
     @Override
-    public void configure(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor) {
+    public void configure(final ExtensionSettings<UblockSettings> extensionSettings, final RemoteWebDriver driver,
+                          final ScriptExecutor scriptExecutor) {
         try {
+            final Map<UblockSettings, Boolean> settings = extensionSettings.settings();
             LOGGER.info("\t- Configuring {}", getClass().getSimpleName());
+            LOGGER.debug("\t\t- Configuring with settings {}", settings);
             openExtensionConfigurationPage(driver, id());
 
-            LOGGER.debug("\t\t- Setting filtering mode");
-            settingFilteringMode(driver);
+            if (getSetting(settings, UblockSettings.SET_FILTERING_MODE)) {
+                LOGGER.debug("\t\t- Setting filtering mode");
+                settingFilteringMode(driver);
+            }
 
-            LOGGER.debug("\t\t- Opening filter lists page");
-            openFilterListsPage(driver, scriptExecutor);
+            if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS) || getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+                LOGGER.debug("\t\t- Opening filter lists page");
+                openFilterListsPage(driver, scriptExecutor);
 
-            LOGGER.debug("\t\t- Enabling all miscellaneous filters");
-            enableAllMiscellaneousFilters(driver, scriptExecutor);
+                if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS)) {
+                    LOGGER.debug("\t\t- Enabling all miscellaneous filters");
+                    enableAllMiscellaneousFilters(driver, scriptExecutor);
+                }
 
-            LOGGER.debug("\t\t- Expanding region filter lists");
-            expandRegionFiltersList(driver, scriptExecutor);
+                if (getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+                    LOGGER.debug("\t\t- Expanding region filter lists");
+                    expandRegionFiltersList(driver, scriptExecutor);
 
-            LOGGER.debug("\t\t- Enabling all region filters");
-            enableAllRegionFilters(driver, scriptExecutor);
+                    LOGGER.debug("\t\t- Enabling all region filters");
+                    enableAllRegionFilters(driver, scriptExecutor);
+                }
+            }
         } catch (final Exception e) {
             LOGGER.debug("Error configuring {}", UblockOriginLiteExtension.class.getSimpleName(), e);
             LOGGER.warn("Error configuring {}: {}", UblockOriginLiteExtension.class.getSimpleName(), e.getMessage());
         }
+    }
+
+    private static boolean getSetting(final Map<UblockSettings, Boolean> settings, final UblockSettings setting) {
+        return settings.getOrDefault(setting, true);
     }
 
     private static void openExtensionConfigurationPage(final RemoteWebDriver driver, final String id) {
@@ -167,11 +204,13 @@ public class UblockOriginLiteExtension implements Extension {
 
     private static void enableAllCheckBoxes(final RemoteWebDriver driver, final ScriptExecutor scriptExecutor, final By checkboxesSelector) {
         final List<WebElement> checkboxes = driver.findElements(checkboxesSelector).stream().toList();
-        LOGGER.debug("\t\t\t- Found {} checkboxes", checkboxes.size());
-        for (int i = 0; i < checkboxes.size(); i++) {
+        final int numberOfCheckboxes = checkboxes.size();
+        LOGGER.debug("\t\t\t- Found {} checkboxes", numberOfCheckboxes);
+
+        for (int i = 0; i < numberOfCheckboxes; i++) {
             final WebElement checkbox = checkboxes.get(i);
             scriptExecutor.scrollToElement(checkbox);
-            scriptExecutor.scroll(0, -150);
+            scriptExecutor.scroll(0, Y_PIXELS_TO_SCROLL_TO_MAKE_CHECKBOXES_VISIBLE);
 
             LOGGER.trace("Clicking checkbox {}: {}", (i + 1), checkbox.getText());
             checkbox.click();

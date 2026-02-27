@@ -24,10 +24,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,7 +83,7 @@ final class PythonHttpServerHandler {
     static SeleniumSession openSession(final String browserDataStoragePath,
                                        final String browserDimensions,
                                        final boolean enableTranslation,
-                                       final Collection<Extension> extensions
+                                       final List<ExtensionBinding<?>> extensions
     ) {
         final String extensionFilePaths = toJsonArrayOfPaths(extensions);
         final String jsonPayload = OPEN_REQUEST_FORMAT.formatted(browserDataStoragePath, browserDimensions, enableTranslation, extensionFilePaths);
@@ -115,8 +115,8 @@ final class PythonHttpServerHandler {
         }
     }
 
-    private static String toJsonArrayOfPaths(final Collection<Extension> extensions) {
-        final List<String> extensionFilePaths = extensions.stream().map(Extension::path).toList();
+    private static String toJsonArrayOfPaths(final List<ExtensionBinding<?>> extensions) {
+        final List<String> extensionFilePaths = extensions.stream().map(ExtensionBinding::extension).map(Extension::path).toList();
         return extensionFilePaths.stream()
             .map(v -> "\"" + v.replace("\"", "\\\"") + "\"")
             .collect(Collectors.joining(",", "[", "]"));

@@ -27,7 +27,7 @@ def create_chrome_options(browser_data_storage_path: str,
         browser_data_storage_path (str): Path to store user data and cache.
         browser_dimensions (str): Browser window size in the format 'WIDTH,HEIGHT'.
         enable_translation (bool): Whether to translate web pages into English
-        extension_paths (list[str]): A list of the filepaths for extenstions to install
+        extension_paths (list[str]): A list of the filepaths for extensions to install
 
     Returns:
         uc.ChromeOptions: Configured Chrome options.

@@ -21,7 +21,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
@@ -56,13 +55,6 @@ public class MetalTrackerHandler extends AbstractTrackerHandler {
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(input, withName("go"), withType("submit"))
-            .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(ul, withClass("user_data"))
             .build();
     }
 

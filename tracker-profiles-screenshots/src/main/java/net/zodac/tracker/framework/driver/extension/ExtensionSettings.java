@@ -15,14 +15,26 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler;
+package net.zodac.tracker.framework.driver.extension;
 
-import net.zodac.tracker.framework.annotation.TrackerHandler;
+import java.util.Map;
 
 /**
- * Extension of the {@link LuminanceHandler} for the {@code Kufirc} tracker.
+ * Represents the configuration settings for a specific {@link Extension}.
+ *
+ * @param <E> the enum type representing the available settings for the extension
  */
-@TrackerHandler(name = "Kufirc", adult = true, url = "https://kufirc.com/")
-public class KufircHandler extends LuminanceHandler {
-    // TODO: Remove?
+@FunctionalInterface
+public interface ExtensionSettings<E extends Enum<E>> {
+
+    /**
+     * Returns thesettings for this {@link Extension}.
+     *
+     * <p>
+     * Each key in the returned {@link Map} corresponds to a specific option defined by the extension’s enum type, and the value indicates whether
+     * the option is enabled ({@code true}) or disabled ({@code false}).
+     *
+     * @return an {@link Map} of settings and their states
+     */
+    Map<E, Boolean> settings();
 }

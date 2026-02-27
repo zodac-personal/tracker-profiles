@@ -51,11 +51,6 @@ public class EmporniumHandler extends LuminanceHandler {
             .build();
     }
 
-    @Override
-    protected By postLoginSelector() {
-        return By.id("stats_block");
-    }
-
     /**
      * {@inheritDoc}
      *

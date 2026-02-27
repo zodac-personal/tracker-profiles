@@ -19,7 +19,6 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -59,13 +58,6 @@ public class SportsCultHandler extends AbstractTrackerHandler {
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(input, withType("submit"))
-            .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(form, withName("jump1"))
             .build();
     }
 

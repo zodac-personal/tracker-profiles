@@ -69,11 +69,6 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    @Override
-    protected By postLoginSelector() {
-        return By.id("collapseobj_loginbox");
-    }
-
     /**
      * {@inheritDoc}
      *

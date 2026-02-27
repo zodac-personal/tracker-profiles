@@ -36,6 +36,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * Utility class used to execute scripts on a web page.
  */
+// TODO: Name this something else? Does more than just scripts now
 public class ScriptExecutor {
 
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.of(2L, ChronoUnit.SECONDS);

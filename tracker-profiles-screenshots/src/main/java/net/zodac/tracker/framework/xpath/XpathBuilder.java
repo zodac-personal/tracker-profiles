@@ -21,7 +21,7 @@ package net.zodac.tracker.framework.xpath;
  * Entry point for building XPath expressions using a fluent, type-safe API.
  *
  * <p>
- * {@code XpathBuilder} provides static factory methods to begin an XPath query from the root of the DOM. From there, the returned {@link XpathStep}
+ * {@link XpathBuilder} provides static factory methods to begin an XPath query from the root of the DOM. From there, the returned {@link XpathStep}
  * can be used to incrementally navigate the document structure using descendant, direct-child, and parent relationships, optionally constrained by
  * {@link XpathPredicate}s.
  *

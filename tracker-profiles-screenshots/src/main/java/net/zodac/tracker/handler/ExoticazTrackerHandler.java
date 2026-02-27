@@ -21,12 +21,19 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
@@ -63,18 +70,43 @@ public class ExoticazTrackerHandler extends AvistazNetworkTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("topNavBar");
+    protected By profilePageSelector() {
+        return XpathBuilder
+            .from(span, withClass("user-group"))
+            .parent(a)
+            .build();
     }
 
     @Override
-    protected By profilePageSelector() {
-        return XpathBuilder
-            .from(div, withClass("ratio-bar"))
-            .child(div, atIndex(1))
-            .child(div, atIndex(1))
-            .child(a, atIndex(1))
-            .build();
+    protected Collection<By> emailElements() {
+        return List.of(
+            XpathBuilder
+                .from(NamedHtmlElement.of("main"), withId("content-area"))
+                .child(div, atIndex(1))
+                .child(div, atIndex(2))
+                .child(div, atIndex(3))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(3))
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            XpathBuilder
+                .from(NamedHtmlElement.of("main"), withId("content-area"))
+                .child(div, atIndex(1))
+                .child(div, atIndex(2))
+                .child(div, atIndex(3))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(4))
+                .child(td, atIndex(2))
+                .build()
+        );
     }
 
     @Override

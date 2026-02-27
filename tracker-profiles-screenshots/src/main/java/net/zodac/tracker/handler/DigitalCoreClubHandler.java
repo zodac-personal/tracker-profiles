@@ -32,6 +32,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.util.ScriptExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -84,11 +85,6 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("statusBox");
-    }
-
-    @Override
     protected By profilePageSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.of("user"), atIndex(1))
@@ -110,7 +106,7 @@ public class DigitalCoreClubHandler extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        reloadPage(); // Reload the page in case it was cancelled
+        ScriptExecutor.explicitWait(waitForTransitionsDuration(), "user details to load");
 
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
