@@ -90,6 +90,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [BackUps](https://back-ups.me/)                      |
 | [BakaBT](https://bakabt.me/)                         |
 | [Blutopia](https://blutopia.cc/)                     |
+| [BrokenStones](https://brokenstones.is/)             |
 | [BwTorrents](https://bwtorrents.tv/)                 |
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
 | [Concertos](https://concertos.live/)                 |
