@@ -683,19 +683,19 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         return List.of();
     }
 
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtentions) {
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
         if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
-            if (!requiredExtentions.isEmpty()) {
-                LOGGER.trace("Attempting to create python driver with extentions; extensions will be installed but cannot be configured: {}",
-                    requiredExtentions);
+            if (!requiredExtensions.isEmpty()) {
+                LOGGER.trace("Attempting to create python driver with extensions; extensions will be installed but cannot be configured: {}",
+                    requiredExtensions);
             }
-            return PythonWebDriverFactory.createDriver(requiredExtentions);
+            return PythonWebDriverFactory.createDriver(requiredExtensions);
         }
 
-        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, requiredExtentions);
+        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, requiredExtensions);
         final ScriptExecutor configurationScriptExecution = new ScriptExecutor(configurationDriver);
 
-        for (final ExtensionBinding<?> extensionBinding : requiredExtentions) {
+        for (final ExtensionBinding<?> extensionBinding : requiredExtensions) {
             configureExtensionWithBinding(extensionBinding, configurationDriver, configurationScriptExecution);
         }
 
