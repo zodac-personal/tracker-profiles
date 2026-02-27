@@ -55,6 +55,7 @@ LST,username,password
 PassThePopcorn,username,password
 TheEmpire,username,password
 TheGeeks,username,password
+TheOccult,username,password
 #,Cloudflare trackers,UI required to pass detection
 AnimeTorrents,username,password
 AvistaZ,username,password

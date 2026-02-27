@@ -47,6 +47,7 @@ import org.openqa.selenium.WebElement;
 @CommonTrackerHandler("TheClick")
 @TrackerHandler(name = "TheEmpire", type = TrackerType.MANUAL, url = "https://theempire.click/")
 @TrackerHandler(name = "TheGeeks", type = TrackerType.MANUAL, url = "https://thegeeks.click/")
+@TrackerHandler(name = "TheOccult", type = TrackerType.MANUAL, url = "https://theoccult.click/")
 public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override

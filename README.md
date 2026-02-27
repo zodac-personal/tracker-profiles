@@ -153,6 +153,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [Speed.CD](https://speed.cd/)                 | **Cloudflare-check** |
 | [TheEmpire](https://theempire.click/)         | **Manual**           |
 | [TheGeeks](https://thegeeks.click/)           | **Manual**           |
+| [TheOccult](https://theoccult.click/)         | **Manual**           |
 | [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
 
 ## How To Use
