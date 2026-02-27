@@ -99,6 +99,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [FearNoPeer](https://fearnopeer.com/)             |
 | [FileList](https://filelist.io/)                  |
 | [FunFile](https://www.funfile.org/)               |
+| [HappyFappy](https://www.happyfappy.net/)         |
 | [HDUnited](https://hd-united.vn/)                 |
 | [ImmortalSeed](https://immortalseed.me/)          |
 | [IPTorrents](https://iptorrents.com/)             |
