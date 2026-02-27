@@ -35,6 +35,7 @@ import org.openqa.selenium.WebElement;
 public class CanalStreetHandler extends GazelleHandler {
 
     @Nullable
+    @Override
     protected By loginPageSelector() {
         return null;
     }

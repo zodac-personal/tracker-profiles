@@ -36,7 +36,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code ArabP2P} tracker.
  */
 @TrackerHandler(name = "ArabP2P", url = "https://www.arabp2p.net/")
-public class ArabP2PHandler extends AbstractTrackerHandler {
+public class ArabP2pHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {

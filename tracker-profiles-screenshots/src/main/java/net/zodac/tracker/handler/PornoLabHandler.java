@@ -27,16 +27,8 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.time.Duration;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
-import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
-import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 

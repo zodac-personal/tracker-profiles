@@ -94,7 +94,7 @@ public class MilkieHandler extends AbstractTrackerHandler {
             .build();
     }
 
-    protected void openUserDropdownMenu() {
+    private void openUserDropdownMenu() {
         reloadPage(); // Reload the page to have a consistent state with no user stats pop-up
         final By profilePageSelector = profilePageSelector();
 

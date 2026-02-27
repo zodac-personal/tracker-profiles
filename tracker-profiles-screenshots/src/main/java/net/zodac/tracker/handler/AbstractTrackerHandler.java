@@ -549,6 +549,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     /**
      * Whether the {@link AbstractTrackerHandler} implementation requires the profile page to be scrolled during a screenshot. Useful for some
      * trackers with a non-standard profile page (like a pop-up), to prevent excessive page info being screenshot.
+     *
      * @return {@code true} if the page should be scrolled during a screenshot
      */
     public boolean scrollDuringScreenshot() {
