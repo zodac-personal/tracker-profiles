@@ -60,7 +60,7 @@ final class TrackerRetriever {
         LOGGER.debug("Tracker execution order: {}", CONFIG.trackerExecutionOrder());
 
         try {
-            final List<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
+            final Set<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
             final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = new EnumMap<>(TrackerType.class);
 
             for (final TrackerCredential trackerCredential : trackerCredentials) {

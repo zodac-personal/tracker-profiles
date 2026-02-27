@@ -24,8 +24,11 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
@@ -54,11 +57,11 @@ public final class TrackerCsvReader {
     /**
      * Reads the input file {@link ApplicationConfiguration#trackerInputFilePath()}, and converts each row into a {@link TrackerCredential}.
      *
-     * @return the {@link List} of {@link TrackerCredential}s
+     * @return the {@link Set} of {@link TrackerCredential}s
      * @throws IOException thrown if there is a problem reading the file or skipping the first record
      * @see TrackerCredential#fromCsv(CSVRecord)
      */
-    public static List<TrackerCredential> readTrackerInfo() throws IOException {
+    public static Set<TrackerCredential> readTrackerInfo() throws IOException {
         final Path csvPath = CONFIG.trackerInputFilePath();
         validateFilePath(csvPath);
 
@@ -74,7 +77,7 @@ public final class TrackerCsvReader {
                 .stream()
                 .skip(1) // Skip header row
                 .map(TrackerCredential::fromCsv)
-                .toList();
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         }
     }
 
