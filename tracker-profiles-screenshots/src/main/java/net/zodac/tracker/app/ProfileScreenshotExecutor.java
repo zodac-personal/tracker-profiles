@@ -141,7 +141,7 @@ final class ProfileScreenshotExecutor {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             final Path failureOutputDirectory = CONFIG.outputDirectory().resolve("errors");
             ensureDirectoryExists(failureOutputDirectory);
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, 0);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, true,  0);
             LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
             LOGGER.debug("\t- Unable to take failure screenshot of '{}'", trackerName, e);
@@ -194,7 +194,7 @@ final class ProfileScreenshotExecutor {
         }
 
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),
-            existingScreenshotValue.second());
+            trackerHandler.scrollDuringScreenshot(), existingScreenshotValue.second());
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
         // TODO: Only do this when taking multiple screenshots: trackerHandler.reloadPage();
 

@@ -105,6 +105,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Lat-Team](https://lat-team.com/)                 |
 | [Libble](https://libble.me/)                      |
 | [Metal-Tracker](https://en.metal-tracker.com/)    |
+| [Milkie](https://milkie.cc/)                      |
 | [MoreThanTV](https://www.morethantv.me/)          |
 | [MyAnonaMouse](https://www.myanonamouse.net/)     |
 | [Nebulance](https://nebulance.io/)                |

@@ -25,14 +25,15 @@ import java.time.Duration;
 import javax.imageio.ImageIO;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 
 /**
  * Utility class used to take a screenshot of a website.
  */
+// TODO: Should this exist as a field variable inside the AbstractTrackerHandler?
 public final class ScreenshotTaker {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
@@ -65,18 +66,23 @@ public final class ScreenshotTaker {
      * Once the screenshot is saved, the page is scrolled back to the top. This is to ensure that any elements at the top of the page are clickable
      * after scrolling.
      *
-     * @param driver          the {@link RemoteWebDriver} with the loaded web page
-     * @param outputDirectory the directory in which the screenshot should be saved
-     * @param trackerName     the name of the tracker having a screenshot taken (used as the file name)
-     * @param index           how many screenshots already exist for this tracker
+     * @param driver                 the {@link RemoteWebDriver} with the loaded web page
+     * @param outputDirectory        the directory in which the screenshot should be saved
+     * @param trackerName            the name of the tracker having a screenshot taken (used as the file name)
+     * @param scrollDuringScreenshot whether to scroll the profile page during the screenshot
+     * @param index                  how many screenshots already exist for this tracker
      * @return the {@link File} instance of the saved screenshot
      * @throws IOException thrown if an error occurs saving the screenshot to the file system
      * @see BrowserInteractionHelper#scrollToTheTop()
      */
-    public static File takeScreenshot(final RemoteWebDriver driver, final Path outputDirectory, final String trackerName, final int index)
-        throws IOException {
+    public static File takeScreenshot(final RemoteWebDriver driver,
+                                      final Path outputDirectory,
+                                      final String trackerName,
+                                      final boolean scrollDuringScreenshot,
+                                      final int index
+    ) throws IOException {
         final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
-        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, browserInteractionHelper);
+        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, browserInteractionHelper, scrollDuringScreenshot);
         final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), trackerName, index);
         ImageIO.write(screenshotImage, "PNG", screenshot);
         browserInteractionHelper.scrollToTheTop();
@@ -91,14 +97,23 @@ public final class ScreenshotTaker {
         return new File(outputDirectory + File.separator + trackerName + "_" + index + ".png");
     }
 
-    private static BufferedImage takeScreenshotOfEntirePage(final WebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
+    private static BufferedImage takeScreenshotOfEntirePage(final RemoteWebDriver driver,
+                                                            final BrowserInteractionHelper browserInteractionHelper,
+                                                            final boolean scrollDuringScreenshot
+    ) {
         browserInteractionHelper.disableScrolling();
         final BufferedImage screenshot = new AShot()
-            .shootingStrategy(ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue()))
+            .shootingStrategy(shootingStrategy(scrollDuringScreenshot))
             .takeScreenshot(driver)
             .getImage();
 
         browserInteractionHelper.enableScrolling("body");
         return screenshot;
+    }
+
+    private static ShootingStrategy shootingStrategy(final boolean scrollDuringScreenshot) {
+        return scrollDuringScreenshot
+            ? ShootingStrategies.viewportPasting(((Long) TIME_BETWEEN_SCROLLS.toMillis()).intValue())
+            : ShootingStrategies.simple();
     }
 }

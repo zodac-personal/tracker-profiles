@@ -404,6 +404,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return <code>true</code> if there are elements in need of redaction
      */
+    // TODO: Does this need to be overridden at all?
     public boolean hasSensitiveInformation() {
         return !emailElements().isEmpty()
             || !ipAddressElements().isEmpty()
@@ -542,6 +543,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public boolean hasFixedHeader() {
         return false;
+    }
+
+    /**
+     * Whether the {@link AbstractTrackerHandler} implementation requires the profile page to be scrolled during a screenshot. Useful for some
+     * trackers with a non-standard profile page (like a pop-up), to prevent excessive page info being screenshot.
+     * @return {@code true} if the page should be scrolled during a screenshot
+     */
+    public boolean scrollDuringScreenshot() {
+        return true;
     }
 
     /**
