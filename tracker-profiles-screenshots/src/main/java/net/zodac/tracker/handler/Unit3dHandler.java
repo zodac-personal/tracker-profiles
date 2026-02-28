@@ -54,6 +54,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "OldToons.World", url = "https://oldtoons.world/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
+@TrackerHandler(name = "Rastastugan", url = "https://rastastugan.org/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 @TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
 public class Unit3dHandler extends AbstractTrackerHandler {

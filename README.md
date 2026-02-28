@@ -127,6 +127,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [PolishTorrent](https://polishtorrent.top/)          |
 | [PornBay](https://pornbay.org/)                      |
 | [PornoLab](https://pornolab.net/forum/tracker.php)   |
+| [Rastastugan](https://rastastugan.org/)              |
 | [Redacted](https://redacted.sh/)                     |
 | [ReelFlix](https://reelflix.cc/)                     |
 | [RUTracker](https://rutracker.org/forum/tracker.php) |
