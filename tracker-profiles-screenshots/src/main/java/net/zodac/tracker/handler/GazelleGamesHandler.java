@@ -116,6 +116,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
         clickButton(logoutButton);
 
         // After clicking logout, an alert appears - find and click 'Yes'
+        // TODO: Instead of overriding logout, move this to abstract?
         browserInteractionHelper.acceptAlert();
 
         browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());

@@ -47,6 +47,7 @@ def create_chrome_options(browser_data_storage_path: str,
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_argument("--unsafely-treat-insecure-origin-as-secure=*")
 
     driver_preferences: dict[str, Any] = {
         # Disable password manager pop-ups

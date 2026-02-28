@@ -82,6 +82,9 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-dev-shm-usage");
 
+        // Disable warnings when visiting HTTP-only sites
+        chromeOptions.addArguments("--unsafely-treat-insecure-origin-as-secure=*");
+
         final Map<String, Object> driverPreferences = new HashMap<>();
         // Disable password manager pop-ups
         driverPreferences.put("credentials_enable_service", false);
