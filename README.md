@@ -97,6 +97,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
 | [Concertos](https://concertos.live/)                 |
 | [D3Si.NET](https://d3si.net/)                        |
+| [DanishBytes](https://danishbytes.club/)             |
 | [DarkPeers](https://darkpeers.org/)                  |
 | [DesiTorrents](https://desitorrents.tv/)             |
 | [DICMusic](https://dicmusic.com/)                    |
