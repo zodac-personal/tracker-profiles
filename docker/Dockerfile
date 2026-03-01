@@ -69,7 +69,7 @@ ENV NO_AT_BRIDGE=1
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="145.0.7632.109-1~deb13u3" \
+        chromium="145.0.7632.116-1~deb13u1" \
     && \
     apt-get autoremove && \
     apt-get clean && \
