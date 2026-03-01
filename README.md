@@ -142,6 +142,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Tasmanites](https://tasmanit.es/)                   |
 | [TeamOS](https://teamos.xyz/)                        |
 | [TorrentLeech](https://www.torrentleech.org/)        |
+| [TranceTraffic](https://www.trancetraffic.com/)      |
 | [TVChaosUK](https://tvchaosuk.com/)                  |
 | [Unwalled](https://unwalled.cc/)                     |
 | [YUSCENE](https://yu-scene.net/)                     |

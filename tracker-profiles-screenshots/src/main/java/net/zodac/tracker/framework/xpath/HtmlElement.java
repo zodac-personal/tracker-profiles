@@ -44,6 +44,11 @@ public enum HtmlElement implements Element {
     a,
 
     /**
+     * Body {@link Element}: {@code {@literal <}body{@literal >}}.
+     */
+    body,
+
+    /**
      * Button {@link Element}: {@code {@literal <}button{@literal >}}.
      */
     button,
@@ -57,6 +62,11 @@ public enum HtmlElement implements Element {
      * Form {@link Element}: {@code {@literal <}form{@literal >}}.
      */
     form,
+
+    /**
+     * Head {@link Element}: {@code {@literal <}head{@literal >}}.
+     */
+    head,
 
     /**
      * Image {@link Element}: {@code {@literal <}img{@literal >}}.
