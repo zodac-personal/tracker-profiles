@@ -44,8 +44,8 @@ public class RedactorImpl implements Redactor {
      */
     public RedactorImpl(final RemoteWebDriver driver) {
         redactor = switch (CONFIG.redactionType()) {
-            case TEXT -> new TextRedactor(driver);
             case OVERLAY -> new OverlayRedactor(driver);
+            case TEXT -> new TextRedactor(driver);
         };
     }
 
@@ -78,6 +78,18 @@ public class RedactorImpl implements Redactor {
     }
 
     private static void logElementToBeRedacted(final WebElement element) {
-        LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
+        final String elementText = element.getText();
+        if (!elementText.isBlank()) {
+            LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
+            return;
+        }
+
+        final String elementValue = element.getAttribute("value");
+        if (elementValue != null && !elementValue.isBlank()) {
+            LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
+            return;
+        }
+
+        LOGGER.warn("\t\t- Found invalid text in <{}> {}, unable to check text or value", element.getTagName(), element);
     }
 }

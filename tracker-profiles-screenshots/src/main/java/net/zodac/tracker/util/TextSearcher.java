@@ -51,23 +51,33 @@ public final class TextSearcher {
     /**
      * Checks if the {@link String} contains an email address.
      *
-     * @param input the {@link String} to check
+     * @param inputs any {@link String}s to check
      * @return {@code true} if it contains an email address
      */
-    public static boolean containsEmailAddress(final String input) {
-        return EMAIL.matcher(input).find();
+    public static boolean hasEmailAddress(final String... inputs) {
+        for (final String input : inputs) {
+            if (EMAIL.matcher(input).find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Checks if the {@link String} contains an IPv4 or IPv6 address to. Also checks for a match of the first 2 octets of the IPv4 address for
      * trackers that post a partial IP address.
      *
-     * @param input the {@link String} to check
+     * @param inputs any {@link String}s to check
      * @return {@code true} if it contains an IP address
      */
-    public static boolean containsIpAddress(final String input) {
-        return IPV4.matcher(input).find()
-            || IPV4_MASKED.matcher(input).find()
-            || IPV6.matcher(input).find();
+    public static boolean hasIpAddress(final String... inputs) {
+        for (final String input : inputs) {
+            if (IPV4.matcher(input).find() || IPV4_MASKED.matcher(input).find() || IPV6.matcher(input).find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

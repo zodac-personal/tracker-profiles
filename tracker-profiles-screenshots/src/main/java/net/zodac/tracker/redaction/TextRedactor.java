@@ -61,15 +61,15 @@ class TextRedactor implements Redactor {
     @Override
     public void redactEmail(final WebElement element) {
         final String htmlContent = retrieveOuterHtml(element);
-        final String substitutionText = replaceEmail(htmlContent);
-        setOuterHtml(element, substitutionText);
+        final String substitutionHtmlContent = replaceEmail(htmlContent);
+        setOuterHtml(element, substitutionHtmlContent);
     }
 
     @Override
     public void redactIpAddress(final WebElement element) {
         final String htmlContent = retrieveOuterHtml(element);
-        final String substitutionText = replaceIpAddresses(htmlContent);
-        setOuterHtml(element, substitutionText);
+        final String substitutionHtmlContent = replaceIpAddresses(htmlContent);
+        setOuterHtml(element, substitutionHtmlContent);
     }
 
     private String retrieveOuterHtml(final WebElement element) {

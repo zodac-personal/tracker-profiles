@@ -23,7 +23,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link Redactor} that redacts text by overlaying a solid, coloured box over the impacted {@link WebElement}.
  */
-// TODO: Allow caller to define buffer bounds of box to cover things completely
+// TODO: Allow caller to define buffer bounds of box to cover things completely? Or just cover the whole HTML element?
 class OverlayRedactor implements Redactor {
 
     private final RemoteWebDriver driver;

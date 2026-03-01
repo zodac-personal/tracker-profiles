@@ -101,6 +101,17 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Retrieves the {@code value} attribute for the {@link WebElement}.
+     *
+     * @param element the {@link WebElement}
+     * @return the {@code value}, or an empty {@link String} if the value is {@code null}
+     */
+    public String getValue(final WebElement element) {
+        final String attributeValue = element.getAttribute("value");
+        return attributeValue == null ? "" : attributeValue;
+    }
+
+    /**
      * Highlight's an {@link WebElement} on the web page. Creates a 3px solid red border around the {@link WebElement}.
      *
      * @param element the {@link WebElement} to highlight

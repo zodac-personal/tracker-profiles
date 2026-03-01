@@ -444,7 +444,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final Collection<WebElement> emailElements = emailElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.containsEmailAddress(element.getText()))
+            .filter(element -> TextSearcher.hasEmailAddress(element.getText(), browserInteractionHelper.getValue(element)))
             .toList();
 
         for (final WebElement element : emailElements) {
@@ -468,7 +468,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final Collection<WebElement> ipAddressElements = ipAddressElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.containsIpAddress(element.getText()))
+            .filter(element -> TextSearcher.hasIpAddress(element.getText(), browserInteractionHelper.getValue(element)))
             .toList();
 
         for (final WebElement element : ipAddressElements) {
@@ -708,16 +708,16 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final BrowserInteractionHelper configurationScriptExecution = new BrowserInteractionHelper(configurationDriver);
 
         for (final ExtensionBinding<?> extensionBinding : requiredExtensions) {
-            configureExtensionWithBinding(extensionBinding, configurationDriver, configurationScriptExecution);
+            configureExtensionBinding(extensionBinding, configurationDriver, configurationScriptExecution);
         }
 
         return configurationDriver;
     }
 
-    private <E extends Enum<E>> void configureExtensionWithBinding(final ExtensionBinding<E> binding,
-                                                                   final RemoteWebDriver driver,
-                                                                   final BrowserInteractionHelper executor
+    private <E extends Enum<E>> void configureExtensionBinding(final ExtensionBinding<E> extensionBinding,
+                                                               final RemoteWebDriver driver,
+                                                               final BrowserInteractionHelper browserInteractionHelper
     ) {
-        binding.extension().configure(binding.settings(), driver, executor);
+        extensionBinding.extension().configure(extensionBinding.settings(), driver, browserInteractionHelper);
     }
 }

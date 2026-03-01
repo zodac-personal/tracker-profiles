@@ -175,6 +175,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [TheGeeks](https://thegeeks.click/)           | **Manual**           |
 | [TheOccult](https://theoccult.click/)         | **Manual**           |
 | [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
+| [YggTorrent](https://www.yggtorrent.org/)     | **Cloudflare-check** |
 
 ## How To Use
 
