@@ -90,6 +90,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [BackUps](https://back-ups.me/)                      |
 | [BakaBT](https://bakabt.me/)                         |
 | [Blutopia](https://blutopia.cc/)                     |
+| [BootyTape](https://ssl.bootytape.com/)              |
 | [BrokenStones](https://brokenstones.is/)             |
 | [BwTorrents](https://bwtorrents.tv/)                 |
 | [C411](https://c411.org/)                            |
