@@ -103,6 +103,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [DICMusic](https://dicmusic.com/)                    |
 | [DimeADozen](http://www.dimeadozen.org/)             |
 | [Empornium](https://www.empornium.sx/)               |
+| [ExtremeBits](https://extremebits.net/)              |
 | [F1Carreras](https://f1carreras.xyz/)                |
 | [Fappaizuri](https://fappaizuri.me/)                 |
 | [FearNoPeer](https://fearnopeer.com/)                |
