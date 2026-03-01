@@ -47,7 +47,11 @@ import org.openqa.selenium.WebElement;
 @CommonTrackerHandler("TheClick")
 @TrackerHandler(name = "TheEmpire", type = TrackerType.MANUAL, url = "https://theempire.click/")
 @TrackerHandler(name = "TheGeeks", type = TrackerType.MANUAL, url = "https://thegeeks.click/")
+@TrackerHandler(name = "TheKitchen", type = TrackerType.MANUAL, url = "https://thekitchen.click/")
 @TrackerHandler(name = "TheOccult", type = TrackerType.MANUAL, url = "https://theoccult.click/")
+@TrackerHandler(name = "ThePlace", type = TrackerType.MANUAL, url = "https://theplace.click/")
+@TrackerHandler(name = "TheShow", type = TrackerType.MANUAL, url = "https://theshow.click/")
+@TrackerHandler(name = "TheVault", type = TrackerType.MANUAL, url = "https://thevault.click/")
 public class TheClickHandler extends AbstractTrackerHandler {
 
     @Override
@@ -126,3 +130,5 @@ public class TheClickHandler extends AbstractTrackerHandler {
             .build();
     }
 }
+
+
