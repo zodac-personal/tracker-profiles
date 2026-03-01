@@ -9,6 +9,7 @@ static_categories=(
   "Documentation"
   "Framework"
   "Python"
+  "Removal"
 )
 
 # -----------------------------

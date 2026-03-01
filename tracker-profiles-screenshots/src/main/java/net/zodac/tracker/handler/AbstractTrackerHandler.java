@@ -683,7 +683,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * The {@link Extension}s required for the {@link AbstractTrackerHandler}. If any are provided, they will be installed in the
-     * {@link RemoteWebDriver}, and then {@link Extension#configure(ExtensionSettings, RemoteWebDriver, BrowserInteractionHelper)}  will be run prior
+     * {@link RemoteWebDriver}, and then {@link Extension#configure(ExtensionSettings, RemoteWebDriver, BrowserInteractionHelper)} will be run prior
      * to the main execution for the {@link AbstractTrackerHandler}.
      *
      * <p>

@@ -44,7 +44,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "DICMusic", url = "https://dicmusic.com/")
 @TrackerHandler(name = "Redacted", url = "https://redacted.sh/")
 @TrackerHandler(name = "SecretCinema", url = "https://secret-cinema.pw/")
-@TrackerHandler(name = "UHDBits", url = "https://uhdbits.org/")
 public class GazelleHandler extends AbstractTrackerHandler {
 
     @Nullable

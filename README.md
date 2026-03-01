@@ -143,7 +143,6 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [TeamOS](https://teamos.xyz/)                        |
 | [TorrentLeech](https://www.torrentleech.org/)        |
 | [TVChaosUK](https://tvchaosuk.com/)                  |
-| [UHDBits](https://uhdbits.org/)                      |
 | [Unwalled](https://unwalled.cc/)                     |
 | [YUSCENE](https://yu-scene.net/)                     |
 
