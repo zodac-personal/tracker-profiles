@@ -98,5 +98,6 @@ HDBits,username,password
 PrivateHD,username,password
 SceneTime,username,password
 Speed.CD,username,password
+Torrenting,username,password
 UploadCX,username,password
 YggTorrent,username,password

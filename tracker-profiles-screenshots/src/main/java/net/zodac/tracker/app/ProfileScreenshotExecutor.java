@@ -141,7 +141,7 @@ final class ProfileScreenshotExecutor {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             final Path failureOutputDirectory = CONFIG.outputDirectory().resolve("errors");
             ensureDirectoryExists(failureOutputDirectory);
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, true,  0);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, true, 0);
             LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
             LOGGER.debug("\t- Unable to take failure screenshot of '{}'", trackerName, e);
@@ -187,6 +187,8 @@ final class ProfileScreenshotExecutor {
             if (numberOfRedactedElements != 0) {
                 LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
             }
+        } else {
+            LOGGER.debug("\t- Nothing to redact");
         }
 
         if (trackerHandler.hasFixedHeader()) {

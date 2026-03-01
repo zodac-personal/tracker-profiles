@@ -89,7 +89,7 @@ final class ResultCollector {
 
         if (totalUnsuccessful == 0) {
             LOGGER.info("");
-            LOGGER.info("All {} selected tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
+            LOGGER.info("All {} selected trackers successfully screenshot", totalSuccessful);
 
             successfulTrackers.forEach((type, trackers) -> LOGGER.debug("- {} ({}): {}", type.formattedName(), trackers.size(), trackers));
 

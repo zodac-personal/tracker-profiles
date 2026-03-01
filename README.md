@@ -184,6 +184,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [ThePlace](https://theplace.click/)           | **Manual**           |
 | [TheShow](https://theshow.click/)             | **Manual**           |
 | [TheVault](https://thevault.click/)           | **Manual**           |
+| [Torrenting](https://torrenting.com/)         | **Cloudflare-check** |
 | [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
 | [YggTorrent](https://www.yggtorrent.org/)     | **Cloudflare-check** |
 
