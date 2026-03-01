@@ -135,6 +135,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Redacted](https://redacted.sh/)                     |
 | [ReelFlix](https://reelflix.cc/)                     |
 | [RUTracker](https://rutracker.org/forum/tracker.php) |
+| [SceneHD](https://scenehd.org/)                      |
 | [SecretCinema](https://secret-cinema.pw/)            |
 | [SeedPool](https://seedpool.org/)                    |
 | [SportsCult](https://sportscult.org/)                |
