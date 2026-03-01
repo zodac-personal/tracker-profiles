@@ -94,6 +94,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [BwTorrents](https://bwtorrents.tv/)                 |
 | [C411](https://c411.org/)                            |
 | [CanalStreet](https://canal-street.org/)             |
+| [CapybaraBR](https://capybarabr.com/)                |
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
 | [Concertos](https://concertos.live/)                 |
 | [D3Si.NET](https://d3si.net/)                        |
