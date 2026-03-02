@@ -65,14 +65,16 @@ ENV NO_AT_BRIDGE=1
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)
-# - fonts-noto-cjk (multilanguage fonts)
+# - fonts-arphic-ukai (Chinese fonts)
+# - fonts-ipafont (Japanese fonts)
 # - wmctrl (force browser to be active window)
 # BEGIN DEBIAN PACKAGES
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
         chromium="145.0.7632.116-1~deb13u1" \
-        fonts-noto-cjk="1:20240730+repack1-1" \
+        fonts-arphic-ukai="0.2.20080216.2-5" \
+        fonts-ipafont="00303-23" \
         wmctrl="1.07+git20240228.1105759-1" \
     && \
     apt-get autoremove && \
