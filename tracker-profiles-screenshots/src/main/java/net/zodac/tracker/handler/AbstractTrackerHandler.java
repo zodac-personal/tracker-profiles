@@ -302,6 +302,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @param trackerName the name of the tracker
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
+    // TODO: Don't need to pass in trackerName anymore?
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         // Do nothing by default
     }
@@ -398,6 +399,24 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     protected void additionalActionOnProfilePage() {
         // Do nothing by default
+    }
+
+    /**
+     * Whether the {@link AbstractTrackerHandler} needs to be explicitly translated. Most non-English languages will automatically be translated,
+     * but some languages require an explicit action to translate the page.
+     *
+     * @return {@code true} if the website needs to be translated
+     */
+    public boolean needsExplicitTranslation() {
+        return false;
+    }
+
+    /**
+     * Explicitly translates the page to English.
+     *
+     */
+    public final void translatePageToEnglish() {
+        browserInteractionHelper.translatePage();
     }
 
     /**

@@ -31,6 +31,7 @@ import net.zodac.tracker.framework.exception.BrowserClosedException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
+import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.ScreenshotTaker;
@@ -102,6 +103,10 @@ final class ProfileScreenshotExecutor {
                 final String cleanedErrorMessage = errorMessage.split("\n")[0];
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
+            return false;
+        } catch (final TranslationException e) {
+            LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
+            LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
             return false;
         } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
@@ -193,6 +198,11 @@ final class ProfileScreenshotExecutor {
 
         if (trackerHandler.hasFixedHeader()) {
             LOGGER.info("\t- Header has been updated to not be fixed");
+        }
+
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler.needsExplicitTranslation()) {
+            LOGGER.info("\t- Translating profile page to English");
+            trackerHandler.translatePageToEnglish();
         }
 
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),

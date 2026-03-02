@@ -160,6 +160,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 
 | Tracker Name                                  | Type                 |
 |-----------------------------------------------|----------------------|
+| [52PT](https://52pt.site/)                    | **Manual**           |
 | [AnimeTorrents](https://animetorrents.me/)    | **Cloudflare-check** |
 | [AvistaZ](https://avistaz.to/)                | **Cloudflare-check** |
 | [BeyondHD](https://beyond-hd.me/)             | **Manual**           |
