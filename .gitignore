@@ -26,3 +26,6 @@ trackers.csv
 
 # vim
 *.swp
+
+# Claude config
+!settings.local.json
