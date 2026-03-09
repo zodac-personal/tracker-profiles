@@ -224,6 +224,7 @@ docker run \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=INFO \
+    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TYPE=TEXT \
@@ -255,6 +256,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=INFO \
+    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TYPE=TEXT \
@@ -322,6 +324,7 @@ The following are all possible configuration options, defined as environment var
 | *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                            |
 | *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                              |
 | *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                             |
+| *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails) (max of 5)                                                                                                             | 1                                |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                       |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                 |
 | *REDACTION_TYPE*                | Whether to redact by replacing the text, or overlaying a solid box over the sensitive information [OVERLAY, TEXT]                                                                                        | TEXT                             |
@@ -388,6 +391,7 @@ docker run \
     --env INPUT_TIMEOUT_ENABLED=true \
     --env INPUT_TIMEOUT_SECONDS=300 \
     --env LOG_LEVEL=TRACE \
+    --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TYPE=TEXT \

@@ -21,18 +21,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.NoSuchElementException;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.config.ExistingScreenshotAction;
-import net.zodac.tracker.framework.exception.BrowserClosedException;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
@@ -49,6 +50,7 @@ import org.openqa.selenium.remote.UnreachableBrowserException;
  */
 final class ProfileScreenshotExecutor {
 
+    private static final int FIRST_ATTEMPT = 1;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ApplicationConfiguration CONFIG = Configuration.get();
 
@@ -57,16 +59,41 @@ final class ProfileScreenshotExecutor {
     }
 
     /**
-     * Attempts to take a screenshot for the given tracker credential.
+     * Attempts to take a screenshot for the given {@link TrackerCredential}.
      *
-     * @param trackerCredential the tracker to screenshot
-     * @return true if screenshot was successful, false otherwise
+     * @param trackerCredential details of the tracker to screenshot
+     * @return {@code true} if screenshot was successful
+     * @throws RuntimeException thrown if all attempts are exhausted due to a retryable failure with a known cause
      */
-    static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
+    static boolean canScreenshotTracker(final TrackerCredential trackerCredential) {
         LOGGER.info("");
         LOGGER.info("[{}]", trackerCredential.name());
 
-        // TODO: Add a retry option, then return number of attempts needed
+        final int maxAttempts = CONFIG.numberOfTrackerAttempts();
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            if (attempt != FIRST_ATTEMPT) {
+                LOGGER.warn("");
+                LOGGER.warn("- Retrying [{}] ({}/{})", trackerCredential.name(), attempt, maxAttempts);
+            }
+
+            try {
+                final boolean screenshotResult = isSuccessfullyScreenshot(trackerCredential);
+
+                if (screenshotResult) {
+                    LOGGER.trace("Successfully screenshot '{}' on attempt #{}", trackerCredential.name(), attempt);
+                    return true;
+                }
+            } catch (final Exception e) {
+                LOGGER.trace("Error screenshotting '{}' on attempt #{}", trackerCredential.name(), attempt, e);
+                BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "a moment before retrying");
+            }
+        }
+
+        LOGGER.debug("\t- All {} attempts exhausted for tracker '{}'", maxAttempts, trackerCredential.name());
+        return false;
+    }
+
+    private static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
         AbstractTrackerHandler trackerHandler = null;
         try { // NOPMD: UseTryWithResources - need access to the trackerHandler to take a screenshot on error
             trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name());
@@ -75,23 +102,18 @@ final class ProfileScreenshotExecutor {
         } catch (final CancelledInputException e) {
             LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerCredential.name());
-            return false;
         } catch (final DriverAttachException e) {
             LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name());
-            return false;
         } catch (final FileNotFoundException e) {
             LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerCredential.name());
             LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerCredential.name(), e.getMessage());
-            return false;
         } catch (final NoSuchElementException e) {
             LOGGER.debug("\t- No implementation for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- No implementation for tracker '{}'", trackerCredential.name());
-            return false;
         } catch (final NoUserInputException e) {
             LOGGER.debug("\t- User provided no manual input for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerCredential.name());
-            return false;
         } catch (final TimeoutException e) {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
@@ -103,14 +125,11 @@ final class ProfileScreenshotExecutor {
                 final String cleanedErrorMessage = errorMessage.split("\n")[0];
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
-            return false;
         } catch (final TranslationException e) {
             LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
             LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
-            return false;
         } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
-            throw new BrowserClosedException(e);
         } catch (final Exception e) {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
@@ -122,13 +141,13 @@ final class ProfileScreenshotExecutor {
                 final String cleanedErrorMessage = errorMessage.split("\n")[0];
                 LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
-
-            return false;
         } finally {
             if (trackerHandler != null) {
                 trackerHandler.close();
             }
         }
+
+        return false;
     }
 
     private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName) {

@@ -77,7 +77,7 @@ final class ResultCollector {
 
         if (totalSuccessful == 0) {
             LOGGER.error("");
-            LOGGER.error("All {} selected tracker{} failed:", totalUnsuccessful, StringUtils.pluralise(totalUnsuccessful));
+            LOGGER.error("{} selected tracker{} failed:", totalUnsuccessful, StringUtils.pluralise(totalUnsuccessful));
 
             unsuccessfulTrackers.forEach((type, trackers) -> {
                 LOGGER.error("- {}:", type.formattedName());
@@ -89,7 +89,7 @@ final class ResultCollector {
 
         if (totalUnsuccessful == 0) {
             LOGGER.info("");
-            LOGGER.info("All {} selected trackers successfully screenshot", totalSuccessful);
+            LOGGER.info("{} selected tracker{} successfully screenshot", totalSuccessful, StringUtils.pluralise(totalSuccessful));
 
             successfulTrackers.forEach((type, trackers) -> LOGGER.debug("- {} ({}): {}", type.formattedName(), trackers.size(), trackers));
 

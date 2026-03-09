@@ -85,7 +85,7 @@ public final class ScreenshotOrchestrator {
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
             for (final TrackerCredential trackerCredential : trackersByType.get(trackerType).second()) {
                 final long startNanos = System.nanoTime();
-                final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.isSuccessfullyScreenshot(trackerCredential);
+                final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.canScreenshotTracker(trackerCredential);
                 resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
                 printExecutionTime(trackerCredential.name(), startNanos);
             }

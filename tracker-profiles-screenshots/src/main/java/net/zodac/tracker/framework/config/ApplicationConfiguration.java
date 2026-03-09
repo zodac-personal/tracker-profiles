@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
  * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
+ * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the user profile page
  * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
@@ -62,6 +63,7 @@ public record ApplicationConfiguration(
     boolean forceUiBrowser,
     Duration inputTimeoutDuration,
     boolean inputTimeoutEnabled,
+    int numberOfTrackerAttempts,
     Path outputDirectory,
     RedactionType redactionType,
     boolean takeScreenshotOnError,
@@ -114,6 +116,7 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
             getInputTimeoutDuration(),
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
+            getNumberOfTrackerAttempts(),
             getOutputDirectory(),
             getRedactionType(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
@@ -144,8 +147,13 @@ public record ApplicationConfiguration(
 
     private static Duration getInputTimeoutDuration() {
         final String inputTimeoutSeconds = getOrDefault("INPUT_TIMEOUT_SECONDS", "300");
-        final int inputTimeoutSecondsValidated = parsePositiveInteger(inputTimeoutSeconds, "INPUT_TIMEOUT_SECONDS");
+        final int inputTimeoutSecondsValidated = parseIntegerInRange(inputTimeoutSeconds, "INPUT_TIMEOUT_SECONDS", Integer.MAX_VALUE);
         return Duration.ofSeconds(inputTimeoutSecondsValidated);
+    }
+
+    private static int getNumberOfTrackerAttempts() {
+        final String numberOfRetriesRaw = getOrDefault("NUMBER_OF_TRACKER_ATTEMPTS", "1");
+        return parseIntegerInRange(numberOfRetriesRaw, "NUMBER_OF_TRACKER_ATTEMPTS", 5);
     }
 
     private static Path getOutputDirectory() {
@@ -216,11 +224,12 @@ public record ApplicationConfiguration(
         return Boolean.parseBoolean(getOrDefault(environmentVariableName, Boolean.toString(defaultValue)));
     }
 
-    private static int parsePositiveInteger(final String input, final String environmentVariableName) {
+    private static int parseIntegerInRange(final String input, final String environmentVariableName, final int max) {
         try {
             final int integer = Integer.parseInt(input);
-            if (integer <= 0) {
-                throw new IllegalArgumentException(String.format("[%s] Invalid input '%s', must be greater than 0", environmentVariableName, input));
+            if (integer < 1 || integer > max) {
+                throw new IllegalArgumentException(
+                    String.format("[%s] Invalid input '%s', must be between %d and %d", environmentVariableName, input, 1, max));
             }
             return integer;
         } catch (final NumberFormatException e) {
@@ -247,6 +256,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
         LOGGER.debug("\t- inputTimeoutDuration={}", inputTimeoutDuration);
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
+        LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- redactionType={}", redactionType);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
