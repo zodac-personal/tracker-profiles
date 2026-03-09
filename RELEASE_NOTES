@@ -1,3 +1,0 @@
-## New option `NUMBER_OF_TRACKER_ATTEMPTS`
-
-New option that allows for multiple attempts to be made when screenshotting a tracker. By default there will only be 1 attempt, and the option can be set to a max of 5. Used for flaky trackers and troubleshooting updates.
