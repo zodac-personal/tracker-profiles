@@ -11,7 +11,7 @@
 # Requirements:
 #   - Bash 4+ with support for string manipulation and arrays
 #   - `mvn` (Maven) must be installed and accessible in the system PATH
-#   - Git repository initialized and containing a `VERSION` file and pom.xml files
+#   - Git repository initialised and containing a `VERSION` file and pom.xml files
 #   - GitHub Actions environment variable `GITHUB_ENV` must be defined for CI integration
 #
 # Behavior:

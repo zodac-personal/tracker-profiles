@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------
 # Script Name:     generate_changelog.sh
 #
-# Description:     Generates a categorized changelog from git commit messages
+# Description:     Generates a categorised changelog from git commit messages
 #                  between a previous tag and the current HEAD. Outputs the
 #                  formatted changelog to the GitHub Actions environment.
 #
@@ -16,7 +16,7 @@
 # Behavior:
 #   - Reads all commits between the given tag and HEAD
 #   - Parses commit messages expecting a format like: [category] message
-#   - Categorizes commits by their bracketed prefix (e.g., [ci], [framework])
+#   - Categorises commits by their bracketed prefix (e.g., [ci], [framework])
 #   - Preferred categories (ci, deployment, doc, framework, python) are printed first
 #   - Other categories are grouped under the "Trackers" section
 #   - Commit messages are linked using the provided repository URL
@@ -39,7 +39,7 @@ declare -A categories
 commit_hash=""
 commit_message=""
 
-# Process commits and categorize them
+# Process commits and categorise them
 while IFS= read -r line; do
     if [[ "$line" == "---END---" ]]; then
         # Process the full commit message line by line
