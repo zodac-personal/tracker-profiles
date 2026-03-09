@@ -121,7 +121,6 @@ jobs:
         run: .github/scripts/generate_github_release_content.sh "${{ steps.version.outputs.version }}" "${{ steps.prev_tag.outputs.prev_tag }}"
 
       - name: Update tracker count in README
-        if: env.has_changes == 'true'
         run: |
           tracker_count=$(grep -R --include='*.java' '^@TrackerHandler(' . | cut -d '"' -f2 | sort -u | wc -l)
           sed -i -E "s/(There are currently \*\*)[0-9]+(\*\* supported trackers listed below\.)/\1${tracker_count}\2/" README.md
