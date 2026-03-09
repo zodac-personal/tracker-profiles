@@ -21,11 +21,10 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.EnumMap;
@@ -82,20 +81,23 @@ public class TeamOsHandler extends AbstractTrackerHandler {
     protected void manualCheckAfterLoginClick(final String trackerName) {
         browserInteractionHelper.stopPageLoad();
 
-        final String title = driver.getTitle();
-        // TODO: Test this again to be language agnostic
-        if (title != null && title.contains("Oops! We ran into some problems.")) {
-            LOGGER.debug("\t\t- Tracker admin requires updated thread to be viewed, clicking...");
-            final By threadRedirectSelector = XpathBuilder
-                .from(span, withText("You can click here to view the thread"))
-                .parent(a)
-                .build();
-            final WebElement threadRedirect = driver.findElement(threadRedirectSelector);
+        // When an update to site rules occurs, there is a single button with a link to the rules thread
+        final By adminThreadButtonsSelector = XpathBuilder
+            .from(a, withClass("button"), containsAttribute("href", "/threads/site-introduction-and-rules"))
+            .build();
+        final List<WebElement> adminThreadButtons = driver.findElements(adminThreadButtonsSelector).stream().toList();
 
-            browserInteractionHelper.removeAttribute(threadRedirect, "target"); // Stop forcing the link to open in a new tab
-            clickButton(threadRedirect);
-            browserInteractionHelper.stopPageLoad();
+        if (adminThreadButtons.size() != 1) {
+            LOGGER.debug("\t\t- Found {} thread links, not clicking anything", adminThreadButtons.size());
+            return;
         }
+
+        LOGGER.debug("\t\t- Found single thread link to updated rules, admin requires thread to be viewed, clicking...");
+        final WebElement adminThreadButton = adminThreadButtons.getFirst();
+        browserInteractionHelper.removeAttribute(adminThreadButton, "target"); // Stop forcing the link to open in a new tab
+        clickButton(adminThreadButton);
+        browserInteractionHelper.stopPageLoad();
+        LOGGER.debug("\t\t- Updated rules thread viewed, continuing tracker execution");
     }
 
     @Override
