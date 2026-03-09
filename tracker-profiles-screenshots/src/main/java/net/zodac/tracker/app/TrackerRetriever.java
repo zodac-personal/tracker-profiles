@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerCsvReader;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
@@ -34,11 +35,12 @@ import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
 import net.zodac.tracker.util.Pair;
+import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Handles retrieving and organizing trackers from the CSV input file.
+ * Handles retrieving and organising trackers from the CSV input file.
  */
 final class TrackerRetriever {
 
@@ -50,9 +52,10 @@ final class TrackerRetriever {
     }
 
     /**
-     * Reads trackers from the CSV file and organizes them by type.
+     * Reads trackers from the CSV file and organises them by {@link TrackerType}.
      *
-     * @return map of tracker types to their credentials
+     * @return {@link Map} of {@link TrackerType} to their credentials
+     * @throws InvalidCsvInputException thrown if there is an error with the CSV input
      */
     static Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
@@ -61,6 +64,14 @@ final class TrackerRetriever {
 
         try {
             final Set<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
+            final Set<String> trackersWithNoHandlers = trackerCredentials.stream()
+                .map(TrackerCredential::name)
+                .filter(name -> TrackerHandlerFactory.findMatchingHandler(name).isEmpty())
+                .collect(Collectors.toCollection(TreeSet::new));
+            if (!trackersWithNoHandlers.isEmpty()) {
+                LOGGER.warn("Unknown tracker{} in CSV: {}", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers);
+            }
+
             final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = new EnumMap<>(TrackerType.class);
 
             for (final TrackerCredential trackerCredential : trackerCredentials) {
@@ -103,9 +114,9 @@ final class TrackerRetriever {
     }
 
     /**
-     * Prints summary information about all trackers, if {@link Logger#isDebugEnabled()} is {@code true}.
+     * Prints summary information about all {@link TrackerHandler}s, if {@link Logger#isDebugEnabled()} is {@code true}.
      *
-     * @param trackersByType the map of trackers organized by type
+     * @param trackersByType the {@link Map} of trackers organised by {@link TrackerType}
      */
     static void printTrackersInfo(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType,
                                   final List<TrackerType> trackerExecutionOrder
