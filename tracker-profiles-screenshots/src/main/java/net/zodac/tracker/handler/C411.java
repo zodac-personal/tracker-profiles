@@ -64,6 +64,7 @@ public class C411 extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
+        BrowserInteractionHelper.explicitWait(Duration.ofMillis(3500L), "login pop-up to disappear");
         return By.id("reka-dropdown-menu-trigger-v-1-0-2");
     }
 
