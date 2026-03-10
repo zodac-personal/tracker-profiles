@@ -89,6 +89,7 @@ background:
 | [AlphaRatio](https://alpharatio.cc/)                 |
 | [AnimeBytes](https://animebytes.tv/)                 |
 | [Anthelion](https://anthelion.me/)                   |
+| [ArabicSource](https://arabicsource.net/)            |
 | [ArabP2P](https://www.arabp2p.net/)                  |
 | [AsianCinema](https://eiga.moi/)                     |
 | [BackUps](https://back-ups.me/)                      |

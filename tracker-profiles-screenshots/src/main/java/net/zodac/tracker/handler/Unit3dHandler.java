@@ -39,10 +39,12 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
  */
 @CommonTrackerHandler("UNIT3D")
+@TrackerHandler(name = "ArabicSource", url = "https://arabicsource.net/")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "AsianCinema", url = "https://eiga.moi/")
 @TrackerHandler(name = "DesiTorrents", url = "https://desitorrents.tv/")
