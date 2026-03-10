@@ -73,6 +73,17 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Adds a value to the HTML 'class' attribute of the {@link WebElement}. Does not override existing classes.
+     *
+     * @param element    the {@link WebElement}
+     * @param classToAdd the name of the class to add to the {@link WebElement}
+     */
+    public void addClass(final WebElement element, final String classToAdd) {
+        LOGGER.trace("Adding class '{}' to element '{}'", classToAdd, element);
+        driver.executeScript("arguments[0].classList.add(arguments[1]);", element, classToAdd);
+    }
+
+    /**
      * Disables scrolling on the current web page, to remove the scrollbar from the screenshot.
      */
     public void disableScrolling() {

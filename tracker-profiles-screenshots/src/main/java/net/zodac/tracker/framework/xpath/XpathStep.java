@@ -59,7 +59,7 @@ public final class XpathStep {
      * @param predicates any remaining {@link XpathPredicate}s
      * @return this {@link XpathBuilder}
      */
-    public XpathStep from(final Element element, final XpathPredicate... predicates) {
+    XpathStep from(final Element element, final XpathPredicate... predicates) {
         xpath.append("//").append(element.tagName());
         applyPredicates(predicates);
         return this;

@@ -561,6 +561,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return {@code true} if there was a fixed header, and it was successfully updated
      */
+    // TODO: I don't like the side-effect of unfixing happening here, it should be called explicitly
     public boolean hasFixedHeader() {
         return false;
     }
