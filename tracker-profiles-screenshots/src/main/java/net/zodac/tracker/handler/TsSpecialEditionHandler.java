@@ -44,6 +44,7 @@ import org.openqa.selenium.WebElement;
 @CommonTrackerHandler("TSSpecialEdition")
 @TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
 @TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
+@TrackerHandler(name = "T3nnis", url = "https://t3nnis.tv/")
 public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 
     @Override

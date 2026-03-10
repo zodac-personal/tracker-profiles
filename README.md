@@ -24,8 +24,10 @@
 
 ## Overview
 
-This is a tool used to log in to private torrent websites and take a screenshot of the user's profile page. This can be used to showcase stats on your
-current tracker as part of an application to another site. It can also be used as a historical record of your stats on a tracker in case it goes down
+This is a tool used to log in to private torrent websites and take a screenshot of the user's profile page. This can be
+used to showcase stats on your
+current tracker as part of an application to another site. It can also be used as a historical record of your stats on a
+tracker in case it goes down
 or becomes otherwise unavailable.
 
 ## Features
@@ -70,13 +72,15 @@ There are currently **100** supported trackers listed below. The available track
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
-- Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides **Manual**)
+- Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides *
+  *Manual**)
 
 **Note:** Any tracker not listed in any section below has not been tested (most likely due to lack of an account).
 
 ### Headless
 
-The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the background:
+The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the
+background:
 
 | Tracker Name                                         |
 |------------------------------------------------------|
@@ -144,6 +148,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [SeedPool](https://seedpool.org/)                    |
 | [SexTorrent](https://sextorrent.myds.me/)            |
 | [SportsCult](https://sportscult.org/)                |
+| [T3nnis](https://t3nnis.tv/)                         |
 | [Tasmanites](https://tasmanit.es/)                   |
 | [TeamOS](https://teamos.xyz/)                        |
 | [TheMixingBowl](https://themixingbowl.org/)          |
@@ -157,7 +162,8 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 
 ### Non-Headless
 
-If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in `TRACKER_EXECUTION_ORDER`), then
+If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in
+`TRACKER_EXECUTION_ORDER`), then
 a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
 | Tracker Name                                  | Type                 |
@@ -195,10 +201,13 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 
 ### Tracker Definitions
 
-First, copy the [trackers_example.csv](./docker/trackers_example.csv) file. This file needs to be updated with your user's login information for each
-tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL` environment variable so they are excluded.
+First, copy the [trackers_example.csv](./docker/trackers_example.csv) file. This file needs to be updated with your
+user's login information for each
+tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL` environment variable so they are
+excluded.
 
-The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when running the application, so
+The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when
+running the application, so
 remember where it is saved and what it is named.
 
 ### Running In Docker
@@ -299,7 +308,8 @@ xhost +local:
 
 #### UI in Windows
 
-I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcXsrv, make sure to set the following in the configuration:
+I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcXsrv, make sure to set the following in
+the configuration:
 
 - Multiple windows
 - Display number 0
@@ -307,7 +317,8 @@ I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcX
 
 #### Disable UI
 
-To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and `ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and
+To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
+`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and
 exclude **manual** and **cloudflare-check** from `TRACKER_EXECUTION_ORDER`. You can also remove `--env DISPLAY` and/or
 `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
@@ -344,7 +355,8 @@ The following are all possible configuration options, defined as environment var
 - [Docker](https://docs.docker.com/engine/install/) (if using the Docker dev image)
 - [Google Chrome](https://www.google.com/chrome/) (only if not using Docker)
 - [Java (JDK 25)](https://jdk.java.net/25/)
-- [Python (3.13+)](https://www.python.org/downloads/release/python-313/) (only if testing trackers with Cloudflare verification, and not using Docker)
+- [Python (3.13+)](https://www.python.org/downloads/release/python-313/) (only if testing trackers with Cloudflare
+  verification, and not using Docker)
 
 ### Install Git Hooks
 
@@ -356,7 +368,8 @@ bash ./ci/hooks/setup-hooks.sh
 
 ### Debugging Application
 
-If `TRACKER_EXECUTION_ORDER` contains **cloudflare-check**, then Python must be configured for your environment. From the root directory, execute the
+If `TRACKER_EXECUTION_ORDER` contains **cloudflare-check**, then Python must be configured for your environment. From
+the root directory, execute the
 following:
 
 ```bash
@@ -365,20 +378,26 @@ pip install -r ./python/requirements.txt
 ./venv/bin/python ./python/selenium_manager.py
 ```
 
-Using IntelliJ, and click on **Run**> **Edit Configurations** and add the environment variables for the application. Once done, open
-the [ApplicationLauncher.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/ApplicationLauncher.java) and run the `main`
+Using IntelliJ, and click on **Run**> **Edit Configurations** and add the environment variables for the application.
+Once done, open
+the [ApplicationLauncher.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/ApplicationLauncher.java)
+and run the `main`
 method from the IDE.
-The [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java) implementation
+The [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java)
+implementation
 for each tracker is retrieved by the *trackerName* field within the CSV file.
 
-[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to leverage the Chromium web browser to take screenshots. While the
+[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to leverage the Chromium web browser to
+take screenshots. While the
 application usually runs in headless mode, this can be changed by updating the `FORCE_UI_BROWSER` value in
-the [configuration](#configuration-options). This will cause a new browser instance to launch when taking a screenshot, and can be used for debugging
+the [configuration](#configuration-options). This will cause a new browser instance to launch when taking a screenshot,
+and can be used for debugging
 a new implementation.
 
 ### Building And Developing In Docker
 
-Below is the command to build and run the development docker image with everything enabled (requires the UI to be defined):
+Below is the command to build and run the development docker image with everything enabled (requires the UI to be
+defined):
 
 ```bash
 docker build -f ./docker/Dockerfile -t tracker-profiles-dev . &&
@@ -410,25 +429,34 @@ docker run \
 
 ### Implementing Support For New Trackers
 
-All supported private trackers have an implementation found in the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler)
+All supported private trackers have an implementation found in
+the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler)
 package. To add a new one,
-extend [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java), following
+extend [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java),
+following
 the convention from an existing implementation
 like [AbTorrentsHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbTorrentsHandler.java).
 
-Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/TrackerType.java) is set correctly for your tracker.
+Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/TrackerType.java) is
+set correctly for your tracker.
 
 ### Cloudflare Trackers
 
-The `Cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the other trackers, since this
-verification check cannot be passed using stock Selenium. [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is
+The `Cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the
+other trackers, since this
+verification check cannot be passed using stock
+Selenium. [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is
 used to create a web browser that is capable of bypassing Cloudflare detection.
 
-Unfortunately, this is a Python-only package. While a *reasonable* person would migrate the project to Python, I'd prefer to keep writing this in
-Java. So a [Python web-server](./python/selenium_manager/server.py) is spun up that exposes endpoints to open/close a Selenium web browser that
+Unfortunately, this is a Python-only package. While a *reasonable* person would migrate the project to Python, I'd
+prefer to keep writing this in
+Java. So a [Python web-server](./python/selenium_manager/server.py) is spun up that exposes endpoints to open/close a
+Selenium web browser that
 can bypass detection. There is a Java implementation of the
-[Selenium WebDriver class](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/driver/python/AttachedRemoteWebDriver.java) which
+[Selenium WebDriver class](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/driver/python/AttachedRemoteWebDriver.java)
+which
 can attach to the Selenium browser that was launched by Python.
 
 This is all handled by the framework, so an implementation of a tracker can be done following like
-[any other tracker](#implementing-support-for-new-trackers), without needing to worry about whether the browser is launched by Java or Python.
+[any other tracker](#implementing-support-for-new-trackers), without needing to worry about whether the browser is
+launched by Java or Python.
