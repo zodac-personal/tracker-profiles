@@ -18,14 +18,8 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.button;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -35,41 +29,16 @@ import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code TeamOS} tracker.
- *
- * <p>
- * Note that the URL is set to the login page in order to bypass the site redirecting to an advertisement.
+ * Extension of the {@link Unit3dHandler} for the {@code TeamOS} tracker.
  */
-@TrackerHandler(name = "TeamOS", url = "https://teamos.xyz/login")
-public class TeamOs extends AbstractTrackerHandler {
+@TrackerHandler(name = "TeamOS", url = "https://teamos.xyz/login/")
+public class TeamOs extends XenForoHandler {
 
     private static final int EXPECTED_NUMBER_OF_THREAD_LINKS = 1;
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(button, withType("submit"))
-            .build();
-    }
 
     /**
      * {@inheritDoc}
@@ -102,73 +71,7 @@ public class TeamOs extends AbstractTrackerHandler {
         LOGGER.debug("\t\t- Updated rules thread viewed, continuing tracker execution");
     }
 
-    @Override
-    protected By postLoginSelector() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
-        return XpathBuilder
-            .from(div, withClass("focus-wrap-user"))
-            .build();
-    }
-
-    @Override
-    protected By profilePageSelector() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
-        navigateToUserPage();
-        return XpathBuilder
-            .from(div, withClass("p-body-sideNavContent"))
-            .child(div, atIndex(1))
-            .child(div, atIndex(1))
-            .child(div, atIndex(1))
-            .child(a, atIndex(1))
-            .build();
-    }
-
-    @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
-    protected By logoutButtonSelector() {
-        navigateToUserPage();
-        return XpathBuilder
-            .from(div, withClass("p-body-sideNavContent"))
-            .child(div, atIndex(2))
-            .child(div, atIndex(1))
-            .child(div, atIndex(1))
-            .child(a, atIndex(1))
-            .build();
-    }
-
-    private void navigateToUserPage() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load before clicking navbar");
-        // Click the nav bar to make the profile button interactable
-        final By profileParentSelector = XpathBuilder
-            .from(a, withClass("p-navgroup-link--user"))
-            .build();
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "first navbar click");
-
-        clickButton(profileParent);
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "second navbar click");
-    }
-
     // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link TeamOs}, after logout we are redirected to the homepage, not the login page. While we actually ignore this page during login
-     * (due to the fact we are redirected to an advertisement), we need to specify it now to confirm logout.
-     */
-    @Override
-    protected By postLogoutElementSelector() {
-        return XpathBuilder
-            .from(a, withClass("p-navgroup-link--logIn"))
-            .build();
-    }
 
     @Override
     protected List<ExtensionBinding<?>> requiredExtensions() {

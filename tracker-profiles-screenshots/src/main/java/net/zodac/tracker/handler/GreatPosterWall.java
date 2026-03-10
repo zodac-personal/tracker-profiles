@@ -113,7 +113,6 @@ public class GreatPosterWall extends AbstractTrackerHandler {
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By dropDownMenuSelector = XpathBuilder
             .from(span, withClass("HeaderProfile-avatarContainer"))
-//            .child(NamedHtmlElement.of("svg"), atIndex(1))
             .build();
         final WebElement dropDownMenu = driver.findElement(dropDownMenuSelector);
         clickButton(dropDownMenu);

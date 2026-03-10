@@ -186,6 +186,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [GazelleGames](https://gazellegames.net/)           | **Manual**           |
 | [Hawke-Uno](https://hawke.uno/)                     | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                       | **Cloudflare-check** |
+| [Immortal-S](https://immortal-s.me/)                | **Manual**           |
 | [LST](https://lst.gg/)                              | **Manual**           |
 | [PassThePopcorn](https://passthepopcorn.me/)        | **Manual**           |
 | [PrivateHD](https://privatehd.to/)                  | **Cloudflare-check** |
@@ -440,7 +441,7 @@ package. To add a new one,
 extend [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java),
 following
 the convention from an existing implementation
-like [AbTorrentsHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbTorrentsHandler.java).
+like [AbTorrents.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbTorrents.java).
 
 Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/TrackerType.java) is
 set correctly for your tracker.
