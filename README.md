@@ -150,6 +150,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [TranceTraffic](https://www.trancetraffic.com/)      |
 | [TVChaosUK](https://tvchaosuk.com/)                  |
 | [Unwalled](https://unwalled.cc/)                     |
+| [XSpeeds](https://www.xspeeds.eu/)                   |
 | [XWT-Classics](https://xwt-classics.net/)            |
 | [YUSCENE](https://yu-scene.net/)                     |
 
