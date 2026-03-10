@@ -49,10 +49,11 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
      * The settings for the {@link UblockSettings} {@link Extension}.
      */
     public enum UblockSettings {
+
         /**
-         * Whether to enable the miscellanous filter lists.
+         * Whether to enable the miscellaneous filter lists.
          */
-        ENABLE_MISCELLANOUS_FILTERS,
+        ENABLE_MISCELLANEOUS_FILTERS,
 
         /**
          * Whether to enable the regional filter lists.
@@ -60,7 +61,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
         ENABLE_REGION_FILTERS,
 
         /**
-         * Whether to change the default filtering mode from 'optimal' to 'complete.
+         * Whether to change the default filtering mode from 'optimal' to 'complete'.
          */
         SET_FILTERING_MODE
     }
@@ -102,11 +103,11 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
                 settingFilteringMode(driver);
             }
 
-            if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS) || getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+            if (getSetting(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS) || getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
                 LOGGER.debug("\t\t- Opening filter lists page");
                 openFilterListsPage(driver, browserInteractionHelper);
 
-                if (getSetting(settings, UblockSettings.ENABLE_MISCELLANOUS_FILTERS)) {
+                if (getSetting(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)) {
                     LOGGER.debug("\t\t- Enabling all miscellaneous filters");
                     enableAllMiscellaneousFilters(driver, browserInteractionHelper);
                 }

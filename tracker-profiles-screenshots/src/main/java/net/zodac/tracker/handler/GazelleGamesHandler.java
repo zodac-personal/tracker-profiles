@@ -106,7 +106,7 @@ public class GazelleGamesHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link GazelleGamesHandler}, after clicking the logout button, a Javascript alert appears, which must be accepted.
+     * For {@link GazelleGamesHandler}, after clicking the logout button, a JavaScript alert appears, which must be accepted.
      */
     @Override
     public void logout() {

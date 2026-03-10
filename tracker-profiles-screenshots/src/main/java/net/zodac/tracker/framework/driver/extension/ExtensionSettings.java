@@ -28,7 +28,7 @@ import java.util.Map;
 public interface ExtensionSettings<E extends Enum<E>> {
 
     /**
-     * Returns thesettings for this {@link Extension}.
+     * Returns the {@link ExtensionSettings} for an {@link Extension}.
      *
      * <p>
      * Each key in the returned {@link Map} corresponds to a specific option defined by the extension’s enum type, and the value indicates whether

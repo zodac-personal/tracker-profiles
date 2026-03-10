@@ -108,7 +108,7 @@ public class TorrentPierHandler extends AbstractTrackerHandler {
             () -> {
                 final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =
                     new EnumMap<>(UblockOriginLiteExtension.UblockSettings.class);
-                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANOUS_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANEOUS_FILTERS, true);
                 settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_REGION_FILTERS, true);
                 settings.put(UblockOriginLiteExtension.UblockSettings.SET_FILTERING_MODE, true);
                 return settings;

@@ -46,7 +46,7 @@ public final class AttachedRemoteWebDriver extends RemoteWebDriver {
 
     /**
      * Creates an instance of {@link AttachedRemoteWebDriver}. It retrieves the URL and port of an existing Python-based Selenium web browser session
-     * from the provided {@link SeleniumSession}, then overrides the requires fields to attach to the existing session.
+     * from the provided {@link SeleniumSession}, then overrides the required fields to attach to the existing session.
      *
      * @param seleniumSession the {@link SeleniumSession}
      * @return the created {@link AttachedRemoteWebDriver}.

@@ -18,7 +18,7 @@
 package net.zodac.tracker.framework.xpath;
 
 /**
- * Interface defining a HTML element to be used with {@link XpathBuilder}.
+ * Interface defining an HTML element to be used with {@link XpathBuilder}.
  */
 public sealed interface Element permits HtmlElement, NamedHtmlElement {
 

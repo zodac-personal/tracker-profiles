@@ -120,7 +120,7 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link TsSpecialEditionHandler}, after clicking the logout button, a Javascript alert appears, which must be accepted.
+     * For {@link TsSpecialEditionHandler}, after clicking the logout button, a JavaScript alert appears, which must be accepted.
      */
     @Override
     public void logout() {

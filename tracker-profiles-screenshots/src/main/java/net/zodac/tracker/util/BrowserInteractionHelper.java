@@ -188,7 +188,7 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Scrolls the page to by the provided number of pixels in both the X and Y axis.
+     * Scrolls the page by the provided number of pixels in both the X and Y axis.
      *
      * @param x pixels to scroll left/right
      * @param y pixels to scroll up/down

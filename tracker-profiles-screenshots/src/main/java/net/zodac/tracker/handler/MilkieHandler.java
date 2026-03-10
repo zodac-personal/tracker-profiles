@@ -98,7 +98,7 @@ public class MilkieHandler extends AbstractTrackerHandler {
         reloadPage(); // Reload the page to have a consistent state with no user stats pop-up
         final By profilePageSelector = profilePageSelector();
 
-        // TODO: Move this to browserInteractionHelper, and replace more explicit waits with element visibily waits
+        // TODO: Move this to browserInteractionHelper, and replace more explicit waits with element visibly waits
         final Wait<WebDriver> wait = new WebDriverWait(driver, waitForPageLoadDuration());
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(profilePageSelector));
 

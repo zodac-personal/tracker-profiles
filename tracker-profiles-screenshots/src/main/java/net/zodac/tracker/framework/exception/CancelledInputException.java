@@ -20,7 +20,7 @@ package net.zodac.tracker.framework.exception;
 import java.io.Serial;
 
 /**
- * Exception used to indicate that a manual tracker has not received a user input due to the use closing the dialog box.
+ * Exception used to indicate that a manual tracker has not received a user input due to the user explicitly closing the dialog box.
  */
 public class CancelledInputException extends RuntimeException {
 

@@ -42,7 +42,7 @@ public @interface TrackerHandler {
     String name();
 
     /**
-     * Whether the tracker primarily focusses on adult content.
+     * Whether the tracker primarily focuses on adult content.
      *
      * @return whether the tracker is an adult tracker or not
      */

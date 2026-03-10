@@ -31,7 +31,7 @@ import java.util.Locale;
  * usage throughout the {@link XpathBuilder}.
  *
  * <p>
- * Instances should be created via the provided factory methods to ensure basic validation and consistent behavior.
+ * Instances should be created via the provided factory methods to ensure basic validation and consistent behaviour.
  *
  * @param tagName the element tag name
  */

@@ -104,7 +104,7 @@ class XpathBuilderTest {
         "div,1,//div//div[1]",
         "span,2,//div//span[2]"
     })
-    void testDescentantAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
+    void testDescendantAtIndexShouldAppendIndexedAnywhereSelector(final HtmlElement element, final int index, final String expected) {
         final String actual = XpathBuilder
             .from(div)
             .descendant(element, atIndex(index))

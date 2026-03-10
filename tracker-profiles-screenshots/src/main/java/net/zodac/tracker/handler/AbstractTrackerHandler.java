@@ -336,7 +336,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * Defines the {@link By} selector of the {@link WebElement} used to confirm that the user has successfully logged in.
      *
      * <p>
-     * By default this will use {@link #profilePageSelector()}, but if that selector requires some additional work (reloading the page, or
+     * By default, this will use {@link #profilePageSelector()}, but if that selector requires some additional work (reloading the page, or
      * hovering/clicking another element to open a drop-down menu), then a simpler one should be used for this check.
      *
      * @return the post-login {@link By} selector
@@ -567,7 +567,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
     /**
      * Whether the {@link AbstractTrackerHandler} implementation requires the profile page to be scrolled during a screenshot. Useful for some
-     * trackers with a non-standard profile page (like a pop-up), to prevent excessive page info being screenshot.
+     * trackers with a non-standard profile page (like a pop-up), to prevent excessive page info being exposed.
      *
      * @return {@code true} if the page should be scrolled during a screenshot
      */
@@ -706,7 +706,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * to the main execution for the {@link AbstractTrackerHandler}.
      *
      * <p>
-     * By default this is empty to avoid needing to configure any {@link Extension}s unnecessarily.
+     * By default, this is empty to avoid needing to configure any {@link Extension}s unnecessarily.
      *
      * @return whether to install an ad-blocker for the {@link AbstractTrackerHandler}
      */

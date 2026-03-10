@@ -22,7 +22,7 @@ import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 
 /**
- * Simple class providing the defintion of a tracker for this application.
+ * Simple class providing the definition of a tracker for this application.
  *
  * @param name the name of the tracker, used to retrieve a {@link TrackerHandler} implementation
  * @param type the type of the tracker, used to define the type of {@link org.openqa.selenium.remote.RemoteWebDriver} to be used

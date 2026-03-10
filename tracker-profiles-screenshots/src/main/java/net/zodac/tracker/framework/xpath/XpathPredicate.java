@@ -18,7 +18,7 @@
 package net.zodac.tracker.framework.xpath;
 
 /**
- * This interface is used to build an XPath predicate clause (such as {@code [@id='value']} or {@code [contains(@class, 'active')]}) for a HTML
+ * This interface is used to build an XPath predicate clause (such as {@code [@id='value']} or {@code [contains(@class, 'active')]}) for an HTML
  * element. It is intended to be used with {@link XpathBuilder} to allow predicates to be supplied declaratively when constructing XPath
  * expressions, rather than being chained imperatively.
  *

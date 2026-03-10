@@ -48,6 +48,8 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "TeamOS", url = "https://teamos.xyz/login")
 public class TeamOsHandler extends AbstractTrackerHandler {
 
+    private static final int EXPECTED_NUMBER_OF_THREAD_LINKS = 1;
+
     @Override
     protected By usernameFieldSelector() {
         return XpathBuilder
@@ -87,7 +89,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
             .build();
         final List<WebElement> adminThreadButtons = driver.findElements(adminThreadButtonsSelector).stream().toList();
 
-        if (adminThreadButtons.size() != 1) {
+        if (adminThreadButtons.size() != EXPECTED_NUMBER_OF_THREAD_LINKS) {
             LOGGER.debug("\t\t- Found {} thread links, not clicking anything", adminThreadButtons.size());
             return;
         }
@@ -174,7 +176,7 @@ public class TeamOsHandler extends AbstractTrackerHandler {
             () -> {
                 final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =
                     new EnumMap<>(UblockOriginLiteExtension.UblockSettings.class);
-                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANOUS_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANEOUS_FILTERS, true);
                 settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_REGION_FILTERS, true);
                 settings.put(UblockOriginLiteExtension.UblockSettings.SET_FILTERING_MODE, false);
                 return settings;

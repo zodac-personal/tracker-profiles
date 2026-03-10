@@ -42,11 +42,11 @@ public final class TimingUtils {
      *     <li>{@code 1h:02m:09s}</li>
      * </ul>
      *
-     * @param elapsedTimeNanosecons the elapsed time in nanoseconds
+     * @param elapsedTimeNanoseconds the elapsed time in nanoseconds
      * @return formatted duration {@link String}
      */
-    public static String toNaturalTime(final long elapsedTimeNanosecons) {
-        final long totalMillis = TimeUnit.NANOSECONDS.toMillis(elapsedTimeNanosecons);
+    public static String toNaturalTime(final long elapsedTimeNanoseconds) {
+        final long totalMillis = TimeUnit.NANOSECONDS.toMillis(elapsedTimeNanoseconds);
 
         if (totalMillis < Duration.ofSeconds(1L).toMillis()) {
             return String.format("%dms", totalMillis);
