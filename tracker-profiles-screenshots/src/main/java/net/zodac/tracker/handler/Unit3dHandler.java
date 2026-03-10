@@ -36,6 +36,7 @@ import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -47,6 +48,8 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "ArabicSource", url = "https://arabicsource.net/")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "AsianCinema", url = "https://eiga.moi/")
+@TrackerHandler(name = "Blutopia", url = "https://blutopia.cc/")
+@TrackerHandler(name = "Concertos", url = "https://concertos.live/")
 @TrackerHandler(name = "DesiTorrents", url = "https://desitorrents.tv/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
@@ -81,21 +84,27 @@ public class Unit3dHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link Unit3dHandler}-based trackers, there is a cookie banner on first log-in.
+     * For many {@link Unit3dHandler}-based trackers, there is a cookie banner on first log-in. We'll search for this and click it to clear if any
+     * exist.
      *
-     * @return {@code true} once the banner is cleared
+     * @return {@code true} if at least one cookie banner exists and is successfully cleared
      */
     @Override
     public boolean canBannerBeCleared() {
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "login pop-up to disappear");
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();
-        final WebElement cookieButton = driver.findElement(cookieSelector);
-        clickButton(cookieButton);
+
+        final Collection<WebElement> cookieButtons = driver.findElements(cookieSelector);
+        LOGGER.trace("Found {} cookie banners to clear", cookieButtons.size());
+        for (final WebElement cookieButton : cookieButtons) {
+            clickButton(cookieButton);
+        }
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
         browserInteractionHelper.moveToOrigin();
-        return true;
+        return !cookieButtons.isEmpty();
     }
 
     @Override
