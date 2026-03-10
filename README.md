@@ -122,6 +122,7 @@ background:
 | [ImmortalSeed](https://immortalseed.me/)             |
 | [IPTorrents](https://iptorrents.com/)                |
 | [ItaTorrents](https://itatorrents.xyz/)              |
+| [JPopsuki](https://jpopsuki.eu/)                     |
 | [Kufirc](https://kufirc.com/)                        |
 | [Lat-Team](https://lat-team.com/)                    |
 | [Libble](https://libble.me/)                         |
@@ -209,11 +210,10 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 First, copy the [trackers_example.csv](./docker/trackers_example.csv) file. This file needs to be updated with your
 user's login information for each
 tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL` environment variable so they are
-excluded.
+excluded. The tracker names are case-insensitive.
 
 The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when
-running the application, so
-remember where it is saved and what it is named.
+running the application, so remember where it is saved and what it is named.
 
 ### Running In Docker
 

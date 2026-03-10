@@ -94,7 +94,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip &&
     chmod -R 0777 /usr/local/chromium
 
 # Copy Google Chrome extensions
-COPY ./docker/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphecmpfh_2026_2_22.crx /app/ublock_origin_lite.crx
+COPY ./docker/browser_extensions/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphecmpfh_2026_2_22.crx /app/ublock_origin_lite.crx
 
 # Copy Python installation
 COPY --from=python_builder /usr/local/bin/python3 /usr/local/bin/python3
