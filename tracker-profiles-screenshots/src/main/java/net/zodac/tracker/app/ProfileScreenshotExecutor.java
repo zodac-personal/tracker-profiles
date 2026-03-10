@@ -53,6 +53,7 @@ final class ProfileScreenshotExecutor {
     private static final int FIRST_ATTEMPT = 1;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ApplicationConfiguration CONFIG = Configuration.get();
+    private static final Path ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("errors");
 
     private ProfileScreenshotExecutor() {
 
@@ -81,6 +82,7 @@ final class ProfileScreenshotExecutor {
 
                 if (screenshotResult) {
                     LOGGER.trace("Successfully screenshot '{}' on attempt #{}", trackerCredential.name(), attempt);
+                    clearErrorScreenshots(trackerCredential.name());
                     return true;
                 }
             } catch (final Exception e) {
@@ -148,7 +150,35 @@ final class ProfileScreenshotExecutor {
         return false;
     }
 
-    // TODO: Clear error screenshot if successful screenshot taken
+    private static void clearErrorScreenshots(final String trackerName) {
+        final Path errorsDirectory = CONFIG.outputDirectory().resolve("errors");
+        final File errorsDir = errorsDirectory.toFile();
+        if (!errorsDir.exists()) {
+            return;
+        }
+
+        final File[] errorScreenshots = errorsDir.listFiles((_, name) -> name.startsWith(trackerName));
+        if (errorScreenshots != null) {
+            for (final File errorScreenshot : errorScreenshots) {
+                final boolean deleted = errorScreenshot.delete();
+                if (deleted) {
+                    LOGGER.debug("\t- Deleted error screenshot after successful retry: [{}]", errorScreenshot.getAbsolutePath());
+                } else {
+                    LOGGER.warn("\t- Failed to delete error screenshot: [{}]", errorScreenshot.getAbsolutePath());
+                }
+            }
+        }
+
+        final String[] remaining = errorsDir.list();
+        if (remaining != null && remaining.length == 0) {
+            LOGGER.trace("No error screenshots remaining, deleting directory");
+            final boolean deleted = errorsDir.delete();
+            if (deleted) {
+                LOGGER.debug("Deleted empty errors directory: [{}]", errorsDir.getAbsolutePath());
+            }
+        }
+    }
+
     private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName) {
         if (!CONFIG.takeScreenshotOnError()) {
             LOGGER.trace("Error occurred, but screenshots for errors are not enabled");
@@ -162,9 +192,8 @@ final class ProfileScreenshotExecutor {
 
         try {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
-            final Path failureOutputDirectory = CONFIG.outputDirectory().resolve("errors");
-            ensureDirectoryExists(failureOutputDirectory);
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), failureOutputDirectory, trackerName, true, 0);
+            createErrorsDirectory();
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, true, 0);
             LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
             LOGGER.debug("\t- Unable to take failure screenshot of '{}'", trackerName, e);
@@ -172,14 +201,17 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void ensureDirectoryExists(final Path directory) {
-        final File directoryHandle = directory.toFile();
-        if (!directoryHandle.exists()) {
-            LOGGER.trace("Creating directory: '{}'", directoryHandle);
-            final boolean wasDirectoryCreated = directoryHandle.mkdirs();
-            if (!wasDirectoryCreated) {
-                LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
-            }
+    private static void createErrorsDirectory() {
+        final File directoryHandle = ProfileScreenshotExecutor.ERRORS_DIRECTORY.toFile();
+        if (directoryHandle.exists()) {
+            LOGGER.trace("Errors directory already exists: '{}'", directoryHandle);
+            return;
+        }
+
+        LOGGER.debug("\t- Creating errors directory: '{}'", directoryHandle);
+        final boolean wasDirectoryCreated = directoryHandle.mkdirs();
+        if (!wasDirectoryCreated) {
+            LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
         }
     }
 
