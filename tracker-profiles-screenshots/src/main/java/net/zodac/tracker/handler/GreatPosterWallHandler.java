@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -36,33 +37,36 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code MooKo} tracker.
+ * Implementation of {@link AbstractTrackerHandler} for the {@code GreatPosterWall} tracker.
  */
-@TrackerHandler(name = "MooKo", url = "https://mooko.org/")
-public class MooKoHandler extends AbstractTrackerHandler {
+@TrackerHandler(name = "GreatPosterWall", url = "https://greatposterwall.com/")
+public class GreatPosterWallHandler extends AbstractTrackerHandler {
+
+    @Override
+    public By loginPageSelector() {
+        return By.id("login-a");
+    }
+
+    @Override
+    protected By usernameFieldSelector() {
+        return By.id("«r1»");
+    }
+
+    @Override
+    protected By passwordFieldSelector() {
+        return By.id("«r2»");
+    }
 
     @Override
     protected By loginButtonSelector() {
         return XpathBuilder
-            .from(button, withType("submit"))
-            .build();
-    }
-
-    @Override
-    protected By postLoginSelector() {
-        return XpathBuilder
-            .from(div, withClass("HeaderNew-user"))
+            .from(button, withName("login"), withType("submit"))
             .build();
     }
 
     @Override
     protected By profilePageSelector() {
-        openUserDropdownMenu();
-        return XpathBuilder
-            .from(div, withClass("HeaderNew-user"))
-            .child(div, withClass("DropdownMenu"))
-            .child(a, atIndex(1))
-            .build();
+        return By.id("header-username-value");
     }
 
     @Override
@@ -98,36 +102,18 @@ public class MooKoHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
-        LOGGER.debug("\t\t- Unfixing header");  // TODO: Add to other similar methods
-        final By headerSelector = XpathBuilder
-            .from(NamedHtmlElement.of("header"), withClass("HeaderNew"))
-            .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
-
-        LOGGER.debug("\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
-        browserInteractionHelper.addClass(headerElement, "is-scrolled");
-
-        return true;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
         return XpathBuilder
-            .from(div, withClass("HeaderNew-user"))
-            .child(div, withClass("DropdownMenu"))
-            .child(a, atIndex(11))
+            .from(a, withClass("is-logout"))
             .build();
     }
 
     private void openUserDropdownMenu() {
-        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");  // TODO: Add to other similar methods
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By dropDownMenuSelector = XpathBuilder
-            .from(div, withClass("HeaderNew-user"))
-            .child(div, atIndex(1))
-            .child(span, atIndex(1))
+            .from(span, withClass("HeaderProfile-avatarContainer"))
+//            .child(NamedHtmlElement.of("svg"), atIndex(1))
             .build();
         final WebElement dropDownMenu = driver.findElement(dropDownMenuSelector);
         clickButton(dropDownMenu);
