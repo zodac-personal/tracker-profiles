@@ -148,6 +148,7 @@ final class ProfileScreenshotExecutor {
         return false;
     }
 
+    // TODO: Clear error screenshot if successful screenshot taken
     private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName) {
         if (!CONFIG.takeScreenshotOnError()) {
             LOGGER.trace("Error occurred, but screenshots for errors are not enabled");

@@ -81,6 +81,7 @@ XWT-Classics,username,password
 YUSCENE,username,password
 #,Manual trackers,UI required for user input
 52PT,username,password
+AnimeZ,username,password
 BeyondHD,username,password
 CGPeers,username,password
 DigitalCore.Club,username,password
@@ -98,7 +99,6 @@ ThePlace,username,password
 TheShow,username,password
 TheVault,username,password
 #,Cloudflare trackers,UI required to pass detection
-AnimeTorrents,username,password
 AvistaZ,username,password
 BroadcasThe.Net,username,password
 CinemaZ,username,password

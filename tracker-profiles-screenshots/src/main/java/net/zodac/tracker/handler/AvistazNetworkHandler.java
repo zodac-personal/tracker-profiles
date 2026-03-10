@@ -52,7 +52,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "AvistaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://avistaz.to/")
 @TrackerHandler(name = "CinemaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://cinemaz.to/")
 @TrackerHandler(name = "PrivateHD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://privatehd.to/")
-public class AvistazNetwork extends AbstractTrackerHandler {
+public class AvistazNetworkHandler extends AbstractTrackerHandler {
 
     @Override
     public By loginPageSelector() {
@@ -78,7 +78,7 @@ public class AvistazNetwork extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link AvistazNetwork}, prior to clicking the login button with a successful username/password there is another field where a
+     * For {@link AvistazNetworkHandler} trackers, prior to clicking the login button with a successful username/password there is another field where a
      * Captcha needs to be entered.
      *
      * <p>

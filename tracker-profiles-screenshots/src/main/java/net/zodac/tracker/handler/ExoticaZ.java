@@ -42,10 +42,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Extension of the {@link AvistazNetwork} for the {@code ExoticaZ} tracker.
+ * Extension of the {@link AvistazNetworkHandler} for the {@code ExoticaZ} tracker.
  */
 @TrackerHandler(name = "ExoticaZ", adult = true, type = TrackerType.CLOUDFLARE_CHECK, url = "https://exoticaz.to/")
-public class ExoticaZ extends AvistazNetwork {
+public class ExoticaZ extends AvistazNetworkHandler {
 
     @Override
     public By loginPageSelector() {
