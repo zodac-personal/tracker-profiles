@@ -143,6 +143,7 @@ background:
 | [Rastastugan](https://rastastugan.org/)              |
 | [Redacted](https://redacted.sh/)                     |
 | [ReelFlix](https://reelflix.cc/)                     |
+| [RocketHD](https://rocket-hd.cc/)                    |
 | [RUTracker](https://rutracker.org/forum/tracker.php) |
 | [SceneHD](https://scenehd.org/)                      |
 | [SecretCinema](https://secret-cinema.pw/)            |
