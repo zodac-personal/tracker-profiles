@@ -170,36 +170,37 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 `TRACKER_EXECUTION_ORDER`), then
 a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
-| Tracker Name                                  | Type                 |
-|-----------------------------------------------|----------------------|
-| [52PT](https://52pt.site/)                    | **Manual**           |
-| [AnimeTorrents](https://animetorrents.me/)    | **Cloudflare-check** |
-| [AvistaZ](https://avistaz.to/)                | **Cloudflare-check** |
-| [BeyondHD](https://beyond-hd.me/)             | **Manual**           |
-| [BroadcasThe.Net](https://broadcasthe.net/)   | **Cloudflare-check** |
-| [CinemaZ](https://cinemaz.to/)                | **Cloudflare-check** |
-| [CGPeers](https://cgpeers.to/)                | **Cloudflare-check** |
-| [DigitalCore.Club](https://digitalcore.club/) | **Manual**           |
-| [DocsPedia](https://docspedia.world/)         | **Manual**           |
-| [ExoticaZ](https://exoticaz.to/)              | **Cloudflare-check** |
-| [GazelleGames](https://gazellegames.net/)     | **Manual**           |
-| [Hawke-Uno](https://hawke.uno/)               | **Cloudflare-check** |
-| [HDBits](https://hdbits.org/)                 | **Cloudflare-check** |
-| [LST](https://lst.gg/)                        | **Manual**           |
-| [PassThePopcorn](https://passthepopcorn.me/)  | **Manual**           |
-| [PrivateHD](https://privatehd.to/)            | **Cloudflare-check** |
-| [SceneTime](https://www.scenetime.com/)       | **Cloudflare-check** |
-| [Speed.CD](https://speed.cd/)                 | **Cloudflare-check** |
-| [TheEmpire](https://theempire.click/)         | **Manual**           |
-| [TheGeeks](https://thegeeks.click/)           | **Manual**           |
-| [TheKitchen](https://thekitchen.click/)       | **Manual**           |
-| [TheOccult](https://theoccult.click/)         | **Manual**           |
-| [ThePlace](https://theplace.click/)           | **Manual**           |
-| [TheShow](https://theshow.click/)             | **Manual**           |
-| [TheVault](https://thevault.click/)           | **Manual**           |
-| [Torrenting](https://torrenting.com/)         | **Cloudflare-check** |
-| [UploadCX](https://upload.cx/)                | **Cloudflare-check** |
-| [YggTorrent](https://www.yggtorrent.org/)     | **Cloudflare-check** |
+| Tracker Name                                        | Type                 |
+|-----------------------------------------------------|----------------------|
+| [52PT](https://52pt.site/)                          | **Manual**           |
+| [AnimeTorrents](https://animetorrents.me/)          | **Cloudflare-check** |
+| [AvistaZ](https://avistaz.to/)                      | **Cloudflare-check** |
+| [BeyondHD](https://beyond-hd.me/)                   | **Manual**           |
+| [BroadcasThe.Net](https://broadcasthe.net/)         | **Cloudflare-check** |
+| [CinemaZ](https://cinemaz.to/)                      | **Cloudflare-check** |
+| [CGPeers](https://cgpeers.to/)                      | **Cloudflare-check** |
+| [DigitalCore.Club](https://digitalcore.club/)       | **Manual**           |
+| [DocsPedia](https://docspedia.world/)               | **Manual**           |
+| [ExoticaZ](https://exoticaz.to/)                    | **Cloudflare-check** |
+| [GazelleGames](https://gazellegames.net/)           | **Manual**           |
+| [Hawke-Uno](https://hawke.uno/)                     | **Cloudflare-check** |
+| [HDBits](https://hdbits.org/)                       | **Cloudflare-check** |
+| [LST](https://lst.gg/)                              | **Manual**           |
+| [PassThePopcorn](https://passthepopcorn.me/)        | **Manual**           |
+| [PrivateHD](https://privatehd.to/)                  | **Cloudflare-check** |
+| [SceneTime](https://www.scenetime.com/)             | **Cloudflare-check** |
+| [SocietyGlitch](https://stalker.societyglitch.com/) | **Manual**           |
+| [Speed.CD](https://speed.cd/)                       | **Cloudflare-check** |
+| [TheEmpire](https://theempire.click/)               | **Manual**           |
+| [TheGeeks](https://thegeeks.click/)                 | **Manual**           |
+| [TheKitchen](https://thekitchen.click/)             | **Manual**           |
+| [TheOccult](https://theoccult.click/)               | **Manual**           |
+| [ThePlace](https://theplace.click/)                 | **Manual**           |
+| [TheShow](https://theshow.click/)                   | **Manual**           |
+| [TheVault](https://thevault.click/)                 | **Manual**           |
+| [Torrenting](https://torrenting.com/)               | **Cloudflare-check** |
+| [UploadCX](https://upload.cx/)                      | **Cloudflare-check** |
+| [YggTorrent](https://www.yggtorrent.org/)           | **Cloudflare-check** |
 
 ## How To Use
 
