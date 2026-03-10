@@ -1,0 +1,67 @@
+/*
+ * BSD Zero Clause License
+ *
+ * Copyright (c) 2024-2026 zodac.net
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package net.zodac.tracker.handler;
+
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+
+import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
+import org.jspecify.annotations.Nullable;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+/**
+ * Extension of the {@link GazelleHandler} for the {@code CanalStreet} tracker.
+ */
+@TrackerHandler(name = "CanalStreet", url = "https://canal-street.org/")
+public class CanalStreet extends GazelleHandler {
+
+    @Nullable
+    @Override
+    protected By loginPageSelector() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link CanalStreet}, the profile dropdown menu is not opened by hovering/clicking on the user link, but instead there is a separate
+     * button that must be clicked, before returning the logout {@link By} selector itself.
+     *
+     * @return the {@link By} selector for the logout button
+     */
+    @Override
+    protected By logoutButtonSelector() {
+        // Click the dropdown menu to make the logout button interactable
+        final By logoutParentSelector = XpathBuilder
+            .from(div, withId("user_bar"))
+            .child(a, atIndex(2))
+            .build();
+        final WebElement logoutParent = driver.findElement(logoutParentSelector);
+        clickButton(logoutParent);
+
+        return XpathBuilder
+            .from(div, withId("user_popup"))
+            .child(a, atIndex(13))
+            .build();
+    }
+}

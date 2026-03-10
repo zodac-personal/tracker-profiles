@@ -1,0 +1,189 @@
+/*
+ * BSD Zero Clause License
+ *
+ * Copyright (c) 2024-2026 zodac.net
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package net.zodac.tracker.handler;
+
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
+import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
+import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.util.BrowserInteractionHelper;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+/**
+ * Implementation of {@link AbstractTrackerHandler} for the {@code TeamOS} tracker.
+ *
+ * <p>
+ * Note that the URL is set to the login page in order to bypass the site redirecting to an advertisement.
+ */
+@TrackerHandler(name = "TeamOS", url = "https://teamos.xyz/login")
+public class TeamOs extends AbstractTrackerHandler {
+
+    private static final int EXPECTED_NUMBER_OF_THREAD_LINKS = 1;
+
+    @Override
+    protected By usernameFieldSelector() {
+        return XpathBuilder
+            .from(input, withName("login"), withType("text"))
+            .build();
+    }
+
+    @Override
+    protected By passwordFieldSelector() {
+        return XpathBuilder
+            .from(input, withName("password"), withType("password"))
+            .build();
+    }
+
+    @Override
+    protected By loginButtonSelector() {
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link TeamOs}, the tracker can request you to read a thread after logging in. Since this page looks very similar to the normal
+     * post-login page, we can't simply rely on {@link #postLoginSelector()}. Instead, we'll explicitly search for this request to read a thread. If
+     * it exists, we'll open the page (forcing it into the current tab). We'll then continue with the rest of the flow.
+     */
+    @Override
+    protected void manualCheckAfterLoginClick(final String trackerName) {
+        browserInteractionHelper.stopPageLoad();
+
+        // When an update to site rules occurs, there is a single button with a link to the rules thread
+        final By adminThreadButtonsSelector = XpathBuilder
+            .from(a, withClass("button"), containsAttribute("href", "/threads/site-introduction-and-rules"))
+            .build();
+        final List<WebElement> adminThreadButtons = driver.findElements(adminThreadButtonsSelector).stream().toList();
+
+        if (adminThreadButtons.size() != EXPECTED_NUMBER_OF_THREAD_LINKS) {
+            LOGGER.debug("\t\t- Found {} thread links, not clicking anything", adminThreadButtons.size());
+            return;
+        }
+
+        LOGGER.debug("\t\t- Found single thread link to updated rules, admin requires thread to be viewed, clicking...");
+        final WebElement adminThreadButton = adminThreadButtons.getFirst();
+        browserInteractionHelper.removeAttribute(adminThreadButton, "target"); // Stop forcing the link to open in a new tab
+        clickButton(adminThreadButton);
+        browserInteractionHelper.stopPageLoad();
+        LOGGER.debug("\t\t- Updated rules thread viewed, continuing tracker execution");
+    }
+
+    @Override
+    protected By postLoginSelector() {
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        return XpathBuilder
+            .from(div, withClass("focus-wrap-user"))
+            .build();
+    }
+
+    @Override
+    protected By profilePageSelector() {
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        navigateToUserPage();
+        return XpathBuilder
+            .from(div, withClass("p-body-sideNavContent"))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    public boolean hasSensitiveInformation() {
+        return false;
+    }
+
+    @Override
+    protected By logoutButtonSelector() {
+        navigateToUserPage();
+        return XpathBuilder
+            .from(div, withClass("p-body-sideNavContent"))
+            .child(div, atIndex(2))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
+    }
+
+    private void navigateToUserPage() {
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load before clicking navbar");
+        // Click the nav bar to make the profile button interactable
+        final By profileParentSelector = XpathBuilder
+            .from(a, withClass("p-navgroup-link--user"))
+            .build();
+        final WebElement profileParent = driver.findElement(profileParentSelector);
+        clickButton(profileParent);
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "first navbar click");
+
+        clickButton(profileParent);
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "second navbar click");
+    }
+
+    // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link TeamOs}, after logout we are redirected to the homepage, not the login page. While we actually ignore this page during login
+     * (due to the fact we are redirected to an advertisement), we need to specify it now to confirm logout.
+     */
+    @Override
+    protected By postLogoutElementSelector() {
+        return XpathBuilder
+            .from(a, withClass("p-navgroup-link--logIn"))
+            .build();
+    }
+
+    @Override
+    protected List<ExtensionBinding<?>> requiredExtensions() {
+        final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
+            () -> {
+                final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =
+                    new EnumMap<>(UblockOriginLiteExtension.UblockSettings.class);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANEOUS_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_REGION_FILTERS, true);
+                settings.put(UblockOriginLiteExtension.UblockSettings.SET_FILTERING_MODE, false);
+                return settings;
+            };
+
+        return List.of(
+            ExtensionBinding.of(new UblockOriginLiteExtension(), ublockOriginLiteExtensionSettings)
+        );
+    }
+}
