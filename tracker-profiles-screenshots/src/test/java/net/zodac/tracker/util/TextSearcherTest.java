@@ -41,7 +41,7 @@ class TextSearcherTest {
             "Contact me at admin123@test.co.uk",
             "prefix user@test.com suffix"
         })
-        void shouldReturnTrue_whenValidEmailPresent(final String input) {
+        void testValidEmailPresentShouldReturnTrue(final String input) {
             assertThat(TextSearcher.hasEmailAddress(input))
                 .isTrue();
         }
@@ -55,13 +55,13 @@ class TextSearcherTest {
             "user@example",
             "192.168.0.1"
         })
-        void shouldReturnFalse_whenNoEmailPresent(final String input) {
+        void testNoEmailPresentShouldReturnFalse(final String input) {
             assertThat(TextSearcher.hasEmailAddress(input))
                 .isFalse();
         }
 
         @Test
-        void shouldReturnTrue_whenAnyInputContainsEmail() {
+        void testAnyInputContainsEmailShouldReturnTrue() {
             assertThat(TextSearcher.hasEmailAddress(
                 "no email here",
                 "another string",
@@ -71,7 +71,7 @@ class TextSearcherTest {
         }
 
         @Test
-        void shouldReturnFalse_whenNoInputsContainEmail() {
+        void testNoInputContainsEmailShouldReturnFalse() {
             assertThat(TextSearcher.hasEmailAddress(
                 "foo",
                 "bar",
@@ -92,7 +92,7 @@ class TextSearcherTest {
             "255.255.255.255",
             "0.0.0.0"
         })
-        void shouldReturnTrue_whenValidIpv4Present(final String input) {
+        void testValidIpv4PresentShouldReturnTrue(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))
                 .isTrue();
         }
@@ -102,7 +102,7 @@ class TextSearcherTest {
             "192.168.x.x",
             "Connection from 10.0.x.x detected"
         })
-        void shouldReturnTrue_whenMaskedIpv4Present(final String input) {
+        void testMaskedIpv4PresentShouldReturnTrue(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))
                 .isTrue();
         }
@@ -112,7 +112,7 @@ class TextSearcherTest {
             "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
             "fe80:0000:0000:0000:0202:b3ff:fe1e:8329"
         })
-        void shouldReturnTrue_whenValidIpv6Present(final String input) {
+        void testValidIpv6PresentShouldReturnTrue(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))
                 .isTrue();
         }
@@ -125,13 +125,13 @@ class TextSearcherTest {
             "192.168.1",
             "2001:db8::1" // compressed IPv6 not supported
         })
-        void shouldReturnFalse_whenNoValidIpPresent(final String input) {
+        void testNoValidIpPresentShouldReturnFalse(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))
                 .isFalse();
         }
 
         @Test
-        void shouldReturnTrue_whenAnyInputContainsIp() {
+        void testAnyInputContainsIpShouldReturnTrue() {
             assertThat(TextSearcher.hasIpAddress(
                 "no ip here",
                 "another string",
@@ -141,7 +141,7 @@ class TextSearcherTest {
         }
 
         @Test
-        void shouldReturnFalse_whenNoInputsContainIp() {
+        void testNoInputContainsIpShouldReturnFalse() {
             assertThat(TextSearcher.hasIpAddress(
                 "foo",
                 "bar",

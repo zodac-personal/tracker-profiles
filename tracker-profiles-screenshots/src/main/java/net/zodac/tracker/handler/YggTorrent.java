@@ -89,7 +89,7 @@ public class YggTorrent extends AbstractTrackerHandler {
             clickButton(turboPromotionCloseButton);
             LOGGER.debug("\t\t- Closing promotion for turbo before proceeding");
         } catch (final ElementNotInteractableException e) {
-            LOGGER.trace("Promotion pop-up not interactable, nothing to close");
+            LOGGER.trace("Promotion pop-up not interactable, nothing to close", e);
         }
 
         return By.id("panel-btn");

@@ -51,7 +51,7 @@ class TimingUtilsTest {
         "3661000, 1h:01m:01s",
         "7322000, 2h:02m:02s"
     })
-    void shouldFormatNaturalTimeCorrectly(final long inputMillis, final String expected) {
+    void testToNaturalTimeShouldFormatTimeCorrectly(final long inputMillis, final String expected) {
         final long input = TimeUnit.MILLISECONDS.toNanos(inputMillis);
         final String actual = TimingUtils.toNaturalTime(input);
 

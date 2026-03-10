@@ -98,21 +98,22 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
             LOGGER.debug("\t\t- Configuring with settings {}", settings);
             openExtensionConfigurationPage(driver, id());
 
-            if (getSetting(settings, UblockSettings.SET_FILTERING_MODE)) {
+            if (isSettingEnabled(settings, UblockSettings.SET_FILTERING_MODE)) {
                 LOGGER.debug("\t\t- Setting filtering mode");
                 settingFilteringMode(driver);
             }
 
-            if (getSetting(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS) || getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+            if (isSettingEnabled(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)
+                || isSettingEnabled(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
                 LOGGER.debug("\t\t- Opening filter lists page");
                 openFilterListsPage(driver, browserInteractionHelper);
 
-                if (getSetting(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)) {
+                if (isSettingEnabled(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)) {
                     LOGGER.debug("\t\t- Enabling all miscellaneous filters");
                     enableAllMiscellaneousFilters(driver, browserInteractionHelper);
                 }
 
-                if (getSetting(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+                if (isSettingEnabled(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
                     LOGGER.debug("\t\t- Expanding region filter lists");
                     expandRegionFiltersList(driver, browserInteractionHelper);
 
@@ -126,7 +127,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
         }
     }
 
-    private static boolean getSetting(final Map<UblockSettings, Boolean> settings, final UblockSettings setting) {
+    private static boolean isSettingEnabled(final Map<UblockSettings, Boolean> settings, final UblockSettings setting) {
         return settings.getOrDefault(setting, true);
     }
 

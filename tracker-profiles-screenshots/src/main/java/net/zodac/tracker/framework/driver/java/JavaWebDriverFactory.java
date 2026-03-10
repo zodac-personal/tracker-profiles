@@ -19,7 +19,6 @@ package net.zodac.tracker.framework.driver.java;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
@@ -63,7 +62,7 @@ public final class JavaWebDriverFactory {
      * @param extensions  any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> extensions) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType, final Iterable<ExtensionBinding<?>> extensions) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
@@ -132,7 +131,7 @@ public final class JavaWebDriverFactory {
             "ur", "uz", "vi", "xh", "yi", "yo", "zh", "zu"
         };
 
-        final Map<String, String> translateWhitelists = new HashMap<>(baseLanguages.length);
+        final Map<String, String> translateWhitelists = HashMap.newHashMap(baseLanguages.length);
         for (final String baseLanguage : baseLanguages) {
             translateWhitelists.put(baseLanguage, "en");
         }

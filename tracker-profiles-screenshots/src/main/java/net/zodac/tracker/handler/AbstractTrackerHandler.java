@@ -734,9 +734,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         return configurationDriver;
     }
 
-    private <E extends Enum<E>> void configureExtensionBinding(final ExtensionBinding<E> extensionBinding,
-                                                               final RemoteWebDriver driver,
-                                                               final BrowserInteractionHelper browserInteractionHelper
+    private static <E extends Enum<E>> void configureExtensionBinding(final ExtensionBinding<E> extensionBinding,
+                                                                      final RemoteWebDriver driver,
+                                                                      final BrowserInteractionHelper browserInteractionHelper
     ) {
         extensionBinding.extension().configure(extensionBinding.settings(), driver, browserInteractionHelper);
     }
