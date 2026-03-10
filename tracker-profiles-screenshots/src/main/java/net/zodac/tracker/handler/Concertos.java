@@ -17,8 +17,8 @@
 
 package net.zodac.tracker.handler;
 
-import java.time.Duration;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code Concertos} tracker.
@@ -36,11 +36,7 @@ public class Concertos extends Unit3dHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
+        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "login pop-up to disappear");
         return false;
-    }
-
-    @Override
-    protected Duration waitForPageLoadDuration() {
-        return Duration.ofMinutes(2L);
     }
 }

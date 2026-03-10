@@ -44,9 +44,8 @@ public class TeamOs extends XenForoHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link TeamOs}, the tracker can request you to read a thread after logging in. Since this page looks very similar to the normal
-     * post-login page, we can't simply rely on {@link #postLoginSelector()}. Instead, we'll explicitly search for this request to read a thread. If
-     * it exists, we'll open the page (forcing it into the current tab). We'll then continue with the rest of the flow.
+     * For {@link TeamOs}, the tracker can request you to read a thread after logging in. We'll explicitly search for this request to read a thread.
+     * If it exists, we'll open the page (forcing it into the current tab). We'll then continue with the rest of the flow.
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
