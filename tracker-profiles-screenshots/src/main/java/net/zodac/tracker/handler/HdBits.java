@@ -37,6 +37,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -47,12 +48,7 @@ import org.openqa.selenium.WebElement;
     "https://hdbits.org/",
     "https://backup.hdbits.org/"
 })
-public class HdBits extends AbstractTrackerHandler {
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
-    }
+public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
     protected By usernameFieldSelector() {

@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -41,21 +42,10 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code TVChaosUK} tracker.
  */
 @TrackerHandler(name = "TVChaosUK", url = "https://tvchaosuk.com/")
-public class TvChaosUk extends AbstractTrackerHandler {
+public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleBanner {
 
     @Override
-    protected By profilePageSelector() {
-        return XpathBuilder
-            .from(div, withClass("ratio-bar"))
-            .child(div, atIndex(1))
-            .child(ul, atIndex(1))
-            .child(li, atIndex(1))
-            .child(a, atIndex(1))
-            .build();
-    }
-
-    @Override
-    public boolean canBannerBeCleared() {
+    public void dismissBanner() {
         final By cookieSelector = XpathBuilder
             .from(div, withId("alert_system_notice"))
             .child(div, atIndex(1))
@@ -66,7 +56,17 @@ public class TvChaosUk extends AbstractTrackerHandler {
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
         browserInteractionHelper.moveToOrigin();
-        return true;
+    }
+
+    @Override
+    protected By profilePageSelector() {
+        return XpathBuilder
+            .from(div, withClass("ratio-bar"))
+            .child(div, atIndex(1))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(1))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override

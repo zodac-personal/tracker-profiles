@@ -30,16 +30,19 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Torrenting} tracker.
  */
 @TrackerHandler(name = "Torrenting", type = TrackerType.CLOUDFLARE_CHECK, url = "https://www.torrenting.com/")
-public class Torrenting extends AbstractTrackerHandler {
+public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollDuringScreenshot, HasCloudflareCheck, HasFixedHeader {
 
     @Override
-    protected By cloudflareSelector() {
+    public By cloudflareSelector() {
         return XpathBuilder
             .from(div, withClass("cf-turnstile"))
             .build();
@@ -72,7 +75,7 @@ public class Torrenting extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         // Special case where the header is made fixed due to JS injection, not HTML/CSS.
         // To make the header unfixed, we inject some CSS to override the existing logic.
         final String script = """
@@ -90,13 +93,6 @@ public class Torrenting extends AbstractTrackerHandler {
             """;
 
         driver.executeScript(script);
-
-        return true;
-    }
-
-    @Override
-    public boolean scrollDuringScreenshot() {
-        return false;
     }
 
     @Override

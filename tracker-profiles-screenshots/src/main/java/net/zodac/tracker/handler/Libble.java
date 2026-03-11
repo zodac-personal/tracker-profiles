@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -39,7 +40,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link LuminanceHandler} for the {@code Libble} tracker.
  */
 @TrackerHandler(name = "Libble", url = "https://libble.me/")
-public class Libble extends LuminanceHandler {
+public class Libble extends LuminanceHandler implements HasFixedHeader {
 
     @Override
     public By loginPageSelector() {
@@ -67,10 +68,9 @@ public class Libble extends LuminanceHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final WebElement headerElement = driver.findElement(By.id("header"));
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

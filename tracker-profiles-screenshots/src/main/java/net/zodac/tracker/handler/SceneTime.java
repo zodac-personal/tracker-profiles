@@ -36,6 +36,7 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,12 +44,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code SceneTime} tracker.
  */
 @TrackerHandler(name = "SceneTime", type = TrackerType.CLOUDFLARE_CHECK, url = "https://scenetime.com/")
-public class SceneTime extends AbstractTrackerHandler {
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
-    }
+public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
     protected By loginButtonSelector() {

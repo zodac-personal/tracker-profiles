@@ -42,6 +42,8 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -52,7 +54,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "AvistaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://avistaz.to/")
 @TrackerHandler(name = "CinemaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://cinemaz.to/")
 @TrackerHandler(name = "PrivateHD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://privatehd.to/")
-public class AvistazNetworkHandler extends AbstractTrackerHandler {
+public class AvistazNetworkHandler extends AbstractTrackerHandler implements HasCloudflareCheck, HasFixedHeader {
 
     @Override
     public By loginPageSelector() {
@@ -62,11 +64,6 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler {
             .child(li, atIndex(1))
             .child(a, atIndex(1))
             .build();
-    }
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
     }
 
     @Override
@@ -146,13 +143,12 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = XpathBuilder
             .from(NamedHtmlElement.of("nav"), withClass("navbar-fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

@@ -15,21 +15,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler;
-
-import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import org.openqa.selenium.By;
+package net.zodac.tracker.handler.definition;
 
 /**
- * Extension of the {@link Unit3dHandler} for the {@code UploadCX} tracker.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as not scrolling during the screenshot. This is useful for trackers with a
+ * non-standard profile page (such as a pop-up), where scrolling would expose excessive or unwanted page content.
+ *
+ * <p>
+ * No need to have any methods, as finding an implementation of this interface is sufficient to make a decision.
  */
-@TrackerHandler(name = "UploadCX", type = TrackerType.CLOUDFLARE_CHECK, url = "https://upload.cx/")
-public class UploadCx extends Unit3dHandler implements HasCloudflareCheck {
+public interface DoesNotScrollDuringScreenshot {
 
-    @Override
-    public By cloudflareSelector() {
-        return By.id("challenge-container");
-    }
 }

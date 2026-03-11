@@ -66,7 +66,7 @@ public class Empornium extends LuminanceHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        reloadPage();  // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
+        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure profile sections can be closed (in case JS was cancelled earlier)");
 
         final List<By> toggleSelectors = List.of(
             By.id("recentsnatchesbutton"),  // Recent snatches

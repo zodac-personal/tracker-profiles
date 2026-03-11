@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code ABTorrents} tracker.
  */
 @TrackerHandler(name = "ABTorrents", url = "https://usefultrash.net/")
-public class AbTorrents extends AbstractTrackerHandler {
+public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     protected By usernameFieldSelector() {
@@ -83,11 +84,10 @@ public class AbTorrents extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = By.id("navbar");
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

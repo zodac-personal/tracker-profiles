@@ -18,8 +18,6 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
 import java.time.Duration;
@@ -29,13 +27,14 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
-import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.TrackerTimings;
+import net.zodac.tracker.handler.definition.UsesExtensions;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.redaction.RedactorImpl;
 import net.zodac.tracker.util.BrowserInteractionHelper;
@@ -58,25 +57,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Since each tracker website has its own UI and own page structure, each implementation of {@link AbstractTrackerHandler} will contain the
  * tracker-specific {@code selenium} logic to perform the UI actions.
  */
-public abstract class AbstractTrackerHandler implements AutoCloseable {
-
-    /**
-     * The default {@link By} selector for the Cloudflare element to be clicked, if a tracker has a Cloudflare verification check.
-     */
-    protected static final By DEFAULT_CLOUDFLARE_SELECTOR = XpathBuilder
-        .from(div, withClass("main-content"))
-        .descendant(div, atIndex(2))
-        .build();
+public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTimings {
 
     /**
      * The logger instance.
      */
     protected static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Duration DEFAULT_MAXIMUM_CLICK_RESOLUTION_DURATION = Duration.ofSeconds(15L);
-    private static final Duration DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME = Duration.ofMinutes(3L);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD_DURATION = Duration.ofSeconds(5L);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_TRANSITIONS_DURATION = Duration.ofMillis(500L);
 
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
@@ -108,7 +94,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         this.trackerDefinition = trackerDefinition;
-        driver = createRemoteWebDriver(trackerDefinition.type(), requiredExtensions());
+        final List<ExtensionBinding<?>> extensions =
+            this instanceof UsesExtensions trackerWithExtensions ? trackerWithExtensions.requiredExtensions() : List.of();
+        driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
         redactor = new RedactorImpl(driver);
     }
@@ -202,8 +190,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     // TODO: Can this button be automatically clicked? If the box is always in the same place, move the mouse and click?
     private void cloudflareCheck(final String trackerName) {
-        final By cloudflareSelector = cloudflareSelector();
-        if (cloudflareSelector == null) {
+        if (!(this instanceof HasCloudflareCheck trackerHasCloudflareCheck)) {
             return;
         }
 
@@ -211,24 +198,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
-        final WebElement cloudflareElement = driver.findElement(cloudflareSelector);
-        // TODO Use cloudflareElement.getShadowRoot()?
+        final WebElement cloudflareElement = driver.findElement(trackerHasCloudflareCheck.cloudflareSelector());
         browserInteractionHelper.highlightElement(cloudflareElement);
         DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
-    }
-
-    /**
-     * If the tracker has a Cloudflare verification check, returns the {@link By} selector for the Cloudflare element.
-     *
-     * <p>
-     * By default, we assume there is no Cloudflare check, so this method returns {@code null}, but should be overridden otherwise. The common
-     * implementation to bypass the check is performed by {@link #cloudflareCheck(String)}.
-     *
-     * @return the {@link By} selector if there is a Cloudflare check
-     */
-    @Nullable
-    protected By cloudflareSelector() {
-        return null;
     }
 
     /**
@@ -345,19 +317,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Checks if there is a banner on the tracker web page, and closes it. This may be a cookie banner, or some other warning banner that can
-     * obscure content, or expose unwanted information.
-     *
-     * <p>
-     * By default, we assume there is no banner to clear, so this method returns {@code false}. Should be overridden otherwise.
-     *
-     * @return {@code true} if there was a banner, and it was cleared
-     */
-    public boolean canBannerBeCleared() {
-        return false;
-    }
-
-    /**
      * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish
      * loading.
      */
@@ -398,24 +357,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     protected void additionalActionOnProfilePage() {
         // Do nothing by default
-    }
-
-    /**
-     * Whether the {@link AbstractTrackerHandler} needs to be explicitly translated. Most non-English languages will automatically be translated,
-     * but some languages require an explicit action to translate the page.
-     *
-     * @return {@code true} if the website needs to be translated
-     */
-    public boolean needsExplicitTranslation() {
-        return false;
-    }
-
-    /**
-     * Explicitly translates the page to English.
-     *
-     */
-    public final void translatePageToEnglish() {
-        browserInteractionHelper.translatePage();
     }
 
     /**
@@ -543,39 +484,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     }
 
     /**
-     * Reload the current page (should be the user profile page) to clear any redactions.
-     */
-    public void reloadPage() {
-        // TODO: Move to scriptExecutor
-        driver.navigate().refresh();
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
-    }
-
-    /**
-     * Checks if there is a header on the tracker's user profile, and updates it to not be fixed. This is to avoid the banner appearing multiple times
-     * in the user profile screenshot as we scroll through the page.
-     *
-     * <p>
-     * By default, we assume there is no header to update, so this method returns {@code false}. Should be overridden otherwise.
-     *
-     * @return {@code true} if there was a fixed header, and it was successfully updated
-     */
-    // TODO: I don't like the side-effect of unfixing happening here, it should be called explicitly
-    public boolean hasFixedHeader() {
-        return false;
-    }
-
-    /**
-     * Whether the {@link AbstractTrackerHandler} implementation requires the profile page to be scrolled during a screenshot. Useful for some
-     * trackers with a non-standard profile page (like a pop-up), to prevent excessive page info being exposed.
-     *
-     * @return {@code true} if the page should be scrolled during a screenshot
-     */
-    public boolean scrollDuringScreenshot() {
-        return true;
-    }
-
-    /**
      * Retrieves the {@link WebElement} of the logout button.
      *
      * @return the logout button {@link WebElement}
@@ -593,7 +501,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
         browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageTransitionsDuration());
     }
 
@@ -650,58 +557,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
 
         driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
         BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "button click");
-    }
-
-    // TODO: Move timers to an interface out of this class?
-
-    /**
-     * The maximum {@link Duration} for a click to complete its action.
-     *
-     * @return the maximum click resolution {@link Duration}
-     */
-    protected Duration maximumClickResolutionDuration() {
-        return DEFAULT_MAXIMUM_CLICK_RESOLUTION_DURATION;
-    }
-
-    /**
-     * The maximum {@link Duration} for a link to complete loading.
-     *
-     * @return the maximum load resolution {@link Duration}
-     */
-    protected Duration maximumLinkResolutionDuration() {
-        return DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME;
-    }
-
-    /**
-     * The {@link Duration} to wait for a page load.
-     *
-     * @return the page load wait {@link Duration}
-     */
-    protected Duration waitForPageLoadDuration() {
-        return DEFAULT_WAIT_FOR_PAGE_LOAD_DURATION;
-    }
-
-    /**
-     * The {@link Duration} to wait for a page/element transition.
-     *
-     * @return the transition wait {@link Duration}
-     */
-    protected Duration waitForPageTransitionsDuration() {
-        return DEFAULT_WAIT_FOR_PAGE_TRANSITIONS_DURATION;
-    }
-
-    /**
-     * The {@link Extension}s required for the {@link AbstractTrackerHandler}. If any are provided, they will be installed in the
-     * {@link RemoteWebDriver}, and then {@link Extension#configure(ExtensionSettings, RemoteWebDriver, BrowserInteractionHelper)} will be run prior
-     * to the main execution for the {@link AbstractTrackerHandler}.
-     *
-     * <p>
-     * By default, this is empty to avoid needing to configure any {@link Extension}s unnecessarily.
-     *
-     * @return whether to install an ad-blocker for the {@link AbstractTrackerHandler}
-     */
-    protected List<ExtensionBinding<?>> requiredExtensions() {
-        return List.of();
     }
 
     private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {

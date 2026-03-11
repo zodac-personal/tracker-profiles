@@ -29,6 +29,7 @@ import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.UsesExtensions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -36,7 +37,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link Unit3dHandler} for the {@code TeamOS} tracker.
  */
 @TrackerHandler(name = "TeamOS", url = "https://teamos.xyz/login/")
-public class TeamOs extends XenForoHandler {
+public class TeamOs extends XenForoHandler implements UsesExtensions {
 
     private static final int EXPECTED_NUMBER_OF_THREAD_LINKS = 1;
 
@@ -73,7 +74,7 @@ public class TeamOs extends XenForoHandler {
     // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?
 
     @Override
-    protected List<ExtensionBinding<?>> requiredExtensions() {
+    public List<ExtensionBinding<?>> requiredExtensions() {
         final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
             () -> {
                 final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =

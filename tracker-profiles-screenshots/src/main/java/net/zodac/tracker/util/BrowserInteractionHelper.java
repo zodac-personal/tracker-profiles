@@ -187,6 +187,19 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Reloads the current page.
+     *
+     * @param pageLoadDuration the {@link Duration} to wait for the page to load
+     * @param reason           the reason for reloading
+     * @see #waitForPageToLoad(Duration)
+     */
+    public void reloadPage(final Duration pageLoadDuration, final String reason) {
+        LOGGER.trace("Reloading page to {}", reason);
+        driver.navigate().refresh();
+        waitForPageToLoad(pageLoadDuration);
+    }
+
+    /**
      * Remove an HTML attribute from the {@link WebElement}.
      *
      * @param element       the {@link WebElement} to update

@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -36,7 +37,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code ArabP2P} tracker.
  */
 @TrackerHandler(name = "ArabP2P", url = "https://www.arabp2p.net/")
-public class ArabP2p extends AbstractTrackerHandler {
+public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     protected By usernameFieldSelector() {
@@ -67,13 +68,12 @@ public class ArabP2p extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = XpathBuilder
             .from(div, withClass("toolbar_div"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

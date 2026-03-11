@@ -34,6 +34,7 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -42,12 +43,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Hawke-Uno} tracker.
  */
 @TrackerHandler(name = "Hawke-Uno", type = TrackerType.CLOUDFLARE_CHECK, url = "https://hawke.uno/")
-public class HawkeUno extends AbstractTrackerHandler {
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
-    }
+public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
     protected By postLoginSelector() {

@@ -110,13 +110,12 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = XpathBuilder
             .from(NamedHtmlElement.of("nav"), withClass("fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

@@ -31,6 +31,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -39,7 +40,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code BeyondHD} tracker.
  */
 @TrackerHandler(name = "BeyondHD", type = TrackerType.MANUAL, url = "https://beyond-hd.me/")
-public class BeyondHd extends AbstractTrackerHandler {
+public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
 
     /**
      * {@inheritDoc}
@@ -76,10 +77,9 @@ public class BeyondHd extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

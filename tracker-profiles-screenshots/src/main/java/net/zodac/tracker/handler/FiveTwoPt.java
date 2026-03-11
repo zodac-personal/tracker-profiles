@@ -36,6 +36,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +44,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code 52PT} tracker.
  */
 @TrackerHandler(name = "52PT", type = TrackerType.MANUAL, url = "https://52pt.site/")
-public class FiveTwoPt extends AbstractTrackerHandler {
+public class FiveTwoPt extends AbstractTrackerHandler implements NeedsExplicitTranslation {
 
     @Override
     protected By usernameFieldSelector() {
@@ -109,13 +110,11 @@ public class FiveTwoPt extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link FiveTwoPt}, the language is not piced up so the automatic translation does not occur.
-     *
-     * @return {@code true} to indicate translation is required
+     * For {@link FiveTwoPt}, the language is not picked up so the automatic translation does not occur.
      */
     @Override
-    public boolean needsExplicitTranslation() {
-        return true;
+    public void translatePageToEnglish() {
+        browserInteractionHelper.translatePage();
     }
 
     @Override

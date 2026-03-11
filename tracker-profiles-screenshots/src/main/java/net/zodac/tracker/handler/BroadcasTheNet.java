@@ -27,6 +27,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -34,7 +35,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link GazelleHandler} for the {@code BroadcasThe.Net} tracker.
  */
 @TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.CLOUDFLARE_CHECK, url = "https://broadcasthe.net/")
-public class BroadcasTheNet extends GazelleHandler {
+public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck {
 
     @Override
     public By loginPageSelector() {
@@ -42,11 +43,6 @@ public class BroadcasTheNet extends GazelleHandler {
             .from(div, withId("logo"))
             .child(a, atIndex(2))
             .build();
-    }
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
     }
 
     /**
@@ -58,7 +54,7 @@ public class BroadcasTheNet extends GazelleHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        reloadPage(); // Reload the page, to ensure the section closing works (JS may have been cancelled earlier)
+        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure the info tab can be clicked (in case JS was cancelled earlier)");
 
         final By infoTabSelector = XpathBuilder
             .from(div, withId("slider"))

@@ -15,21 +15,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler;
-
-import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import org.openqa.selenium.By;
+package net.zodac.tracker.handler.definition;
 
 /**
- * Extension of the {@link Unit3dHandler} for the {@code UploadCX} tracker.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a banner that can be dismissed before taking the screenshot. This may
+ * be a cookie consent banner, a warning banner, or a login pop-up that can obscure content or expose unwanted information.
  */
-@TrackerHandler(name = "UploadCX", type = TrackerType.CLOUDFLARE_CHECK, url = "https://upload.cx/")
-public class UploadCx extends Unit3dHandler implements HasCloudflareCheck {
+@FunctionalInterface
+public interface HasDismissibleBanner {
 
-    @Override
-    public By cloudflareSelector() {
-        return By.id("challenge-container");
-    }
+    /**
+     * Finds any banner on the tracker web page, and closes it.
+     */
+    void dismissBanner();
 }

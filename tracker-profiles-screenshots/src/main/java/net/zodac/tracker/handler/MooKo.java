@@ -32,6 +32,7 @@ import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -39,7 +40,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code MooKo} tracker.
  */
 @TrackerHandler(name = "MooKo", url = "https://mooko.org/")
-public class MooKo extends AbstractTrackerHandler {
+public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     protected By loginButtonSelector() {
@@ -98,7 +99,7 @@ public class MooKo extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         LOGGER.debug("\t\t- Unfixing header");  // TODO: Add to other similar methods
         final By headerSelector = XpathBuilder
             .from(NamedHtmlElement.of("header"), withClass("HeaderNew"))
@@ -109,7 +110,6 @@ public class MooKo extends AbstractTrackerHandler {
         LOGGER.debug("\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
         browserInteractionHelper.addClass(headerElement, "is-scrolled");
 
-        return true;
     }
 
     @Override

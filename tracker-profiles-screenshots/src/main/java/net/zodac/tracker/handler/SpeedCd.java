@@ -29,6 +29,7 @@ import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -37,12 +38,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Speed.CD} tracker.
  */
 @TrackerHandler(name = "Speed.CD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://speed.cd/")
-public class SpeedCd extends AbstractTrackerHandler {
-
-    @Override
-    protected By cloudflareSelector() {
-        return DEFAULT_CLOUDFLARE_SELECTOR;
-    }
+public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
     protected By usernameFieldSelector() {

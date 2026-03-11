@@ -37,6 +37,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -47,7 +48,7 @@ import org.openqa.selenium.WebElement;
     "https://cgpeers.to/",
     "https://cgpeers.com/"
 })
-public class CgPeers extends AbstractTrackerHandler {
+public class CgPeers extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
     public By loginPageSelector() {
@@ -59,7 +60,7 @@ public class CgPeers extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By cloudflareSelector() {
+    public By cloudflareSelector() {
         return XpathBuilder
             .from(div, withClass("cf-turnstile"))
             .child(div, atIndex(1))

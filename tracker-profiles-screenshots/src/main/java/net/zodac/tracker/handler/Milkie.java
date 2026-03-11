@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -37,7 +38,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Milkie} tracker.
  */
 @TrackerHandler(name = "Milkie", url = "https://milkie.cc/")
-public class Milkie extends AbstractTrackerHandler {
+public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDuringScreenshot {
 
     @Override
     protected By usernameFieldSelector() {
@@ -70,18 +71,6 @@ public class Milkie extends AbstractTrackerHandler {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link Milkie}, because there is no user profile page we take a screenshot of the main tracker page. This is a large list of
-     * torrents and there is no value to scrolling, so we just screenshot the page once the pop-up appears.
-     */
-    @Override
-    public boolean scrollDuringScreenshot() {
-        return false;
-    }
-
     @Override
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
@@ -95,7 +84,7 @@ public class Milkie extends AbstractTrackerHandler {
     }
 
     private void openUserDropdownMenu() {
-        reloadPage(); // Reload the page to have a consistent state with no user stats pop-up
+        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure the page has a consistent state (no user pop-ups showing)");
         final By profilePageSelector = profilePageSelector();
 
         // TODO: Move this to browserInteractionHelper, and replace more explicit waits with element visibly waits

@@ -28,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -35,7 +36,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link TsSpecialEditionHandler} for the {@code BackUps} tracker.
  */
 @TrackerHandler(name = "BackUps", url = "https://back-ups.me/")
-public class BackUps extends TsSpecialEditionHandler {
+public class BackUps extends TsSpecialEditionHandler implements HasFixedHeader {
 
     @Override
     public By loginPageSelector() {
@@ -94,11 +95,10 @@ public class BackUps extends TsSpecialEditionHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = By.id("menu");
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

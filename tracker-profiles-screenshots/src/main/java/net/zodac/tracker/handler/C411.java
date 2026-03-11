@@ -18,7 +18,6 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.body;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
@@ -35,7 +34,10 @@ import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
+import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +45,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code C411} tracker.
  */
 @TrackerHandler(name = "C411", url = "https://c411.org/")
-public class C411 extends AbstractTrackerHandler {
+public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
 
     @Override
     protected By usernameFieldSelector() {
@@ -73,6 +75,21 @@ public class C411 extends AbstractTrackerHandler {
     }
 
     @Override
+    public void dismissBanner() {
+        // Remove the login pop-up (if it exists) since it covers the user drop down menu
+        final By loginPopupsSelector = XpathBuilder
+            .from(span, withClass("i-lucide:x"))
+            .parent(button)
+            .build();
+        final Collection<WebElement> loginPopups = driver.findElements(loginPopupsSelector);
+        LOGGER.trace("Found {} login pop-up{} to clear", loginPopups.size(), StringUtils.pluralise(loginPopups));
+
+        for (final WebElement loginPopup : loginPopups) {
+            clickButton(loginPopup);
+        }
+    }
+
+    @Override
     protected By profilePageSelector() {
         openUserDropdownMenu();
         return XpathBuilder
@@ -83,7 +100,7 @@ public class C411 extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = XpathBuilder
             .from(div, withId("__nuxt"))
             .child(div, atIndex(2))
@@ -91,7 +108,6 @@ public class C411 extends AbstractTrackerHandler {
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override
@@ -105,18 +121,6 @@ public class C411 extends AbstractTrackerHandler {
     }
 
     private void openUserDropdownMenu() {
-        // Remove the login pop-up (if it exists) since it covers the user drop down menu
-        final By loginPopupsSelector = XpathBuilder
-            .from(span, withClass("i-lucide:x"))
-            .parent(button)
-            .build();
-        final Collection<WebElement> loginPopups = driver.findElements(loginPopupsSelector);
-        LOGGER.debug("\t\t- Found {} login pop-ups, closing", loginPopups.size());
-
-        for (final WebElement loginPopup : loginPopups) {
-            clickButton(loginPopup);
-        }
-
         // Click the user dropdown menu bar to make the profile/logout button interactable
         final By profileParentSelector = XpathBuilder
             .from(NamedHtmlElement.of("nav"), atIndex(1))

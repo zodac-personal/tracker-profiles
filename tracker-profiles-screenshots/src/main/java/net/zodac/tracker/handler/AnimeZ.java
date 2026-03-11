@@ -35,6 +35,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -42,7 +43,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code AnimeZ} tracker.
  */
 @TrackerHandler(name = "AnimeZ", type = TrackerType.MANUAL, url = "https://animez.to/")
-public class AnimeZ extends AbstractTrackerHandler {
+public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     public By loginPageSelector() {
@@ -118,11 +119,10 @@ public class AnimeZ extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final By headerSelector = By.tagName("header");
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override

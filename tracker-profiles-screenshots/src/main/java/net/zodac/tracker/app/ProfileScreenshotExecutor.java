@@ -33,6 +33,10 @@ import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
+import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.ScreenshotTaker;
@@ -202,7 +206,7 @@ final class ProfileScreenshotExecutor {
     }
 
     private static void createErrorsDirectory() {
-        final File directoryHandle = ProfileScreenshotExecutor.ERRORS_DIRECTORY.toFile();
+        final File directoryHandle = ERRORS_DIRECTORY.toFile();
         if (directoryHandle.exists()) {
             LOGGER.trace("Errors directory already exists: '{}'", directoryHandle);
             return;
@@ -229,7 +233,8 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
         trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
 
-        if (trackerHandler.canBannerBeCleared()) {
+        if (trackerHandler instanceof HasDismissibleBanner trackerWithBanner) {
+            trackerWithBanner.dismissBanner();
             LOGGER.info("\t- Banner has been cleared");
         }
 
@@ -246,17 +251,19 @@ final class ProfileScreenshotExecutor {
             LOGGER.debug("\t- Nothing to redact");
         }
 
-        if (trackerHandler.hasFixedHeader()) {
+        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            trackerWithFixedHeader.unfixHeader();
             LOGGER.info("\t- Header has been updated to not be fixed");
         }
 
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler.needsExplicitTranslation()) {
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
             LOGGER.info("\t- Translating profile page to English");
-            trackerHandler.translatePageToEnglish();
+            trackerNeedsTranslation.translatePageToEnglish();
         }
 
+        final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),
-            trackerHandler.scrollDuringScreenshot(), existingScreenshotValue.second());
+            scrollDuringScreenshot, existingScreenshotValue.second());
         LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
         // TODO: Only do this when taking multiple screenshots: trackerHandler.reloadPage();
 

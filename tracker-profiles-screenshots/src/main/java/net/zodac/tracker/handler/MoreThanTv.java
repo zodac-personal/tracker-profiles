@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -27,7 +28,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link LuminanceHandler} for the {@code MoreThanTV} tracker.
  */
 @TrackerHandler(name = "MoreThanTV", url = "https://www.morethantv.me/")
-public class MoreThanTv extends LuminanceHandler {
+public class MoreThanTv extends LuminanceHandler implements HasFixedHeader {
 
     @Override
     protected Collection<By> passkeyElements() {
@@ -35,9 +36,8 @@ public class MoreThanTv extends LuminanceHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final WebElement headerElement = driver.findElement(By.cssSelector("#menu, .main-menu"));
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 }

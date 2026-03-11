@@ -15,21 +15,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler;
-
-import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import org.openqa.selenium.By;
+package net.zodac.tracker.handler.definition;
 
 /**
- * Extension of the {@link Unit3dHandler} for the {@code UploadCX} tracker.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a fixed header on the user profile page that must be unfixed before
+ * taking the screenshot. This prevents the header from appearing multiple times as the page is scrolled during the screenshot.
  */
-@TrackerHandler(name = "UploadCX", type = TrackerType.CLOUDFLARE_CHECK, url = "https://upload.cx/")
-public class UploadCx extends Unit3dHandler implements HasCloudflareCheck {
+@FunctionalInterface
+public interface HasFixedHeader {
 
-    @Override
-    public By cloudflareSelector() {
-        return By.id("challenge-container");
-    }
+    /**
+     * Finds the fixed header element on the tracker's user profile page and updates it to not be fixed.
+     */
+    void unfixHeader();
 }

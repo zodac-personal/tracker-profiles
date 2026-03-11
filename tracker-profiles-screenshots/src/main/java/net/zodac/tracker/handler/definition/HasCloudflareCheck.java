@@ -15,27 +15,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler;
+package net.zodac.tracker.handler.definition;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 
 /**
- * Extension of the {@link Unit3dHandler} for the {@code Immortal-S} tracker.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a Cloudflare verification check on the login page that must be passed
+ * before logging in.
  */
-@TrackerHandler(name = "Immortal-S", type = TrackerType.CLOUDFLARE_CHECK, url = "https://immortal-s.me/login/")
-public class ImmortalS extends XenForoHandler implements HasCloudflareCheck {
+public interface HasCloudflareCheck {
 
-    @Override
-    public By cloudflareSelector() {
+    /**
+     * Returns the {@link By} selector for the Cloudflare verification element.
+     *
+     * @return the {@link By} selector for the Cloudflare element
+     */
+    default By cloudflareSelector() {
         return XpathBuilder
-            .from(div, withAttribute("data-xf-init", "turnstile"))
+            .from(div, withClass("main-content"))
+            .descendant(div, atIndex(2))
             .build();
     }
 }

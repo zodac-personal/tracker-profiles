@@ -34,6 +34,7 @@ import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.UsesExtensions;
 import org.openqa.selenium.By;
 
 /**
@@ -44,7 +45,7 @@ import org.openqa.selenium.By;
     "https://rutracker.org/forum/tracker.php",
     "https://rutracker.net/forum/tracker.php"
 })
-public class TorrentPier extends AbstractTrackerHandler {
+public class TorrentPier extends AbstractTrackerHandler implements UsesExtensions {
 
     @Override
     protected By usernameFieldSelector() {
@@ -88,12 +89,12 @@ public class TorrentPier extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Duration maximumClickResolutionDuration() {
+    public Duration maximumClickResolutionDuration() {
         return Duration.ofMinutes(2L);
     }
 
     @Override
-    protected List<ExtensionBinding<?>> requiredExtensions() {
+    public List<ExtensionBinding<?>> requiredExtensions() {
         final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
             () -> {
                 final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =

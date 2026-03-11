@@ -36,6 +36,8 @@ import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -64,7 +66,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "SexTorrent", adult = true, url = "https://sextorrent.myds.me/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 @TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
-public class Unit3dHandler extends AbstractTrackerHandler {
+public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
 
     @Override
     protected By loginButtonSelector() {
@@ -86,11 +88,9 @@ public class Unit3dHandler extends AbstractTrackerHandler {
      * <p>
      * For many {@link Unit3dHandler}-based trackers, there is a cookie banner on first log-in. We'll search for this and click it to clear if any
      * exist.
-     *
-     * @return {@code true} if at least one cookie banner exists and is successfully cleared
      */
     @Override
-    public boolean canBannerBeCleared() {
+    public void dismissBanner() {
         BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "login pop-up to disappear");
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
@@ -104,7 +104,6 @@ public class Unit3dHandler extends AbstractTrackerHandler {
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
         browserInteractionHelper.moveToOrigin();
-        return !cookieButtons.isEmpty();
     }
 
     @Override
@@ -142,10 +141,9 @@ public class Unit3dHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasFixedHeader() {
+    public void unfixHeader() {
         final WebElement headerElement = driver.findElement(By.tagName("header"));
         browserInteractionHelper.makeUnfixed(headerElement);
-        return true;
     }
 
     @Override
