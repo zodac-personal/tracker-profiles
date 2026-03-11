@@ -84,15 +84,7 @@ public class TranceTraffic extends AbstractTrackerHandler {
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder
-                .from(body, atIndex(1))
-                .child(table, atIndex(1))
-                .child(tbody, atIndex(1))
-                .child(tr, atIndex(2))
-                .child(td, atIndex(2))
-                .child(table, atIndex(3))
-                .descendant(table, atIndex(2))
-                .descendant(table, atIndex(1))
-                .child(tbody, atIndex(1))
+                .from(tbody)
                 .child(tr, atIndex(4))
                 .child(td, atIndex(2))
                 .build()
