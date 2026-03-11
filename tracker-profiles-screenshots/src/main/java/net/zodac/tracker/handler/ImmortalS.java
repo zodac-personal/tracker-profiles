@@ -17,21 +17,28 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+
 import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code Immortal-S} tracker.
- *
- * <p>
- * Note that the {@link TrackerType#MANUAL} is set due to the Cloudflare check. While it doesn't require any user interaction, it does not work in
- * headless mode so we need to enforce the browser launches with a UI.
  */
-@TrackerHandler(name = "Immortal-S", type = TrackerType.MANUAL, url = "https://immortal-s.me/login/")
+@TrackerHandler(name = "Immortal-S", type = TrackerType.CLOUDFLARE_CHECK, url = "https://immortal-s.me/login/")
 public class ImmortalS extends XenForoHandler {
+
+    @Override
+    protected By cloudflareSelector() {
+        return XpathBuilder
+            .from(div, withAttribute("data-xf-init", "turnstile"))
+            .build();
+    }
 
     /**
      * {@inheritDoc}
@@ -45,7 +52,6 @@ public class ImmortalS extends XenForoHandler {
      */
     @Override
     protected By usernameFieldSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "Cloudflare check to pass");
         return super.usernameFieldSelector();
     }
 }

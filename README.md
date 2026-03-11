@@ -186,7 +186,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [GazelleGames](https://gazellegames.net/)           | **Manual**           |
 | [Hawke-Uno](https://hawke.uno/)                     | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                       | **Cloudflare-check** |
-| [Immortal-S](https://immortal-s.me/)                | **Manual**           |
+| [Immortal-S](https://immortal-s.me/)                | **Cloudflare-check** |
 | [LST](https://lst.gg/)                              | **Manual**           |
 | [PassThePopcorn](https://passthepopcorn.me/)        | **Manual**           |
 | [PrivateHD](https://privatehd.to/)                  | **Cloudflare-check** |
