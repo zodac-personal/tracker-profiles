@@ -95,6 +95,11 @@ public class Torrenting extends AbstractTrackerHandler {
     }
 
     @Override
+    public boolean scrollDuringScreenshot() {
+        return false;
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withId("userInfoDiv"))
