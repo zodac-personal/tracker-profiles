@@ -60,9 +60,8 @@ public final class ScreenshotOrchestrator {
         final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = TrackerRetriever.getTrackers();
         final int numberOfTrackers = trackersByType.values()
             .stream()
-            .flatMap(pair -> pair.second().stream())
-            .toList()
-            .size();
+            .mapToInt(pair -> pair.second().size())
+            .sum();
         if (numberOfTrackers == 0) {
             LOGGER.error("No trackers selected!");
             return ExitState.FAILURE;
