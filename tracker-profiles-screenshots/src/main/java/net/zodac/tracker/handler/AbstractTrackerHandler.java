@@ -74,10 +74,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     protected static final Logger LOGGER = LogManager.getLogger();
 
     private static final Duration DEFAULT_MAXIMUM_CLICK_RESOLUTION_DURATION = Duration.ofSeconds(15L);
-    private static final Duration DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME = Duration.ofMinutes(2L);
+    private static final Duration DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME = Duration.ofMinutes(3L);
     private static final Duration DEFAULT_WAIT_FOR_PAGE_LOAD_DURATION = Duration.ofSeconds(5L);
-    private static final Duration DEFAULT_WAIT_FOR_PAGE_UPDATES_DURATION = Duration.ofSeconds(1L);
-    private static final Duration DEFAULT_WAIT_FOR_TRANSITIONS_DURATION = Duration.ofMillis(500L);
+    private static final Duration DEFAULT_WAIT_FOR_PAGE_TRANSITIONS_DURATION = Duration.ofMillis(500L);
 
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
@@ -241,7 +240,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      */
     public void login(final String username, final String password, final String trackerName) {
         LOGGER.trace("Logging in to tracker '{}'", trackerName);
-        browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
+        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
         LOGGER.trace("Entering username");
         final WebElement usernameField = driver.findElement(usernameFieldSelector());
         usernameField.clear();
@@ -365,7 +364,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
     // TODO: Add a postProfilePageSelector() to confirm the user profile has been loaded?
     public void openProfilePage() {
         LOGGER.trace("Opening profile page");
-        browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
+        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
 
         // TODO: Add a debug mode to highlight elements on click, to aid in identifying issues?
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
@@ -595,7 +594,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
         clickButton(logoutButton);
 
         browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForTransitionsDuration());
+        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageTransitionsDuration());
     }
 
     /**
@@ -649,8 +648,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
             throw e;
         }
 
-        driver.manage().timeouts().pageLoadTimeout(DEFAULT_MAXIMUM_LINK_RESOLUTION_TIME);
-        BrowserInteractionHelper.explicitWait(waitForTransitionsDuration(), "button click");
+        driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "button click");
     }
 
     // TODO: Move timers to an interface out of this class?
@@ -687,18 +686,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return the transition wait {@link Duration}
      */
-    protected Duration waitForTransitionsDuration() {
-        return DEFAULT_WAIT_FOR_TRANSITIONS_DURATION;
-    }
-
-    /**
-     * The {@link Duration} to wait for a page updates.
-     *
-     * @return the page updates wait {@link Duration}
-     */
-    // TODO: Use waitForTransitionsDuration() instead?
-    protected Duration waitForPageUpdateDuration() {
-        return DEFAULT_WAIT_FOR_PAGE_UPDATES_DURATION;
+    protected Duration waitForPageTransitionsDuration() {
+        return DEFAULT_WAIT_FOR_PAGE_TRANSITIONS_DURATION;
     }
 
     /**

@@ -71,7 +71,7 @@ public class XenForoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load after login");
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "page to load after login");
         navigateToUserPage();
         return XpathBuilder
             .from(div, withClass("p-body-sideNavContent"))
@@ -100,17 +100,17 @@ public class XenForoHandler extends AbstractTrackerHandler {
     }
 
     private void navigateToUserPage() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "page to load before clicking navbar");
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "page to load before clicking navbar");
         // Click the nav bar to make the profile button interactable
         final By profileParentSelector = XpathBuilder
             .from(a, withClass("p-navgroup-link--user"))
             .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "first navbar click");
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "first navbar click");
 
         clickButton(profileParent);
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "second navbar click");
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "second navbar click");
     }
 
     /**

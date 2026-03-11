@@ -91,7 +91,7 @@ public class Unit3dHandler extends AbstractTrackerHandler {
      */
     @Override
     public boolean canBannerBeCleared() {
-        BrowserInteractionHelper.explicitWait(waitForPageUpdateDuration(), "login pop-up to disappear");
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "login pop-up to disappear");
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();

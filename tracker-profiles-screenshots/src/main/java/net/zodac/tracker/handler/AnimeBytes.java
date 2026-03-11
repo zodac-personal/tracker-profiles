@@ -64,7 +64,6 @@ public class AnimeBytes extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
@@ -72,12 +71,11 @@ public class AnimeBytes extends AbstractTrackerHandler {
         final By logoutConfirmationSelector = XpathBuilder
             .from(input, withName("yes"), withType("submit"))
             .build();
-        browserInteractionHelper.waitForElementToAppear(logoutConfirmationSelector, waitForTransitionsDuration());
+        browserInteractionHelper.waitForElementToAppear(logoutConfirmationSelector, waitForPageTransitionsDuration());
         final WebElement logoutConfirmation = driver.findElement(logoutConfirmationSelector);
         clickButton(logoutConfirmation);
 
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), maximumLinkResolutionDuration());
     }
 
     @Override

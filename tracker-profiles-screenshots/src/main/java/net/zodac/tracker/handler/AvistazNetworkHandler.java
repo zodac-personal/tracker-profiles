@@ -78,8 +78,8 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link AvistazNetworkHandler} trackers, prior to clicking the login button with a successful username/password there is another field where a
-     * Captcha needs to be entered.
+     * For {@link AvistazNetworkHandler} trackers, prior to clicking the login button with a successful username/password there is another field where
+     * a Captcha needs to be entered.
      *
      * <p>
      * Manual user interaction:

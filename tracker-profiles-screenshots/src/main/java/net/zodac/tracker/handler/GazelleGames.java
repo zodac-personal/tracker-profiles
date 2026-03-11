@@ -111,7 +111,6 @@ public class GazelleGames extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
@@ -119,8 +118,7 @@ public class GazelleGames extends AbstractTrackerHandler {
         // TODO: Instead of overriding logout, move this to abstract?
         browserInteractionHelper.acceptAlert();
 
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), maximumLinkResolutionDuration());
     }
 
     @Override

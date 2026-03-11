@@ -56,8 +56,7 @@ public class HawkeUno extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageSelector() {
-        BrowserInteractionHelper.explicitWait(waitForPageLoadDuration(), "login pop-up to disappear");
-
+        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "login pop-up to disappear");
         openUserDropdownMenu();
         return XpathBuilder
             .from(ul, withClass("dropdown-menu"))

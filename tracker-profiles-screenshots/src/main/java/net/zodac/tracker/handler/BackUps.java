@@ -74,7 +74,7 @@ public class BackUps extends TsSpecialEditionHandler {
      */
     @Override
     protected void manualCheckAfterLoginClick(final String trackerName) {
-        browserInteractionHelper.waitForPageToLoad(waitForPageUpdateDuration());
+        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
 
         final By messagesSelector = By.id("collapseobj_messages");
         final Collection<WebElement> messages = driver.findElements(messagesSelector);

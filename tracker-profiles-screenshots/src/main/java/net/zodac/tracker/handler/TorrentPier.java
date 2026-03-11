@@ -98,11 +98,6 @@ public class TorrentPier extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Duration waitForPageLoadDuration() {
-        return Duration.ofMinutes(1L);
-    }
-
-    @Override
     protected List<ExtensionBinding<?>> requiredExtensions() {
         final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
             () -> {

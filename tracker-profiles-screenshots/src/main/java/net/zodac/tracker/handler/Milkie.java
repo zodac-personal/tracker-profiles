@@ -99,7 +99,7 @@ public class Milkie extends AbstractTrackerHandler {
         final By profilePageSelector = profilePageSelector();
 
         // TODO: Move this to browserInteractionHelper, and replace more explicit waits with element visibly waits
-        final Wait<WebDriver> wait = new WebDriverWait(driver, waitForPageLoadDuration());
+        final Wait<WebDriver> wait = new WebDriverWait(driver, maximumLinkResolutionDuration());
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(profilePageSelector));
 
         final WebElement logoutParent = driver.findElement(profilePageSelector);

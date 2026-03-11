@@ -126,15 +126,13 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     @Override
     public void logout() {
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
         // After clicking logout, an alert appears - find and click 'Yes'
         browserInteractionHelper.acceptAlert();
 
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), maximumLinkResolutionDuration());
     }
 
     @Override
