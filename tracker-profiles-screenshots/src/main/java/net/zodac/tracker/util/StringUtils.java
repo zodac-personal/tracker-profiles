@@ -18,6 +18,7 @@
 package net.zodac.tracker.util;
 
 import java.util.Collection;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Utility class with {@link String}-based functions.
@@ -26,6 +27,19 @@ public final class StringUtils {
 
     private StringUtils() {
 
+    }
+
+    /**
+     * Returns the first line of the given string, or an empty string if the input is {@code null} or blank.
+     *
+     * <p>
+     * Useful for cleaning multi-line exception messages before logging.
+     *
+     * @param input the string to process, may be {@code null}
+     * @return the first line of {@code input}, or an empty string if {@code null} or blank
+     */
+    public static String firstLine(final @Nullable String input) {
+        return input == null ? "" : input.split("\n")[0].trim();
     }
 
     /**

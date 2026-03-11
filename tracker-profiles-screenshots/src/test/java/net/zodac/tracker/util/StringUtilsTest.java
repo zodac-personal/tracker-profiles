@@ -67,4 +67,22 @@ class StringUtilsTest {
             arguments(Set.of("a", "b"), "s")
         );
     }
+
+    @ParameterizedTest(name = "firstLine({0}) -> {1}")
+    @MethodSource("firstLineProvider")
+    void testFirstLine(final String input, final String expected) {
+        assertThat(StringUtils.firstLine(input))
+            .isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> firstLineProvider() {
+        return Stream.of(
+            arguments(null, ""),
+            arguments("", ""),
+            arguments("   ", ""),
+            arguments("single line", "single line"),
+            arguments("first\nsecond", "first"),
+            arguments("first\nsecond\nthird", "first")
+        );
+    }
 }

@@ -118,11 +118,10 @@ final class ProfileScreenshotExecutor {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
 
-            final String errorMessage = e.getMessage() == null ? "" : e.getMessage();
-            if (errorMessage.isEmpty()) {
+            final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
+            if (cleanedErrorMessage.isEmpty()) {
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name());
             } else {
-                final String cleanedErrorMessage = errorMessage.split("\n")[0];
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
         } catch (final TranslationException e) {
@@ -134,11 +133,10 @@ final class ProfileScreenshotExecutor {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
-            final String errorMessage = e.getMessage() == null ? "" : e.getMessage();
-            if (errorMessage.isEmpty()) {
+            final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
+            if (cleanedErrorMessage.isEmpty()) {
                 LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name());
             } else {
-                final String cleanedErrorMessage = errorMessage.split("\n")[0];
                 LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
         } finally {
