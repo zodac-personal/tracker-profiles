@@ -423,8 +423,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      *
      * @return <code>true</code> if there are elements in need of redaction
      */
-    // TODO: Does this need to be overridden at all?
-    public boolean hasSensitiveInformation() {
+    public final boolean hasSensitiveInformation() {
         return !emailElements().isEmpty()
             || !ipAddressElements().isEmpty()
             || !passkeyElements().isEmpty()
@@ -440,6 +439,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable {
      * @see Redactor
      */
     // TODO: Add other redaction types (country, flag, avatar, gender)
+    // TODO: Move redaction methods to another class?
     public int redactElements() {
         LOGGER.trace("Redacting elements");
         return redactEmailElements()

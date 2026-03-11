@@ -69,11 +69,6 @@ public class SportsCult extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withId("header"))

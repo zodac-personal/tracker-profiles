@@ -76,11 +76,6 @@ public class BeyondHd extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     public boolean hasFixedHeader() {
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
         browserInteractionHelper.makeUnfixed(headerElement);

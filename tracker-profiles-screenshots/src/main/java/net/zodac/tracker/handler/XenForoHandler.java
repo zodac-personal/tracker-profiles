@@ -83,11 +83,6 @@ public class XenForoHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         navigateToUserPage();
         return XpathBuilder

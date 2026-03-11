@@ -50,11 +50,6 @@ public class AnimeBytes extends AbstractTrackerHandler {
             .build();
     }
 
-    @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
     /**
      * {@inheritDoc}
      *

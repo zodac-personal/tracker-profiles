@@ -86,11 +86,6 @@ public class SpeedCd extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(input, withClass("logOut"))

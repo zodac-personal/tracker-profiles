@@ -75,11 +75,6 @@ public class BroadcasTheNet extends GazelleHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(ul, withId("userinfo_username"))

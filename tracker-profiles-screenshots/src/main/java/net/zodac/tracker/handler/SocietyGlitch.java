@@ -91,11 +91,6 @@ public class SocietyGlitch extends AbstractTrackerHandler {
     }
 
     @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
-    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withId("sbleft"))

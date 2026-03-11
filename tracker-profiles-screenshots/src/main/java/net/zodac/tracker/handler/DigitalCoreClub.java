@@ -110,11 +110,6 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
             .build();
     }
 
-    @Override
-    public boolean hasSensitiveInformation() {
-        return false;
-    }
-
     /**
      * {@inheritDoc}
      *
