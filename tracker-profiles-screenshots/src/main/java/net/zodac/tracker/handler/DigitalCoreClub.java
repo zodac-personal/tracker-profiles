@@ -20,13 +20,17 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
+import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -47,12 +51,23 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return By.id("inputUsername");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "");
+        return XpathBuilder
+            .from(div, withClass("panel-body"))
+            .child(form, atIndex(1))
+            .child(div, atIndex(1))
+            .child(input, atIndex(1))
+            .build();
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return By.id("inputPassword");
+        return XpathBuilder
+            .from(div, withClass("panel-body"))
+            .child(form, atIndex(1))
+            .child(div, atIndex(2))
+            .child(input, atIndex(1))
+            .build();
     }
 
     /**
@@ -72,7 +87,10 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
-        final WebElement captchaElement = driver.findElement(By.id("captcha"));
+        final By captchaSelector = XpathBuilder
+            .from(div, withClass("neural-captcha-group"))
+            .build();
+        final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
         DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
     }
@@ -106,14 +124,12 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        BrowserInteractionHelper.explicitWait(waitForTransitionsDuration(), "user details to load");
-
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))
             .descendant(td, withAttribute("translate", "FRIENDS.LAST_SEEN"))
             .build();
-        browserInteractionHelper.waitForElementToAppear(selector, waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(selector, maximumLinkResolutionDuration());
     }
 
     @Override
