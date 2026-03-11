@@ -20,10 +20,9 @@ package net.zodac.tracker.framework;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -135,9 +134,9 @@ public final class TrackerHandlerFactory {
     }
 
     private static Set<Class<?>> getFromJar(final URL resource, final String packagePath) throws IOException {
-        final String jarFilePath = resource.getFile().substring(5, resource.getFile().indexOf('!'));
+        final JarURLConnection connection = (JarURLConnection) resource.openConnection();
 
-        try (final JarFile jarFile = new JarFile(URLDecoder.decode(jarFilePath, StandardCharsets.UTF_8))) {
+        try (final JarFile jarFile = connection.getJarFile()) {
             return jarFile.stream()
                 .map(ZipEntry::getName)
                 .filter(jarEntryName -> jarEntryName.startsWith(packagePath) && jarEntryName.endsWith(".class"))
