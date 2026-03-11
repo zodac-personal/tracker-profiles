@@ -18,15 +18,20 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.body;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
+import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -64,17 +69,15 @@ public class C411 extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofMillis(3500L), "login pop-up to disappear");
-        return By.id("reka-dropdown-menu-trigger-v-1-0-2");
+        return By.tagName("header");
     }
 
     @Override
     protected By profilePageSelector() {
         openUserDropdownMenu();
         return XpathBuilder
-            .from(div, withId("reka-dropdown-menu-content-v-1-0-4"))
-            .child(div, atIndex(1))
-            .child(div, atIndex(1))
+            .from(div, withAttribute("role", "presentation"))
+            .child(div, withAttribute("role", "group"), atIndex(1))
             .child(a, atIndex(1))
             .build();
     }
@@ -95,16 +98,33 @@ public class C411 extends AbstractTrackerHandler {
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
         return XpathBuilder
-            .from(div, withId("reka-dropdown-menu-content-v-1-0-4"))
-            .child(div, atIndex(1))
-            .child(div, atIndex(3))
+            .from(div, withAttribute("role", "presentation"))
+            .child(div, withAttribute("role", "group"), atIndex(3))
             .child(button, atIndex(1))
             .build();
     }
 
     private void openUserDropdownMenu() {
+        // Remove the login pop-up (if it exists) since it covers the user drop down menu
+        final By loginPopupsSelector = XpathBuilder
+            .from(span, withClass("i-lucide:x"))
+            .parent(button)
+            .build();
+        final Collection<WebElement> loginPopups = driver.findElements(loginPopupsSelector);
+        LOGGER.debug("\t\t- Found {} login pop-ups, closing", loginPopups.size());
+
+        for (final WebElement loginPopup : loginPopups) {
+            clickButton(loginPopup);
+        }
+
         // Click the user dropdown menu bar to make the profile/logout button interactable
-        final By profileParentSelector = By.id("reka-dropdown-menu-trigger-v-1-0-2");
+        final By profileParentSelector = XpathBuilder
+            .from(NamedHtmlElement.of("nav"), atIndex(1))
+            .child(div, atIndex(3))
+            .child(button, atIndex(1))
+            .child(div, atIndex(1))
+            .child(span, atIndex(1))
+            .build();
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
     }
