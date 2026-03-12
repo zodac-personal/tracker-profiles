@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
  * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
+ * @param logLevel                   the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
  * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the user profile page
@@ -63,13 +64,14 @@ public record ApplicationConfiguration(
     boolean forceUiBrowser,
     Duration inputTimeoutDuration,
     boolean inputTimeoutEnabled,
+    String logLevel,
     int numberOfTrackerAttempts,
     Path outputDirectory,
     RedactionType redactionType,
     boolean takeScreenshotOnError,
     List<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
-) { // TODO: Invalid LOG_LEVEL?
+) {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -85,6 +87,14 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
+
+    private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR"
+        ));
 
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
         "800x600",
@@ -116,6 +126,7 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
             getInputTimeoutDuration(),
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
+            getLogLevel(),
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
             getRedactionType(),
@@ -149,6 +160,15 @@ public record ApplicationConfiguration(
         final String inputTimeoutSeconds = getOrDefault("INPUT_TIMEOUT_SECONDS", "300");
         final int inputTimeoutSecondsValidated = parseIntegerInRange(inputTimeoutSeconds, "INPUT_TIMEOUT_SECONDS", Integer.MAX_VALUE);
         return Duration.ofSeconds(inputTimeoutSecondsValidated);
+    }
+
+    private static String getLogLevel() {
+        final String logLevelRaw = getOrDefault("LOG_LEVEL", "INFO").toUpperCase(Locale.getDefault());
+        if (!VALID_LOG_LEVELS.contains(logLevelRaw)) {
+            throw new IllegalArgumentException(
+                String.format("[LOG_LEVEL] Invalid value: '%s', must be one of: %s", logLevelRaw, VALID_LOG_LEVELS));
+        }
+        return logLevelRaw;
     }
 
     private static int getNumberOfTrackerAttempts() {
@@ -256,6 +276,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
         LOGGER.debug("\t- inputTimeoutDuration={}", inputTimeoutDuration);
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
+        LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- redactionType={}", redactionType);
