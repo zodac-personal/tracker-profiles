@@ -54,7 +54,9 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "Concertos", url = "https://concertos.live/")
 @TrackerHandler(name = "DesiTorrents", url = "https://desitorrents.tv/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
+@TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
+@TrackerHandler(name = "InfinityHD", url = "https://infinityhd.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
 @TrackerHandler(name = "MalayaBits", url = "https://malayabits.cc/")
@@ -65,6 +67,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "RocketHD", url = "https://rocket-hd.cc/")
 @TrackerHandler(name = "SexTorrent", adult = true, url = "https://sextorrent.myds.me/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
+@TrackerHandler(name = "VietMediaF", url = "https://tracker.vietmediaf.store/")
 @TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
 public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
 
