@@ -167,6 +167,7 @@ background:
 | [XSpeeds](https://www.xspeeds.eu/)                   |
 | [XWT-Classics](https://xwt-classics.net/)            |
 | [YUSCENE](https://yu-scene.net/)                     |
+| [Zappateers](https://zappateers.com/)                |
 
 ### Non-Headless
 
