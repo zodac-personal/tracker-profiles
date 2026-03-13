@@ -28,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
 import java.util.List;
@@ -66,7 +67,7 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
         return XpathBuilder
             .from(NamedHtmlElement.any(), withId("collapseobj_loginbox"))
             .descendant(form, atIndex(1))
-            .child(input, atIndex(4))
+            .child(input, withType("submit"))
             .build();
     }
 

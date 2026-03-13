@@ -192,6 +192,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [Hawke-Uno](https://hawke.uno/)                     | **Cloudflare-check** |
 | [HDBits](https://hdbits.org/)                       | **Cloudflare-check** |
 | [Immortal-S](https://immortal-s.me/)                | **Cloudflare-check** |
+| [LetSeed](https://letseed.org/)                     | **Manual**           |
 | [LST](https://lst.gg/)                              | **Manual**           |
 | [PassThePopcorn](https://passthepopcorn.me/)        | **Manual**           |
 | [PrivateHD](https://privatehd.to/)                  | **Cloudflare-check** |

@@ -241,6 +241,12 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Opening user profile page");
         trackerHandler.openProfilePage();
 
+        // We translate the page prior to redaction because some translations will require a page reload
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
+            LOGGER.info("\t- Translating profile page to English");
+            trackerNeedsTranslation.translatePageToEnglish();
+        }
+
         if (trackerHandler.hasSensitiveInformation()) {
             LOGGER.info("\t- Redacting elements with sensitive information");
             final int numberOfRedactedElements = trackerHandler.redactElements();
@@ -254,11 +260,6 @@ final class ProfileScreenshotExecutor {
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
             trackerWithFixedHeader.unfixHeader();
             LOGGER.info("\t- Header has been updated to not be fixed");
-        }
-
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
-            LOGGER.info("\t- Translating profile page to English");
-            trackerNeedsTranslation.translatePageToEnglish();
         }
 
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
