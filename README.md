@@ -118,6 +118,7 @@ background:
 | [FunFile](https://www.funfile.org/)                  |
 | [GreatPosterWall](https://greatposterwall.com/)      |
 | [HappyFappy](https://www.happyfappy.net/)            |
+| [HD-Forever](https://hdf.world/)                     |
 | [HDUnited](https://hd-united.vn/)                    |
 | [Hellenic-HD](https://hellenic-hd.cc/)               |
 | [ImmortalSeed](https://immortalseed.me/)             |
