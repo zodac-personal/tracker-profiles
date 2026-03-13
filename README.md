@@ -14,6 +14,7 @@
         - [UI In Windows](#ui-in-windows)
         - [Disable UI](#disable-ui)
     - [Configuration Options](#configuration-options)
+- [Versioning](#versioning)
 - [Contributing](#contributing)
     - [Requirements](#requirements)
     - [Install Git Hooks](#install-git-hooks)
@@ -358,6 +359,18 @@ The following are all possible configuration options, defined as environment var
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                              |
 | *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | headless,manual,cloudflare-check |
 | *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv    |
+
+## Versioning
+
+This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+
+- **MAJOR**: incompatible changes to the public API (e.g. removed or renamed configuration options, changed CSV format)
+- **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options)
+- **PATCH**: backwards-compatible bug fixes or code changes
+
+Adding or removing tracker support is **not** considered a `MINOR` change. Trackers are external to the application and
+not part of its public API, as their availability depends on third-party sites that can change or disappear at any time.
+Tracker additions and removals are released as `PATCH` versions.
 
 ## Contributing
 
