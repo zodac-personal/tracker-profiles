@@ -75,8 +75,11 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     @SuppressWarnings("NullAway") // Will be set in the configure() method
     protected BrowserInteractionHelper browserInteractionHelper;
 
+    /**
+     * The {@link TrackerDefinition}.
+     */
     @SuppressWarnings("NullAway") // Will be set in the configure() method
-    private TrackerDefinition trackerDefinition;
+    protected TrackerDefinition trackerDefinition;
 
     /**
      * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
@@ -229,7 +232,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         passwordField.clear();
         passwordField.sendKeys(password);
 
-        manualCheckBeforeLoginClick(trackerName);
+        manualCheckBeforeLoginClick();
 
         // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
         final By loginButtonSelector = loginButtonSelector();
@@ -238,7 +241,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
         }
-        manualCheckAfterLoginClick(trackerName);
+        manualCheckAfterLoginClick();
 
         try {
             final By postLoginSelector = postLoginSelector();
@@ -280,11 +283,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * <p>
      * Where possible, the element to be interacted with will be highlighted in the browser.
      *
-     * @param trackerName the name of the tracker
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
-    // TODO: Don't need to pass in trackerName anymore?
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         // Do nothing by default
     }
 
@@ -306,10 +307,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * <p>
      * Where possible, the element to be interacted with will be highlighted in the browser.
      *
-     * @param trackerName the name of the tracker
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
-    protected void manualCheckAfterLoginClick(final String trackerName) {
+    protected void manualCheckAfterLoginClick() {
         // Do nothing by default
     }
 

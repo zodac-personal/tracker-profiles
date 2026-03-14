@@ -79,7 +79,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         final By twoFactorPasscodeSelector = XpathBuilder
             .from(input, withName("twostep_code"), withType("number"))
             .navigateTo(parent(td))
@@ -97,7 +97,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
 
-        DisplayUtils.userInputConfirmation(trackerName, String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
             captchaTextElement.getText()));
     }
 

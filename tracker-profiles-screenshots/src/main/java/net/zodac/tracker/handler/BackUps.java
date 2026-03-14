@@ -74,7 +74,7 @@ public class BackUps extends TsSpecialEditionHandler implements HasFixedHeader {
      * and then navigate to the home page.
      */
     @Override
-    protected void manualCheckAfterLoginClick(final String trackerName) {
+    protected void manualCheckAfterLoginClick() {
         browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
 
         final By messagesSelector = By.id("collapseobj_messages");

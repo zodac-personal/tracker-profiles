@@ -74,7 +74,7 @@ public class FiveTwoPt extends AbstractTrackerHandler implements NeedsExplicitTr
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaElementSelector = XpathBuilder
@@ -82,7 +82,7 @@ public class FiveTwoPt extends AbstractTrackerHandler implements NeedsExplicitTr
             .build();
         final WebElement captchaElement = driver.findElement(captchaElementSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

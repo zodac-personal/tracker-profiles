@@ -50,13 +50,13 @@ public class LetSeed extends TsSpecialEditionHandler implements NeedsExplicitTra
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = By.id("regimage");
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

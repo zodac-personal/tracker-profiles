@@ -59,7 +59,7 @@ public class GazelleGames extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         LOGGER.info("\t\t >>> Waiting for user to select correct game title");
 
         final By selectionSelector = XpathBuilder
@@ -69,7 +69,7 @@ public class GazelleGames extends AbstractTrackerHandler {
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Select the correct game");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct game");
     }
 
     @Override

@@ -74,12 +74,12 @@ public class Docspedia extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

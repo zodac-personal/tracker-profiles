@@ -103,7 +103,7 @@ public class CgPeers extends AbstractTrackerHandler implements HasCloudflareChec
      * </ol>
      */
     @Override
-    protected void manualCheckAfterLoginClick(final String trackerName) {
+    protected void manualCheckAfterLoginClick() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button");
 
@@ -112,7 +112,7 @@ public class CgPeers extends AbstractTrackerHandler implements HasCloudflareChec
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Enter the 2FA code and click the 'Verify Code' button");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code and click the 'Verify Code' button");
 
         // If the user didn't click 'Verify Code', do it for them (it shares the same HTML ID as the login button from the previous page)
         final String nextUrl = driver.getCurrentUrl();

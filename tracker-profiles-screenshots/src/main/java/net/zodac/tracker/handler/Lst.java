@@ -52,7 +52,7 @@ public class Lst extends Unit3dHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckAfterLoginClick(final String trackerName) {
+    protected void manualCheckAfterLoginClick() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button");
 
@@ -61,7 +61,7 @@ public class Lst extends Unit3dHandler {
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Select the correct movie and click the login button");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie and click the login button");
 
         // If the user didn't click 'login', do it for them
         final String nextUrl = driver.getCurrentUrl();

@@ -84,7 +84,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick(final String trackerName) {
+    protected void manualCheckBeforeLoginClick() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = XpathBuilder
@@ -92,7 +92,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override
