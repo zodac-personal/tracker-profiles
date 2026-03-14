@@ -580,7 +580,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "button click");
     }
 
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
+    private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
         if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
             if (!requiredExtensions.isEmpty()) {
                 LOGGER.trace("Attempting to create python driver with extensions; extensions will be installed but cannot be configured: {}",

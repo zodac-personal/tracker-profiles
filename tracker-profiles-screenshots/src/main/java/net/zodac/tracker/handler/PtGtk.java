@@ -1,0 +1,70 @@
+/*
+ * BSD Zero Clause License
+ *
+ * Copyright (c) 2024-2026 zodac.net
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package net.zodac.tracker.handler;
+
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+
+import java.util.Collection;
+import java.util.List;
+import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.XpathBuilder;
+import org.openqa.selenium.By;
+
+/**
+ * Extension of the {@link NexusPhpHandler} for the {@code PT.GTK} tracker.
+ */
+@TrackerHandler(name = "PT.GTK", type = TrackerType.MANUAL, url = "https://pt.gtk.pw/")
+public class PtGtk extends NexusPhpHandler {
+
+    @Override
+    protected By loginButtonSelector() {
+        return By.id("submit-btn");
+    }
+
+    @Override
+    protected Collection<By> emailElements() {
+        return List.of(
+            XpathBuilder
+                .from(table, withClass("main"))
+                .descendant(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(6))
+                .child(td, atIndex(2))
+                .build()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link PtGtk}, the IP address is already blurred and not visible in the screenshot.
+     *
+     * @return an empty {@link Collection} to indicate no IP address elements to redact
+     */
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of();
+    }
+}

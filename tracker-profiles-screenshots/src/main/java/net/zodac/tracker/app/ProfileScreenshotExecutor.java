@@ -20,6 +20,7 @@ package net.zodac.tracker.app;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.LinkedHashSet;
@@ -159,29 +160,31 @@ final class ProfileScreenshotExecutor {
     }
 
     private static void clearErrorScreenshots(final String trackerName) {
-        final File errorsDir = ERRORS_DIRECTORY.toFile();
-        if (!errorsDir.exists()) {
+        final File errorsDirectory = ERRORS_DIRECTORY.toFile();
+        if (!errorsDirectory.exists()) {
             return;
         }
 
-        final File[] errorScreenshots = errorsDir.listFiles((_, name) -> name.startsWith(trackerName));
+        final File[] errorScreenshots = errorsDirectory.listFiles((_, name) -> name.startsWith(trackerName));
         if (errorScreenshots != null) {
             for (final File errorScreenshot : errorScreenshots) {
-                final boolean deleted = errorScreenshot.delete();
-                if (deleted) {
+                try {
+                    Files.delete(errorScreenshot.toPath());
                     LOGGER.debug("\t- Deleted error screenshot after successful retry: [{}]", errorScreenshot.getAbsolutePath());
-                } else {
-                    LOGGER.warn("\t- Failed to delete error screenshot: [{}]", errorScreenshot.getAbsolutePath());
+                } catch (final IOException e) {
+                    LOGGER.warn("\t- Failed to delete error screenshot: [{}]", errorScreenshot.getAbsolutePath(), e);
                 }
             }
         }
 
-        final String[] remaining = errorsDir.list();
+        final String[] remaining = errorsDirectory.list();
         if (remaining != null && remaining.length == 0) {
             LOGGER.trace("No error screenshots remaining, deleting directory");
-            final boolean deleted = errorsDir.delete();
-            if (deleted) {
-                LOGGER.debug("Deleted empty errors directory: [{}]", errorsDir.getAbsolutePath());
+            try {
+                Files.delete(errorsDirectory.toPath());
+                LOGGER.debug("\t- Deleted empty errors directory after successful retry: [{}]", errorsDirectory.getAbsolutePath());
+            } catch (final IOException e) {
+                LOGGER.warn("\t- Failed to delete errors screenshot: [{}]", errorsDirectory.getAbsolutePath(), e);
             }
         }
     }
@@ -323,6 +326,6 @@ final class ProfileScreenshotExecutor {
     }
 
     private static String screenshotBaseName(final String trackerName, final RedactionType redactionType) {
-        return redactionType == RedactionType.NONE ? trackerName : trackerName + "_" + redactionType.formattedName();
+        return redactionType == RedactionType.NONE ? trackerName : (trackerName + "_" + redactionType.formattedName());
     }
 }

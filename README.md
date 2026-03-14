@@ -125,13 +125,15 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [DigitalCore.Club](https://digitalcore.club/)       | [CinemaZ](https://cinemaz.to/)              |
 | [DocsPedia](https://docspedia.world/)               | [ExoticaZ](https://exoticaz.to/)            |
 | [GazelleGames](https://gazellegames.net/)           | [Hawke-Uno](https://hawke.uno/)             |
-| [LetSeed](https://letseed.org/)                     | [HDBits](https://hdbits.org/)               |
-| [LST](https://lst.gg/)                              | [Immortal-S](https://immortal-s.me/)        |
-| [PassThePopcorn](https://passthepopcorn.me/)        | [PrivateHD](https://privatehd.to/)          |
-| [SocietyGlitch](https://stalker.societyglitch.com/) | [SceneTime](https://www.scenetime.com/)     |
-| [TheEmpire](https://theempire.click/)               | [Speed.CD](https://speed.cd/)               |
-| [TheGeeks](https://thegeeks.click/)                 | [Torrenting](https://torrenting.com/)       |
-| [TheKitchen](https://thekitchen.click/)             | [UploadCX](https://upload.cx/)              |
+| [HDFans](https://hdfans.org/)                       | [HDBits](https://hdbits.org/)               |
+| [LetSeed](https://letseed.org/)                     | [Immortal-S](https://immortal-s.me/)        |
+| [LST](https://lst.gg/)                              | [PrivateHD](https://privatehd.to/)          |
+| [PassThePopcorn](https://passthepopcorn.me/)        | [SceneTime](https://www.scenetime.com/)     |
+| [PT.GTK](https://pt.gtk.pw/)                        | [Speed.CD](https://speed.cd/)               |
+| [SocietyGlitch](https://stalker.societyglitch.com/) | [Torrenting](https://torrenting.com/)       |
+| [TheEmpire](https://theempire.click/)               | [UploadCX](https://upload.cx/)              |
+| [TheGeeks](https://thegeeks.click/)                 |                                             |
+| [TheKitchen](https://thekitchen.click/)             |                                             |
 | [TheOccult](https://theoccult.click/)               |                                             |
 | [ThePlace](https://theplace.click/)                 |                                             |
 | [TheShow](https://theshow.click/)                   |                                             |

@@ -17,14 +17,9 @@
 
 package net.zodac.tracker.util;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
-import net.zodac.tracker.framework.exception.TranslationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
@@ -248,58 +243,6 @@ public class BrowserInteractionHelper {
     public void stopPageLoad() {
         LOGGER.trace("Stopping page load");
         driver.executeScript("window.stop();");
-    }
-
-    /**
-     * Translates the web page into English. Performs the following actions:
-     * <ol>
-     *     <li>Loads a non-interactive element on the web page</li>
-     *      <li>Performs a right-click</li>
-     *      <li>Using {@link Robot}, performs 3 'UP' keyboard presses to highlight the 'Translate to English' option</li>
-     *      <li>Presses 'ENTER'</li>
-     * </ol>
-     *
-     */
-    public void translatePage() {
-        LOGGER.trace("Translating page to English");
-        setBrowserAsActiveWindow();
-
-        try {
-            // Find a non-interactive element to right-click
-            final WebElement bodyElement = driver.findElement(By.tagName("body"));
-
-            // Simulate right-click on the page, then wait for it to appear
-            final Actions actions = new Actions(driver);
-            actions.contextClick(bodyElement).perform();
-            explicitWait(DEFAULT_WAIT_FOR_CONTEXT_MENU, "context menu to open");
-
-            // Press "Up" key 3 times to select 'Translate to English' option from bottom of the menu
-            final Robot robot = new Robot();
-            final int numberOfUpPressesToSelectTranslateButton = 3;
-            for (int i = 0; i < numberOfUpPressesToSelectTranslateButton; i++) {
-                robot.keyPress(KeyEvent.VK_UP);
-                robot.keyRelease(KeyEvent.VK_UP);
-                explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS, "key press to activate");
-            }
-
-            // Press "Enter" to select the "Translate to English" option
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-
-            explicitWait(DEFAULT_WAIT_FOR_TRANSLATION, "translation to complete");
-        } catch (final AWTException e) {
-            throw new TranslationException(e);
-        }
-    }
-
-    private static void setBrowserAsActiveWindow() {
-        try {
-            LOGGER.trace("Setting Chromium browser as active window");
-            new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start();
-        } catch (final IOException e) {
-            LOGGER.debug("Error setting browser as active window", e);
-            LOGGER.error("Error setting browser as active window: {}", e.getMessage());
-        }
     }
 
     /**

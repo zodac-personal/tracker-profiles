@@ -67,15 +67,13 @@ ENV NO_AT_BRIDGE=1
 # - chromium (web browser)
 # - fonts-arphic-ukai (Chinese fonts)
 # - fonts-ipafont (Japanese fonts)
-# - wmctrl (force browser to be active window)
 # BEGIN DEBIAN PACKAGES
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="145.0.7632.159-1~deb13u1" \
+        chromium="146.0.7680.71-1~deb13u1" \
         fonts-arphic-ukai="0.2.20080216.2-5" \
         fonts-ipafont="00303-23" \
-        wmctrl="1.07+git20240228.1105759-1" \
     && \
     apt-get autoremove && \
     apt-get clean && \
