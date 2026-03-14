@@ -1,0 +1,7 @@
+## Ability to disable redaction
+
+A new option **NONE** has been added to `REDACTION_TYPE` to take a screenshot of a tracker with no redaction.
+
+## Allowing multiple `REDACTION_TYPE` options
+
+The `REDACTION_TYPE` configuration option can now take multiple values and perform multiple screenshots for each tracker.

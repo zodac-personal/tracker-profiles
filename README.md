@@ -353,7 +353,7 @@ The following are all possible configuration options, defined as environment var
 | *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails) (max of 5)                                                                                                             | 1                                |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                       |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                 |
-| *REDACTION_TYPE*                | Whether to redact by replacing the text, or overlaying a solid box over the sensitive information [OVERLAY, TEXT]                                                                                        | TEXT                             |
+| *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, OVERLAY, TEXT]                                                            | TEXT                             |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                   |
 | *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                            |
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                              |
@@ -370,7 +370,7 @@ This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PA
 
 Adding or removing tracker support is **not** considered a `MINOR` change. Trackers are external to the application and
 not part of its public API, as their availability depends on third-party sites that can change or disappear at any time.
-Tracker additions and removals are released as `PATCH` versions.
+Tracker additions and removals will be released as `PATCH` versions.
 
 ## Contributing
 
@@ -440,7 +440,7 @@ docker run \
     --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env REDACTION_TYPE=TEXT \
+    --env REDACTION_TYPE=NONE,OVERLAY,TEXT \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=true \
     --env TIMEZONE=UTC \

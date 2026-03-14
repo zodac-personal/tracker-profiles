@@ -18,21 +18,18 @@
 package net.zodac.tracker.redaction;
 
 import java.util.regex.Pattern;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
-import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.config.RedactionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link Redactor} that delegates calls to another concrete implementation. We use {@link ApplicationConfiguration#redactionType()}
- * to determine which to use.
+ * Implementation of {@link Redactor} that delegates calls to another concrete implementation, based on the provided {@link RedactionType}.
  */
 public class RedactorImpl implements Redactor {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
-    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Redactor redactor;
@@ -40,12 +37,14 @@ public class RedactorImpl implements Redactor {
     /**
      * Default constructor.
      *
-     * @param driver the {@link RemoteWebDriver}
+     * @param driver        the {@link RemoteWebDriver}
+     * @param redactionType the {@link RedactionType} to use for redaction
      */
-    public RedactorImpl(final RemoteWebDriver driver) {
-        redactor = switch (CONFIG.redactionType()) {
+    public RedactorImpl(final RemoteWebDriver driver, final RedactionType redactionType) {
+        redactor = switch (redactionType) {
             case OVERLAY -> new OverlayRedactor(driver);
             case TEXT -> new TextRedactor(driver);
+            case NONE -> throw new IllegalStateException("RedactorImpl should not be created for NONE redaction type");
         };
     }
 
@@ -80,16 +79,16 @@ public class RedactorImpl implements Redactor {
     private static void logElementToBeRedacted(final WebElement element) {
         final String elementText = element.getText();
         if (!elementText.isBlank()) {
-            LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
+            LOGGER.info("\t\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
             return;
         }
 
         final String elementValue = element.getAttribute("value");
         if (elementValue != null && !elementValue.isBlank()) {
-            LOGGER.info("\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
+            LOGGER.info("\t\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
             return;
         }
 
-        LOGGER.warn("\t\t- Found invalid text in <{}> {}, unable to check text or value", element.getTagName(), element);
+        LOGGER.warn("\t\t\t- Found invalid text in <{}> {}, unable to check text or value", element.getTagName(), element);
     }
 }

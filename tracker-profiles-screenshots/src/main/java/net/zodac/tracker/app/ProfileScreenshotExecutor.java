@@ -22,12 +22,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.config.ExistingScreenshotAction;
+import net.zodac.tracker.framework.config.RedactionType;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
@@ -37,8 +40,9 @@ import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
+import net.zodac.tracker.redaction.Redactor;
+import net.zodac.tracker.redaction.RedactorImpl;
 import net.zodac.tracker.util.BrowserInteractionHelper;
-import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -155,8 +159,7 @@ final class ProfileScreenshotExecutor {
     }
 
     private static void clearErrorScreenshots(final String trackerName) {
-        final Path errorsDirectory = CONFIG.outputDirectory().resolve("errors");
-        final File errorsDir = errorsDirectory.toFile();
+        final File errorsDir = ERRORS_DIRECTORY.toFile();
         if (!errorsDir.exists()) {
             return;
         }
@@ -196,7 +199,7 @@ final class ProfileScreenshotExecutor {
 
         try {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
-            createErrorsDirectory();
+            ensureErrorDirectoryExists();
             final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, true, 0);
             LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
@@ -205,25 +208,27 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void createErrorsDirectory() {
+    private static void ensureErrorDirectoryExists() {
         final File directoryHandle = ERRORS_DIRECTORY.toFile();
-        if (directoryHandle.exists()) {
-            LOGGER.trace("Errors directory already exists: '{}'", directoryHandle);
-            return;
-        }
-
-        LOGGER.debug("\t- Creating errors directory: '{}'", directoryHandle);
-        final boolean wasDirectoryCreated = directoryHandle.mkdirs();
-        if (!wasDirectoryCreated) {
-            LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
+        if (!directoryHandle.exists()) {
+            LOGGER.trace("Creating directory: '{}'", directoryHandle);
+            final boolean created = directoryHandle.mkdirs();
+            if (!created) {
+                LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
+            }
         }
     }
 
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
         LOGGER.trace("\t- Starting to take screenshot of profile");
-        final Pair<ExistingScreenshotAction, Integer> existingScreenshotValue = doesScreenshotExistAndSkipSelected(trackerCredential.name());
-        if (existingScreenshotValue.first() == ExistingScreenshotAction.SKIP) {
+        final Set<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
+        if (redactionsToExecute.isEmpty()) {
+            LOGGER.warn("\t- Screenshots already exist for all redaction types for tracker '{}', skipping", trackerCredential.name());
             return;
+        }
+
+        if (!redactionsToExecute.equals(CONFIG.redactionTypes())) {
+            LOGGER.warn("\t- Some screenshots already exist for tracker '{}', only executing: {}", trackerCredential.name(), redactionsToExecute);
         }
 
         LOGGER.info("\t- Opening tracker");
@@ -247,52 +252,77 @@ final class ProfileScreenshotExecutor {
             trackerNeedsTranslation.translatePageToEnglish();
         }
 
-        if (trackerHandler.hasSensitiveInformation()) {
-            LOGGER.info("\t- Redacting elements with sensitive information");
-            final int numberOfRedactedElements = trackerHandler.redactElements();
-            if (numberOfRedactedElements != 0) {
-                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
-            }
-        } else {
-            LOGGER.debug("\t- Nothing to redact");
-        }
-
-        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
-            trackerWithFixedHeader.unfixHeader();
-            LOGGER.info("\t- Header has been updated to not be fixed");
-        }
-
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), trackerCredential.name(),
-            scrollDuringScreenshot, existingScreenshotValue.second());
-        LOGGER.info("\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
-        // TODO: Only do this when taking multiple screenshots: trackerHandler.reloadPage();
+
+        for (final RedactionType redactionType : redactionsToExecute) {
+            LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
+            final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
+
+            // Translate if needed, as a page reload may have cleared the translation
+            if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
+                LOGGER.info("\t\t- Translating profile page to English");
+                trackerNeedsTranslation.translatePageToEnglish();
+            }
+
+            if (redactionType == RedactionType.NONE) {
+                LOGGER.debug("\t\t- Not redacting content");
+            } else if (trackerHandler.hasSensitiveInformation()) {
+                final Redactor redactor = new RedactorImpl(trackerHandler.driver(), redactionType);
+                LOGGER.info("\t\t- Redacting elements with sensitive information");
+
+                final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
+                if (numberOfRedactedElements == 0) {
+                    LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
+                } else {
+                    LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
+                }
+            } else {
+                LOGGER.debug("\t\t- Nothing to redact");
+            }
+
+            if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+                trackerWithFixedHeader.unfixHeader();
+                LOGGER.info("\t\t- Header has been updated to not be fixed");
+            }
+
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(),
+                baseName, scrollDuringScreenshot, screenshotIndex(baseName));
+            LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+            // Reload to restore page to original state (clears DOM mutations from previous redaction)
+            LOGGER.debug("\t\t- Reloading profile page for next redaction");
+            trackerHandler.reloadProfilePage();
+        }
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
     }
 
-    private static Pair<ExistingScreenshotAction, Integer> doesScreenshotExistAndSkipSelected(final String trackerName) {
-        final int numberOfExistingScreenshots = ScreenshotTaker.howManyScreenshotsAlreadyExist(trackerName);
-        // If no screenshots already exist, no need to handle anything
-        if (numberOfExistingScreenshots == 0) {
-            return Pair.of(ExistingScreenshotAction.OVERWRITE, numberOfExistingScreenshots);
+    private static Set<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {
+        if (CONFIG.existingScreenshotAction() != ExistingScreenshotAction.SKIP) {
+            return redactionTypes;
         }
 
-        // Otherwise, we need to decide how to handle the case with an existing screenshot
-        return switch (CONFIG.existingScreenshotAction()) {
-            case CREATE_ANOTHER -> {
-                LOGGER.debug("\t- Screenshot already exists for tracker '{}', taking a new one and appending index to name", trackerName);
-                yield Pair.of(ExistingScreenshotAction.CREATE_ANOTHER, numberOfExistingScreenshots);
+        // If ExistingScreenshotAction == SKIP, we need to verify if any screenshots have already been taken and exclude those from being taken again
+        final Set<RedactionType> typesToProcess = new LinkedHashSet<>();
+        for (final RedactionType type : redactionTypes) {
+            final String baseName = screenshotBaseName(trackerName, type);
+            if (ScreenshotTaker.howManyScreenshotsAlreadyExist(baseName, CONFIG.outputDirectory()) == 0) {
+                typesToProcess.add(type);
+            } else {
+                LOGGER.debug("\t- Screenshot already exists for '{}', skipping", baseName);
             }
-            case OVERWRITE -> {
-                LOGGER.debug("\t- Screenshot already exists for tracker '{}', overwriting with new screenshot", trackerName);
-                yield Pair.of(ExistingScreenshotAction.OVERWRITE, 0);
-            }
-            case SKIP -> {
-                LOGGER.warn("\t- Screenshot already exists for tracker '{}', skipping", trackerName);
-                yield Pair.of(ExistingScreenshotAction.SKIP, numberOfExistingScreenshots);
-            }
-        };
+        }
+        return typesToProcess;
+    }
+
+    private static int screenshotIndex(final String baseName) {
+        return CONFIG.existingScreenshotAction() == ExistingScreenshotAction.CREATE_ANOTHER
+            ? ScreenshotTaker.howManyScreenshotsAlreadyExist(baseName, CONFIG.outputDirectory())
+            : 0;
+    }
+
+    private static String screenshotBaseName(final String trackerName, final RedactionType redactionType) {
+        return redactionType == RedactionType.NONE ? trackerName : trackerName + "_" + redactionType.formattedName();
     }
 }

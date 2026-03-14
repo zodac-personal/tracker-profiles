@@ -19,8 +19,6 @@ package net.zodac.tracker.app;
 
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -59,7 +57,7 @@ final class TrackerRetriever {
      */
     static Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
-        final Set<TrackerType> trackerExecutionOrder = EnumSet.copyOf(CONFIG.trackerExecutionOrder());
+        final Set<TrackerType> trackerExecutionOrder = CONFIG.trackerExecutionOrder();
         LOGGER.debug("Tracker execution order: {}", CONFIG.trackerExecutionOrder());
 
         try {
@@ -116,10 +114,11 @@ final class TrackerRetriever {
     /**
      * Prints summary information about all {@link TrackerHandler}s, if {@link Logger#isDebugEnabled()} is {@code true}.
      *
-     * @param trackersByType the {@link Map} of trackers organised by {@link TrackerType}
+     * @param trackersByType        the {@link Map} of trackers organised by {@link TrackerType}
+     * @param trackerExecutionOrder the execution order of the {@link TrackerType}s
      */
     static void printTrackersInfo(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType,
-                                  final List<TrackerType> trackerExecutionOrder
+                                  final Iterable<TrackerType> trackerExecutionOrder
     ) {
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : trackerExecutionOrder) {

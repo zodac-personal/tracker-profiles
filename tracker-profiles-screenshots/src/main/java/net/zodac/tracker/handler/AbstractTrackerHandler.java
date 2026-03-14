@@ -36,7 +36,6 @@ import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import net.zodac.tracker.redaction.Redactor;
-import net.zodac.tracker.redaction.RedactorImpl;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.TextSearcher;
 import org.apache.logging.log4j.LogManager;
@@ -80,12 +79,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     private TrackerDefinition trackerDefinition;
 
     /**
-     * The {@link Redactor} instance to redact sensitive information on user profile pages.
-     */
-    @SuppressWarnings("NullAway") // Will be set in the configure() method
-    protected Redactor redactor;
-
-    /**
      * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
      * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker for execution, so we overwrite the default
      * values that were already set.
@@ -98,7 +91,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             this instanceof UsesExtensions trackerWithExtensions ? trackerWithExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
-        redactor = new RedactorImpl(driver);
+    }
+
+    /**
+     * Reloads the current profile page in the browser, restoring the page to its original state (clearing any DOM mutations from redaction). Waits
+     * {@link #waitForPageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
+     */
+    public void reloadProfilePage() {
+        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "bring profile page back to non-redacted state");
+        additionalActionOnProfilePage();
     }
 
     /**
@@ -376,17 +377,18 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * {@link WebElement}s that has sensitive information (like an IP address), which should not be visible in the screenshot. Once found, the text
      * in the {@link WebElement}s is redacted.
      *
+     * @param redactor the {@link Redactor} to redact the sensitive information
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see Redactor
      */
     // TODO: Add other redaction types (country, flag, avatar, gender)
     // TODO: Move redaction methods to another class?
-    public int redactElements() {
+    public int redactElements(final Redactor redactor) {
         LOGGER.trace("Redacting elements");
-        return redactEmailElements()
-            + redactIpAddressElements()
-            + redactPasskeyElements()
-            + redactSensitiveElements();
+        return redactEmailElements(redactor)
+            + redactIpAddressElements(redactor)
+            + redactPasskeyElements(redactor)
+            + redactSensitiveElements(redactor);
     }
 
     /**
@@ -398,7 +400,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
-    private int redactEmailElements() {
+    private int redactEmailElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting email elements");
         final Collection<WebElement> emailElements = emailElements()
             .stream()
@@ -422,7 +424,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
-    private int redactIpAddressElements() {
+    private int redactIpAddressElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting IP address elements");
         final Collection<WebElement> ipAddressElements = ipAddressElements()
             .stream()
@@ -446,7 +448,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
-    private int redactPasskeyElements() {
+    private int redactPasskeyElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting passkey elements");
         final Collection<WebElement> passkeyElements = passkeyElements()
             .stream()
@@ -469,7 +471,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return Map.of();
     }
 
-    private int redactSensitiveElements() {
+    private int redactSensitiveElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting remaining sensitive elements");
         for (final Map.Entry<String, By> entry : sensitiveElements().entrySet()) {
             final String description = entry.getKey();

@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import javax.imageio.ImageIO;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
-import net.zodac.tracker.framework.config.Configuration;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -36,7 +34,6 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 // TODO: Should this exist as a field variable inside the AbstractTrackerHandler?
 public final class ScreenshotTaker {
 
-    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Duration TIME_BETWEEN_SCROLLS = Duration.ofMillis(500L);
 
     private ScreenshotTaker() {
@@ -44,16 +41,34 @@ public final class ScreenshotTaker {
     }
 
     /**
-     * Checks how many screenshot already exist for the selected tracker for this day.
+     * Checks how many screenshots already exist for the given base name in the given directory. The base name is either the tracker name alone (for
+     * {@link net.zodac.tracker.framework.config.RedactionType#NONE}) or the tracker name with the redaction type appended (e.g.
+     * {@code trackerName_Text}).
      *
-     * @param trackerName the name of the tracker having a screenshot taken (used as the file name)
-     * @return the number of screenshots for the tracker that already exist in the {@link ApplicationConfiguration#outputDirectory()}.
+     * <p>
+     * A file is counted if it matches exactly {@code baseName.png} or {@code baseName_N.png} where {@code N} is a positive integer. This avoids
+     * counting files for other redaction types that share the same tracker name prefix.
+     *
+     * @param baseName  the base file name to match against (tracker name, with optional redaction type suffix)
+     * @param directory the directory in which to check for existing screenshots
+     * @return the number of screenshots for the base name that already exist in the given directory
      */
-    public static int howManyScreenshotsAlreadyExist(final String trackerName) {
-        final File outputDir = CONFIG.outputDirectory().toAbsolutePath().toFile();
-        final File[] matchingFiles = outputDir.listFiles((_, name) ->
-            name.startsWith(trackerName)
-        );
+    public static int howManyScreenshotsAlreadyExist(final String baseName, final Path directory) {
+        final File outputDir = directory.toAbsolutePath().toFile();
+        final File[] matchingFiles = outputDir.listFiles((_, name) -> {
+            if (!name.endsWith(".png")) {
+                return false;
+            }
+            final String nameWithoutExtension = name.substring(0, name.length() - ".png".length());
+            if (nameWithoutExtension.equals(baseName)) {
+                return true;
+            }
+            if (!nameWithoutExtension.startsWith(baseName + "_")) {
+                return false;
+            }
+            final String indexSuffix = nameWithoutExtension.substring(baseName.length() + 1);
+            return !indexSuffix.isEmpty() && indexSuffix.chars().allMatch(Character::isDigit);
+        });
 
         return matchingFiles == null ? 0 : matchingFiles.length;
     }
@@ -68,33 +83,33 @@ public final class ScreenshotTaker {
      *
      * @param driver                 the {@link RemoteWebDriver} with the loaded web page
      * @param outputDirectory        the directory in which the screenshot should be saved
-     * @param trackerName            the name of the tracker having a screenshot taken (used as the file name)
+     * @param baseName               the base file name for the screenshot (tracker name, with optional redaction type suffix)
      * @param scrollDuringScreenshot whether to scroll the profile page during the screenshot
-     * @param index                  how many screenshots already exist for this tracker
+     * @param index                  how many screenshots already exist for this base name
      * @return the {@link File} instance of the saved screenshot
      * @throws IOException thrown if an error occurs saving the screenshot to the file system
      * @see BrowserInteractionHelper#scrollToTheTop()
      */
     public static File takeScreenshot(final RemoteWebDriver driver,
                                       final Path outputDirectory,
-                                      final String trackerName,
+                                      final String baseName,
                                       final boolean scrollDuringScreenshot,
                                       final int index
     ) throws IOException {
         final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
         final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, browserInteractionHelper, scrollDuringScreenshot);
-        final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), trackerName, index);
+        final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), baseName, index);
         ImageIO.write(screenshotImage, "PNG", screenshot);
         browserInteractionHelper.scrollToTheTop();
         return screenshot;
     }
 
-    private static File createOutputFileHandle(final Path outputDirectory, final String trackerName, final int index) {
+    private static File createOutputFileHandle(final Path outputDirectory, final String baseName, final int index) {
         if (index == 0) {
-            return new File(outputDirectory + File.separator + trackerName + ".png");
+            return new File(outputDirectory + File.separator + baseName + ".png");
         }
 
-        return new File(outputDirectory + File.separator + trackerName + "_" + index + ".png");
+        return new File(outputDirectory + File.separator + baseName + "_" + index + ".png");
     }
 
     private static BufferedImage takeScreenshotOfEntirePage(final RemoteWebDriver driver,

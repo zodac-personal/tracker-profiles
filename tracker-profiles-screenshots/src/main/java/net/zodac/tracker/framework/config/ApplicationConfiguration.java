@@ -24,12 +24,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Function;
 import net.zodac.tracker.framework.TrackerType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +48,7 @@ import org.apache.logging.log4j.Logger;
  * @param logLevel                   the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
  * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
- * @param redactionType              the {@link RedactionType} to perform the redaction of sensitive information on the user profile page
+ * @param redactionTypes             the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
  * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
@@ -67,9 +66,9 @@ public record ApplicationConfiguration(
     String logLevel,
     int numberOfTrackerAttempts,
     Path outputDirectory,
-    RedactionType redactionType,
+    Set<RedactionType> redactionTypes,
     boolean takeScreenshotOnError,
-    List<TrackerType> trackerExecutionOrder,
+    Set<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
 ) {
 
@@ -82,7 +81,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
-    private static final RedactionType DEFAULT_REDACTION_TYPE = RedactionType.TEXT;
+    private static final String DEFAULT_REDACTION_TYPES = "TEXT";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
@@ -94,7 +93,7 @@ public record ApplicationConfiguration(
         "INFO",
         "WARNING",
         "ERROR"
-        ));
+    ));
 
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
         "800x600",
@@ -129,7 +128,7 @@ public record ApplicationConfiguration(
             getLogLevel(),
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
-            getRedactionType(),
+            getRedactionTypes(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
@@ -192,14 +191,8 @@ public record ApplicationConfiguration(
         }
     }
 
-    private static RedactionType getRedactionType() {
-        final String redactionTypeRaw = getOrDefault("REDACTION_TYPE", DEFAULT_REDACTION_TYPE.toString());
-        final RedactionType redactionTypeInput = RedactionType.get(redactionTypeRaw);
-        if (redactionTypeInput == null) {
-            throw new IllegalArgumentException(String.format("[REDACTION_TYPE] Invalid value: '%s'", redactionTypeRaw));
-        }
-
-        return redactionTypeInput;
+    private static Set<RedactionType> getRedactionTypes() {
+        return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPES, RedactionType::find);
     }
 
     private static ExistingScreenshotAction getScreenshotExistsAction() {
@@ -212,28 +205,27 @@ public record ApplicationConfiguration(
         return existingScreenshotActionInput;
     }
 
-    private static List<TrackerType> getTrackerExecutionOrder() {
-        final String executionOrderRaw = getOrDefault("TRACKER_EXECUTION_ORDER", DEFAULT_TRACKER_EXECUTION_ORDER);
-        final String[] executionOrderTokens = executionOrderRaw.split(",");
-        if (executionOrderTokens.length == 0 || executionOrderTokens.length > TrackerType.ALL_VALUES.size()) {
-            throw new IllegalArgumentException(
-                String.format("[TRACKER_EXECUTION_ORDER] 1-%d tracker types required, found: %s", TrackerType.ALL_VALUES.size(),
-                    Arrays.toString(executionOrderTokens)));
-        }
+    private static Set<TrackerType> getTrackerExecutionOrder() {
+        return parseCommaSeparatedEnvVar("TRACKER_EXECUTION_ORDER", DEFAULT_TRACKER_EXECUTION_ORDER, TrackerType::find);
+    }
 
-        final Collection<TrackerType> trackerExecutionOrder = new LinkedHashSet<>();
-        for (final String executionOrderToken : executionOrderTokens) {
-            final TrackerType trackerType = TrackerType.find(executionOrderToken);
-            if (trackerType == null) {
-                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Invalid tracker found: '%s'", executionOrderToken));
+    private static <T> Set<T> parseCommaSeparatedEnvVar(final String envVarName, final String defaultValue, final Function<String, T> parser) {
+        final String rawValue = getOrDefault(envVarName, defaultValue);
+        final Set<T> results = new LinkedHashSet<>();
+
+        for (final String token : rawValue.split(",")) {
+            final String trimmed = token.trim();
+            final T value = parser.apply(trimmed);
+
+            if (value == null) {
+                throw new IllegalArgumentException(String.format("[%s] Invalid value: '%s'", envVarName, trimmed));
             }
 
-            if (!trackerExecutionOrder.add(trackerType)) {
-                throw new IllegalArgumentException(String.format("[TRACKER_EXECUTION_ORDER] Duplicate tracker found: '%s'", executionOrderToken));
+            if (!results.add(value)) {
+                throw new IllegalArgumentException(String.format("[%s] Duplicate value found: '%s'", envVarName, trimmed));
             }
         }
-
-        return List.copyOf(trackerExecutionOrder);
+        return results;
     }
 
     private static Path getTrackerInputFilePath() {
@@ -279,7 +271,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
-        LOGGER.debug("\t- redactionType={}", redactionType);
+        LOGGER.debug("\t- redactionTypes={}", redactionTypes);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);

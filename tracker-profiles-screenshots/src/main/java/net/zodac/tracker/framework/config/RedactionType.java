@@ -18,12 +18,18 @@
 package net.zodac.tracker.framework.config;
 
 import java.util.Arrays;
+import java.util.Locale;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Enum defining the options for redacting sensitive information on a user profile page.
  */
 public enum RedactionType {
+
+    /**
+     * No redaction performed.
+     */
+    NONE,
 
     /**
      * Overlay a solid box with a title over the sensitive text.
@@ -36,13 +42,23 @@ public enum RedactionType {
     TEXT;
 
     /**
+     * Returns the formatted name of this {@link RedactionType}, using title case. For example, {@link #TEXT} returns {@code "Text"}.
+     *
+     * @return the formatted name
+     */
+    public String formattedName() {
+        final String name = toString();
+        return name.charAt(0) + name.substring(1).toLowerCase(Locale.getDefault());
+    }
+
+    /**
      * Retrieve a {@link RedactionType} based on the input {@link String}. The search is case-insensitive.
      *
      * @param input the {@link RedactionType} as a {@link String}
      * @return the matching {@link RedactionType}, or {@code null} if none is found
      */
     @Nullable
-    public static RedactionType get(final String input) {
+    public static RedactionType find(final String input) {
         return Arrays.stream(values())
             .filter(redactionType -> redactionType.toString().equalsIgnoreCase(input))
             .findAny()
