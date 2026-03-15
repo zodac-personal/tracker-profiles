@@ -48,13 +48,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Abstract class used to define a {@link AbstractTrackerHandler}. All implementations will be used by {@link ScreenshotOrchestrator},
- * if the tracker is included in the tracker input file. This class lists the high-level methods required for {@link ScreenshotOrchestrator} to be
- * able to successfully generate a screenshot for a given tracker.
+ * Abstract class used to define a {@link AbstractTrackerHandler}. All implementations will be used by {@link ScreenshotOrchestrator}, if the tracker
+ * is included in the tracker input file. This class lists the high-level methods required for {@link ScreenshotOrchestrator} to be able to
+ * successfully generate a screenshot for a given tracker.
  *
  * <p>
  * Since each tracker website has its own UI and own page structure, each implementation of {@link AbstractTrackerHandler} will contain the
- * tracker-specific {@code selenium} logic to perform the UI actions.
+ * tracker-specific {@code Selenium} logic to perform the UI actions.
  */
 public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTimings {
 
@@ -214,10 +214,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public void login(final String username, final String password, final String trackerName) {
         LOGGER.trace("Logging in to tracker '{}'", trackerName);
         browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
-        LOGGER.trace("Entering username");
-        final WebElement usernameField = driver.findElement(usernameFieldSelector());
-        usernameField.clear();
-        usernameField.sendKeys(username);
+
+        try {
+            LOGGER.trace("Entering username");
+            final WebElement usernameField = driver.findElement(usernameFieldSelector());
+            usernameField.clear();
+            usernameField.sendKeys(username);
+        } catch (final TimeoutException e) {
+            throw new TimeoutException("Unable to find username field, tracker may not have loaded", e);
+        }
 
         LOGGER.trace("Entering password");
         final WebElement passwordField = driver.findElement(passwordFieldSelector());
@@ -235,9 +240,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
         manualCheckAfterLoginClick(trackerName);
 
-        final By postLoginSelector = postLoginSelector();
-        LOGGER.trace("Logged in, waiting for post login selector: {}", postLoginSelector);
-        browserInteractionHelper.waitForElementToAppear(postLoginSelector, waitForPageLoadDuration());
+        try {
+            final By postLoginSelector = postLoginSelector();
+            LOGGER.trace("Logged in, waiting for post-login selector: {}", postLoginSelector);
+            browserInteractionHelper.waitForElementToAppear(postLoginSelector, waitForPageLoadDuration());
+        } catch (final TimeoutException e) {
+            throw new TimeoutException("Timed out waiting for post-login selector, cannot confirm login was successful", e);
+        }
     }
 
     /**
@@ -321,12 +330,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish
      * loading.
      */
-    // TODO: Add a postProfilePageSelector() to confirm the user profile has been loaded?
     public void openProfilePage() {
         LOGGER.trace("Opening profile page");
         browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
 
-        // TODO: Add a debug mode to highlight elements on click, to aid in identifying issues?
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);

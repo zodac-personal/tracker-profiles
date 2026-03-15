@@ -37,7 +37,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
