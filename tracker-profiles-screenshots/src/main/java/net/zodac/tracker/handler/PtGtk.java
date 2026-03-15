@@ -34,7 +34,10 @@ import org.openqa.selenium.By;
 /**
  * Extension of the {@link NexusPhpHandler} for the {@code PT.GTK} tracker.
  */
-@TrackerHandler(name = "PT.GTK", type = TrackerType.MANUAL, url = "https://pt.gtk.pw/")
+@TrackerHandler(name = "PT.GTK", type = TrackerType.MANUAL, url = {
+    "https://pt.gtk.pw/",
+    "https://pt.gtkpw.xyz/"
+})
 public class PtGtk extends NexusPhpHandler {
 
     @Override

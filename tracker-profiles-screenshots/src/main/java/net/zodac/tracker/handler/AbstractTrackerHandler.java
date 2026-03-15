@@ -547,6 +547,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * <p>
      * By default, it re-enables scrolling and scrolls back to the top of the page.
      *
+     * @see BrowserInteractionHelper#scrollToTheTop()
      * @see BrowserInteractionHelper#showScrollbar()
      */
     public void actionAfterScreenshot() {
