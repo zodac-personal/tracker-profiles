@@ -20,7 +20,9 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.footer;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
@@ -31,7 +33,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -93,8 +94,8 @@ public class GreatPosterWall extends AbstractTrackerHandler {
                 .build(),
             // Last connected IP address
             XpathBuilder
-                .from(NamedHtmlElement.of("footer"), atIndex(1))
-                .child(NamedHtmlElement.of("p"), atIndex(2))
+                .from(footer, atIndex(1))
+                .child(p, atIndex(2))
                 .child(a, atIndex(1))
                 .child(span, atIndex(3))
                 .build()

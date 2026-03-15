@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -63,7 +64,7 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     protected By profilePageSelector() {
         return XpathBuilder
             .from(img, withClass("toolbar_avatar"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 

@@ -20,7 +20,9 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.header;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
@@ -28,11 +30,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -79,7 +81,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
         // Remove the login pop-up (if it exists) since it covers the user drop down menu
         final By loginPopupsSelector = XpathBuilder
             .from(span, withClass("i-lucide:x"))
-            .parent(button)
+            .navigateTo(parent(button))
             .build();
         final Collection<WebElement> loginPopups = driver.findElements(loginPopupsSelector);
         LOGGER.trace("Found {} login pop-up{} to clear", loginPopups.size(), StringUtils.pluralise(loginPopups));
@@ -104,7 +106,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
         final By headerSelector = XpathBuilder
             .from(div, withId("__nuxt"))
             .child(div, atIndex(2))
-            .child(NamedHtmlElement.of("header"), atIndex(1))
+            .child(header, atIndex(1))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
@@ -123,7 +125,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
     private void openUserDropdownMenu() {
         // Click the user dropdown menu bar to make the profile/logout button interactable
         final By profileParentSelector = XpathBuilder
-            .from(NamedHtmlElement.of("nav"), atIndex(1))
+            .from(nav, atIndex(1))
             .child(div, atIndex(3))
             .child(button, atIndex(1))
             .child(div, atIndex(1))

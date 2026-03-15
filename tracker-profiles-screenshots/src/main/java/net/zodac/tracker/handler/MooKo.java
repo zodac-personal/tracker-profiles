@@ -20,7 +20,10 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.footer;
+import static net.zodac.tracker.framework.xpath.HtmlElement.header;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
@@ -30,7 +33,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
@@ -90,8 +92,8 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
                 .build(),
             // Last connected IP address
             XpathBuilder
-                .from(NamedHtmlElement.of("footer"), atIndex(1))
-                .child(NamedHtmlElement.of("p"), atIndex(2))
+                .from(footer, atIndex(1))
+                .child(p, atIndex(2))
                 .child(a, atIndex(1))
                 .child(span, atIndex(3))
                 .build()
@@ -102,7 +104,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     public void unfixHeader() {
         LOGGER.debug("\t\t- Unfixing header");  // TODO: Add to other similar methods
         final By headerSelector = XpathBuilder
-            .from(NamedHtmlElement.of("header"), withClass("HeaderNew"))
+            .from(header, withClass("HeaderNew"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);

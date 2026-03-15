@@ -21,6 +21,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -31,6 +32,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,7 +75,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     protected By profilePageSelector() {
         return XpathBuilder
             .from(span, withClass("user-group"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 
@@ -112,7 +114,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     @Override
     public void unfixHeader() {
         final By headerSelector = XpathBuilder
-            .from(NamedHtmlElement.of("nav"), withClass("fixed-top"))
+            .from(nav, withClass("fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);

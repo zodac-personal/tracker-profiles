@@ -20,6 +20,7 @@ package net.zodac.tracker.framework.driver.extension;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -149,7 +150,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
 
     private static void openFilterListsPage(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         final By filterListSelector = XpathBuilder
-            .from(NamedHtmlElement.of("nav"), withId("dashboard-nav"))
+            .from(nav, withId("dashboard-nav"))
             .child(button, atIndex(2))
             .build();
         final WebElement filterList = driver.findElement(filterListSelector);

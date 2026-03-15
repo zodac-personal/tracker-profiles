@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -28,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -73,7 +73,7 @@ public class Fappaizuri extends AbstractTrackerHandler {
                 .descendant(div, withClass("box"))
                 .child(div, atIndex(1))
                 .child(div, atIndex(2))
-                .child(NamedHtmlElement.of("p"), atIndex(3))
+                .child(p, atIndex(3))
                 .build()
         );
     }

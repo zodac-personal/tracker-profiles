@@ -1,14 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc:*)",
-      "Bash(du:*)",
-      "Bash(grep:*)",
-      "Bash(for f:*)",
       "Bash(do)",
-      "Bash(echo \"=== $f ===\")",
       "Bash(done)",
-      "Bash(mvn clean:*)"
+      "Bash(du:*)",
+      "Bash(echo:*)",
+      "Bash(for f:*)",
+      "Bash(grep:*)",
+      "Bash(mvn:*)",
+      "Bash(mvn.cmd:*)",
+      "Bash(wc:*)"
     ]
   }
 }

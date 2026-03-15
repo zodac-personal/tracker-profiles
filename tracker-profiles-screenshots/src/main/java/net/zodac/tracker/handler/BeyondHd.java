@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
@@ -61,7 +62,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
 
         final By captchaSelector = XpathBuilder
             .from(input, withId("captcha"))
-            .parent(div)
+            .navigateTo(parent(div))
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
@@ -72,7 +73,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
     protected By profilePageSelector() {
         return XpathBuilder
             .from(img, withClass("beta-image-avatar"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 
@@ -94,7 +95,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
 
         return XpathBuilder
             .from(form, withId("logout-form1"))
-            .parent(div)
+            .navigateTo(parent(div))
             .child(a, atIndex(1))
             .build();
     }

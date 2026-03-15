@@ -49,10 +49,13 @@ public final class XpathStep {
      * Begin the XPATH query to find an element anywhere in the DOM under the current position, with the provided {@link XpathPredicate}s.
      *
      * <p>
+     * Should only be used by {@link XpathBuilder} to begin the query construction.
+     *
+     * <p>
      * Adds:
      *
      * <pre>
-     *      //existing_query<u>//element[@attribute-name='attribute-value']</u>
+     *      <u>//element[@attribute-name='attribute-value']</u>
      * </pre>
      *
      * @param element    the name of the HTML element
@@ -104,22 +107,26 @@ public final class XpathStep {
     }
 
     /**
-     * Update the XPATH query to find the first element that is a parent element of the current position.
+     * Update the XPATH query by applying the given {@link XpathNavigation} axis step to the current position.
+     *
+     * <p>
+     * Unlike {@link #child(Element, XpathPredicate...)} and {@link #descendant(Element, XpathPredicate...)}, which select elements by structural
+     * position, this method allows navigating the DOM using XPath axes such as {@code ancestor::}, {@code following-sibling::}, and
+     * {@code preceding-sibling::}.
      *
      * <p>
      * Adds:
      *
      * <pre>
-     *      //existing_query<u>/ancestor::element[1]</u>
+     *      //existing_query<u>/axis::element[predicates]</u>
      * </pre>
      *
-     * @param element the name of the HTML element
-     * @return this {@link XpathBuilder}
+     * @param navigation the {@link XpathNavigation} axis step to apply
+     * @return this {@link XpathStep}
+     * @see XpathAxis
      */
-    public XpathStep parent(final Element element) {
-        xpath.append("/ancestor::")
-            .append(element.tagName())
-            .append("[1]");
+    public XpathStep navigateTo(final XpathNavigation navigation) {
+        navigation.apply(xpath);
         return this;
     }
 

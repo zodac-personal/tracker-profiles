@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
@@ -28,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
@@ -99,7 +99,7 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withId("userInfoDiv"))
-            .child(NamedHtmlElement.of("p"), atIndex(16))
+            .child(p, atIndex(16))
             .child(a, atIndex(1))
             .build();
     }

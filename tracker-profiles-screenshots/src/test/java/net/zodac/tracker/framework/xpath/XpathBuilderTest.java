@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.framework.xpath;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
@@ -26,15 +27,22 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atFirstIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atLastIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttributeFunction;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttributeFunction;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withExactText;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
+import static net.zodac.tracker.framework.xpath.XpathAxis.precedingSibling;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -142,14 +150,36 @@ class XpathBuilderTest {
     }
 
     @Test
-    void testFindParentShouldAppendAncestorSelector() {
+    void testNavigateParentShouldAppendAncestorSelector() {
         final String actual = XpathBuilder
             .from(input)
-            .parent(div)
+            .navigateTo(parent(div))
             .toString();
 
         assertThat(actual)
             .isEqualTo("//input/ancestor::div[1]");
+    }
+
+    @Test
+    void testNavigateFollowingSiblingShouldAppendFollowingSiblingSelector() {
+        final String actual = XpathBuilder
+            .from(div, withId("header"))
+            .navigateTo(followingSibling(div, withClass("content")))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//div[@id='header']/following-sibling::div[contains(@class, 'content')]");
+    }
+
+    @Test
+    void testNavigatePrecedingSiblingShouldAppendPrecedingSiblingSelector() {
+        final String actual = XpathBuilder
+            .from(div, withClass("footer"))
+            .navigateTo(precedingSibling(div, atIndex(1)))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//div[contains(@class, 'footer')]/preceding-sibling::div[1]");
     }
 
     @Test
@@ -264,6 +294,76 @@ class XpathBuilderTest {
 
         assertThat(actual)
             .isEqualTo("//li[" + index + "]");
+    }
+
+    @Test
+    void testAtLastIndexShouldAppendLastIndexPredicate() {
+        final String actual = XpathBuilder
+            .from(li, atLastIndex())
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//li[last()]");
+    }
+
+    @Test
+    void testWithExactTextShouldAppendNormalizeSpaceEqualsPredicate() {
+        final String actual = XpathBuilder
+            .from(span, withExactText("hello world"))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//span[normalize-space()='hello world']");
+    }
+
+    @Test
+    void testWithHrefShouldAppendHrefPredicate() {
+        final String actual = XpathBuilder
+            .from(a, withHref("/profile"))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//a[@href='/profile']");
+    }
+
+    @Test
+    void testContainsHrefShouldAppendContainsHrefPredicate() {
+        final String actual = XpathBuilder
+            .from(a, containsHref("/profile"))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//a[contains(@href, '/profile')]");
+    }
+
+    @Test
+    void testNamedHtmlElementAnyShouldProduceWildcardSelector() {
+        final String actual = XpathBuilder
+            .from(NamedHtmlElement.any())
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//*");
+    }
+
+    @Test
+    void testValueWithApostropheShouldBeEscaped() {
+        final String actual = XpathBuilder
+            .from(div, withClass("user's-profile"))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//div[contains(@class, 'user\\'s-profile')]");
+    }
+
+    @Test
+    void testMultiplePredicatesStackedOnSingleStepShouldAllBeApplied() {
+        final String actual = XpathBuilder
+            .from(input, withType("text"), withClass("login"), atIndex(2))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//input[@type='text'][contains(@class, 'login')][2]");
     }
 
     @Test

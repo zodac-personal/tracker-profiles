@@ -18,7 +18,7 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
 import java.util.EnumMap;
@@ -54,7 +54,7 @@ public class TeamOs extends XenForoHandler implements UsesExtensions {
 
         // When an update to site rules occurs, there is a single button with a link to the rules thread
         final By adminThreadButtonsSelector = XpathBuilder
-            .from(a, withClass("button"), containsAttribute("href", "/threads/site-introduction-and-rules"))
+            .from(a, withClass("button"), containsHref("/threads/site-introduction-and-rules"))
             .build();
         final List<WebElement> adminThreadButtons = driver.findElements(adminThreadButtonsSelector).stream().toList();
 

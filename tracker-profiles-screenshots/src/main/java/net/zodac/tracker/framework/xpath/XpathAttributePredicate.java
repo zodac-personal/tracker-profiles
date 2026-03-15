@@ -63,6 +63,22 @@ public final class XpathAttributePredicate {
     }
 
     /**
+     * Update the XPATH query to specify the last element at the current position.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query[@attributeName='attributeValue']<u>[last()]</u>
+     * </pre>
+     *
+     * @return this {@link XpathAttributePredicate}
+     */
+    public static XpathPredicate atLastIndex() {
+        return xpath -> xpath.append("[last()]");
+    }
+
+    /**
      * Update the XPATH query to filter the element at the current position if it contains the provided attribute.
      *
      * <p>
@@ -101,6 +117,24 @@ public final class XpathAttributePredicate {
                 .append(", '")
                 .append(escapeXpath(value))
                 .append("')]");
+    }
+
+    /**
+     * Update the XPATH query to filter the element at the current position if it contains the provided {@code href} attribute.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query<u>[contains(@href, 'wanted-href')]</u>
+     * </pre>
+     *
+     * @param value the wanted {@code href} for the HTML element
+     * @return this {@link XpathAttributePredicate}
+     * @see #containsAttribute(String, String)
+     */
+    public static XpathPredicate containsHref(final String value) {
+        return containsAttribute("href", value);
     }
 
     /**
@@ -159,6 +193,43 @@ public final class XpathAttributePredicate {
      */
     public static XpathPredicate withClass(final String value) {
         return containsAttribute("class", value);
+    }
+
+    /**
+     * Update the XPATH query to filter the element at the current position to only return elements whose text is an exact match for the supplied
+     * text.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query<u>[normalize-space()='wanted text']</u>
+     * </pre>
+     *
+     * @param value the exact text for the HTML element
+     * @return this {@link XpathAttributePredicate}
+     * @see #withAttributeFunction(String, String)
+     */
+    public static XpathPredicate withExactText(final String value) {
+        return withAttributeFunction("normalize-space()", value);
+    }
+
+    /**
+     * Update the XPATH query to filter the element at the current position if it has an exact match for the provided {@code href} attribute.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query<u>[@href='wanted-href']</u>
+     * </pre>
+     *
+     * @param value the wanted {@code href} for the HTML element
+     * @return this {@link XpathAttributePredicate}
+     * @see #containsHref(String)
+     */
+    public static XpathPredicate withHref(final String value) {
+        return withAttribute("href", value);
     }
 
     /**

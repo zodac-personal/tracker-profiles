@@ -22,6 +22,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -33,6 +34,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.util.Collection;
 import java.util.List;
@@ -90,7 +92,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
 
         final By captchaSelector = XpathBuilder
             .from(input, withName("captcha"))
-            .parent(div)
+            .navigateTo(parent(div))
             .child(div, atIndex(1))
             .child(img, atIndex(1))
             .build();
@@ -110,7 +112,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     protected By profilePageSelector() {
         return XpathBuilder
             .from(span, withClass("badge-user"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 
@@ -145,7 +147,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     @Override
     public void unfixHeader() {
         final By headerSelector = XpathBuilder
-            .from(NamedHtmlElement.of("nav"), withClass("navbar-fixed-top"))
+            .from(nav, withClass("navbar-fixed-top"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);

@@ -28,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,7 +73,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
 
         final By captchaSelector = XpathBuilder
             .from(input, withName("captcha"))
-            .parent(div)
+            .navigateTo(parent(div))
             .child(div, atIndex(1))
             .child(img, atIndex(1))
             .build();
@@ -92,7 +93,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
     protected By postLoginSelector() {
         return XpathBuilder
             .from(span, withClass("avatar"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 
@@ -141,7 +142,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
         // Click the user dropdown menu bar to make the profile/logout button interactable
         final By logoutParentSelector = XpathBuilder
             .from(span, withClass("avatar"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         clickButton(logoutParent);

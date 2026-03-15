@@ -61,7 +61,7 @@ package net.zodac.tracker.framework.xpath;
  *     .from(NamedHtmlElement.of("root"))
  *     .descendant(HtmlElement.table, XpathAttributePredicate.atFirstIndex())
  *     .descendant(HtmlElement.td, XpathAttributePredicate.withText("Total"))
- *     .parent(HtmlElement.tr)
+ *     .navigateTo(XpathAxis.parent(HtmlElement.tr))
  *     .child(HtmlElement.td, XpathAttributePredicate.atIndex(2))
  *   .build();
  *}
@@ -80,12 +80,13 @@ package net.zodac.tracker.framework.xpath;
  * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atFirstIndex;
  * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
  * import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
+ * import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
  *
  * final By selector = XpathBuilder
  *     .from(NamedHtmlElement.of("root"))
  *     .descendant(table, atFirstIndex())
  *     .descendant(td, withText("Total"))
- *     .parent(tr)
+ *     .navigateTo(parent(tr))
  *     .child(td, atIndex(2))
  *   .build();
  *}

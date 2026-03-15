@@ -59,6 +59,11 @@ public enum HtmlElement implements Element {
     div,
 
     /**
+     * Footer {@link Element}: {@code {@literal <}footer{@literal >}}.
+     */
+    footer,
+
+    /**
      * Form {@link Element}: {@code {@literal <}form{@literal >}}.
      */
     form,
@@ -67,6 +72,11 @@ public enum HtmlElement implements Element {
      * Head {@link Element}: {@code {@literal <}head{@literal >}}.
      */
     head,
+
+    /**
+     * Header {@link Element}: {@code {@literal <}header{@literal >}}.
+     */
+    header,
 
     /**
      * Image {@link Element}: {@code {@literal <}img{@literal >}}.
@@ -82,6 +92,16 @@ public enum HtmlElement implements Element {
      * List item {@link Element}: {@code {@literal <}li{@literal >}}.
      */
     li,
+
+    /**
+     * Navigation {@link Element}: {@code {@literal <}nav{@literal >}}.
+     */
+    nav,
+
+    /**
+     * Paragraph {@link Element}: {@code {@literal <}p{@literal >}}.
+     */
+    p,
 
     /**
      * Inline container {@link Element}: {@code {@literal <}span{@literal >}}.

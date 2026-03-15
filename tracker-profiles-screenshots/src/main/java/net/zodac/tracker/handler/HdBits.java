@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.util.Collection;
 import java.util.List;
@@ -81,7 +82,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
     protected void manualCheckBeforeLoginClick(final String trackerName) {
         final By twoFactorPasscodeSelector = XpathBuilder
             .from(input, withName("twostep_code"), withType("number"))
-            .parent(td)
+            .navigateTo(parent(td))
             .build();
         final WebElement twoFactorPasscodeElement = driver.findElement(twoFactorPasscodeSelector);
         browserInteractionHelper.highlightElement(twoFactorPasscodeElement);
@@ -122,7 +123,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
             // IP address
             XpathBuilder
                 .from(td, withClass("heading"))
-                .parent(tr)
+                .navigateTo(parent(tr))
                 .child(td, atIndex(2))
                 .build(),
             // IP history
@@ -139,7 +140,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
         return List.of(
             XpathBuilder
                 .from(tr, withId("seclog"))
-                .parent(tbody)
+                .navigateTo(parent(tbody))
                 .child(tr, atIndex(4))
                 .child(td, atIndex(2))
                 .build()

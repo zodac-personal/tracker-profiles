@@ -24,6 +24,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +42,7 @@ public class D3SiNet extends GazelleHandler {
     public By loginPageSelector() {
         return XpathBuilder
             .from(div, withId("login-logo"))
-            .parent(a)
+            .navigateTo(parent(a))
             .build();
     }
 
