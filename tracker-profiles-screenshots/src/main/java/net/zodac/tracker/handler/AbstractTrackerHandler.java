@@ -35,6 +35,7 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.TextSearcher;
@@ -407,6 +408,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
+    /**
+     * The {@link OverlayBuffer} applied when redacting email elements. Override to adjust the buffer for a specific tracker.
+     *
+     * @return the {@link OverlayBuffer} for email redaction
+     */
+    protected OverlayBuffer emailElementBuffer() {
+        return OverlayBuffer.DEFAULT;
+    }
+
     private int redactEmailElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting email elements");
         final Collection<WebElement> emailElements = emailElements()
@@ -416,7 +426,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .toList();
 
         for (final WebElement element : emailElements) {
-            redactor.redactEmail(element);
+            redactor.redactEmail(element, emailElementBuffer());
         }
 
         return emailElements.size();
@@ -431,6 +441,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
+    /**
+     * The {@link OverlayBuffer} applied when redacting IP address elements. Override to adjust the buffer for a specific tracker.
+     *
+     * @return the {@link OverlayBuffer} for IP address redaction
+     */
+    protected OverlayBuffer ipAddressElementBuffer() {
+        return OverlayBuffer.DEFAULT;
+    }
+
     private int redactIpAddressElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting IP address elements");
         final Collection<WebElement> ipAddressElements = ipAddressElements()
@@ -440,7 +459,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .toList();
 
         for (final WebElement element : ipAddressElements) {
-            redactor.redactIpAddress(element);
+            redactor.redactIpAddress(element, ipAddressElementBuffer());
         }
 
         return ipAddressElements.size();
@@ -455,6 +474,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return List.of();
     }
 
+    /**
+     * The {@link OverlayBuffer} applied when redacting passkey elements. Override to adjust the buffer for a specific tracker.
+     *
+     * @return the {@link OverlayBuffer} for passkey redaction
+     */
+    protected OverlayBuffer passkeyElementBuffer() {
+        return OverlayBuffer.DEFAULT;
+    }
+
     private int redactPasskeyElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting passkey elements");
         final Collection<WebElement> passkeyElements = passkeyElements()
@@ -463,7 +491,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .toList();
 
         for (final WebElement element : passkeyElements) {
-            redactor.redactPasskey(element);
+            redactor.redactPasskey(element, passkeyElementBuffer());
         }
 
         return passkeyElements.size();
@@ -478,6 +506,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return Map.of();
     }
 
+    /**
+     * The {@link OverlayBuffer} applied when redacting sensitive elements. Override to adjust the buffer for a specific tracker.
+     *
+     * @return the {@link OverlayBuffer} for sensitive element redaction
+     */
+    protected OverlayBuffer sensitiveElementBuffer() {
+        return OverlayBuffer.DEFAULT;
+    }
+
     private int redactSensitiveElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting remaining sensitive elements");
         for (final Map.Entry<String, By> entry : sensitiveElements().entrySet()) {
@@ -485,7 +522,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             final By selector = entry.getValue();
 
             for (final WebElement element : driver.findElements(selector)) {
-                redactor.redact(element, description);
+                redactor.redact(element, description, sensitiveElementBuffer());
             }
         }
 

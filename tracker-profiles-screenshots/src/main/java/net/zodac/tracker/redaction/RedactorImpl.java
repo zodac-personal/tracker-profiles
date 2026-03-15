@@ -49,30 +49,30 @@ public class RedactorImpl implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description) {
+    public void redact(final WebElement element, final String description, final OverlayBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redact(element, description);
+        redactor.redact(element, description, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactPasskey(final WebElement element) {
+    public void redactPasskey(final WebElement element, final OverlayBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactPasskey(element);
+        redactor.redactPasskey(element, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactEmail(final WebElement element) {
+    public void redactEmail(final WebElement element, final OverlayBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactEmail(element);
+        redactor.redactEmail(element, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactIpAddress(final WebElement element) {
+    public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactIpAddress(element);
+        redactor.redactIpAddress(element, buffer);
         LOGGER.trace("");
     }
 

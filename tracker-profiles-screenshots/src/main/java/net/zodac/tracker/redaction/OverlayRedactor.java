@@ -23,7 +23,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link Redactor} that redacts text by overlaying a solid, coloured box over the impacted {@link WebElement}.
  */
-// TODO: Allow caller to define buffer bounds of box to cover things completely? Or just cover the whole HTML element?
 class OverlayRedactor implements Redactor {
 
     private final RemoteWebDriver driver;
@@ -38,17 +37,17 @@ class OverlayRedactor implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description) {
-        redactElement(element, "orange", description);
+    public void redact(final WebElement element, final String description, final OverlayBuffer buffer) {
+        redactElement(element, "orange", description, buffer);
     }
 
     @Override
-    public void redactPasskey(final WebElement element) {
-        redactElement(element, "red", "Passkey");
+    public void redactPasskey(final WebElement element, final OverlayBuffer buffer) {
+        redactElement(element, "red", "Passkey", buffer);
     }
 
     @Override
-    public void redactEmail(final WebElement element) {
+    public void redactEmail(final WebElement element, final OverlayBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
@@ -75,22 +74,16 @@ class OverlayRedactor implements Redactor {
             // Get computed styles to check for any overhanging text
             var computed_style = window.getComputedStyle(element)
             
-            // Add small buffer to ensure text is fully covered (especially for descenders, etc)
-            var right_buffer = 10
-            var left_buffer = 0
-            var vertical_buffer = 2
-            
             // Create overlay for each target
             for (var i = 0; i < target_spans.length; i++) {
               var bounding_rectangle = target_spans[i].getBoundingClientRect()
               var overlay = document.createElement('div')
             
               overlay.style.position = 'absolute'
-              // Removing a buffer here since the box gets 'pushed' left when taking a screenshot
-              overlay.style.left = (bounding_rectangle.left + scroll_left + left_buffer) + 'px'
-              overlay.style.top = (bounding_rectangle.top + scroll_top - vertical_buffer) + 'px'
-              overlay.style.width = (bounding_rectangle.width + (right_buffer * 2)) + 'px'
-              overlay.style.height = (bounding_rectangle.height + (vertical_buffer * 2)) + 'px'
+              overlay.style.left = (bounding_rectangle.left + scroll_left - %d) + 'px'
+              overlay.style.top = (bounding_rectangle.top + scroll_top - %d) + 'px'
+              overlay.style.width = (bounding_rectangle.width + %d + %d) + 'px'
+              overlay.style.height = (bounding_rectangle.height + %d + %d) + 'px'
             
               overlay.style.backgroundColor = '%s'
               overlay.style.zIndex = '9999'
@@ -112,13 +105,14 @@ class OverlayRedactor implements Redactor {
             }
             
             return overlay_ids.join(',')
-            """.formatted("blue", "white", "Email");
+            """.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
+            "blue", "white", "Email");
 
         driver.executeScript(script, element);
     }
 
     @Override
-    public void redactIpAddress(final WebElement element) {
+    public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
         final String script = """
             var element = arguments[0]
             
@@ -154,22 +148,16 @@ class OverlayRedactor implements Redactor {
             // Get computed styles to check for any overhanging text
             var computed_style = window.getComputedStyle(element)
             
-            // Add small buffer to ensure text is fully covered (especially for descenders, etc)
-            var right_buffer = 10
-            var left_buffer = 5
-            var vertical_buffer = 2
-            
             // Create overlay for each target
             for (var i = 0; i < target_spans.length; i++) {
               var bounding_rectangle = target_spans[i].getBoundingClientRect()
               var overlay = document.createElement('div')
             
               overlay.style.position = 'absolute'
-              // Removing a buffer here since the box gets 'pushed' left when taking a screenshot
-              overlay.style.left = (bounding_rectangle.left + scroll_left + left_buffer) + 'px'
-              overlay.style.top = (bounding_rectangle.top + scroll_top - vertical_buffer) + 'px'
-              overlay.style.width = (bounding_rectangle.width + (right_buffer * 2)) + 'px'
-              overlay.style.height = (bounding_rectangle.height + (vertical_buffer * 2)) + 'px'
+              overlay.style.left = (bounding_rectangle.left + scroll_left - %d) + 'px'
+              overlay.style.top = (bounding_rectangle.top + scroll_top - %d) + 'px'
+              overlay.style.width = (bounding_rectangle.width + %d + %d) + 'px'
+              overlay.style.height = (bounding_rectangle.height + %d + %d) + 'px'
             
               overlay.style.backgroundColor = '%s'
               overlay.style.zIndex = '9999'
@@ -191,12 +179,14 @@ class OverlayRedactor implements Redactor {
             }
             
             return overlay_ids.join(',')
-            """.formatted("yellow", "black", "IP");
+            """.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
+            "yellow", "black", "IP");
 
         driver.executeScript(script, element);
     }
 
-    private void redactElement(final WebElement element, final String overlayColour, final String description) {
+    private void redactElement(final WebElement element, final String overlayColour, final String description,
+                               final OverlayBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var bounding_rectangle = element.getBoundingClientRect()
@@ -206,19 +196,13 @@ class OverlayRedactor implements Redactor {
             // Get computed styles to check for any overhanging text
             var computed_style = window.getComputedStyle(element)
             
-            // Add small buffer to ensure text is fully covered (especially for descenders, etc)
-            var right_buffer = 10
-            var left_buffer = 5
-            var vertical_buffer = 2
-            
             var overlay = document.createElement('div')
             
             overlay.style.position = 'absolute'
-            // Removing a buffer here since the box gets 'pushed' left when taking a screenshot
-            overlay.style.left = (bounding_rectangle.left + scroll_left + left_buffer) + 'px'
-            overlay.style.top = (bounding_rectangle.top + scroll_top - vertical_buffer) + 'px'
-            overlay.style.width = (bounding_rectangle.width + (right_buffer * 2)) + 'px'
-            overlay.style.height = (bounding_rectangle.height + (vertical_buffer * 2)) + 'px'
+            overlay.style.left = (bounding_rectangle.left + scroll_left - %d) + 'px'
+            overlay.style.top = (bounding_rectangle.top + scroll_top - %d) + 'px'
+            overlay.style.width = (bounding_rectangle.width + %d + %d) + 'px'
+            overlay.style.height = (bounding_rectangle.height + %d + %d) + 'px'
             
             overlay.style.backgroundColor = '%s'
             overlay.style.zIndex = '9999'
@@ -238,7 +222,8 @@ class OverlayRedactor implements Redactor {
             
             overlay.id = 'redact-' + Date.now()
             return overlay.id
-            """.formatted(overlayColour, "white", description);
+            """.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
+            overlayColour, "white", description);
 
         driver.executeScript(script, element);
     }

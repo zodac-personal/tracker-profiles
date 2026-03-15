@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
@@ -144,6 +145,11 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .child(td, atIndex(2))
                 .build()
         );
+    }
+
+    @Override
+    protected OverlayBuffer ipAddressElementBuffer() {
+        return new OverlayBuffer(0, 0, -2, 4);
     }
 
     @Override
