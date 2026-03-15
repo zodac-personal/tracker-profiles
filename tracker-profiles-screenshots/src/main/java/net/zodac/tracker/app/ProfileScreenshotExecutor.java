@@ -258,47 +258,57 @@ final class ProfileScreenshotExecutor {
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
 
         for (final RedactionType redactionType : redactionsToExecute) {
-            LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
-            final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
-
-            // Translate if needed, as a page reload may have cleared the translation
-            if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
-                LOGGER.info("\t\t- Translating profile page to English");
-                trackerNeedsTranslation.translatePageToEnglish();
-            }
-
-            if (redactionType == RedactionType.NONE) {
-                LOGGER.debug("\t\t- Not redacting content");
-            } else if (trackerHandler.hasSensitiveInformation()) {
-                final Redactor redactor = new RedactorImpl(trackerHandler.driver(), redactionType);
-                LOGGER.info("\t\t- Redacting elements with sensitive information");
-
-                final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
-                if (numberOfRedactedElements == 0) {
-                    LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
-                } else {
-                    LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
-                }
-            } else {
-                LOGGER.debug("\t\t- Nothing to redact");
-            }
-
-            if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
-                trackerWithFixedHeader.unfixHeader();
-                LOGGER.info("\t\t- Header has been updated to not be fixed");
-            }
-
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(),
-                baseName, scrollDuringScreenshot, screenshotIndex(baseName));
-            LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
-
-            // Reload to restore page to original state (clears DOM mutations from previous redaction)
-            LOGGER.debug("\t\t- Reloading profile page for next redaction");
-            trackerHandler.reloadProfilePage();
+            takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
         }
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
+    }
+
+    private static void takeScreenshotForRedactionType(final AbstractTrackerHandler trackerHandler,
+                                                       final TrackerCredential trackerCredential,
+                                                       final RedactionType redactionType,
+                                                       final boolean scrollDuringScreenshot
+    ) throws IOException {
+        LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
+        final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
+
+        // Translate if needed, as a page reload may have cleared the translation
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
+            LOGGER.info("\t\t- Translating profile page to English");
+            trackerNeedsTranslation.translatePageToEnglish();
+        }
+
+        if (redactionType == RedactionType.NONE) {
+            LOGGER.debug("\t\t- Not redacting content");
+        } else if (trackerHandler.hasSensitiveInformation()) {
+            final Redactor redactor = new RedactorImpl(trackerHandler.driver(), redactionType);
+            LOGGER.info("\t\t- Redacting elements with sensitive information");
+
+            final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
+            if (numberOfRedactedElements == 0) {
+                LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
+            } else {
+                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
+            }
+        } else {
+            LOGGER.debug("\t\t- Nothing to redact");
+        }
+
+        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            trackerWithFixedHeader.unfixHeader();
+            LOGGER.info("\t\t- Header has been updated to not be fixed");
+        }
+
+        trackerHandler.actionBeforeScreenshot();
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName, scrollDuringScreenshot,
+            screenshotIndex(baseName));
+        trackerHandler.actionAfterScreenshot();
+        LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+        // Reload to restore page to original state (clears DOM mutations from previous redaction)
+        LOGGER.debug("\t\t- Reloading profile page for next redaction");
+        trackerHandler.reloadProfilePage();
     }
 
     private static Set<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {

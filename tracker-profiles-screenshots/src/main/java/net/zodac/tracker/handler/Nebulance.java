@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 
 /**
@@ -62,12 +61,11 @@ public class Nebulance extends LuminanceHandler {
      * <p>
      * For {@link Nebulance}, the user's profile page cannot be scrolled by default. We override the 'body' tag to allow scrolling to occur
      * when taking the screenshot.
-     *
-     * @see BrowserInteractionHelper#enableScrolling(String)
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        browserInteractionHelper.enableScrolling("body");
+        driver.executeScript("document.body.style.height = 'auto';");
+        driver.executeScript("document.body.style.overflowY = 'visible';");
     }
 
     @Override

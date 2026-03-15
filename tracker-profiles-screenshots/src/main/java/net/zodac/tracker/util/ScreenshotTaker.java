@@ -96,11 +96,9 @@ public final class ScreenshotTaker {
                                       final boolean scrollDuringScreenshot,
                                       final int index
     ) throws IOException {
-        final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
-        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, browserInteractionHelper, scrollDuringScreenshot);
+        final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, scrollDuringScreenshot);
         final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), baseName, index);
         ImageIO.write(screenshotImage, "PNG", screenshot);
-        browserInteractionHelper.scrollToTheTop();
         return screenshot;
     }
 
@@ -112,18 +110,11 @@ public final class ScreenshotTaker {
         return new File(outputDirectory + File.separator + baseName + "_" + index + ".png");
     }
 
-    private static BufferedImage takeScreenshotOfEntirePage(final RemoteWebDriver driver,
-                                                            final BrowserInteractionHelper browserInteractionHelper,
-                                                            final boolean scrollDuringScreenshot
-    ) {
-        browserInteractionHelper.disableScrolling();
-        final BufferedImage screenshot = new AShot()
+    private static BufferedImage takeScreenshotOfEntirePage(final RemoteWebDriver driver, final boolean scrollDuringScreenshot) {
+        return new AShot()
             .shootingStrategy(shootingStrategy(scrollDuringScreenshot))
             .takeScreenshot(driver)
             .getImage();
-
-        browserInteractionHelper.enableScrolling("body");
-        return screenshot;
     }
 
     private static ShootingStrategy shootingStrategy(final boolean scrollDuringScreenshot) {

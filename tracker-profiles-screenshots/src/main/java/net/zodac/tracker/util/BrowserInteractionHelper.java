@@ -76,26 +76,6 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Disables scrolling on the current web page, to remove the scrollbar from the screenshot.
-     */
-    public void disableScrolling() {
-        LOGGER.trace("Disabling scrolling on page to remove scrollbar");
-        driver.executeScript("document.body.style.overflow = 'hidden'");
-    }
-
-    /**
-     * Some web pages may have 'overflow' set to 'hidden', which can disable scrolling. This function will override the configuration of the web page
-     * to enable scrolling again.
-     *
-     * @param elementToOverride the element that needs to be overridden to allow scrolling (usually 'body')
-     */
-    public void enableScrolling(final String elementToOverride) {
-        LOGGER.trace("Enabling scrolling on page");
-        driver.executeScript(String.format("document.%s.style.height = 'auto';", elementToOverride));
-        driver.executeScript(String.format("document.%s.style.overflowY = 'visible';", elementToOverride));
-    }
-
-    /**
      * Performs a {@link Thread#sleep(Duration)} for the specified {@link Duration}.
      *
      * @param sleepTime the time to wait
@@ -120,6 +100,23 @@ public class BrowserInteractionHelper {
     public String getValue(final WebElement element) {
         final String attributeValue = element.getAttribute("value");
         return attributeValue == null ? "" : attributeValue;
+    }
+
+    /**
+     * Hides the scrollbar on the current web page without changing page dimensions. Rather than setting {@code overflow: hidden} (which removes the
+     * scrollbar gutter and causes layout shifts), this injects a stylesheet that makes the scrollbar transparent. The gutter space is preserved,
+     * preventing overlay redaction positions from shifting.
+     */
+    public void hideScrollbar() {
+        LOGGER.trace("Hiding scrollbar on page without changing page dimensions");
+        driver.executeScript("""
+            var style = document.createElement('style');
+            style.id = 'hide-scrollbar-style';
+            style.textContent = '::-webkit-scrollbar { background-color: transparent !important; } \
+                                 ::-webkit-scrollbar-thumb { background-color: transparent !important; } \
+                                 ::-webkit-scrollbar-track { background-color: transparent !important; }';
+            document.head.appendChild(style);
+            """);
     }
 
     /**
@@ -232,6 +229,22 @@ public class BrowserInteractionHelper {
     public void scrollToTheTop() {
         driver.executeScript("window.scrollTo(0, 0);");
         explicitWait(Duration.ofSeconds(1L), "page to scroll to the top");
+    }
+
+    /**
+     * Some web pages may have 'overflow' set to 'hidden', which can disable scrolling. This function will override the configuration of the web page
+     * to enable scrolling again.
+     */
+    public void showScrollbar() {
+        LOGGER.trace("Enabling scrolling on page");
+        driver.executeScript("document.body.style.height = 'auto';");
+        driver.executeScript("document.body.style.overflowY = 'visible';");
+        driver.executeScript("""
+            var style = document.getElementById('hide-scrollbar-style');
+            if (style) {
+                style.remove();
+            }
+            """);
     }
 
     /**

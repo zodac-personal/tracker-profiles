@@ -530,6 +530,31 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
+     * Any action to be taken by the {@link AbstractTrackerHandler} while on the profile page, prior to taking a screenshot.
+     *
+     * <p>
+     * By default, it hides the scrollbar without changing page dimensions, preventing layout shifts that would affect overlay redaction positioning.
+     *
+     * @see BrowserInteractionHelper#hideScrollbar()
+     */
+    public void actionBeforeScreenshot() {
+        browserInteractionHelper.hideScrollbar();
+    }
+
+    /**
+     * Any action to be taken by the {@link AbstractTrackerHandler} while on the profile page, after taking a screenshot.
+     *
+     * <p>
+     * By default, it re-enables scrolling and scrolls back to the top of the page.
+     *
+     * @see BrowserInteractionHelper#showScrollbar()
+     */
+    public void actionAfterScreenshot() {
+        browserInteractionHelper.showScrollbar();
+        browserInteractionHelper.scrollToTheTop();
+    }
+
+    /**
      * Retrieves the {@link WebElement} of the logout button.
      *
      * @return the logout button {@link WebElement}
