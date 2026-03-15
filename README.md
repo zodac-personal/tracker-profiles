@@ -83,93 +83,33 @@ There are currently **116** supported trackers listed below. The available track
 The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the
 background:
 
-| Tracker Name                                         |
-|------------------------------------------------------|
-| [ABTorrents](https://usefultrash.net/)               |
-| [Aither](https://aither.cc/)                         |
-| [AlphaRatio](https://alpharatio.cc/)                 |
-| [AnimeBytes](https://animebytes.tv/)                 |
-| [Anthelion](https://anthelion.me/)                   |
-| [ArabicSource](https://arabicsource.net/)            |
-| [ArabP2P](https://www.arabp2p.net/)                  |
-| [AsianCinema](https://eiga.moi/)                     |
-| [BackUps](https://back-ups.me/)                      |
-| [BakaBT](https://bakabt.me/)                         |
-| [Blutopia](https://blutopia.cc/)                     |
-| [BootyTape](https://ssl.bootytape.com/)              |
-| [BrokenStones](https://brokenstones.is/)             |
-| [BwTorrents](https://bwtorrents.tv/)                 |
-| [C411](https://c411.org/)                            |
-| [CanalStreet](https://canal-street.org/)             |
-| [CapybaraBR](https://capybarabr.com/)                |
-| [Cathode-Ray.Tube](https://www.cathode-ray.tube/)    |
-| [Concertos](https://concertos.live/)                 |
-| [D3Si.NET](https://d3si.net/)                        |
-| [DanishBytes](https://danishbytes.club/)             |
-| [DarkPeers](https://darkpeers.org/)                  |
-| [DesiTorrents](https://desitorrents.tv/)             |
-| [DICMusic](https://dicmusic.com/)                    |
-| [DimeADozen](http://www.dimeadozen.org/)             |
-| [Empornium](https://www.empornium.sx/)               |
-| [ExtremeBits](https://extremebits.net/)              |
-| [F1Carreras](https://f1carreras.xyz/)                |
-| [Fappaizuri](https://fappaizuri.me/)                 |
-| [FearNoPeer](https://fearnopeer.com/)                |
-| [FileList](https://filelist.io/)                     |
-| [FunFile](https://www.funfile.org/)                  |
-| [GreatPosterWall](https://greatposterwall.com/)      |
-| [HappyFappy](https://www.happyfappy.net/)            |
-| [HD-Forever](https://hdf.world/)                     |
-| [HDUnited](https://hd-united.vn/)                    |
-| [Hellenic-HD](https://hellenic-hd.cc/)               |
-| [ImmortalSeed](https://immortalseed.me/)             |
-| [InfinityHD](https://infinityhd.net/)                |
-| [IPTorrents](https://iptorrents.com/)                |
-| [ItaTorrents](https://itatorrents.xyz/)              |
-| [JPopsuki](https://jpopsuki.eu/)                     |
-| [Kufirc](https://kufirc.com/)                        |
-| [Lat-Team](https://lat-team.com/)                    |
-| [Libble](https://libble.me/)                         |
-| [Luminarr](https://luminarr.me/)                     |
-| [MalayaBits](https://malayabits.cc/)                 |
-| [Metal-Tracker](https://en.metal-tracker.com/)       |
-| [Milkie](https://milkie.cc/)                         |
-| [MoreThanTV](https://www.morethantv.me/)             |
-| [MooKo](https://mooko.org/)                          |
-| [MyAnonaMouse](https://www.myanonamouse.net/)        |
-| [Nebulance](https://nebulance.io/)                   |
-| [NordicHD](http://nordichd.org/)                     |
-| [OldToons.World](https://oldtoons.world/)            |
-| [OnlyEncodes](https://onlyencodes.cc/)               |
-| [Orpheus](https://orpheus.network/)                  |
-| [PixelCove](https://www.pixelcove.me/)               |
-| [PixelHD](https://pixelhd.me/)                       |
-| [PolishTorrent](https://polishtorrent.top/)          |
-| [PornBay](https://pornbay.org/)                      |
-| [PornoLab](https://pornolab.net/forum/tracker.php)   |
-| [Rastastugan](https://rastastugan.org/)              |
-| [Redacted](https://redacted.sh/)                     |
-| [ReelFlix](https://reelflix.cc/)                     |
-| [RocketHD](https://rocket-hd.cc/)                    |
-| [RUTracker](https://rutracker.org/forum/tracker.php) |
-| [SceneHD](https://scenehd.org/)                      |
-| [SecretCinema](https://secret-cinema.pw/)            |
-| [SeedPool](https://seedpool.org/)                    |
-| [SexTorrent](https://sextorrent.myds.me/)            |
-| [SportsCult](https://sportscult.org/)                |
-| [T3nnis](https://t3nnis.tv/)                         |
-| [Tasmanites](https://tasmanit.es/)                   |
-| [TeamOS](https://teamos.xyz/)                        |
-| [TheMixingBowl](https://themixingbowl.org/)          |
-| [TorrentLeech](https://www.torrentleech.org/)        |
-| [TranceTraffic](https://www.trancetraffic.com/)      |
-| [TVChaosUK](https://tvchaosuk.com/)                  |
-| [Unwalled](https://unwalled.cc/)                     |
-| [VietMediaF](https://tracker.vietmediaf.store/)      |
-| [XSpeeds](https://www.xspeeds.eu/)                   |
-| [XWT-Classics](https://xwt-classics.net/)            |
-| [YUSCENE](https://yu-scene.net/)                     |
-| [Zappateers](https://zappateers.com/)                |
+| Tracker Name                                      |                                                 |                                                      |                                                 |
+|---------------------------------------------------|-------------------------------------------------|------------------------------------------------------|-------------------------------------------------|
+| [ABTorrents](https://usefultrash.net/)            | [Empornium](https://www.empornium.sx/)          | [MoreThanTV](https://www.morethantv.me/)             | [TheMixingBowl](https://themixingbowl.org/)     |
+| [Aither](https://aither.cc/)                      | [ExtremeBits](https://extremebits.net/)         | [MyAnonaMouse](https://www.myanonamouse.net/)        | [TorrentLeech](https://www.torrentleech.org/)   |
+| [AlphaRatio](https://alpharatio.cc/)              | [F1Carreras](https://f1carreras.xyz/)           | [Nebulance](https://nebulance.io/)                   | [TranceTraffic](https://www.trancetraffic.com/) |
+| [AnimeBytes](https://animebytes.tv/)              | [Fappaizuri](https://fappaizuri.me/)            | [NordicHD](http://nordichd.org/)                     | [TVChaosUK](https://tvchaosuk.com/)             |
+| [Anthelion](https://anthelion.me/)                | [FearNoPeer](https://fearnopeer.com/)           | [OldToons.World](https://oldtoons.world/)            | [Unwalled](https://unwalled.cc/)                |
+| [ArabicSource](https://arabicsource.net/)         | [FileList](https://filelist.io/)                | [OnlyEncodes](https://onlyencodes.cc/)               | [VietMediaF](https://tracker.vietmediaf.store/) |
+| [ArabP2P](https://www.arabp2p.net/)               | [FunFile](https://www.funfile.org/)             | [Orpheus](https://orpheus.network/)                  | [XSpeeds](https://www.xspeeds.eu/)              |
+| [AsianCinema](https://eiga.moi/)                  | [GreatPosterWall](https://greatposterwall.com/) | [PixelCove](https://www.pixelcove.me/)               | [XWT-Classics](https://xwt-classics.net/)       |
+| [BackUps](https://back-ups.me/)                   | [HappyFappy](https://www.happyfappy.net/)       | [PixelHD](https://pixelhd.me/)                       | [YUSCENE](https://yu-scene.net/)                |
+| [BakaBT](https://bakabt.me/)                      | [HD-Forever](https://hdf.world/)                | [PolishTorrent](https://polishtorrent.top/)          | [Zappateers](https://zappateers.com/)           |
+| [Blutopia](https://blutopia.cc/)                  | [HDUnited](https://hd-united.vn/)               | [PornBay](https://pornbay.org/)                      |                                                 |
+| [BootyTape](https://ssl.bootytape.com/)           | [Hellenic-HD](https://hellenic-hd.cc/)          | [PornoLab](https://pornolab.net/forum/tracker.php)   |                                                 |
+| [BrokenStones](https://brokenstones.is/)          | [ImmortalSeed](https://immortalseed.me/)        | [Rastastugan](https://rastastugan.org/)              |                                                 |
+| [BwTorrents](https://bwtorrents.tv/)              | [InfinityHD](https://infinityhd.net/)           | [Redacted](https://redacted.sh/)                     |                                                 |
+| [C411](https://c411.org/)                         | [IPTorrents](https://iptorrents.com/)           | [ReelFlix](https://reelflix.cc/)                     |                                                 |
+| [CanalStreet](https://canal-street.org/)          | [ItaTorrents](https://itatorrents.xyz/)         | [RocketHD](https://rocket-hd.cc/)                    |                                                 |
+| [CapybaraBR](https://capybarabr.com/)             | [JPopsuki](https://jpopsuki.eu/)                | [RUTracker](https://rutracker.org/forum/tracker.php) |                                                 |
+| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | [Kufirc](https://kufirc.com/)                   | [SceneHD](https://scenehd.org/)                      |                                                 |
+| [Concertos](https://concertos.live/)              | [Lat-Team](https://lat-team.com/)               | [SecretCinema](https://secret-cinema.pw/)            |                                                 |
+| [D3Si.NET](https://d3si.net/)                     | [Libble](https://libble.me/)                    | [SeedPool](https://seedpool.org/)                    |                                                 |
+| [DanishBytes](https://danishbytes.club/)          | [Luminarr](https://luminarr.me/)                | [SexTorrent](https://sextorrent.myds.me/)            |                                                 |
+| [DarkPeers](https://darkpeers.org/)               | [MalayaBits](https://malayabits.cc/)            | [SportsCult](https://sportscult.org/)                |                                                 |
+| [DesiTorrents](https://desitorrents.tv/)          | [Metal-Tracker](https://en.metal-tracker.com/)  | [T3nnis](https://t3nnis.tv/)                         |                                                 |
+| [DICMusic](https://dicmusic.com/)                 | [Milkie](https://milkie.cc/)                    | [Tasmanites](https://tasmanit.es/)                   |                                                 |
+| [DimeADozen](http://www.dimeadozen.org/)          | [MooKo](https://mooko.org/)                     | [TeamOS](https://teamos.xyz/)                        |                                                 |
 
 ### Non-Headless
 
@@ -177,38 +117,25 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 `TRACKER_EXECUTION_ORDER`), then
 a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
-| Tracker Name                                        | Type                 |
-|-----------------------------------------------------|----------------------|
-| [52PT](https://52pt.site/)                          | **Manual**           |
-| [AnimeZ](https://animez.to/)                        | **Manual**           |
-| [AvistaZ](https://avistaz.to/)                      | **Cloudflare-check** |
-| [BeyondHD](https://beyond-hd.me/)                   | **Manual**           |
-| [BroadcasThe.Net](https://broadcasthe.net/)         | **Cloudflare-check** |
-| [CinemaZ](https://cinemaz.to/)                      | **Cloudflare-check** |
-| [CGPeers](https://cgpeers.to/)                      | **Cloudflare-check** |
-| [DigitalCore.Club](https://digitalcore.club/)       | **Manual**           |
-| [DocsPedia](https://docspedia.world/)               | **Manual**           |
-| [ExoticaZ](https://exoticaz.to/)                    | **Cloudflare-check** |
-| [GazelleGames](https://gazellegames.net/)           | **Manual**           |
-| [Hawke-Uno](https://hawke.uno/)                     | **Cloudflare-check** |
-| [HDBits](https://hdbits.org/)                       | **Cloudflare-check** |
-| [Immortal-S](https://immortal-s.me/)                | **Cloudflare-check** |
-| [LetSeed](https://letseed.org/)                     | **Manual**           |
-| [LST](https://lst.gg/)                              | **Manual**           |
-| [PassThePopcorn](https://passthepopcorn.me/)        | **Manual**           |
-| [PrivateHD](https://privatehd.to/)                  | **Cloudflare-check** |
-| [SceneTime](https://www.scenetime.com/)             | **Cloudflare-check** |
-| [SocietyGlitch](https://stalker.societyglitch.com/) | **Manual**           |
-| [Speed.CD](https://speed.cd/)                       | **Cloudflare-check** |
-| [TheEmpire](https://theempire.click/)               | **Manual**           |
-| [TheGeeks](https://thegeeks.click/)                 | **Manual**           |
-| [TheKitchen](https://thekitchen.click/)             | **Manual**           |
-| [TheOccult](https://theoccult.click/)               | **Manual**           |
-| [ThePlace](https://theplace.click/)                 | **Manual**           |
-| [TheShow](https://theshow.click/)                   | **Manual**           |
-| [TheVault](https://thevault.click/)                 | **Manual**           |
-| [Torrenting](https://torrenting.com/)               | **Cloudflare-check** |
-| [UploadCX](https://upload.cx/)                      | **Cloudflare-check** |
+| Manual                                              | Cloudflare-Check                            |
+|-----------------------------------------------------|---------------------------------------------|
+| [52PT](https://52pt.site/)                          | [AvistaZ](https://avistaz.to/)              |
+| [AnimeZ](https://animez.to/)                        | [BroadcasThe.Net](https://broadcasthe.net/) |
+| [BeyondHD](https://beyond-hd.me/)                   | [CGPeers](https://cgpeers.to/)              |
+| [DigitalCore.Club](https://digitalcore.club/)       | [CinemaZ](https://cinemaz.to/)              |
+| [DocsPedia](https://docspedia.world/)               | [ExoticaZ](https://exoticaz.to/)            |
+| [GazelleGames](https://gazellegames.net/)           | [Hawke-Uno](https://hawke.uno/)             |
+| [LetSeed](https://letseed.org/)                     | [HDBits](https://hdbits.org/)               |
+| [LST](https://lst.gg/)                              | [Immortal-S](https://immortal-s.me/)        |
+| [PassThePopcorn](https://passthepopcorn.me/)        | [PrivateHD](https://privatehd.to/)          |
+| [SocietyGlitch](https://stalker.societyglitch.com/) | [SceneTime](https://www.scenetime.com/)     |
+| [TheEmpire](https://theempire.click/)               | [Speed.CD](https://speed.cd/)               |
+| [TheGeeks](https://thegeeks.click/)                 | [Torrenting](https://torrenting.com/)       |
+| [TheKitchen](https://thekitchen.click/)             | [UploadCX](https://upload.cx/)              |
+| [TheOccult](https://theoccult.click/)               |                                             |
+| [ThePlace](https://theplace.click/)                 |                                             |
+| [TheShow](https://theshow.click/)                   |                                             |
+| [TheVault](https://thevault.click/)                 |                                             |
 
 ## How To Use
 
