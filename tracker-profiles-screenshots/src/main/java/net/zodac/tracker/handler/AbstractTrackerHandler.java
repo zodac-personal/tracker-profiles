@@ -496,14 +496,26 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * Logs out of the tracker, ending the user's session. Waits {@link #waitForPageLoadDuration()} for the {@link #postLogoutElementSelector()} to
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
-    public void logout() {
+    public final void logout() {
         LOGGER.debug("\t\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
         browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);
         clickButton(logoutButton);
 
+        additionalActionAfterLogoutClick();
         browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageTransitionsDuration());
+    }
+
+    /**
+     * For certain trackers, additional actions may need to be performed after clicking on the logout button. For example, some trackers will have a
+     * pop-up to confirm logout.
+     *
+     * <p>
+     * This method should be overridden as required.
+     */
+    protected void additionalActionAfterLogoutClick() {
+        // Do nothing by default
     }
 
     /**

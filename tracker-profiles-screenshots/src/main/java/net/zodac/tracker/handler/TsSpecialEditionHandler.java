@@ -125,15 +125,9 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * For {@link TsSpecialEditionHandler}, after clicking the logout button, a JavaScript alert appears, which must be accepted.
      */
     @Override
-    public void logout() {
-        final By logoutButtonSelector = logoutButtonSelector();
-        final WebElement logoutButton = driver.findElement(logoutButtonSelector);
-        clickButton(logoutButton);
-
-        // After clicking logout, an alert appears - find and click 'Yes'
+    protected void additionalActionAfterLogoutClick() {
+        LOGGER.debug("\t\t- Clicking JavaScript alert to confirm logout");
         browserInteractionHelper.acceptAlert();
-
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), maximumLinkResolutionDuration());
     }
 
     @Override
