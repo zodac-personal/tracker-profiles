@@ -69,6 +69,7 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
+        LOGGER.debug("\t\t- Unfixing header");
         final WebElement headerElement = driver.findElement(By.id("header"));
         browserInteractionHelper.makeUnfixed(headerElement);
     }

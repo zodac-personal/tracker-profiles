@@ -37,6 +37,7 @@ public class MoreThanTv extends LuminanceHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
+        LOGGER.debug("\t\t- Unfixing header");
         final WebElement headerElement = driver.findElement(By.cssSelector("#menu, .main-menu"));
         browserInteractionHelper.makeUnfixed(headerElement);
     }

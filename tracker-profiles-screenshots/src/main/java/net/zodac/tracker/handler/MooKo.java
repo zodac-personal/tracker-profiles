@@ -102,7 +102,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");  // TODO: Add to other similar methods
+        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(header, withClass("HeaderNew"))
             .build();

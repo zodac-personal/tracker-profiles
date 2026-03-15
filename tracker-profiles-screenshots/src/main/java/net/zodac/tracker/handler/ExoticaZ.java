@@ -113,6 +113,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
 
     @Override
     public void unfixHeader() {
+        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(nav, withClass("fixed-top"))
             .build();

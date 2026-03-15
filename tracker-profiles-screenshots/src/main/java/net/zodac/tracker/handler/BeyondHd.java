@@ -79,6 +79,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
+        LOGGER.debug("\t\t- Unfixing header");
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
         browserInteractionHelper.makeUnfixed(headerElement);
     }
