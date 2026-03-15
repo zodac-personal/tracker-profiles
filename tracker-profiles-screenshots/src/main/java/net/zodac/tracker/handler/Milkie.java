@@ -28,11 +28,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Milkie} tracker.
@@ -84,12 +80,12 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
     }
 
     private void openUserDropdownMenu() {
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure the page has a consistent state (no user pop-ups showing)");
         final By profilePageSelector = profilePageSelector();
 
-        // TODO: Move this to browserInteractionHelper, and replace more explicit waits with element visibly waits
-        final Wait<WebDriver> wait = new WebDriverWait(driver, maximumLinkResolutionDuration());
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(profilePageSelector));
+        // TODO: Replace more explicit waits with element visibly waits
+        browserInteractionHelper.waitForElementToAppear(profilePageSelector, maximumLinkResolutionDuration());
 
         final WebElement logoutParent = driver.findElement(profilePageSelector);
         clickButton(logoutParent);

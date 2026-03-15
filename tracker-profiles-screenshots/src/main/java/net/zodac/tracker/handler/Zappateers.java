@@ -127,7 +127,7 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
     }
 
     private void openUserDropdownMenu() {
-        // Click the user dropdown menu bar to make the profile/logout button interactable
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder
             .from(li, withClass("hoe-header-profile"))
             .child(a, withClass("dropdown-toggle"))

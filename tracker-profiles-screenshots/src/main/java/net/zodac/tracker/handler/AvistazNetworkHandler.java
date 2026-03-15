@@ -170,7 +170,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
      * Opens the user's dropdown menu to expose links to the user profile and the logout button.
      */
     protected void openUserDropdownMenu() {
-        // Click the user dropdown menu bar to make the profile/logout button interactable
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By logoutParentSelector = XpathBuilder
             .from(div, withClass("navbar"))
             .child(ul, atIndex(2))

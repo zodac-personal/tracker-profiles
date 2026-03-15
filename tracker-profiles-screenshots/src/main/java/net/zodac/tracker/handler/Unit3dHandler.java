@@ -165,7 +165,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
      * Opens the user's dropdown menu to expose links to the user profile and the logout button.
      */
     protected void openUserDropdownMenu() {
-        // Highlight the nav bar to make the profile/logout button interactable
+        LOGGER.debug("\t\t- Highlighting user dropdown menu to make profile/logout button interactable");
         final By logoutParentSelector = XpathBuilder
             .from(div, withClass("top-nav__right"))
             .descendant(li, withClass("top-nav__dropdown"))

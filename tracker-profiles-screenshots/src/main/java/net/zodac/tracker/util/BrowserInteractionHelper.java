@@ -39,10 +39,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class BrowserInteractionHelper {
 
     private static final Duration DEFAULT_WAIT_FOR_ALERT = Duration.ofSeconds(2L);
-    private static final Duration DEFAULT_WAIT_FOR_CONTEXT_MENU = Duration.of(500L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_KEY_PRESS = Duration.of(250L, ChronoUnit.MILLIS);
     private static final Duration DEFAULT_WAIT_FOR_MOUSE_MOVE = Duration.of(300L, ChronoUnit.MILLIS);
-    private static final Duration DEFAULT_WAIT_FOR_TRANSLATION = Duration.ofSeconds(2L);
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;

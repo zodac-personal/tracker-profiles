@@ -124,7 +124,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
     }
 
     private void openUserDropdownMenu() {
-        // Click the user dropdown menu bar to make the profile/logout button interactable
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder
             .from(nav, atIndex(1))
             .child(div, atIndex(3))

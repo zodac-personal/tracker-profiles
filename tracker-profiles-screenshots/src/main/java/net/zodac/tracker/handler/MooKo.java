@@ -125,7 +125,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     private void openUserDropdownMenu() {
-        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");  // TODO: Add to other similar methods
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By dropDownMenuSelector = XpathBuilder
             .from(div, withClass("HeaderNew-user"))
             .child(div, atIndex(1))

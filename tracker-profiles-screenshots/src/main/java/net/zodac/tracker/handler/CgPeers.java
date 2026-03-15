@@ -172,7 +172,7 @@ public class CgPeers extends AbstractTrackerHandler implements HasCloudflareChec
     }
 
     private void openUserDropdownMenu() {
-        // Click the user dropdown menu bar to make the profile/logout button interactable
+        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = By.id("userDropdownTrigger");
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
