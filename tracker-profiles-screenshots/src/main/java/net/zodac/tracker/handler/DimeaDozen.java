@@ -79,7 +79,7 @@ public class DimeaDozen extends AbstractTrackerHandler {
         return List.of(
             XpathBuilder
                 .from(tbody)
-                .child(tr)
+                .child(tr, atIndex(10))
                 .child(td, atIndex(2))
                 .child(a, atIndex(1))
                 .build()
@@ -91,7 +91,7 @@ public class DimeaDozen extends AbstractTrackerHandler {
         return List.of(
             XpathBuilder
                 .from(tbody)
-                .child(tr)
+                .child(tr, atIndex(9))
                 .child(td, atIndex(2))
                 .build()
         );
