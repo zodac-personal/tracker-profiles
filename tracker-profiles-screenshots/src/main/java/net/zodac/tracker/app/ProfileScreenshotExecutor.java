@@ -196,7 +196,7 @@ final class ProfileScreenshotExecutor {
         }
 
         if (trackerHandler == null) {
-            LOGGER.warn("\t- Unable to take failure screenshot, trackerHandler is unexpectedly null");
+            LOGGER.warn("\t\t- Unable to take failure screenshot, trackerHandler is unexpectedly null");
             return;
         }
 
@@ -204,10 +204,10 @@ final class ProfileScreenshotExecutor {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             ensureErrorDirectoryExists();
             final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, true, 0);
-            LOGGER.warn("\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
+            LOGGER.warn("\t\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
-            LOGGER.debug("\t- Unable to take failure screenshot of '{}'", trackerName, e);
-            LOGGER.warn("\t- Unable to take failure screenshot of '{}': {}", trackerName, e.getMessage());
+            LOGGER.debug("\t\t- Unable to take failure screenshot of '{}'", trackerName, e);
+            LOGGER.warn("\t\t- Unable to take failure screenshot of '{}': {}", trackerName, e.getMessage());
         }
     }
 
@@ -279,6 +279,7 @@ final class ProfileScreenshotExecutor {
             trackerNeedsTranslation.translatePageToEnglish();
         }
 
+        // TODO: If there is no redaction for the tracker, only take a single screenshot
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {

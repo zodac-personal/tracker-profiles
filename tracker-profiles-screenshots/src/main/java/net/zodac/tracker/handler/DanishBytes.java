@@ -63,7 +63,7 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
 
     @Override
     protected By postLoginSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(3L), "log in pop-up to disappear");
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(5L), "login/rules pop-up to disappear");
         return XpathBuilder
             .from(li, withClass("hoe-header-profile"))
             .child(a, withClass("dropdown-toggle"))
