@@ -30,18 +30,22 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
 
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code PixelHD} tracker.
  */
 @TrackerHandler(name = "PixelHD", url = "https://pixelhd.me/")
-public class PixelHd extends AbstractTrackerHandler {
+public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBanner {
 
     @Override
     protected By loginPageSelector() {
@@ -89,6 +93,42 @@ public class PixelHd extends AbstractTrackerHandler {
             .build();
     }
 
+    /**
+     * For {@link PixelHd}, if there is a new announcement this will be flagged on the home screen, and can block the user profile link. We click this
+     * announcement link before continuing.
+     */
+    @Override
+    public void dismissBanner() {
+        LOGGER.debug("\t\t- Checking for announcement");
+        final By announcementSelector = XpathBuilder
+            .from(div, withId("newAnnouncementSlideDown"))
+            .child(a, atIndex(1))
+            .build();
+        final Collection<WebElement> announcements = driver.findElements(announcementSelector);
+        if (announcements.isEmpty()) {
+            return;
+        }
+
+        // There should only be one of these, and we'll wait for it to scroll down and become interactable
+        LOGGER.debug("\t\t\t- Found announcement, opening link");
+        final WebElement announcementLink = browserInteractionHelper.waitForElementToBeInteractable(announcementSelector, waitForPageLoadDuration());
+        clickButton(announcementLink);
+
+        // This scrolls us down to the announcement, which we need to click and mark as read
+        LOGGER.debug("\t\t\t- Marking announcement as read");
+        final By markAsReadSelector = XpathBuilder
+            .from(a, withId("newsDivSectionAnchor"))
+            .navigateTo(followingSibling(a))
+            .build();
+        final WebElement markAsReadElement = driver.findElement(markAsReadSelector);
+        clickButton(markAsReadElement);
+
+        // The announcement is at the bottom of the page, so we need to scroll back up to continue execution
+        browserInteractionHelper.scrollToTheTop();
+
+        LOGGER.debug("\t\t\t- Cleared announcement");
+    }
+
     @Override
     protected By profilePageSelector() {
         return By.id("userNameMenu");
@@ -117,6 +157,16 @@ public class PixelHd extends AbstractTrackerHandler {
                 .child(li, atIndex(4))
                 .build()
         );
+    }
+
+    /**
+     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the right.
+     *
+     * @return the {@link OverlayBuffer} for passkey redaction
+     */
+    @Override
+    protected OverlayBuffer passkeyElementBuffer() {
+        return new OverlayBuffer(0, 0, 0, 13);
     }
 
     @Override
