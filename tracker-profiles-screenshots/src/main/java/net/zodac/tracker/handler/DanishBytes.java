@@ -116,8 +116,8 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
 
     private void openUserDropdownMenu() {
         LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
-        final By loginPopup = By.cssSelector(".swal2-popup.swal2-toast");
-        browserInteractionHelper.waitForElementToDisappear(loginPopup, Duration.ofSeconds(5L));
+        final By loginPopupSelector = By.id("swal2-title");
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, waitForPageLoadDuration());
 
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder

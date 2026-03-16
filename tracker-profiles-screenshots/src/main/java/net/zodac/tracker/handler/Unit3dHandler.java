@@ -38,7 +38,6 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -47,15 +46,15 @@ import org.openqa.selenium.WebElement;
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
  */
 @CommonTrackerHandler("UNIT3D")
-@TrackerHandler(name = "ArabicSource", url = "https://arabicsource.net/")
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
+@TrackerHandler(name = "ArabicSource", url = "https://arabicsource.net/")
 @TrackerHandler(name = "AsianCinema", url = "https://eiga.moi/")
 @TrackerHandler(name = "Blutopia", url = "https://blutopia.cc/")
 @TrackerHandler(name = "Concertos", url = "https://concertos.live/")
 @TrackerHandler(name = "DesiTorrents", url = "https://desitorrents.tv/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
-@TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
+@TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
 @TrackerHandler(name = "InfinityHD", url = "https://infinityhd.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
@@ -94,7 +93,9 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
      */
     @Override
     public void dismissBanner() {
-        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "login pop-up to disappear");
+        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
+        final By loginPopupSelector = By.id("swal2-title");
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, waitForPageLoadDuration());
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();
