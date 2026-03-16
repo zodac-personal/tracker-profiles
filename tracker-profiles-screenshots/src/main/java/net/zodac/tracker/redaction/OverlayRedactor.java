@@ -51,19 +51,42 @@ class OverlayRedactor implements Redactor {
         final String script = """
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
-            
-            var original_html = element.innerHTML
             var counter = 0
-            
-            // Replace all matching patterns with spans
-            // Order matters: check masked IPv4 before regular IPv4 to avoid partial matches
-            var new_html = original_html
-            new_html = new_html.replace(email_regex, function(match) {
-              return '<span class="redact-target" data-index="' + (counter++) + '">' + match + '</span>'
-            })
-            
-            element.innerHTML = new_html
-            
+
+            // Use TreeWalker to process only text nodes, so attribute values are never modified
+            var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false)
+            var text_nodes = []
+            var node
+            while (node = walker.nextNode()) {
+              text_nodes.push(node)
+            }
+
+            for (var t = 0; t < text_nodes.length; t++) {
+              var text_node = text_nodes[t]
+              var text = text_node.textContent
+              email_regex.lastIndex = 0
+              if (!email_regex.test(text)) continue
+              email_regex.lastIndex = 0
+              var fragment = document.createDocumentFragment()
+              var last_index = 0
+              var match
+              while ((match = email_regex.exec(text)) !== null) {
+                if (match.index > last_index) {
+                  fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
+                }
+                var span = document.createElement('span')
+                span.className = 'redact-target'
+                span.dataset.index = counter++
+                span.textContent = match[0]
+                fragment.appendChild(span)
+                last_index = match.index + match[0].length
+              }
+              if (last_index < text.length) {
+                fragment.appendChild(document.createTextNode(text.slice(last_index)))
+              }
+              text_node.parentNode.replaceChild(fragment, text_node)
+            }
+
             // Get all redaction target spans
             var target_spans = element.querySelectorAll('.redact-target')
             var overlay_ids = []
@@ -115,29 +138,55 @@ class OverlayRedactor implements Redactor {
     public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
         final String script = """
             var element = arguments[0]
-            
+
             var ipv4_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)/g
             var ipv4_masked_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x/g
             var ipv6_regex = /([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g
-            
-            var original_html = element.innerHTML
             var counter = 0
-            
-            // Replace all matching patterns with spans
+
+            function wrap_matches_in_text_node(text_node, regex) {
+              var text = text_node.textContent
+              regex.lastIndex = 0
+              if (!regex.test(text)) return
+              regex.lastIndex = 0
+              var fragment = document.createDocumentFragment()
+              var last_index = 0
+              var match
+              while ((match = regex.exec(text)) !== null) {
+                if (match.index > last_index) {
+                  fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
+                }
+                var span = document.createElement('span')
+                span.className = 'redact-target'
+                span.dataset.index = counter++
+                span.textContent = match[0]
+                fragment.appendChild(span)
+                last_index = match.index + match[0].length
+              }
+              if (last_index < text.length) {
+                fragment.appendChild(document.createTextNode(text.slice(last_index)))
+              }
+              text_node.parentNode.replaceChild(fragment, text_node)
+            }
+
+            // Use TreeWalker to process only text nodes, so attribute values are never modified
             // Order matters: check masked IPv4 before regular IPv4 to avoid partial matches
-            var new_html = original_html
-            new_html = new_html.replace(ipv4_masked_regex, function(match) {
-              return '<span class="redact-target" data-index="' + (counter++) + '">' + match + '</span>'
-            })
-            new_html = new_html.replace(ipv6_regex, function(match) {
-              return '<span class="redact-target" data-index="' + (counter++) + '">' + match + '</span>'
-            })
-            new_html = new_html.replace(ipv4_regex, function(match) {
-              return '<span class="redact-target" data-index="' + (counter++) + '">' + match + '</span>'
-            })
-            
-            element.innerHTML = new_html
-            
+            function apply_regex(regex) {
+              var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false)
+              var text_nodes = []
+              var node
+              while (node = walker.nextNode()) {
+                text_nodes.push(node)
+              }
+              for (var t = 0; t < text_nodes.length; t++) {
+                wrap_matches_in_text_node(text_nodes[t], regex)
+              }
+            }
+
+            apply_regex(ipv4_masked_regex)
+            apply_regex(ipv6_regex)
+            apply_regex(ipv4_regex)
+
             // Get all redaction target spans
             var target_spans = element.querySelectorAll('.redact-target')
             var overlay_ids = []
