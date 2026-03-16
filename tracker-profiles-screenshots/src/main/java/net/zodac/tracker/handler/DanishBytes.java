@@ -56,14 +56,13 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
         // The password field doesn't load until the username is entered and the 'Login' button is clicked
         final WebElement usernameLoginButton = driver.findElement(Objects.requireNonNull(super.loginButtonSelector()));
         clickButton(usernameLoginButton);
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "username to be accepted and password field to appear");
+        browserInteractionHelper.waitForElementToBeInteractable(super.passwordFieldSelector(), waitForPageLoadDuration());
 
         return super.passwordFieldSelector();
     }
 
     @Override
     protected By postLoginSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(5L), "login/rules pop-up to disappear");
         return XpathBuilder
             .from(li, withClass("hoe-header-profile"))
             .child(a, withClass("dropdown-toggle"))
@@ -116,11 +115,16 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
     }
 
     private void openUserDropdownMenu() {
+        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
+        final By loginPopup = By.cssSelector(".swal2-popup.swal2-toast");
+        browserInteractionHelper.waitForElementToDisappear(loginPopup, Duration.ofSeconds(5L));
+
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder
             .from(li, withClass("hoe-header-profile"))
             .child(a, withClass("dropdown-toggle"))
             .build();
+
         final WebElement profileParent = driver.findElement(profileParentSelector);
         clickButton(profileParent);
     }

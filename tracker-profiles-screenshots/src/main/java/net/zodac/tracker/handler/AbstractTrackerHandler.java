@@ -567,7 +567,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public final void logout() {
-        LOGGER.debug("\t\t- Logging out of tracker");
+        LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
         browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         final WebElement logoutButton = driver.findElement(logoutButtonSelector);

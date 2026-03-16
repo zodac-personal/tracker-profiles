@@ -256,19 +256,57 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Waits for the page that the {@link WebDriver} is loading to find the wanted {@link WebElement}. If the {@code timeout} {@link Duration} is
-     * exceeded, the execution will continue.
+     * Waits for the page that the {@link WebDriver} is loading to find the wanted {@link WebElement}.
      *
-     * @param selector the {@link By} selector for the wanted {@link WebElement}
+     * @param selector the {@link By} selector for the target {@link WebElement}
      * @param timeout  the maximum {@link Duration} to wait
+     * @return the {@link WebElement} if found
+     * @throws TimeoutException thrown if the {@link WebElement} doesn't load in the specified {@link Duration}
      */
-    public void waitForElementToAppear(final By selector, final Duration timeout) {
+    public WebElement waitForElementToAppear(final By selector, final Duration timeout) {
         try {
             LOGGER.trace("Waiting {} for [{}] to appear", timeout, selector);
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(selector));
+            return wait.until(ExpectedConditions.presenceOfElementLocated(selector));
         } catch (final TimeoutException e) {
             LOGGER.trace("Element didn't appear, page source: {}", driver.getPageSource());
+            throw e;
+        }
+    }
+
+    /**
+     * Waits for the specified {@link WebElement} to become interactable.
+     *
+     * @param selector the {@link By} selector for the target {@link WebElement}
+     * @param timeout  the maximum {@link Duration} to wait
+     * @return the {@link WebElement} if clickable
+     * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
+     */
+    public WebElement waitForElementToBeInteractable(final By selector, final Duration timeout) {
+        try {
+            LOGGER.trace("Waiting {} for [{}] to be interactable", timeout, selector);
+            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+            return wait.until(ExpectedConditions.elementToBeClickable(selector));
+        } catch (final TimeoutException e) {
+            LOGGER.trace("Element didn't become interactable, page source: {}", driver.getPageSource());
+            throw e;
+        }
+    }
+
+    /**
+     * Waits for the specified {@link WebElement} to become interactable.
+     *
+     * @param selector the {@link By} selector for the target {@link WebElement}
+     * @param timeout  the maximum {@link Duration} to wait
+     * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
+     */
+    public void waitForElementToDisappear(final By selector, final Duration timeout) {
+        try {
+            LOGGER.trace("Waiting {} for [{}] to disappear", timeout, selector);
+            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(selector));
+        } catch (final TimeoutException e) {
+            LOGGER.trace("Element didn't disappear, page source: {}", driver.getPageSource());
             throw e;
         }
     }
