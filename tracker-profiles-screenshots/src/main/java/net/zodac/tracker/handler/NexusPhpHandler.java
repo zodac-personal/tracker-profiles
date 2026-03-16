@@ -44,7 +44,6 @@ import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.redaction.OverlayBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -145,11 +144,6 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .child(td, atIndex(2))
                 .build()
         );
-    }
-
-    @Override
-    protected OverlayBuffer ipAddressElementBuffer() {
-        return new OverlayBuffer(0, 0, -2, 4);
     }
 
     @Override

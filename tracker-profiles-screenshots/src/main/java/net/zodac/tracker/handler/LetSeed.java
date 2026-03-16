@@ -21,11 +21,13 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -33,8 +35,9 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link TsSpecialEditionHandler} for the {@code LetSeed} tracker.
  */
+// TODO: Overlay redactions not positioned correctly
 @TrackerHandler(name = "LetSeed", type = TrackerType.MANUAL, url = "https://letseed.org/")
-public class LetSeed extends TsSpecialEditionHandler implements NeedsExplicitTranslation {
+public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, NeedsExplicitTranslation {
 
     /**
      * {@inheritDoc}
@@ -67,6 +70,20 @@ public class LetSeed extends TsSpecialEditionHandler implements NeedsExplicitTra
             .build();
         final WebElement englishLanguageOption = driver.findElement(englishLanguageOptionSelector);
         clickButton(englishLanguageOption);
+    }
+
+    @Override
+    public void unfixHeader() {
+        LOGGER.debug("\t\t- Unfixing header");
+        final By headerSelector = XpathBuilder
+            .from(div, withId("menu"))
+            .build();
+        final WebElement headerElement = driver.findElement(headerSelector);
+
+        LOGGER.debug("\t\t- Updating header with 'fixedMenu' class, to set up static state");
+        browserInteractionHelper.addClass(headerElement, "fixedMenu");
+
+        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override
