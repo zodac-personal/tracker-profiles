@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -90,6 +91,11 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
                 .child(td, atIndex(2))
                 .build()
         );
+    }
+
+    @Override
+    protected OverlayBuffer ipAddressElementBuffer() {
+        return new OverlayBuffer(0, 0, 13, 0);
     }
 
     @Override

@@ -104,17 +104,20 @@ public class BrowserInteractionHelper {
 
     /**
      * Hides the scrollbar on the current web page without changing page dimensions. Rather than setting {@code overflow: hidden} (which removes the
-     * scrollbar gutter and causes layout shifts), this injects a stylesheet that makes the scrollbar transparent. The gutter space is preserved,
-     * preventing overlay redaction positions from shifting.
+     * scrollbar gutter and causes layout shifts), this injects a stylesheet that makes the scrollbar transparent via both the standard
+     * {@code scrollbar-color} property and the legacy {@code ::-webkit-scrollbar} pseudo-elements. The gutter space is preserved, preventing overlay
+     * redaction positions from shifting.
      */
     public void hideScrollbar() {
         LOGGER.trace("Hiding scrollbar on page without changing page dimensions");
         driver.executeScript("""
             var style = document.createElement('style');
             style.id = 'hide-scrollbar-style';
-            style.textContent = '::-webkit-scrollbar { background-color: transparent !important; } \
-                                 ::-webkit-scrollbar-thumb { background-color: transparent !important; } \
-                                 ::-webkit-scrollbar-track { background-color: transparent !important; }';
+            style.textContent = \
+                '* { scrollbar-color: transparent transparent !important; } \
+                ::-webkit-scrollbar { background-color: transparent !important; } \
+                ::-webkit-scrollbar-thumb { background-color: transparent !important; } \
+                ::-webkit-scrollbar-track { background-color: transparent !important; }';
             document.head.appendChild(style);
             """);
     }
