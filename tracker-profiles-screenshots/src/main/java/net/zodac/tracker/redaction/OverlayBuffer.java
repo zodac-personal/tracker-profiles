@@ -32,4 +32,37 @@ public record OverlayBuffer(int up, int down, int left, int right) {
      * Default {@link OverlayBuffer} used when no custom buffer is required.
      */
     public static final OverlayBuffer DEFAULT = new OverlayBuffer(0, 0, 0, 0);
+
+    /**
+     * Static constructor to create an {@link OverlayBuffer}.
+     *
+     * @param up    pixels to extend the overlay above the element
+     * @param down  pixels to extend the overlay below the element
+     * @param left  pixels to extend the overlay to the left of the element
+     * @param right pixels to extend the overlay to the right of the element
+     * @return the created {@link OverlayBuffer}
+     */
+    public static OverlayBuffer of(final int up, final int down, final int left, final int right) {
+        return new OverlayBuffer(up, down, left, right);
+    }
+
+    /**
+     * Static constructor to create an {@link OverlayBuffer} with only a left offset.
+     *
+     * @param leftOffset pixels to extend the overlay to the left of the element
+     * @return the created {@link OverlayBuffer}
+     */
+    public static OverlayBuffer withLeftOffset(final int leftOffset) {
+        return of(0, 0, leftOffset, 0);
+    }
+
+    /**
+     * Static constructor to create an {@link OverlayBuffer} with only a right offset.
+     *
+     * @param rightOffset pixels to extend the overlay to the right of the element
+     * @return the created {@link OverlayBuffer}
+     */
+    public static OverlayBuffer withRightOffset(final int rightOffset) {
+        return of(0, 0, 0, rightOffset);
+    }
 }

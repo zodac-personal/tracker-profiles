@@ -166,7 +166,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
      */
     @Override
     protected OverlayBuffer passkeyElementBuffer() {
-        return new OverlayBuffer(0, 0, 0, 13);
+        return OverlayBuffer.withRightOffset(13);
     }
 
     @Override

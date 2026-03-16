@@ -100,7 +100,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
      */
     @Override
     protected OverlayBuffer ipAddressElementBuffer() {
-        return new OverlayBuffer(0, 0, 13, 0);
+        return OverlayBuffer.withLeftOffset(13);
     }
 
     @Override
