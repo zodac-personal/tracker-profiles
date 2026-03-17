@@ -35,7 +35,6 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link TsSpecialEditionHandler} for the {@code LetSeed} tracker.
  */
-// TODO: Overlay redactions not positioned correctly
 @TrackerHandler(name = "LetSeed", type = TrackerType.MANUAL, url = "https://letseed.org/")
 public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, NeedsExplicitTranslation {
 

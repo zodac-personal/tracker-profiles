@@ -48,7 +48,7 @@ public interface TrackerTimings {
      *
      * @return the page load wait {@link Duration}
      */
-    default Duration waitForPageLoadDuration() {
+    default Duration pageLoadDuration() {
         return Duration.ofSeconds(5L);
     }
 
@@ -57,7 +57,7 @@ public interface TrackerTimings {
      *
      * @return the transition wait {@link Duration}
      */
-    default Duration waitForPageTransitionsDuration() {
+    default Duration pageTransitionsDuration() {
         return Duration.ofMillis(500L);
     }
 }

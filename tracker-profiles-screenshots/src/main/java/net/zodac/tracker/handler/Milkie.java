@@ -81,7 +81,7 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
 
     private void openUserDropdownMenu() {
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
-        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure the page has a consistent state (no user pop-ups showing)");
+        browserInteractionHelper.reloadPage(pageLoadDuration(), "ensure the page has a consistent state (no user pop-ups showing)");
         final By profilePageSelector = profilePageSelector();
 
         // TODO: Replace more explicit waits with element visibly waits

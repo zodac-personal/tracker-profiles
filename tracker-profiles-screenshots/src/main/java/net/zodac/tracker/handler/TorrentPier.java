@@ -92,7 +92,7 @@ public class TorrentPier extends AbstractTrackerHandler implements HasDismissibl
 
         // There should only be one of these
         LOGGER.debug("\t\t\t- Found donation banner, clearing");
-        final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(bannerSelector, waitForPageLoadDuration());
+        final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(bannerSelector, pageLoadDuration());
         clickButton(banner);
 
         LOGGER.debug("\t\t\t- Cleared donation banner");

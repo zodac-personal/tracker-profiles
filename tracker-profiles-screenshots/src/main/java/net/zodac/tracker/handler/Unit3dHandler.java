@@ -38,6 +38,7 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -95,7 +96,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     public void dismissBanner() {
         LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
         final By loginPopupSelector = By.id("swal2-title");
-        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();
@@ -130,6 +131,16 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
                 .child(NamedHtmlElement.of("dd"))
                 .build()
         );
+    }
+
+    /**
+     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the left.
+     *
+     * @return the {@link OverlayBuffer} for IP address redaction
+     */
+    @Override
+    protected OverlayBuffer emailElementBuffer() {
+        return OverlayBuffer.withLeftOffset(6);
     }
 
     @Override

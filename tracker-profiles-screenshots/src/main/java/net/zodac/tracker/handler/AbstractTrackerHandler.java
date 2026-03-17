@@ -27,8 +27,6 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
-import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
@@ -67,8 +65,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     protected static final Logger LOGGER = LogManager.getLogger();
 
-    private static final ApplicationConfiguration CONFIG = Configuration.get();
-
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
      */
@@ -104,15 +100,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     /**
      * Reloads the current profile page in the browser, restoring the page to its original state (clearing any DOM mutations from redaction). Waits
-     * {@link #waitForPageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
+     * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
      */
     public void reloadProfilePage() {
-        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "bring profile page back to non-redacted state");
+        browserInteractionHelper.reloadPage(pageLoadDuration(), "bring profile page back to non-redacted state");
         additionalActionOnProfilePage();
     }
 
     /**
-     * Navigates to the home page of the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish loading.
+     * Navigates to the home page of the tracker. Waits {@link #pageLoadDuration()} for the page to finish loading.
      */
     public void openTracker() {
         boolean successfulConnection = false;
@@ -134,7 +130,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
                     LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
                 } else {
                     successfulConnection = true;
-                    browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
+                    browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
                 }
             } catch (final WebDriverException e) {
                 // If website can't be resolved, assume the site is down and attempt the next URL (if any), else rethrow exception
@@ -180,7 +176,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             final WebElement loginLink = driver.findElement(loginLinkSelector);
             clickButton(loginLink);
             cloudflareCheck(trackerName);
-            browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), waitForPageLoadDuration());
+            browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), pageLoadDuration());
         } else {
             cloudflareCheck(trackerName);
         }
@@ -205,7 +201,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
 
         LOGGER.debug("\t- Performing Cloudflare verification check");
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
+        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
         final WebElement cloudflareElement = driver.findElement(trackerHasCloudflareCheck.cloudflareSelector());
@@ -214,7 +210,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Enters the user's credential and logs in to the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish loading.
+     * Enters the user's credential and logs in to the tracker. Waits {@link #pageLoadDuration()} for the page to finish loading.
      *
      * @param username    the user's username for the tracker
      * @param password    the user's password for the tracker
@@ -222,11 +218,12 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     public void login(final String username, final String password, final String trackerName) {
         LOGGER.trace("Logging in to tracker '{}'", trackerName);
-        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
+        browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
 
         try {
             LOGGER.trace("Entering username");
-            final WebElement usernameField = driver.findElement(usernameFieldSelector());
+            browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), pageLoadDuration());
+            final WebElement usernameField = browserInteractionHelper.waitForElementToBeInteractable(usernameFieldSelector(), pageLoadDuration());
             usernameField.clear();
             usernameField.sendKeys(username);
         } catch (final TimeoutException e) {
@@ -234,7 +231,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
 
         LOGGER.trace("Entering password");
-        final WebElement passwordField = driver.findElement(passwordFieldSelector());
+        browserInteractionHelper.waitForElementToAppear(passwordFieldSelector(), pageLoadDuration());
+        final WebElement passwordField = browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector(), pageLoadDuration());
         passwordField.clear();
         passwordField.sendKeys(password);
 
@@ -243,7 +241,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
-            final WebElement loginButton = driver.findElement(loginButtonSelector);
+            browserInteractionHelper.waitForElementToAppear(loginButtonSelector, pageLoadDuration());
+            final WebElement loginButton = browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector, pageLoadDuration());
             LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
         }
@@ -252,7 +251,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         try {
             final By postLoginSelector = postLoginSelector();
             LOGGER.trace("Logged in, waiting for post-login selector: {}", postLoginSelector);
-            browserInteractionHelper.waitForElementToAppear(postLoginSelector, waitForPageLoadDuration());
+            browserInteractionHelper.waitForElementToAppear(postLoginSelector, pageLoadDuration());
         } catch (final TimeoutException e) {
             throw new TimeoutException("Timed out waiting for post-login selector, cannot confirm login was successful", e);
         }
@@ -333,18 +332,18 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #waitForPageLoadDuration()} for the page to finish
+     * Once logged in, navigates to the user's profile page on the tracker. Waits {@link #pageLoadDuration()} for the page to finish
      * loading.
      */
     public void openProfilePage() {
         LOGGER.trace("Opening profile page");
-        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
+        browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
 
         final WebElement profilePageLink = driver.findElement(profilePageSelector());
         browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
-        browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
+        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         browserInteractionHelper.moveToOrigin();
         additionalActionOnProfilePage();
     }
@@ -568,17 +567,17 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     protected abstract By logoutButtonSelector();
 
     /**
-     * Logs out of the tracker, ending the user's session. Waits {@link #waitForPageLoadDuration()} for the {@link #postLogoutElementSelector()} to
+     * Logs out of the tracker, ending the user's session. Waits {@link #pageLoadDuration()} for the {@link #postLogoutElementSelector()} to
      * load, signifying that we have successfully logged out and been redirected to the login page.
      */
     public final void logout() {
         LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        final WebElement logoutButton = browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
+        final WebElement logoutButton = browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, pageLoadDuration());
         clickButton(logoutButton);
 
         additionalActionAfterLogoutClick();
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), waitForPageTransitionsDuration());
+        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), pageTransitionsDuration());
     }
 
     /**
@@ -644,7 +643,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
 
         driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
-        BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "button click");
+        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "button click");
     }
 
     private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {

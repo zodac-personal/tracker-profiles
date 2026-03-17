@@ -66,7 +66,7 @@ public class Empornium extends LuminanceHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure profile sections can be closed (in case JS was cancelled earlier)");
+        browserInteractionHelper.reloadPage(pageLoadDuration(), "ensure profile sections can be closed (in case JS was cancelled earlier)");
 
         final List<By> toggleSelectors = List.of(
             By.id("recentsnatchesbutton"),  // Recent snatches
@@ -81,7 +81,7 @@ public class Empornium extends LuminanceHandler {
                 if (sectionToggle.getText().contains("Hide")) {
                     LOGGER.debug("\t\t- Closing section {}", toggleSelector);
                     clickButton(sectionToggle);
-                    BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "section to close");
+                    BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "section to close");
                 }
             }
         }

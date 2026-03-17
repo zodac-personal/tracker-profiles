@@ -75,7 +75,7 @@ public class BackUps extends TsSpecialEditionHandler implements HasFixedHeader {
      */
     @Override
     protected void manualCheckAfterLoginClick() {
-        browserInteractionHelper.waitForPageToLoad(waitForPageTransitionsDuration());
+        browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
 
         final By messagesSelector = By.id("collapseobj_messages");
         final Collection<WebElement> messages = driver.findElements(messagesSelector);

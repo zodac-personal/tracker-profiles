@@ -54,7 +54,7 @@ public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        browserInteractionHelper.reloadPage(waitForPageLoadDuration(), "ensure the info tab can be clicked (in case JS was cancelled earlier)");
+        browserInteractionHelper.reloadPage(pageLoadDuration(), "ensure the info tab can be clicked (in case JS was cancelled earlier)");
 
         final By infoTabSelector = XpathBuilder
             .from(div, withId("slider"))

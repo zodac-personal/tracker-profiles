@@ -83,7 +83,7 @@ final class ProfileScreenshotExecutor {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             if (attempt != FIRST_ATTEMPT) {
                 LOGGER.warn("");
-                LOGGER.warn("- Retrying [{}] ({}/{})", trackerCredential.name(), attempt, maxAttempts);
+                LOGGER.warn("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
             }
 
             try {
@@ -251,7 +251,19 @@ final class ProfileScreenshotExecutor {
 
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
 
-        for (final RedactionType redactionType : redactionsToExecute) {
+        // If the tracker has no sensitive information, all redaction types produce identical screenshots, so we take a single one
+        final Set<RedactionType> effectiveRedactions;
+        if (trackerHandler.hasSensitiveInformation()) {
+            effectiveRedactions = redactionsToExecute;
+        } else {
+            LOGGER.debug("\t- No sensitive information to redact, taking a single screenshot");
+            effectiveRedactions = redactionTypesToExecute(trackerCredential.name(), Set.of(RedactionType.NONE));
+            if (effectiveRedactions.isEmpty()) {
+                LOGGER.warn("\t- Screenshot already exists for tracker '{}' with no sensitive information, skipping", trackerCredential.name());
+            }
+        }
+
+        for (final RedactionType redactionType : effectiveRedactions) {
             takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
         }
 
@@ -279,7 +291,6 @@ final class ProfileScreenshotExecutor {
             LOGGER.info("\t\t- Header has been updated to not be fixed");
         }
 
-        // TODO: If there is no redaction for the tracker, only take a single screenshot
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {

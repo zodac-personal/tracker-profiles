@@ -41,7 +41,6 @@ import org.openqa.selenium.WebElement;
  * Common implementation of {@link AbstractTrackerHandler} for {@code Gazelle}-based trackers.
  */
 @CommonTrackerHandler("Gazelle")
-@TrackerHandler(name = "DICMusic", url = "https://dicmusic.com/")
 @TrackerHandler(name = "Redacted", url = "https://redacted.sh/")
 @TrackerHandler(name = "SecretCinema", url = "https://secret-cinema.pw/")
 public class GazelleHandler extends AbstractTrackerHandler {

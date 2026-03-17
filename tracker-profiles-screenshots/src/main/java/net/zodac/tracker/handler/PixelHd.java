@@ -111,7 +111,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
 
         // There should only be one of these, and we'll wait for it to scroll down and become interactable
         LOGGER.debug("\t\t\t- Found announcement, opening link");
-        final WebElement announcementLink = browserInteractionHelper.waitForElementToBeInteractable(announcementSelector, waitForPageLoadDuration());
+        final WebElement announcementLink = browserInteractionHelper.waitForElementToBeInteractable(announcementSelector, pageLoadDuration());
         clickButton(announcementLink);
 
         // This scrolls us down to the announcement, which we need to click and mark as read

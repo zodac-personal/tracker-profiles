@@ -72,7 +72,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .build();
             final WebElement languageDropdown = driver.findElement(languageDropdownSelector);
             new Select(languageDropdown).selectByIndex(0);
-            browserInteractionHelper.waitForPageToLoad(waitForPageLoadDuration());
+            browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         }
 
         return XpathBuilder

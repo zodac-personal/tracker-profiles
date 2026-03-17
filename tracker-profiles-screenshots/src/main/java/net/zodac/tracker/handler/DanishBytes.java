@@ -35,6 +35,7 @@ import java.util.Objects;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -56,7 +57,7 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
         // The password field doesn't load until the username is entered and the 'Login' button is clicked
         final WebElement usernameLoginButton = driver.findElement(Objects.requireNonNull(super.loginButtonSelector()));
         clickButton(usernameLoginButton);
-        browserInteractionHelper.waitForElementToBeInteractable(super.passwordFieldSelector(), waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToBeInteractable(super.passwordFieldSelector(), pageLoadDuration());
 
         return super.passwordFieldSelector();
     }
@@ -103,6 +104,16 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
         );
     }
 
+    /**
+     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the left.
+     *
+     * @return the {@link OverlayBuffer} for IP address redaction
+     */
+    @Override
+    protected OverlayBuffer emailElementBuffer() {
+        return OverlayBuffer.withLeftOffset(13);
+    }
+
     @Override
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
@@ -117,7 +128,7 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
     private void openUserDropdownMenu() {
         LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
         final By loginPopupSelector = By.id("swal2-title");
-        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, waitForPageLoadDuration());
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
 
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder
