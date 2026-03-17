@@ -18,6 +18,7 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
@@ -38,6 +39,8 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -48,7 +51,7 @@ import org.openqa.selenium.WebElement;
     "https://cgpeers.to/",
     "https://cgpeers.com/"
 })
-public class CgPeers extends AbstractTrackerHandler implements HasCloudflareCheck {
+public class CgPeers extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleBanner {
 
     @Override
     public By loginPageSelector() {
@@ -128,6 +131,29 @@ public class CgPeers extends AbstractTrackerHandler implements HasCloudflareChec
     @Override
     protected By postLoginSelector() {
         return By.id("userDropdownTrigger");
+    }
+
+    @Override
+    public void dismissBanner() {
+        LOGGER.debug("\t\t- Checking for 2FA announcements");
+
+        final By announcementSelector = XpathBuilder
+            .from(div, withId("announcement-bar"))
+            .descendant(button, withClass("announcement-dismiss"))
+            .build();
+        final Collection<WebElement> announcements = driver.findElements(announcementSelector);
+
+        if (announcements.isEmpty()) {
+            LOGGER.debug("\t\t\t- No announcements found");
+            return;
+        }
+
+        LOGGER.debug("\t\t\t- Found {} announcement{}, clearing", announcements.size(), StringUtils.pluralise(announcements));
+        for (final WebElement announcement : announcements) {
+            clickButton(announcement);
+        }
+
+        LOGGER.debug("\t\t- Cleared announcements");
     }
 
     @Override
