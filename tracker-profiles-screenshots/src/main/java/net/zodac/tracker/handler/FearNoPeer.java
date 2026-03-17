@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.redaction.OverlayBuffer;
 import org.openqa.selenium.By;
 
 /**
@@ -44,6 +45,16 @@ public class FearNoPeer extends Unit3dHandler {
                 .from(span, withClass("profile-hero-2026__info-value--email"))
                 .build()
         );
+    }
+
+    /**
+     * The {@link OverlayBuffer} set in {@link Unit3dHandler} is excessive for {@link FearNoPeer}, so we use {@link OverlayBuffer#DEFAULT} instead.
+     *
+     * @return the {@link OverlayBuffer} for email address redaction
+     */
+    @Override
+    protected OverlayBuffer emailElementBuffer() {
+        return OverlayBuffer.DEFAULT;
     }
 
     @Override
