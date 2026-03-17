@@ -41,7 +41,7 @@ import org.openqa.selenium.By;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code NordicHD} tracker.
  */
-@TrackerHandler(name = "NordicHD", url = "http://nordichd.org/")
+@TrackerHandler(name = "NordicHD", url = "http://cinefilhd.eu/")
 public class NordicHd extends AbstractTrackerHandler {
 
     @Override
