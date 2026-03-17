@@ -96,20 +96,20 @@ background:
 | [BackUps](https://back-ups.me/)                   | [HappyFappy](https://www.happyfappy.net/)       | [PixelHD](https://pixelhd.me/)                       | [YUSCENE](https://yu-scene.net/)                |
 | [BakaBT](https://bakabt.me/)                      | [HDUnited](https://hd-united.vn/)               | [PolishTorrent](https://polishtorrent.top/)          | [Zappateers](https://zappateers.com/)           |
 | [Blutopia](https://blutopia.cc/)                  | [Hellenic-HD](https://hellenic-hd.cc/)          | [PornBay](https://pornbay.org/)                      |                                                 |
-| [BootyTape](https://ssl.bootytape.com/)           | [ImmortalSeed](https://immortalseed.me/)        | [PornoLab](https://pornolab.net/forum/tracker.php)   |                                                 |
-| [BrokenStones](https://brokenstones.is/)          | [InfinityHD](https://infinityhd.net/)           | [Rastastugan](https://rastastugan.org/)              |                                                 |
-| [BwTorrents](https://bwtorrents.tv/)              | [IPTorrents](https://iptorrents.com/)           | [Redacted](https://redacted.sh/)                     |                                                 |
-| [C411](https://c411.org/)                         | [ItaTorrents](https://itatorrents.xyz/)         | [ReelFlix](https://reelflix.cc/)                     |                                                 |
-| [CanalStreet](https://canal-street.org/)          | [JPopsuki](https://jpopsuki.eu/)                | [RocketHD](https://rocket-hd.cc/)                    |                                                 |
-| [CapybaraBR](https://capybarabr.com/)             | [Kufirc](https://kufirc.com/)                   | [RUTracker](https://rutracker.org/forum/tracker.php) |                                                 |
-| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | [Lat-Team](https://lat-team.com/)               | [SceneHD](https://scenehd.org/)                      |                                                 |
-| [Concertos](https://concertos.live/)              | [Libble](https://libble.me/)                    | [SecretCinema](https://secret-cinema.pw/)            |                                                 |
-| [D3Si.NET](https://d3si.net/)                     | [Luminarr](https://luminarr.me/)                | [SeedPool](https://seedpool.org/)                    |                                                 |
-| [DanishBytes](https://danishbytes.club/)          | [MalayaBits](https://malayabits.cc/)            | [SexTorrent](https://sextorrent.myds.me/)            |                                                 |
-| [DarkPeers](https://darkpeers.org/)               | [Metal-Tracker](https://en.metal-tracker.com/)  | [SportsCult](https://sportscult.org/)                |                                                 |
-| [DesiTorrents](https://desitorrents.tv/)          | [Milkie](https://milkie.cc/)                    | [T3nnis](https://t3nnis.tv/)                         |                                                 |
-| [DICMusic](https://dicmusic.com/)                 | [MooKo](https://mooko.org/)                     | [Tasmanites](https://tasmanit.es/)                   |                                                 |
-| [DimeADozen](http://www.dimeadozen.org/)          |                                                 | [TeamOS](https://teamos.xyz/)                        |                                                 |
+| [BootyTape](https://ssl.bootytape.com/)           | [ImmortalSeed](https://immortalseed.me/)        | [Rastastugan](https://rastastugan.org/)              |                                                 |
+| [BrokenStones](https://brokenstones.is/)          | [InfinityHD](https://infinityhd.net/)           | [Redacted](https://redacted.sh/)                     |                                                 |
+| [BwTorrents](https://bwtorrents.tv/)              | [IPTorrents](https://iptorrents.com/)           | [ReelFlix](https://reelflix.cc/)                     |                                                 |
+| [C411](https://c411.org/)                         | [ItaTorrents](https://itatorrents.xyz/)         | [RocketHD](https://rocket-hd.cc/)                    |                                                 |
+| [CanalStreet](https://canal-street.org/)          | [JPopsuki](https://jpopsuki.eu/)                | [RUTracker](https://rutracker.org/forum/tracker.php) |                                                 |
+| [CapybaraBR](https://capybarabr.com/)             | [Kufirc](https://kufirc.com/)                   | [SceneHD](https://scenehd.org/)                      |                                                 |
+| [Cathode-Ray.Tube](https://www.cathode-ray.tube/) | [Lat-Team](https://lat-team.com/)               | [SecretCinema](https://secret-cinema.pw/)            |                                                 |
+| [Concertos](https://concertos.live/)              | [Libble](https://libble.me/)                    | [SeedPool](https://seedpool.org/)                    |                                                 |
+| [D3Si.NET](https://d3si.net/)                     | [Luminarr](https://luminarr.me/)                | [SexTorrent](https://sextorrent.myds.me/)            |                                                 |
+| [DanishBytes](https://danishbytes.club/)          | [MalayaBits](https://malayabits.cc/)            | [SportsCult](https://sportscult.org/)                |                                                 |
+| [DarkPeers](https://darkpeers.org/)               | [Metal-Tracker](https://en.metal-tracker.com/)  | [T3nnis](https://t3nnis.tv/)                         |                                                 |
+| [DesiTorrents](https://desitorrents.tv/)          | [Milkie](https://milkie.cc/)                    | [Tasmanites](https://tasmanit.es/)                   |                                                 |
+| [DICMusic](https://dicmusic.com/)                 | [MooKo](https://mooko.org/)                     | [TeamOS](https://teamos.xyz/)                        |                                                 |
+| [DimeADozen](http://www.dimeadozen.org/)          |                                                 |                                                      |                                                 |
 
 ### Non-Headless
 
@@ -130,8 +130,9 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [LetSeed](https://letseed.org/)                     | [PrivateHD](https://privatehd.to/)          |
 | [LST](https://lst.gg/)                              | [SceneTime](https://www.scenetime.com/)     |
 | [PassThePopcorn](https://passthepopcorn.me/)        | [Speed.CD](https://speed.cd/)               |
-| [PT.GTK](https://pt.gtk.pw/)                        | [Torrenting](https://torrenting.com/)       |
-| [SocietyGlitch](https://stalker.societyglitch.com/) | [UploadCX](https://upload.cx/)              |
+| [PornoLab](https://pornolab.net/forum/tracker.php)  | [Torrenting](https://torrenting.com/)       | 
+| [PT.GTK](https://pt.gtk.pw/)                        | [UploadCX](https://upload.cx/)              |
+| [SocietyGlitch](https://stalker.societyglitch.com/) |                                             |
 | [TheEmpire](https://theempire.click/)               |                                             |
 | [TheGeeks](https://thegeeks.click/)                 |                                             |
 | [TheKitchen](https://thekitchen.click/)             |                                             |

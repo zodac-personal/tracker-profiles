@@ -41,6 +41,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Google Chrome {@link Extension} for {@code uBlock Origin Lite}, used as an ad-blocker for websites.
  */
+// TODO: Pass settings into constructor?
 public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExtension.UblockSettings> {
 
     private static final Logger LOGGER = LogManager.getLogger();

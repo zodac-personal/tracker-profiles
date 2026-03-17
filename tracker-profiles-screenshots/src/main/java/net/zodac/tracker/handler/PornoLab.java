@@ -28,15 +28,17 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 
 /**
  * Extension of the {@link TorrentPier} for the {@code PornoLab} tracker.
  */
-@TrackerHandler(name = "PornoLab", adult = true, url = "https://pornolab.net/forum/tracker.php")
-public class PornoLab extends TorrentPier {
+@TrackerHandler(name = "PornoLab", adult = true, type = TrackerType.MANUAL, url = "https://pornolab.net/forum/tracker.php")
+public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
 
     @Override
     protected By profilePageSelector() {
@@ -48,6 +50,11 @@ public class PornoLab extends TorrentPier {
             .child(td, atIndex(1))
             .child(a, atIndex(1))
             .build();
+    }
+
+    @Override
+    public void translatePageToEnglish() {
+        browserInteractionHelper.translatePage();
     }
 
     @Override

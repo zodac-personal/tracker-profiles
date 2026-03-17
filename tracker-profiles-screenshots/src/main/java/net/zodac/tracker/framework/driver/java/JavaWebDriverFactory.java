@@ -73,6 +73,7 @@ public final class JavaWebDriverFactory {
         // User-defined options
         chromeOptions.addArguments("--window-size=" + CONFIG.browserDimensions());
         if (canTrackerUseHeadlessBrowser(trackerType, needsExplicitTranslation)) {
+            LOGGER.trace("Using headless browser");
             chromeOptions.addArguments("--headless=new");
             chromeOptions.addArguments("--start-maximized");
         }
@@ -142,8 +143,18 @@ public final class JavaWebDriverFactory {
         return translateWhitelists;
     }
 
+    // No need to check for CLOUDFLARE_CHECK, since that is handled by Python
     private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType, final boolean needsExplicitTranslation) {
-        // No need to check for CLOUDFLARE_CHECK, since that is handled by Python
-        return !(CONFIG.forceUiBrowser() || trackerType == TrackerType.MANUAL || needsExplicitTranslation);
+        if (CONFIG.forceUiBrowser()) {
+            LOGGER.trace("UI browser is forced");
+            return false;
+        }
+
+        if (needsExplicitTranslation && !CONFIG.enableTranslationToEnglish()) {
+            LOGGER.trace("'{}' requires explicit translation, but translation is disabled, allowing headless", trackerType.formattedName());
+            return true;
+        }
+
+        return trackerType != TrackerType.MANUAL;
     }
 }

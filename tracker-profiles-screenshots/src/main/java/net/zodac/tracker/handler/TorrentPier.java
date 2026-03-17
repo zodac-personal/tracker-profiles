@@ -17,14 +17,19 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +39,10 @@ import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
 import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Common implementation of {@link AbstractTrackerHandler} for {@code TorrentPier}-based trackers.
@@ -45,7 +52,7 @@ import org.openqa.selenium.By;
     "https://rutracker.org/forum/tracker.php",
     "https://rutracker.net/forum/tracker.php"
 })
-public class TorrentPier extends AbstractTrackerHandler implements UsesExtensions {
+public class TorrentPier extends AbstractTrackerHandler implements HasDismissibleBanner, UsesExtensions {
 
     @Override
     protected By usernameFieldSelector() {
@@ -69,6 +76,26 @@ public class TorrentPier extends AbstractTrackerHandler implements UsesExtension
             .from(table, withClass("forumline"))
             .descendant(input, withName("login"), withType("submit"))
             .build();
+    }
+
+    @Override
+    public void dismissBanner() {
+        LOGGER.debug("\t\t- Checking for donation notice");
+        final By bannerSelector = XpathBuilder
+            .from(div, withId("cookieNotice"))
+            .child(a, atIndex(2))
+            .build();
+        final Collection<WebElement> banners = driver.findElements(bannerSelector);
+        if (banners.isEmpty()) {
+            return;
+        }
+
+        // There should only be one of these
+        LOGGER.debug("\t\t\t- Found donation banner, clearing");
+        final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(bannerSelector, waitForPageLoadDuration());
+        clickButton(banner);
+
+        LOGGER.debug("\t\t\t- Cleared donation banner");
     }
 
     @Override

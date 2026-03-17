@@ -656,7 +656,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             return PythonWebDriverFactory.createDriver(requiredExtensions);
         }
 
-        final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation && CONFIG.enableTranslationToEnglish();
+        final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation;
         final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
         final BrowserInteractionHelper configurationScriptExecution = new BrowserInteractionHelper(configurationDriver);
 
