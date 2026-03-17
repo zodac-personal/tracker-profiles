@@ -33,6 +33,6 @@ public class DicMusicHandler extends GazelleHandler {
      */
     @Override
     protected OverlayBuffer emailElementBuffer() {
-        return OverlayBuffer.withLeftOffset(10);
+        return OverlayBuffer.withLeftOffset(7);
     }
 }
