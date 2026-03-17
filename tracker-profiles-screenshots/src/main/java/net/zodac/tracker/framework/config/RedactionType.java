@@ -34,6 +34,7 @@ public enum RedactionType {
     /**
      * Overlay a solid box with a title over the sensitive text.
      */
+    // TODO: Split this into 'BOX' and 'BLUR' overlays
     OVERLAY,
 
     /**

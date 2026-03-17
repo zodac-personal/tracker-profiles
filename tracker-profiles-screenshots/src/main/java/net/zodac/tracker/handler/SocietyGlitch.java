@@ -20,12 +20,18 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.table;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
+import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -88,6 +94,20 @@ public class SocietyGlitch extends AbstractTrackerHandler {
             .from(div, withId("sbleft"))
             .child(a, atIndex(1))
             .build();
+    }
+
+    @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withId("contentcontainer"))
+                .child(table, atIndex(2))
+                .descendant(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(4))
+                .child(td, atIndex(2))
+                .build()
+        );
     }
 
     @Override

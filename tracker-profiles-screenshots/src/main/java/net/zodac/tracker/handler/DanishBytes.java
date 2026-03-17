@@ -43,6 +43,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code DanishBytes} tracker.
  */
+// TODO: Fix sidebar and jump buttons when scrolling, same for TVChaosUK/Zappateers
 @TrackerHandler(name = "DanishBytes", url = "https://danishbytes.club/")
 public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeader {
 

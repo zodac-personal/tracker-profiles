@@ -394,7 +394,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see Redactor
      */
-    // TODO: Add other redaction types (country, flag, avatar, gender)
+    // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port)
     // TODO: Move redaction methods to another class?
     public int redactElements(final Redactor redactor) {
         LOGGER.trace("Redacting elements");
