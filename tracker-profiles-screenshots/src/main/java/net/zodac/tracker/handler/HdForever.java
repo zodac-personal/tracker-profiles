@@ -32,15 +32,17 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import java.util.Collection;
 import java.util.List;
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code HD-Forever} tracker.
  */
-@TrackerHandler(name = "HD-Forever", url = "https://hdf.world/")
-public class HdForever extends AbstractTrackerHandler {
+@TrackerHandler(name = "HD-Forever", type = TrackerType.MANUAL, url = "https://hdf.world/")
+public class HdForever extends AbstractTrackerHandler implements NeedsExplicitTranslation {
 
     @Override
     protected By loginPageSelector() {
@@ -63,6 +65,11 @@ public class HdForever extends AbstractTrackerHandler {
             .from(div, withId("userinfo_left"))
             .descendant(span, withClass("class_2"))
             .build();
+    }
+
+    @Override
+    public void translatePageToEnglish() {
+        browserInteractionHelper.translatePage();
     }
 
     @Override

@@ -27,12 +27,15 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import net.zodac.tracker.redaction.OverlayBuffer;
@@ -63,6 +66,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * The logger instance.
      */
     protected static final Logger LOGGER = LogManager.getLogger();
+
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
 
     /**
      * The {@link RemoteWebDriver} instance used to load web pages and perform UI actions.
@@ -569,8 +574,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public final void logout() {
         LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
-        final WebElement logoutButton = driver.findElement(logoutButtonSelector);
+        final WebElement logoutButton = browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, waitForPageLoadDuration());
         clickButton(logoutButton);
 
         additionalActionAfterLogoutClick();
@@ -643,7 +647,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         BrowserInteractionHelper.explicitWait(waitForPageTransitionsDuration(), "button click");
     }
 
-    private static RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
         if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
             if (!requiredExtensions.isEmpty()) {
                 LOGGER.trace("Attempting to create python driver with extensions; extensions will be installed but cannot be configured: {}",
@@ -652,7 +656,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             return PythonWebDriverFactory.createDriver(requiredExtensions);
         }
 
-        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, requiredExtensions);
+        final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation && CONFIG.enableTranslationToEnglish();
+        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
         final BrowserInteractionHelper configurationScriptExecution = new BrowserInteractionHelper(configurationDriver);
 
         for (final ExtensionBinding<?> extensionBinding : requiredExtensions) {

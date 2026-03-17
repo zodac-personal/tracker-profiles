@@ -58,17 +58,21 @@ public final class JavaWebDriverFactory {
      * <p>
      * Otherwise it will run in full UI mode.
      *
-     * @param trackerType whether {@link TrackerType} defining the execution method for this tracker
-     * @param extensions  any {@link Extension}s to be installed
+     * @param trackerType              whether {@link TrackerType} defining the execution method for this tracker
+     * @param needsExplicitTranslation whether this {@link TrackerType} needs explicit translation, requiring a UI
+     * @param extensions               any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    public static RemoteWebDriver createDriver(final TrackerType trackerType, final Iterable<ExtensionBinding<?>> extensions) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType,
+                                               final boolean needsExplicitTranslation,
+                                               final Iterable<ExtensionBinding<?>> extensions
+    ) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
         // User-defined options
         chromeOptions.addArguments("--window-size=" + CONFIG.browserDimensions());
-        if (canTrackerUseHeadlessBrowser(trackerType)) {
+        if (canTrackerUseHeadlessBrowser(trackerType, needsExplicitTranslation)) {
             chromeOptions.addArguments("--headless=new");
             chromeOptions.addArguments("--start-maximized");
         }
@@ -138,7 +142,8 @@ public final class JavaWebDriverFactory {
         return translateWhitelists;
     }
 
-    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType) {
-        return !(CONFIG.forceUiBrowser() || trackerType == TrackerType.MANUAL);
+    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType, final boolean needsExplicitTranslation) {
+        // No need to check for CLOUDFLARE_CHECK, since that is handled by Python
+        return !(CONFIG.forceUiBrowser() || trackerType == TrackerType.MANUAL || needsExplicitTranslation);
     }
 }
