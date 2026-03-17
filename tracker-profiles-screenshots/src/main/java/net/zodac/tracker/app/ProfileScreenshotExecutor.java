@@ -273,6 +273,12 @@ final class ProfileScreenshotExecutor {
             trackerNeedsTranslation.translatePageToEnglish();
         }
 
+        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
+        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            trackerWithFixedHeader.unfixHeader();
+            LOGGER.info("\t\t- Header has been updated to not be fixed");
+        }
+
         // TODO: If there is no redaction for the tracker, only take a single screenshot
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
@@ -288,11 +294,6 @@ final class ProfileScreenshotExecutor {
             }
         } else {
             LOGGER.debug("\t\t- Nothing to redact");
-        }
-
-        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
-            trackerWithFixedHeader.unfixHeader();
-            LOGGER.info("\t\t- Header has been updated to not be fixed");
         }
 
         trackerHandler.actionBeforeScreenshot();

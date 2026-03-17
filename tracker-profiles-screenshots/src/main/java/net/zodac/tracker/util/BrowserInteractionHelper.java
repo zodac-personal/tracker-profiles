@@ -132,11 +132,20 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Updates the {@link WebElement} and unfixes it from its pinned position.
+     * Updates the {@link WebElement} and unfixes it from its pinned position. First all CSS transitions and animations are disabled, to avoid
+     * scrolling triggering an update to the {@link WebElement}.
      *
      * @param element the {@link WebElement} to unfix
      */
     public void makeUnfixed(final WebElement element) {
+        LOGGER.trace("Disabling CSS transitions and animations on page");
+        driver.executeScript("""
+            var style = document.createElement('style');
+            style.id = 'disable-transitions-style';
+            style.textContent = '*, *::before, *::after { transition: none !important; animation: none !important; }';
+            document.head.appendChild(style);
+            """);
+
         updateCss(element, "position", "static");
     }
 
