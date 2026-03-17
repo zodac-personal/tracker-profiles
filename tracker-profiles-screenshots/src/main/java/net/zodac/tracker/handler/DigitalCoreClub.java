@@ -51,7 +51,6 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "");
         return XpathBuilder
             .from(div, withClass("panel-body"))
             .child(form, atIndex(1))
@@ -122,9 +121,10 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))
-            .descendant(td, withAttribute("translate", "FRIENDS.LAST_SEEN"))
+            .descendant(td, withAttribute("translate", "STATUS.BONUS"))
             .build();
         browserInteractionHelper.waitForElementToAppear(selector, maximumLinkResolutionDuration());
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "user details to load");
     }
 
     @Override
