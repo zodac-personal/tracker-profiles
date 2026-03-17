@@ -130,7 +130,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [LetSeed](https://letseed.org/)                     | [PrivateHD](https://privatehd.to/)          |
 | [LST](https://lst.gg/)                              | [SceneTime](https://www.scenetime.com/)     |
 | [PassThePopcorn](https://passthepopcorn.me/)        | [Speed.CD](https://speed.cd/)               |
-| [PornoLab](https://pornolab.net/forum/tracker.php)  | [Torrenting](https://torrenting.com/)       | 
+| [PornoLab](https://pornolab.net/forum/tracker.php)  | [Torrenting](https://torrenting.com/)       |
 | [PT.GTK](https://pt.gtk.pw/)                        | [UploadCX](https://upload.cx/)              |
 | [SocietyGlitch](https://stalker.societyglitch.com/) |                                             |
 | [TheEmpire](https://theempire.click/)               |                                             |

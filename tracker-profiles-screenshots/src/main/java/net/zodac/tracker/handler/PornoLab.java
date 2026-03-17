@@ -30,9 +30,12 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Extension of the {@link TorrentPier} for the {@code PornoLab} tracker.
@@ -54,7 +57,29 @@ public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
 
     @Override
     public void translatePageToEnglish() {
-        browserInteractionHelper.translatePage();
+        // The default location of the cursor means a right-click won't always show the 'translate' option, so we move the cursor
+        final By selector = XpathBuilder
+            .from(NamedHtmlElement.of("h1"), withClass("pagetitle"))
+            .build();
+        browserInteractionHelper.translatePage(selector);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link PornoLab}, we close the section of the page showing torrents currently being seeded.
+     */
+    @Override
+    protected void additionalActionOnProfilePage() {
+        final By activeTorrentsSelector = XpathBuilder
+            .from(div, withClass("active-torrents-list"))
+            .child(div, atIndex(4))
+            .build();
+
+        final WebElement activeTorrents = driver.findElement(activeTorrentsSelector);
+        clickButton(activeTorrents);
+        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "section to close");
     }
 
     @Override

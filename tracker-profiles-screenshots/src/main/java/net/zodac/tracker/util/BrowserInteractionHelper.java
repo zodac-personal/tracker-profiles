@@ -276,6 +276,15 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Translates the web page into English. Specifies the {@literal <}body{@literal >} HTML element to be right-clicked.
+     *
+     * @see #translatePage(By)
+     */
+    public void translatePage() {
+        translatePage(By.tagName("body"));
+    }
+
+    /**
      * Translates the web page into English. Performs the following actions:
      * <ol>
      *     <li>Loads a non-interactive element on the web page</li>
@@ -284,14 +293,15 @@ public class BrowserInteractionHelper {
      *      <li>Presses 'ENTER'</li>
      * </ol>
      *
+     * @param nonInteractiveElementSelector the {@link By} selector to a non-interactive {@link WebElement} to right-click
      */
-    public void translatePage() {
+    public void translatePage(final By nonInteractiveElementSelector) {
         LOGGER.trace("Translating page to English");
         setBrowserAsActiveWindow();
 
         try {
             // Find a non-interactive element to right-click
-            final WebElement bodyElement = driver.findElement(By.tagName("body"));
+            final WebElement bodyElement = driver.findElement(nonInteractiveElementSelector);
 
             // Simulate right-click on the page, then wait for it to appear
             final Actions actions = new Actions(driver);

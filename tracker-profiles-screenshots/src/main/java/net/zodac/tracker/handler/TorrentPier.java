@@ -21,6 +21,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
@@ -81,21 +82,34 @@ public class TorrentPier extends AbstractTrackerHandler implements HasDismissibl
     @Override
     public void dismissBanner() {
         LOGGER.debug("\t\t- Checking for donation notice");
-        final By bannerSelector = XpathBuilder
+
+        // Donation banner at the bottom of the screen
+        final By bottomBannerSelector = XpathBuilder
             .from(div, withId("cookieNotice"))
             .child(a, atIndex(2))
             .build();
-        final Collection<WebElement> banners = driver.findElements(bannerSelector);
-        if (banners.isEmpty()) {
-            return;
+        final Collection<WebElement> bottomBanners = driver.findElements(bottomBannerSelector);
+        if (!bottomBanners.isEmpty()) {
+            // There should only be one of these
+            LOGGER.debug("\t\t\t- Found bottom donation banner, clearing");
+            final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(bottomBannerSelector, pageLoadDuration());
+            clickButton(banner);
         }
 
-        // There should only be one of these
-        LOGGER.debug("\t\t\t- Found donation banner, clearing");
-        final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(bannerSelector, pageLoadDuration());
-        clickButton(banner);
+        // Donation banner in the middle of the screen
+        final By mainBannerSelector = XpathBuilder
+            .from(div, withClass("top-alert"), withClass("hide-for-print"))
+            .child(span, atIndex(2))
+            .build();
+        final Collection<WebElement> mainBanners = driver.findElements(mainBannerSelector);
+        if (!mainBanners.isEmpty()) {
+            // There should only be one of these
+            LOGGER.debug("\t\t\t- Found main donation banner, clearing");
+            final WebElement banner = browserInteractionHelper.waitForElementToBeInteractable(mainBannerSelector, pageLoadDuration());
+            clickButton(banner);
+        }
 
-        LOGGER.debug("\t\t\t- Cleared donation banner");
+        LOGGER.debug("\t\t- Cleared donation banner");
     }
 
     @Override
