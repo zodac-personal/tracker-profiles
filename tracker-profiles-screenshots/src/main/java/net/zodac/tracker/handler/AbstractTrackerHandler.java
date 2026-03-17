@@ -231,8 +231,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
 
         LOGGER.trace("Entering password");
-        browserInteractionHelper.waitForElementToAppear(passwordFieldSelector(), pageLoadDuration());
-        final WebElement passwordField = browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector(), pageLoadDuration());
+        final By passwordFieldSelector = passwordFieldSelector();
+        browserInteractionHelper.waitForElementToAppear(passwordFieldSelector, pageLoadDuration());
+        final WebElement passwordField = browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector, pageLoadDuration());
         passwordField.clear();
         passwordField.sendKeys(password);
 

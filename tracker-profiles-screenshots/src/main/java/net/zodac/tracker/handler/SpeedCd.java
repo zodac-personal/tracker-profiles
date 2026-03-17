@@ -25,12 +25,10 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 
-import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -55,13 +53,15 @@ public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareChec
             .child(div, atIndex(2))
             .child(input, atIndex(1))
             .build();
-        final WebElement usernameNextButton = driver.findElement(usernameNextButtonSelector);
+        final WebElement usernameNextButton = browserInteractionHelper.waitForElementToBeInteractable(usernameNextButtonSelector, pageLoadDuration());
         clickButton(usernameNextButton);
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "username to be accepted and password field to appear");
 
-        return XpathBuilder
+        LOGGER.trace("Waiting for username to be accepted and password field to appear");
+        final By passwordFieldSelector = XpathBuilder
             .from(input, withName("pwd"))
             .build();
+        browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector, pageLoadDuration());
+        return passwordFieldSelector;
     }
 
     @Override
