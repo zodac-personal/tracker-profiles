@@ -22,12 +22,14 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
@@ -37,6 +39,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -44,7 +47,15 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code SceneTime} tracker.
  */
 @TrackerHandler(name = "SceneTime", type = TrackerType.CLOUDFLARE_CHECK, url = "https://scenetime.com/")
-public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck {
+public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleBanner {
+
+    @Override
+    protected By loginPageSelector() {
+        return XpathBuilder
+            .from(nav, withId("navbar"))
+            .child(a, atIndex(2))
+            .build();
+    }
 
     @Override
     protected By loginButtonSelector() {
@@ -53,6 +64,28 @@ public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCh
             .child(div, atIndex(1))
             .child(button, atIndex(1))
             .build();
+    }
+
+    /**
+     * For {@link SceneTime}, a pop-up may appear for VIP membership, which we close before proceeding.
+     */
+    @Override
+    public void dismissBanner() {
+        LOGGER.debug("\t\t- Checking for promotion pop-up");
+        final By promotionCloseSelector = XpathBuilder
+            .from(button, withAttribute("aria-label", "Close promotion"))
+            .build();
+        final Collection<WebElement> announcements = driver.findElements(promotionCloseSelector);
+        if (announcements.isEmpty()) {
+            return;
+        }
+
+        // There should only be one of these, and we'll wait for it to scroll down and become interactable
+        LOGGER.debug("\t\t\t- Found promotion pop-up, closing");
+        final WebElement promotionClose = browserInteractionHelper.waitForElementToBeInteractable(promotionCloseSelector, pageLoadDuration());
+        clickButton(promotionClose);
+
+        LOGGER.debug("\t\t\t- Cleared pop-up");
     }
 
     @Override
