@@ -47,7 +47,6 @@ import org.openqa.selenium.WebElement;
  * Common implementation of {@link AbstractTrackerHandler} for {@code UNIT3D}-based trackers.
  */
 @CommonTrackerHandler("UNIT3D")
-@TrackerHandler(name = "Aither", url = "https://aither.cc/")
 @TrackerHandler(name = "ArabicSource", url = "https://arabicsource.net/")
 @TrackerHandler(name = "AsianCinema", url = "https://eiga.moi/")
 @TrackerHandler(name = "Blutopia", url = "https://blutopia.cc/")
@@ -136,7 +135,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     /**
      * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the left.
      *
-     * @return the {@link OverlayBuffer} for IP address redaction
+     * @return the {@link OverlayBuffer} for email address redaction
      */
     @Override
     protected OverlayBuffer emailElementBuffer() {

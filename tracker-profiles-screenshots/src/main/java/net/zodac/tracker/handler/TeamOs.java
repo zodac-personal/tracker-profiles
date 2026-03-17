@@ -71,8 +71,6 @@ public class TeamOs extends XenForoHandler implements UsesExtensions {
         LOGGER.debug("\t\t- Updated rules thread viewed, continuing tracker execution");
     }
 
-    // TODO: Have a before/after screenshot section, where this tracker's bespoke scrollbar can be explicitly hidden?
-
     @Override
     public List<ExtensionBinding<?>> requiredExtensions() {
         final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
