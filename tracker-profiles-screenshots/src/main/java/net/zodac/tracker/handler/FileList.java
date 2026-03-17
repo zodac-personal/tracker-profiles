@@ -24,10 +24,8 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.time.Duration;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 
 /**
@@ -49,7 +47,6 @@ public class FileList extends AbstractTrackerHandler {
 
     @Override
     protected By postLoginSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(2L), "page content to load");
         return By.id("maincolumn");
     }
 

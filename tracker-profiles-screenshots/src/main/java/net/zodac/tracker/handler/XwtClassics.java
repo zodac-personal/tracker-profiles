@@ -30,12 +30,10 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -91,13 +89,14 @@ public class XwtClassics extends AbstractTrackerHandler {
         final WebElement userPanel = driver.findElement(userPanelSelector);
         clickButton(userPanel);
 
-        BrowserInteractionHelper.explicitWait(Duration.ofMillis(500L), "logout button to become visible and clickable");
-        return XpathBuilder
+        final By logoutButton = XpathBuilder
             .from(div, withClass("profile-wrap"))
             .child(div, atIndex(1))
             .child(div, atIndex(2))
             .child(div, atIndex(2))
             .child(a, atIndex(1))
             .build();
+        browserInteractionHelper.waitForElementToBeInteractable(logoutButton, pageLoadDuration());
+        return logoutButton;
     }
 }

@@ -30,14 +30,12 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -71,6 +69,10 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
 
     @Override
     public void dismissBanner() {
+        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
+        final By loginPopupSelector = By.id("swal2-title");
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
+
         // Cookie banner
         final By cookieSelector = XpathBuilder
             .from(div, withId("alert_system_notice"))
@@ -85,7 +87,6 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
 
     @Override
     protected By profilePageSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1), "login pop-up to disappear");
         openUserDropdownMenu();
         return XpathBuilder
             .from(ul, withClass("dropdown-menu"))

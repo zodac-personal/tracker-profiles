@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -35,7 +36,6 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -52,7 +52,6 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
 
     @Override
     protected By profilePageSelector() {
-        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "login pop-up to disappear");
         openUserDropdownMenu();
         return XpathBuilder
             .from(ul, withClass("dropdown-menu"))
@@ -83,6 +82,12 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
     }
 
     private void openUserDropdownMenu() {
+        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
+        final By loginPopupSelector = XpathBuilder
+            .from(div, withClass("swal2-popup"), withClass("swal2-toast"))
+            .build();
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
+
         LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
         final By profileParentSelector = XpathBuilder
             .from(li, withClass("hoe-header-profile"))

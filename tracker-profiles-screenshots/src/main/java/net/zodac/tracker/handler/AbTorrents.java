@@ -27,13 +27,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -93,7 +91,8 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
 
     @Override
     protected By logoutButtonSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofMillis(500L), "logout button to become visible and clickable");
-        return By.id("logoff");
+        final By logoutSelector = By.id("logoff");
+        browserInteractionHelper.waitForElementToBeInteractable(logoutSelector, pageTransitionsDuration());
+        return logoutSelector;
     }
 }

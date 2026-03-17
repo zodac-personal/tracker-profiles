@@ -33,7 +33,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -92,12 +91,14 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
             .build();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         browserInteractionHelper.moveTo(logoutParent);
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "dropdown menu for logout button to appear");
 
-        return XpathBuilder
+        final By logoutSelector = XpathBuilder
             .from(form, withId("logout-form1"))
             .navigateTo(parent(div))
             .child(a, atIndex(1))
             .build();
+
+        browserInteractionHelper.waitForElementToBeInteractable(logoutSelector, Duration.ofSeconds(1L));
+        return logoutSelector;
     }
 }
