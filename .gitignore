@@ -28,4 +28,4 @@ trackers.csv
 *.swp
 
 # Claude config
-!settings.local.json
+.claude/
