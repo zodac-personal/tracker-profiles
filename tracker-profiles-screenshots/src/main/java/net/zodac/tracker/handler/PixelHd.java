@@ -160,7 +160,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
     }
 
     /**
-     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the right.
+     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the right.
      *
      * @return the {@link OverlayBuffer} for passkey redaction
      */

@@ -276,7 +276,7 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Translates the web page into English. Specifies the {@literal <}body{@literal >} HTML element to be right-clicked.
+     * Translates the web page into English. Specifies the {@code <body>} HTML element to be right-clicked.
      *
      * @see #translatePage(By)
      */

@@ -94,7 +94,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
     }
 
     /**
-     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the left.
+     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.
      *
      * @return the {@link OverlayBuffer} for IP address redaction
      */

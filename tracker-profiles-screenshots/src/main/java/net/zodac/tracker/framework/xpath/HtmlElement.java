@@ -39,102 +39,102 @@ import java.util.Locale;
 public enum HtmlElement implements Element {
 
     /**
-     * Anchor {@link Element}: {@code {@literal <}a{@literal >}}.
+     * Anchor {@link Element}: {@code <a>}.
      */
     a,
 
     /**
-     * Body {@link Element}: {@code {@literal <}body{@literal >}}.
+     * Body {@link Element}: {@code <body>}.
      */
     body,
 
     /**
-     * Button {@link Element}: {@code {@literal <}button{@literal >}}.
+     * Button {@link Element}: {@code <button>}.
      */
     button,
 
     /**
-     * Generic container {@link Element}: {@code {@literal <}div{@literal >}}.
+     * Generic container {@link Element}: {@code <div>}.
      */
     div,
 
     /**
-     * Footer {@link Element}: {@code {@literal <}footer{@literal >}}.
+     * Footer {@link Element}: {@code <footer>}.
      */
     footer,
 
     /**
-     * Form {@link Element}: {@code {@literal <}form{@literal >}}.
+     * Form {@link Element}: {@code <form>}.
      */
     form,
 
     /**
-     * Head {@link Element}: {@code {@literal <}head{@literal >}}.
+     * Head {@link Element}: {@code <head>}.
      */
     head,
 
     /**
-     * Header {@link Element}: {@code {@literal <}header{@literal >}}.
+     * Header {@link Element}: {@code <header>}.
      */
     header,
 
     /**
-     * Image {@link Element}: {@code {@literal <}img{@literal >}}.
+     * Image {@link Element}: {@code <img>}.
      */
     img,
 
     /**
-     * Input control {@link Element}: {@code {@literal <}input{@literal >}}.
+     * Input control {@link Element}: {@code <input>}.
      */
     input,
 
     /**
-     * List item {@link Element}: {@code {@literal <}li{@literal >}}.
+     * List item {@link Element}: {@code <li>}.
      */
     li,
 
     /**
-     * Navigation {@link Element}: {@code {@literal <}nav{@literal >}}.
+     * Navigation {@link Element}: {@code <nav>}.
      */
     nav,
 
     /**
-     * Paragraph {@link Element}: {@code {@literal <}p{@literal >}}.
+     * Paragraph {@link Element}: {@code <p>}.
      */
     p,
 
     /**
-     * Inline container {@link Element}: {@code {@literal <}span{@literal >}}.
+     * Inline container {@link Element}: {@code <span>}.
      */
     span,
 
     /**
-     * Table {@link Element}: {@code {@literal <}table{@literal >}}.
+     * Table {@link Element}: {@code <table>}.
      */
     table,
 
     /**
-     * Table body {@link Element}: {@code {@literal <}tbody{@literal >}}.
+     * Table body {@link Element}: {@code <tbody>}.
      */
     tbody,
 
     /**
-     * Table cell {@link Element}: {@code {@literal <}td{@literal >}}.
+     * Table cell {@link Element}: {@code <td>}.
      */
     td,
 
     /**
-     * Table header {@link Element}: {@code {@literal <}th{@literal >}}.
+     * Table header {@link Element}: {@code <th>}.
      */
     th,
 
     /**
-     * Table row {@link Element}: {@code {@literal <}tr{@literal >}}.
+     * Table row {@link Element}: {@code <tr>}.
      */
     tr,
 
     /**
-     * Unordered list {@link Element}: {@code {@literal <}ul{@literal >}}.
+     * Unordered list {@link Element}: {@code <ul>}.
      */
     ul;
 
