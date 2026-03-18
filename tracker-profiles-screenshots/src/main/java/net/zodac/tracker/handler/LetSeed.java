@@ -78,7 +78,7 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
 
-        LOGGER.debug("\t\t- Updating header with 'fixedMenu' class, to set up static state");
+        LOGGER.debug("\t\t\t- Updating header with 'fixedMenu' class, to set up static state");
         browserInteractionHelper.addClass(headerElement, "fixedMenu");
 
         browserInteractionHelper.makeUnfixed(headerElement);

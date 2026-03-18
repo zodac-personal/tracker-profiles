@@ -108,7 +108,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
 
-        LOGGER.debug("\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
+        LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
         browserInteractionHelper.addClass(headerElement, "is-scrolled");
     }
 

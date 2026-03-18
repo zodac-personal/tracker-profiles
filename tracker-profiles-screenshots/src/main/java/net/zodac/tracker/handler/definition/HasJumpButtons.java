@@ -26,6 +26,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a dynamic button that can jump the page to the top or to the bottom.
  */
+@FunctionalInterface
 public interface HasJumpButtons {
 
     /**
@@ -35,7 +36,7 @@ public interface HasJumpButtons {
      * @param jumpButtonSelectors the jump button {@link By} selectors to hide
      * @see BrowserInteractionHelper#removeElement(WebElement)
      */
-    default void hideJumpButtons(RemoteWebDriver driver, List<By> jumpButtonSelectors) {
+    default void hideJumpButtons(final RemoteWebDriver driver, final List<By> jumpButtonSelectors) {
         final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
         for (final By jumpButtonSelector : jumpButtonSelectors) {
             final WebElement jumpButton = driver.findElement(jumpButtonSelector);

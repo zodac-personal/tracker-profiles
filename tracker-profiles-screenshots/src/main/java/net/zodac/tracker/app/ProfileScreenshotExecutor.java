@@ -267,6 +267,12 @@ final class ProfileScreenshotExecutor {
 
         for (final RedactionType redactionType : effectiveRedactions) {
             takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
+
+            if (effectiveRedactions.size() > 1) {
+                // Reload to restore page to original state (clears DOM mutations from previous redaction) before next redaction
+                LOGGER.debug("\t\t- Reloading profile page for next redaction");
+                trackerHandler.reloadProfilePage();
+            }
         }
 
         trackerHandler.logout();
@@ -281,32 +287,7 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
         final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
 
-        // Translate if needed, as a page reload may have cleared the translation
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
-            LOGGER.info("\t\t- Translating profile page to English");
-            trackerNeedsTranslation.translatePageToEnglish();
-        }
-
-        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
-        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
-            LOGGER.debug("\t\t- Unfixing header");
-            trackerWithFixedHeader.unfixHeader();
-            LOGGER.info("\t\t- Header has been updated to not be fixed");
-        }
-
-        // Unfix sidebar before redaction so overlay positions are computed against the settled, post-reflow layout
-        if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
-            LOGGER.debug("\t\t- Unfixing sidebar");
-            trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
-            LOGGER.info("\t\t- Sidebar has been updated to not be fixed");
-        }
-
-        // Hide jump buttons
-        if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
-            LOGGER.debug("\t\t- Hiding jump to top/bottom buttons");
-            trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
-            LOGGER.info("\t\t- Top/bottom jump buttons have been hidden");
-        }
+        updatingProfilePage(trackerHandler);
 
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
@@ -329,10 +310,37 @@ final class ProfileScreenshotExecutor {
             screenshotIndex(baseName));
         trackerHandler.actionAfterScreenshot();
         LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+    }
 
-        // Reload to restore page to original state (clears DOM mutations from previous redaction)
-        LOGGER.debug("\t\t- Reloading profile page for next redaction");
-        trackerHandler.reloadProfilePage();
+    private static void updatingProfilePage(final AbstractTrackerHandler trackerHandler) {
+        LOGGER.info("\t\t- Performing updates to profile page, if needed");
+
+        // Translate to English
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
+            LOGGER.info("\t\t\t- Translating profile page to English");
+            trackerNeedsTranslation.translatePageToEnglish();
+        }
+
+        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
+        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            LOGGER.debug("\t\t\t- Unfixing header");
+            trackerWithFixedHeader.unfixHeader();
+            LOGGER.info("\t\t\t- Header has been updated to not be fixed");
+        }
+
+        // Unfix sidebar before redaction so overlay positions are computed against the settled, post-reflow layout
+        if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
+            LOGGER.debug("\t\t\t- Unfixing sidebar");
+            trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
+            LOGGER.info("\t\t\t- Sidebar has been updated to not be fixed");
+        }
+
+        // Hide jump buttons
+        if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
+            LOGGER.debug("\t\t\t- Hiding jump to top/bottom buttons");
+            trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
+            LOGGER.info("\t\t\t- Top/bottom jump buttons have been hidden");
+        }
     }
 
     private static Set<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {

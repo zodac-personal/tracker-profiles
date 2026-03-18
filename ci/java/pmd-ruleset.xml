@@ -100,6 +100,13 @@
         <!-- Disagree, nicer to have getters with the field name -->
         <exclude name="AvoidFieldNameMatchingMethodName"/>
     </rule>
+    <!-- Happy to include 1 as an acceptable magic number -->
+    <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+        <properties>
+            <property name="ignoreMagicNumbers" value="-1,0,1"/>
+            <property name="ignoreExpressions" value="true"/>
+        </properties>
+    </rule>
 
     <rule ref="category/java/multithreading.xml">
         <!-- Need to interrupt the thread when catching an InterruptedException -->
