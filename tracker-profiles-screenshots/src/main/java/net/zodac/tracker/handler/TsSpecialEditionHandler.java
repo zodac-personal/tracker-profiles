@@ -74,9 +74,9 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * Depending on the specific {@link TsSpecialEditionHandler} tracker, the <b>collapseobj_loginbox</b> HTML element is sometimes a
-     * {@code <div>}, sometimes a {@code <table>}. In addition, the user profile link is sometimes a direct child if this
-     * element, or sometimes nested below other HTML elements. This general XPATH query should work for all trackers of this type.
+     * Depending on the specific {@link TsSpecialEditionHandler} tracker, the type HTML element with ID <b>collapseobj_loginbox</b> not consistent. In
+     * addition, the user profile link is sometimes a direct child of this element, or sometimes nested below other HTML elements. This general XPATH
+     * query should work for all trackers of this type.
      *
      * @return the profile page {@link By} selector
      */

@@ -146,7 +146,6 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(nav, withClass("navbar-fixed-top"))
             .build();

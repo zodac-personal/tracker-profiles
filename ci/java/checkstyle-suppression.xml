@@ -8,4 +8,7 @@
 <suppressions>
     <!-- Ignore generated files -->
     <suppress files="[\\/]gen[\\/]" checks=".*"/>
+
+    <!-- Disable Javadoc checks due to unclosed HTML tags in this class -->
+    <suppress files="HtmlElement.java" checks="JavadocStyle"/>
 </suppressions>

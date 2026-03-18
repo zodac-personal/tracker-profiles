@@ -338,6 +338,16 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Removes the {@link WebElement} from the DOM while keeping all of its children in place.
+     *
+     * @param element the {@link WebElement} to unwrap
+     */
+    public void unwrapElement(final WebElement element) {
+        LOGGER.trace("Unwrapping element '{}'", element);
+        driver.executeScript("arguments[0].replaceWith(...arguments[0].childNodes);", element);
+    }
+
+    /**
      * Waits for the page that the {@link WebDriver} is loading to find the wanted {@link WebElement}.
      *
      * @param selector the {@link By} selector for the target {@link WebElement}

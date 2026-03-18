@@ -36,6 +36,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +44,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link Zappateers} for the {@code Zappateers} tracker.
  */
 @TrackerHandler(name = "Zappateers", url = "https://zappateers.com/")
-public class Zappateers extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
+public class Zappateers extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader, HasFixedSidebar {
 
     /**
      * {@inheritDoc}
@@ -97,7 +98,6 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(div, withClass("hoe-right-header"))
             .build();

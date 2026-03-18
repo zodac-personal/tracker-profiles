@@ -17,7 +17,6 @@
 
 package net.zodac.tracker.framework.driver.extension;
 
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -42,8 +41,7 @@ public interface Extension {
     /**
      * Performs any configuration needed for the {@link Extension}.
      *
-     * @param driver                   the {@link RemoteWebDriver}
-     * @param browserInteractionHelper the {@link BrowserInteractionHelper}
+     * @param driver the {@link RemoteWebDriver}
      */
-    void configure(RemoteWebDriver driver, BrowserInteractionHelper browserInteractionHelper);
+    void configure(RemoteWebDriver driver);
 }

@@ -83,7 +83,6 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = By.id("navbar");
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);

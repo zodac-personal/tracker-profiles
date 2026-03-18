@@ -40,6 +40,7 @@ import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.redaction.RedactorImpl;
@@ -287,8 +288,16 @@ final class ProfileScreenshotExecutor {
 
         // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            LOGGER.debug("\t\t- Unfixing header");
             trackerWithFixedHeader.unfixHeader();
             LOGGER.info("\t\t- Header has been updated to not be fixed");
+        }
+
+        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
+        if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
+            LOGGER.debug("\t\t- Unfixing sidebar");
+            trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
+            LOGGER.info("\t\t- Sidebar has been updated to not be fixed");
         }
 
         if (redactionType == RedactionType.NONE) {

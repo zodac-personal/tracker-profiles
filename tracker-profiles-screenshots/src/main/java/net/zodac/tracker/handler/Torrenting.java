@@ -76,7 +76,6 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header using JavaScript");
         // Special case where the header is made fixed due to JS injection, not HTML/CSS.
         // To make the header unfixed, we inject some CSS to override the existing logic.
         final String script = """
@@ -92,7 +91,7 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
                 `;
                 document.head.appendChild(style);
             """;
-
+        LOGGER.trace("Using script: {}", script);
         driver.executeScript(script);
     }
 

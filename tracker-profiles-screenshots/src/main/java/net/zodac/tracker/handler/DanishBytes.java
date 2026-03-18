@@ -35,6 +35,7 @@ import java.util.Objects;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.redaction.OverlayBuffer;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
@@ -43,9 +44,8 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code DanishBytes} tracker.
  */
-// TODO: Fix sidebar and jump buttons when scrolling, same for TVChaosUK/Zappateers
 @TrackerHandler(name = "DanishBytes", url = "https://danishbytes.club/")
-public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeader {
+public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeader, HasFixedSidebar {
 
     @Override
     protected By usernameFieldSelector() {
@@ -84,13 +84,11 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(div, withClass("hoe-right-header"))
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
-
     }
 
     @Override
@@ -106,7 +104,7 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
     }
 
     /**
-     * The overlay doesn't cover the full {@literal <}li{@literal >} element for some reason, so we extend the overlay to the left.
+     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.
      *
      * @return the {@link OverlayBuffer} for IP address redaction
      */

@@ -121,7 +121,6 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = By.tagName("header");
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);

@@ -102,7 +102,6 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     public void unfixHeader() {
-        LOGGER.debug("\t\t- Unfixing header");
         final By headerSelector = XpathBuilder
             .from(header, withClass("HeaderNew"))
             .build();
@@ -111,7 +110,6 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
 
         LOGGER.debug("\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
         browserInteractionHelper.addClass(headerElement, "is-scrolled");
-
     }
 
     @Override
