@@ -24,7 +24,6 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.Extension;
-import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -65,7 +64,7 @@ public final class JavaWebDriverFactory {
      */
     public static RemoteWebDriver createDriver(final TrackerType trackerType,
                                                final boolean needsExplicitTranslation,
-                                               final Iterable<ExtensionBinding<?>> extensions
+                                               final Iterable<Extension> extensions
     ) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
@@ -111,9 +110,8 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--ignore-certificate-errors");
 
-        for (final ExtensionBinding<?> extensionBinding : extensions) {
-            final Extension<?> extension = extensionBinding.extension();
-            LOGGER.trace("Installing extension {} from '{}'", extensionBinding.getClass().getSimpleName(), extension.path());
+        for (final Extension extension : extensions) {
+            LOGGER.trace("Installing extension {} from '{}'", extension.getClass().getSimpleName(), extension.path());
             final File extensionFile = new File(extension.path());
             chromeOptions.addExtensions(extensionFile);
         }

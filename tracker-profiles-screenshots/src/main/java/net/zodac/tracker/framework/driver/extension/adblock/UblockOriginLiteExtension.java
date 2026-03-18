@@ -15,7 +15,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework.driver.extension;
+package net.zodac.tracker.framework.driver.extension.adblock;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.BrowserInteractionHelper;
@@ -41,31 +42,20 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Google Chrome {@link Extension} for {@code uBlock Origin Lite}, used as an ad-blocker for websites.
  */
-// TODO: Pass settings into constructor?
-public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExtension.UblockSettings> {
+public class UblockOriginLiteExtension implements Extension {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int Y_PIXELS_TO_SCROLL_TO_MAKE_CHECKBOXES_VISIBLE = -150;
 
+    private final Map<UblockOriginSetting, Boolean> settings;
+
     /**
-     * The settings for the {@link UblockSettings} {@link Extension}.
+     * Constructs a new {@link UblockOriginLiteExtension} with the given {@link UblockOriginSetting}s.
+     *
+     * @param settings the {@link Map} of {@link UblockOriginSetting}s to apply when configuring the {@link Extension}
      */
-    public enum UblockSettings {
-
-        /**
-         * Whether to enable the miscellaneous filter lists.
-         */
-        ENABLE_MISCELLANEOUS_FILTERS,
-
-        /**
-         * Whether to enable the regional filter lists.
-         */
-        ENABLE_REGION_FILTERS,
-
-        /**
-         * Whether to change the default filtering mode from 'optimal' to 'complete'.
-         */
-        SET_FILTERING_MODE
+    public UblockOriginLiteExtension(final Map<UblockOriginSetting, Boolean> settings) {
+        this.settings = settings;
     }
 
     @Override
@@ -92,30 +82,28 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
      * </ol>
      */
     @Override
-    public void configure(final ExtensionSettings<UblockSettings> extensionSettings, final RemoteWebDriver driver,
-                          final BrowserInteractionHelper browserInteractionHelper) {
+    public void configure(final RemoteWebDriver driver, final BrowserInteractionHelper browserInteractionHelper) {
         try {
-            final Map<UblockSettings, Boolean> settings = extensionSettings.settings();
             LOGGER.info("\t- Configuring {}", getClass().getSimpleName());
             LOGGER.debug("\t\t- Configuring with settings {}", settings);
             openExtensionConfigurationPage(driver, id());
 
-            if (isSettingEnabled(settings, UblockSettings.SET_FILTERING_MODE)) {
+            if (isSettingEnabled(UblockOriginSetting.SET_FILTERING_MODE)) {
                 LOGGER.debug("\t\t- Setting filtering mode");
                 settingFilteringMode(driver);
             }
 
-            if (isSettingEnabled(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)
-                || isSettingEnabled(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+            if (isSettingEnabled(UblockOriginSetting.ENABLE_MISCELLANEOUS_FILTERS)
+                || isSettingEnabled(UblockOriginSetting.ENABLE_REGION_FILTERS)) {
                 LOGGER.debug("\t\t- Opening filter lists page");
                 openFilterListsPage(driver, browserInteractionHelper);
 
-                if (isSettingEnabled(settings, UblockSettings.ENABLE_MISCELLANEOUS_FILTERS)) {
+                if (isSettingEnabled(UblockOriginSetting.ENABLE_MISCELLANEOUS_FILTERS)) {
                     LOGGER.debug("\t\t- Enabling all miscellaneous filters");
                     enableAllMiscellaneousFilters(driver, browserInteractionHelper);
                 }
 
-                if (isSettingEnabled(settings, UblockSettings.ENABLE_REGION_FILTERS)) {
+                if (isSettingEnabled(UblockOriginSetting.ENABLE_REGION_FILTERS)) {
                     LOGGER.debug("\t\t- Expanding region filter lists");
                     expandRegionFiltersList(driver, browserInteractionHelper);
 
@@ -129,7 +117,7 @@ public class UblockOriginLiteExtension implements Extension<UblockOriginLiteExte
         }
     }
 
-    private static boolean isSettingEnabled(final Map<UblockSettings, Boolean> settings, final UblockSettings setting) {
+    private boolean isSettingEnabled(final UblockOriginSetting setting) {
         return settings.getOrDefault(setting, true);
     }
 

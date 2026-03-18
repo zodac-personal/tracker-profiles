@@ -27,7 +27,7 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
+import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -92,8 +92,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         this.trackerDefinition = trackerDefinition;
-        final List<ExtensionBinding<?>> extensions =
-            this instanceof UsesExtensions trackerWithExtensions ? trackerWithExtensions.requiredExtensions() : List.of();
+        final List<Extension> extensions = this instanceof UsesExtensions tracerExtensions ? tracerExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
     }
@@ -647,7 +646,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "button click");
     }
 
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<ExtensionBinding<?>> requiredExtensions) {
+    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<Extension> requiredExtensions) {
         if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
             if (!requiredExtensions.isEmpty()) {
                 LOGGER.trace("Attempting to create python driver with extensions; extensions will be installed but cannot be configured: {}",
@@ -660,17 +659,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
         final BrowserInteractionHelper configurationScriptExecution = new BrowserInteractionHelper(configurationDriver);
 
-        for (final ExtensionBinding<?> extensionBinding : requiredExtensions) {
-            configureExtensionBinding(extensionBinding, configurationDriver, configurationScriptExecution);
+        for (final Extension extension : requiredExtensions) {
+            extension.configure(configurationDriver, configurationScriptExecution);
         }
 
         return configurationDriver;
-    }
-
-    private static <E extends Enum<E>> void configureExtensionBinding(final ExtensionBinding<E> extensionBinding,
-                                                                      final RemoteWebDriver driver,
-                                                                      final BrowserInteractionHelper browserInteractionHelper
-    ) {
-        extensionBinding.extension().configure(extensionBinding.settings(), driver, browserInteractionHelper);
     }
 }

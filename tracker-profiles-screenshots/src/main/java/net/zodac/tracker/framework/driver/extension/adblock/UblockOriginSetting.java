@@ -15,26 +15,25 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework.driver.extension;
-
-import java.util.Map;
+package net.zodac.tracker.framework.driver.extension.adblock;
 
 /**
- * Represents the configuration settings for a specific {@link Extension}.
- *
- * @param <E> the enum type representing the available settings for the extension
+ * The settings for the {@link UblockOriginLiteExtension}.
  */
-@FunctionalInterface
-public interface ExtensionSettings<E extends Enum<E>> {
+public enum UblockOriginSetting {
 
     /**
-     * Returns the {@link ExtensionSettings} for an {@link Extension}.
-     *
-     * <p>
-     * Each key in the returned {@link Map} corresponds to a specific option defined by the extension’s enum type, and the value indicates whether
-     * the option is enabled ({@code true}) or disabled ({@code false}).
-     *
-     * @return an {@link Map} of settings and their states
+     * Whether to enable the miscellaneous filter lists.
      */
-    Map<E, Boolean> settings();
+    ENABLE_MISCELLANEOUS_FILTERS,
+
+    /**
+     * Whether to enable the regional filter lists.
+     */
+    ENABLE_REGION_FILTERS,
+
+    /**
+     * Whether to change the default filtering mode from 'optimal' to 'complete'.
+     */
+    SET_FILTERING_MODE
 }

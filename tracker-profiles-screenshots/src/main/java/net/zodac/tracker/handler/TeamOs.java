@@ -21,13 +21,12 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
-import net.zodac.tracker.framework.driver.extension.ExtensionSettings;
-import net.zodac.tracker.framework.driver.extension.UblockOriginLiteExtension;
+import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.driver.extension.adblock.UblockOriginLiteExtension;
+import net.zodac.tracker.framework.driver.extension.adblock.UblockOriginSetting;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import org.openqa.selenium.By;
@@ -65,26 +64,21 @@ public class TeamOs extends XenForoHandler implements UsesExtensions {
 
         LOGGER.debug("\t\t- Found single thread link to updated rules, admin requires thread to be viewed, clicking...");
         final WebElement adminThreadButton = adminThreadButtons.getFirst();
-        browserInteractionHelper.removeAttribute(adminThreadButton, "target"); // Stop forcing the link to open in a new tab
+        browserInteractionHelper.removeAttribute(adminThreadButton, "target");  // Stop forcing the link to open in a new tab
         clickButton(adminThreadButton);
         browserInteractionHelper.stopPageLoad();
         LOGGER.debug("\t\t- Updated rules thread viewed, continuing tracker execution");
     }
 
     @Override
-    public List<ExtensionBinding<?>> requiredExtensions() {
-        final ExtensionSettings<UblockOriginLiteExtension.UblockSettings> ublockOriginLiteExtensionSettings =
-            () -> {
-                final Map<UblockOriginLiteExtension.UblockSettings, Boolean> settings =
-                    new EnumMap<>(UblockOriginLiteExtension.UblockSettings.class);
-                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_MISCELLANEOUS_FILTERS, true);
-                settings.put(UblockOriginLiteExtension.UblockSettings.ENABLE_REGION_FILTERS, true);
-                settings.put(UblockOriginLiteExtension.UblockSettings.SET_FILTERING_MODE, false);
-                return settings;
-            };
-
-        return List.of(
-            ExtensionBinding.of(new UblockOriginLiteExtension(), ublockOriginLiteExtensionSettings)
+    public List<Extension> requiredExtensions() {
+        // Ad-blocker
+        final Map<UblockOriginSetting, Boolean> settings = Map.of(
+            UblockOriginSetting.ENABLE_MISCELLANEOUS_FILTERS, true,
+            UblockOriginSetting.ENABLE_REGION_FILTERS, true,
+            UblockOriginSetting.SET_FILTERING_MODE, false
         );
+
+        return List.of(new UblockOriginLiteExtension(settings));
     }
 }

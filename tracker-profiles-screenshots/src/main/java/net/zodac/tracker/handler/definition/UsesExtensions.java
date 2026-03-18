@@ -18,21 +18,20 @@
 package net.zodac.tracker.handler.definition;
 
 import java.util.List;
-import net.zodac.tracker.framework.driver.extension.ExtensionBinding;
+import net.zodac.tracker.framework.driver.extension.Extension;
 
 /**
- * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as requiring browser
- * {@link net.zodac.tracker.framework.driver.extension.Extension}s. Implementing handlers must provide the list of {@link ExtensionBinding}s to be
- * installed before execution begins.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as requiring browser {@link Extension}s. Implementing handlers must provide the
+ * list of {@link Extension}s to be installed before execution begins.
  */
 @FunctionalInterface
 public interface UsesExtensions {
 
     /**
-     * The {@link ExtensionBinding}s required for the tracker. Any provided extensions will be installed in the
+     * The {@link Extension}s required for the tracker. Any provided extensions will be installed in the
      * {@link org.openqa.selenium.remote.RemoteWebDriver} and configured prior to the main execution.
      *
-     * @return the {@link List} of required {@link ExtensionBinding}s
+     * @return the {@link List} of required {@link Extension}s
      */
-    List<ExtensionBinding<?>> requiredExtensions();
+    List<Extension> requiredExtensions();
 }
