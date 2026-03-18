@@ -28,11 +28,13 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.time.Duration;
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -40,7 +42,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code BeyondHD} tracker.
  */
 @TrackerHandler(name = "BeyondHD", type = TrackerType.MANUAL, url = "https://beyond-hd.me/")
-public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
+public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader, HasJumpButtons {
 
     /**
      * {@inheritDoc}
@@ -80,6 +82,13 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader {
     public void unfixHeader() {
         final WebElement headerElement = driver.findElement(By.id("stickyBar"));
         browserInteractionHelper.makeUnfixed(headerElement);
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top")
+        );
     }
 
     @Override

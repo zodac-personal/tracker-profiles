@@ -41,6 +41,7 @@ import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.redaction.RedactorImpl;
@@ -293,11 +294,18 @@ final class ProfileScreenshotExecutor {
             LOGGER.info("\t\t- Header has been updated to not be fixed");
         }
 
-        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
+        // Unfix sidebar before redaction so overlay positions are computed against the settled, post-reflow layout
         if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
             LOGGER.debug("\t\t- Unfixing sidebar");
             trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
             LOGGER.info("\t\t- Sidebar has been updated to not be fixed");
+        }
+
+        // Hide jump buttons
+        if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
+            LOGGER.debug("\t\t- Hiding jump to top/bottom buttons");
+            trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
+            LOGGER.info("\t\t- Top/bottom jump buttons have been hidden");
         }
 
         if (redactionType == RedactionType.NONE) {

@@ -37,6 +37,7 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -44,7 +45,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link Zappateers} for the {@code Zappateers} tracker.
  */
 @TrackerHandler(name = "Zappateers", url = "https://zappateers.com/")
-public class Zappateers extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader, HasFixedSidebar {
+public class Zappateers extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader, HasFixedSidebar, HasJumpButtons {
 
     /**
      * {@inheritDoc}
@@ -84,6 +85,14 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
 
         // Move the mouse, or else a dropdown menu is highlighted and covers some of the page
         browserInteractionHelper.moveToOrigin();
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top"),
+            By.id("back-to-down")
+        );
     }
 
     @Override

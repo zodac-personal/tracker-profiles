@@ -17,14 +17,24 @@
 
 package net.zodac.tracker.handler;
 
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.redaction.OverlayBuffer;
+import org.openqa.selenium.By;
 
 /**
- * Extension of the {@link GazelleHandler} for the {@code Anthelion} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code DICMusic} tracker.
  */
 @TrackerHandler(name = "DICMusic", url = "https://dicmusic.com/")
-public class DicMusicHandler extends GazelleHandler {
+public class DicMusic extends GazelleHandler implements HasJumpButtons {
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top-btn")
+        );
+    }
 
     /**
      * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.

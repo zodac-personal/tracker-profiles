@@ -36,6 +36,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.redaction.OverlayBuffer;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
@@ -45,7 +46,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code DanishBytes} tracker.
  */
 @TrackerHandler(name = "DanishBytes", url = "https://danishbytes.club/")
-public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeader, HasFixedSidebar {
+public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeader, HasFixedSidebar, HasJumpButtons {
 
     @Override
     protected By usernameFieldSelector() {
@@ -89,6 +90,14 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
             .build();
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top"),
+            By.id("back-to-down")
+        );
     }
 
     @Override

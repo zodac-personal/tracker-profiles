@@ -221,6 +221,17 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Remove an HTML {@link WebElement} from the page.
+     *
+     * @param element the {@link WebElement} to remove
+     */
+    public void removeElement(final WebElement element) {
+        LOGGER.trace("Removing element {}", element);
+        final String script = "arguments[0].remove();";
+        driver.executeScript(script, element);
+    }
+
+    /**
      * Scrolls the page by the provided number of pixels in both the X and Y axis.
      *
      * @param x pixels to scroll left/right

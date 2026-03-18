@@ -20,15 +20,17 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import org.openqa.selenium.By;
 
 /**
  * Extension of the {@link Unit3dHandler} for the {@code DarkPeers} tracker.
  */
 @TrackerHandler(name = "DarkPeers", url = "https://darkpeers.org/")
-public class DarkPeers extends Unit3dHandler {
+public class DarkPeers extends Unit3dHandler implements HasJumpButtons {
 
     /**
      * {@inheritDoc}
@@ -43,5 +45,12 @@ public class DarkPeers extends Unit3dHandler {
         return XpathBuilder
             .from(button, withClass("login-btn"))
             .build();
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("topBtn")
+        );
     }
 }

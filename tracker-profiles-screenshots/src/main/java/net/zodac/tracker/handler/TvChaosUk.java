@@ -36,6 +36,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +44,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code TVChaosUK} tracker.
  */
 @TrackerHandler(name = "TVChaosUK", url = "https://tvchaosuk.com/")
-public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedSidebar {
+public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedSidebar, HasJumpButtons {
 
     @Override
     public void dismissBanner() {
@@ -68,6 +69,14 @@ public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleB
             .child(li, atIndex(1))
             .child(a, atIndex(1))
             .build();
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top"),
+            By.id("back-to-down")
+        );
     }
 
     @Override
