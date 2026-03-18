@@ -34,6 +34,7 @@ import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Torrenting} tracker.
@@ -75,7 +76,7 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     }
 
     @Override
-    public void unfixHeader() {
+    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
         // Special case where the header is made fixed due to JS injection, not HTML/CSS.
         // To make the header unfixed, we inject some CSS to override the existing logic.
         final String script = """
@@ -93,6 +94,12 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
             """;
         LOGGER.trace("Using script: {}", script);
         driver.executeScript(script);
+    }
+
+    @Override
+    public By headerSelector() {
+        // Not actually used
+        return By.cssSelector("#navBarOuter");
     }
 
     @Override

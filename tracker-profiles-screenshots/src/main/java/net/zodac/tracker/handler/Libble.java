@@ -34,7 +34,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Libble} tracker.
@@ -68,9 +67,8 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
     }
 
     @Override
-    public void unfixHeader() {
-        final WebElement headerElement = driver.findElement(By.id("header"));
-        browserInteractionHelper.makeUnfixed(headerElement);
+    public By headerSelector() {
+        return By.id("header");
     }
 
     @Override

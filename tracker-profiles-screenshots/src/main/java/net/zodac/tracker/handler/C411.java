@@ -102,14 +102,12 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(div, withId("__nuxt"))
             .child(div, atIndex(2))
             .child(header, atIndex(1))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override

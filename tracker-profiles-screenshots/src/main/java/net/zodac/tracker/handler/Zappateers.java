@@ -88,14 +88,6 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
     }
 
     @Override
-    public List<By> jumpButtonSelectors() {
-        return List.of(
-            By.id("back-to-top"),
-            By.id("back-to-down")
-        );
-    }
-
-    @Override
     protected By profilePageSelector() {
         openUserDropdownMenu();
         return XpathBuilder
@@ -106,12 +98,18 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(div, withClass("hoe-right-header"))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("back-to-top"),
+            By.id("back-to-down")
+        );
     }
 
     @Override

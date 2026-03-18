@@ -84,12 +84,10 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(div, withClass("hoe-right-header"))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override

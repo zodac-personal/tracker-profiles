@@ -573,7 +573,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public final void logout() {
         LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        final WebElement logoutButton = browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, pageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, pageLoadDuration());
+        final WebElement logoutButton = browserInteractionHelper.waitForElementToBeInteractable(logoutButtonSelector, pageTransitionsDuration());
         clickButton(logoutButton);
 
         additionalActionAfterLogoutClick();

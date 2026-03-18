@@ -69,12 +69,10 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(div, withClass("toolbar_div"))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override

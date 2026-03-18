@@ -31,6 +31,7 @@ import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Extension of the {@link TsSpecialEditionHandler} for the {@code LetSeed} tracker.
@@ -72,16 +73,20 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
-            .from(div, withId("menu"))
-            .build();
+    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
         final WebElement headerElement = driver.findElement(headerSelector);
 
         LOGGER.debug("\t\t\t- Updating header with 'fixedMenu' class, to set up static state");
         browserInteractionHelper.addClass(headerElement, "fixedMenu");
 
         browserInteractionHelper.makeUnfixed(headerElement);
+    }
+
+    @Override
+    public By headerSelector() {
+        return XpathBuilder
+            .from(div, withId("menu"))
+            .build();
     }
 
     @Override

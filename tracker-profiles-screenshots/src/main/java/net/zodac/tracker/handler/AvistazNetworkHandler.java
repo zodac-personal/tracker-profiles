@@ -145,12 +145,10 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(nav, withClass("navbar-fixed-top"))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override

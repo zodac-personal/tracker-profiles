@@ -31,7 +31,6 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 /**
  * Utility class used to take a screenshot of a website.
  */
-// TODO: Should this exist as a field variable inside the AbstractTrackerHandler?
 public final class ScreenshotTaker {
 
     private static final Duration TIME_BETWEEN_SCROLLS = Duration.ofMillis(500L);

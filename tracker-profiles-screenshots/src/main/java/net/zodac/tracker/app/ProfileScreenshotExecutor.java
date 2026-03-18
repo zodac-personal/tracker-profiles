@@ -324,7 +324,7 @@ final class ProfileScreenshotExecutor {
         // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
             LOGGER.debug("\t\t\t- Unfixing header");
-            trackerWithFixedHeader.unfixHeader();
+            trackerWithFixedHeader.unfixHeader(trackerHandler.driver(), trackerWithFixedHeader.headerSelector());
             LOGGER.info("\t\t\t- Header has been updated to not be fixed");
         }
 

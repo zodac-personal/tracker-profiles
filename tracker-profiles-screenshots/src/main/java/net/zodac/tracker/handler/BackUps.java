@@ -95,10 +95,8 @@ public class BackUps extends TsSpecialEditionHandler implements HasFixedHeader {
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = By.id("menu");
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
+    public By headerSelector() {
+        return By.id("menu");
     }
 
     @Override

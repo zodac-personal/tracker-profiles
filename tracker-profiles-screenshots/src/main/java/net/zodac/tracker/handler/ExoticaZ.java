@@ -41,7 +41,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Extension of the {@link AvistazNetworkHandler} for the {@code ExoticaZ} tracker.
@@ -112,12 +111,10 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
+    public By headerSelector() {
+        return XpathBuilder
             .from(nav, withClass("fixed-top"))
             .build();
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
     }
 
     @Override

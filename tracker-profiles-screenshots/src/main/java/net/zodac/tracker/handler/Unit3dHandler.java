@@ -155,9 +155,8 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     @Override
-    public void unfixHeader() {
-        final WebElement headerElement = driver.findElement(By.tagName("header"));
-        browserInteractionHelper.makeUnfixed(headerElement);
+    public By headerSelector() {
+        return By.tagName("header");
     }
 
     @Override

@@ -37,6 +37,7 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code MooKo} tracker.
@@ -101,15 +102,19 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = XpathBuilder
-            .from(header, withClass("HeaderNew"))
-            .build();
+    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
         final WebElement headerElement = driver.findElement(headerSelector);
         browserInteractionHelper.makeUnfixed(headerElement);
 
         LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
         browserInteractionHelper.addClass(headerElement, "is-scrolled");
+    }
+
+    @Override
+    public By headerSelector() {
+        return XpathBuilder
+            .from(header, withClass("HeaderNew"))
+            .build();
     }
 
     @Override

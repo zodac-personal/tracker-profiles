@@ -33,7 +33,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code ABTorrents} tracker.
@@ -82,16 +81,12 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
     }
 
     @Override
-    public void unfixHeader() {
-        final By headerSelector = By.id("navbar");
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
+    public By headerSelector() {
+        return By.id("navbar");
     }
 
     @Override
     protected By logoutButtonSelector() {
-        final By logoutSelector = By.id("logoff");
-        browserInteractionHelper.waitForElementToBeInteractable(logoutSelector, pageTransitionsDuration());
-        return logoutSelector;
+        return By.id("logoff");
     }
 }
