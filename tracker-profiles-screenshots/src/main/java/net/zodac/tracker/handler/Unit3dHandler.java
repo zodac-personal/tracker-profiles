@@ -38,7 +38,7 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -55,7 +55,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
-@TrackerHandler(name = "InfinityHD", url = "https://infinityhd.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
 @TrackerHandler(name = "MalayaBits", url = "https://malayabits.cc/")
@@ -133,13 +132,13 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     /**
-     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      *
-     * @return the {@link OverlayBuffer} for email address redaction
+     * @return the {@link RedactionBuffer} for email address redaction
      */
     @Override
-    protected OverlayBuffer emailElementBuffer() {
-        return OverlayBuffer.withLeftOffset(6);
+    protected RedactionBuffer emailElementBuffer() {
+        return RedactionBuffer.withLeftOffset(6);
     }
 
     @Override

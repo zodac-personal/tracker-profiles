@@ -15,31 +15,47 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.handler.definition;
+package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
+import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
+import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
- * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a Cloudflare verification check on the login page that must be passed
- * before logging in.
+ * Extension of the {@link Unit3dHandler} for the {@code InfinityHD} tracker.
  */
-// TODO: Remove 'Has' prefix?
-public interface HasCloudflareCheck {
+@TrackerHandler(name = "InfinityHD", url = "https://infinityhd.net/")
+public class InfinityHd extends Unit3dHandler {
 
-    /**
-     * Returns the {@link By} selector for the Cloudflare verification element.
-     *
-     * @return the {@link By} selector for the Cloudflare element
-     */
-    default By cloudflareSelector() {
+    @Override
+    protected By usernameFieldSelector() {
         return XpathBuilder
-            .from(div, withClass("main-content"))
-            .descendant(div, atIndex(2))
+            .from(form, atIndex(1))
+            .child(div, atIndex(1))
+            .child(input, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By passwordFieldSelector() {
+        return XpathBuilder
+            .from(form, atIndex(1))
+            .child(div, atIndex(2))
+            .child(input, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By loginButtonSelector() {
+        return XpathBuilder
+            .from(button, withClass("btn-launch"))
             .build();
     }
 }
