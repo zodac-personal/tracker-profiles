@@ -65,14 +65,11 @@ main() {
     java -jar /app/tracker-profiles.jar &
     JAVA_PID=$!
 
-    wait "${JAVA_PID}"
-    JAVA_EXIT_CODE=$?
-
-    if [ "${JAVA_EXIT_CODE}" -eq 1 ]; then
+    if wait "${JAVA_PID}"; then
+        printf '\033[32mScreenshots complete in %s\033[0m\n' "$(get_execution_time "${start_time}")"
+    else
         printf '\033[31mTook screenshots with errors in %s, review logs\033[0m\n' "$(get_execution_time "${start_time}")"
         exit 1
-    else
-        printf '\033[32mScreenshots complete in %s\033[0m\n' "$(get_execution_time "${start_time}")"
     fi
 }
 
