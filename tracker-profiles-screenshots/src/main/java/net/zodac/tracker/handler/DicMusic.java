@@ -20,7 +20,7 @@ package net.zodac.tracker.handler;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.handler.definition.HasJumpButtons;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 
 /**
@@ -37,12 +37,12 @@ public class DicMusic extends GazelleHandler implements HasJumpButtons {
     }
 
     /**
-     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      *
-     * @return the {@link OverlayBuffer} for IP address redaction
+     * @return the {@link RedactionBuffer} for IP address redaction
      */
     @Override
-    protected OverlayBuffer emailElementBuffer() {
-        return OverlayBuffer.withLeftOffset(7);
+    protected RedactionBuffer emailElementBuffer() {
+        return RedactionBuffer.withLeftOffset(7);
     }
 }

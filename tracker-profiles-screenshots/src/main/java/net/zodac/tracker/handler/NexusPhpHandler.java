@@ -140,7 +140,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .from(table, withClass("main"))
                 .descendant(table, atIndex(1))
                 .child(tbody, atIndex(1))
-                .child(tr, atIndex(5))
+                .child(tr)
                 .child(td, atIndex(2))
                 .build()
         );
@@ -157,10 +157,10 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .child(td, atIndex(1))
                 .child(table, atIndex(1))
                 .child(tbody, atIndex(1))
-                .child(tr, atIndex(6))
+                .child(tr)
                 .child(td, atIndex(2))
                 .build(),
-            // IP address of current BitTorrent client
+            // IPv4 address of current BitTorrent client
             XpathBuilder
                 .from(table, withClass("main"))
                 .child(tbody, atIndex(1))
@@ -168,12 +168,27 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
                 .child(td, atIndex(1))
                 .child(table, atIndex(1))
                 .child(tbody, atIndex(1))
-                .child(tr, atIndex(7))
+                .child(tr)
                 .child(td, atIndex(2))
                 .child(table, atIndex(1))
                 .child(tbody, atIndex(1))
                 .child(tr, atIndex(2))
                 .child(td, atIndex(2))
+                .build(),
+            // IPv4 address of current BitTorrent client
+            XpathBuilder
+                .from(table, withClass("main"))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(1))
+                .child(td, atIndex(1))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr)
+                .child(td, atIndex(2))
+                .child(table, atIndex(1))
+                .child(tbody, atIndex(1))
+                .child(tr, atIndex(2))
+                .child(td, atIndex(3))
                 .build()
         );
     }

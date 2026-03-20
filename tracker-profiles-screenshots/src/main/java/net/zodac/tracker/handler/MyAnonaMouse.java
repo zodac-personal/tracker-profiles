@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -94,13 +94,13 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
     }
 
     /**
-     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the left.
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      *
-     * @return the {@link OverlayBuffer} for IP address redaction
+     * @return the {@link RedactionBuffer} for IP address redaction
      */
     @Override
-    protected OverlayBuffer ipAddressElementBuffer() {
-        return OverlayBuffer.withLeftOffset(13);
+    protected RedactionBuffer ipAddressElementBuffer() {
+        return RedactionBuffer.withLeftOffset(13);
     }
 
     @Override

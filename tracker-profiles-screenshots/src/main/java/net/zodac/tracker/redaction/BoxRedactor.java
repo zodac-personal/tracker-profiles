@@ -21,9 +21,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Implementation of {@link Redactor} that redacts text by overlaying a solid, coloured box over the impacted {@link WebElement}.
+ * Implementation of {@link Redactor} that redacts text by covering the impacted {@link WebElement} with a solid, coloured box with a title.
  */
-class OverlayRedactor implements Redactor {
+class BoxRedactor implements Redactor {
 
     private final RemoteWebDriver driver;
 
@@ -32,22 +32,22 @@ class OverlayRedactor implements Redactor {
      *
      * @param driver the {@link RemoteWebDriver}
      */
-    OverlayRedactor(final RemoteWebDriver driver) {
+    BoxRedactor(final RemoteWebDriver driver) {
         this.driver = driver;
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final OverlayBuffer buffer) {
+    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         redactElement(element, "orange", description, buffer);
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final OverlayBuffer buffer) {
+    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
         redactElement(element, "red", "Passkey", buffer);
     }
 
     @Override
-    public void redactEmail(final WebElement element, final OverlayBuffer buffer) {
+    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
@@ -135,7 +135,7 @@ class OverlayRedactor implements Redactor {
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
+    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
 
@@ -235,7 +235,7 @@ class OverlayRedactor implements Redactor {
     }
 
     private void redactElement(final WebElement element, final String overlayColour, final String description,
-                               final OverlayBuffer buffer) {
+                               final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var bounding_rectangle = element.getBoundingClientRect()

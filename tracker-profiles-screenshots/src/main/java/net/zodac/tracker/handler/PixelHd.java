@@ -37,7 +37,7 @@ import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -160,13 +160,13 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
     }
 
     /**
-     * The overlay doesn't cover the full {@code <li>} element for some reason, so we extend the overlay to the right.
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the right.
      *
-     * @return the {@link OverlayBuffer} for passkey redaction
+     * @return the {@link RedactionBuffer} for passkey redaction
      */
     @Override
-    protected OverlayBuffer passkeyElementBuffer() {
-        return OverlayBuffer.withRightOffset(13);
+    protected RedactionBuffer passkeyElementBuffer() {
+        return RedactionBuffer.withRightOffset(13);
     }
 
     @Override

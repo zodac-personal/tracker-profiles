@@ -113,7 +113,7 @@ public class BrowserInteractionHelper {
     /**
      * Hides the scrollbar on the current web page without changing page dimensions. Rather than setting {@code overflow: hidden} (which removes the
      * scrollbar gutter and causes layout shifts), this injects a stylesheet that makes the scrollbar transparent via both the standard
-     * {@code scrollbar-color} property and the legacy {@code ::-webkit-scrollbar} pseudo-elements. The gutter space is preserved, preventing overlay
+     * {@code scrollbar-color} property and the legacy {@code ::-webkit-scrollbar} pseudo-elements. The gutter space is preserved, preventing
      * redaction positions from shifting.
      */
     public void hideScrollbar() {
@@ -193,19 +193,6 @@ public class BrowserInteractionHelper {
      */
     public void moveToOrigin() {
         moveTo(0, 0);
-    }
-
-    /**
-     * Reloads the current page.
-     *
-     * @param pageLoadDuration the {@link Duration} to wait for the page to load
-     * @param reason           the reason for reloading
-     * @see #waitForPageToLoad(Duration)
-     */
-    public void reloadPage(final Duration pageLoadDuration, final String reason) {
-        LOGGER.trace("Reloading page to {}", reason);
-        driver.navigate().refresh();
-        waitForPageToLoad(pageLoadDuration);
     }
 
     /**
@@ -321,8 +308,7 @@ public class BrowserInteractionHelper {
 
             // Press "Up" key 3 times to select 'Translate to English' option from bottom of the menu
             final Robot robot = new Robot();
-            final int numberOfUpPressesToSelectTranslateButton = 3;
-            for (int i = 0; i < numberOfUpPressesToSelectTranslateButton; i++) {
+            for (int i = 0; i < 3; i++) {
                 robot.keyPress(KeyEvent.VK_UP);
                 robot.keyRelease(KeyEvent.VK_UP);
                 explicitWait(DEFAULT_WAIT_FOR_KEY_PRESS, "key press to activate");

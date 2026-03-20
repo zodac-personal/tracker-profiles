@@ -42,35 +42,36 @@ public class RedactorImpl implements Redactor {
      */
     public RedactorImpl(final RemoteWebDriver driver, final RedactionType redactionType) {
         redactor = switch (redactionType) {
-            case OVERLAY -> new OverlayRedactor(driver);
+            case BLUR -> new BlurRedactor(driver);
+            case BOX -> new BoxRedactor(driver);
             case TEXT -> new TextRedactor(driver);
             case NONE -> throw new IllegalStateException("RedactorImpl should not be created for NONE redaction type");
         };
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final OverlayBuffer buffer) {
+    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redact(element, description, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final OverlayBuffer buffer) {
+    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redactPasskey(element, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactEmail(final WebElement element, final OverlayBuffer buffer) {
+    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redactEmail(element, buffer);
         LOGGER.trace("");
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
+    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redactIpAddress(element, buffer);
         LOGGER.trace("");

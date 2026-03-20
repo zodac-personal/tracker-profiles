@@ -28,7 +28,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -113,12 +113,12 @@ public class Lst extends Unit3dHandler {
     }
 
     /**
-     * The {@link OverlayBuffer} set in {@link Unit3dHandler} is excessive for {@link Lst}, so we use {@link OverlayBuffer#DEFAULT} instead.
+     * The {@link RedactionBuffer} set in {@link Unit3dHandler} is excessive for {@link Lst}, so we use {@link RedactionBuffer#DEFAULT} instead.
      *
-     * @return the {@link OverlayBuffer} for email address redaction
+     * @return the {@link RedactionBuffer} for email address redaction
      */
     @Override
-    protected OverlayBuffer emailElementBuffer() {
-        return OverlayBuffer.DEFAULT;
+    protected RedactionBuffer emailElementBuffer() {
+        return RedactionBuffer.DEFAULT;
     }
 }

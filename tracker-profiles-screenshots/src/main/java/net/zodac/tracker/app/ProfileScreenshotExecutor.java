@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import net.zodac.tracker.framework.TrackerCredential;
@@ -226,13 +227,13 @@ final class ProfileScreenshotExecutor {
 
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
         LOGGER.trace("\t- Starting to take screenshot of profile");
-        final Set<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
+        final List<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
         if (redactionsToExecute.isEmpty()) {
             LOGGER.warn("\t- Screenshots already exist for all redaction types for tracker '{}', skipping", trackerCredential.name());
             return;
         }
 
-        if (!redactionsToExecute.equals(CONFIG.redactionTypes())) {
+        if (redactionsToExecute.size() != CONFIG.redactionTypes().size()) {
             LOGGER.warn("\t- Some screenshots already exist for tracker '{}', only executing: {}", trackerCredential.name(), redactionsToExecute);
         }
 
@@ -254,7 +255,7 @@ final class ProfileScreenshotExecutor {
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
 
         // If the tracker has no sensitive information, all redaction types produce identical screenshots, so we take a single one
-        final Set<RedactionType> effectiveRedactions;
+        final List<RedactionType> effectiveRedactions;
         if (trackerHandler.hasSensitiveInformation()) {
             effectiveRedactions = redactionsToExecute;
         } else {
@@ -265,14 +266,15 @@ final class ProfileScreenshotExecutor {
             }
         }
 
-        for (final RedactionType redactionType : effectiveRedactions) {
-            takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
-
-            if (effectiveRedactions.size() > 1) {
+        for (int i = 0; i < effectiveRedactions.size(); i++) {
+            if (i > 0) {
                 // Reload to restore page to original state (clears DOM mutations from previous redaction) before next redaction
                 LOGGER.debug("\t\t- Reloading profile page for next redaction");
                 trackerHandler.reloadProfilePage();
             }
+
+            final RedactionType redactionType = effectiveRedactions.get(i);
+            takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
         }
 
         trackerHandler.logout();
@@ -310,32 +312,31 @@ final class ProfileScreenshotExecutor {
             screenshotIndex(baseName));
         trackerHandler.actionAfterScreenshot();
         LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+        // TODO: Undo redaction here, instead of reloading the page in the calling message?
     }
 
+    // Perform modifications to the user profile page before redaction so redaction positions are computed against the settled layout
     private static void updatingProfilePage(final AbstractTrackerHandler trackerHandler) {
         LOGGER.info("\t\t- Performing updates to profile page, if needed");
 
-        // Translate to English
         if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
             LOGGER.info("\t\t\t- Translating profile page to English");
             trackerNeedsTranslation.translatePageToEnglish();
         }
 
-        // Unfix header before redaction so overlay positions are computed against the settled, post-reflow layout
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
             LOGGER.debug("\t\t\t- Unfixing header");
             trackerWithFixedHeader.unfixHeader(trackerHandler.driver(), trackerWithFixedHeader.headerSelector());
             LOGGER.info("\t\t\t- Header has been updated to not be fixed");
         }
 
-        // Unfix sidebar before redaction so overlay positions are computed against the settled, post-reflow layout
         if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
             LOGGER.debug("\t\t\t- Unfixing sidebar");
             trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
             LOGGER.info("\t\t\t- Sidebar has been updated to not be fixed");
         }
 
-        // Hide jump buttons
         if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
             LOGGER.debug("\t\t\t- Hiding jump to top/bottom buttons");
             trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
@@ -343,13 +344,13 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static Set<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {
+    private static List<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {
         if (CONFIG.existingScreenshotAction() != ExistingScreenshotAction.SKIP) {
-            return redactionTypes;
+            return redactionTypes.stream().toList();
         }
 
         // If ExistingScreenshotAction == SKIP, we need to verify if any screenshots have already been taken and exclude those from being taken again
-        final Set<RedactionType> typesToProcess = new LinkedHashSet<>();
+        final List<RedactionType> typesToProcess = new ArrayList<>();
         for (final RedactionType type : redactionTypes) {
             final String baseName = screenshotBaseName(trackerName, type);
             if (ScreenshotTaker.howManyScreenshotsAlreadyExist(baseName, CONFIG.outputDirectory()) == 0) {

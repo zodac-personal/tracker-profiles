@@ -32,10 +32,14 @@ public enum RedactionType {
     NONE,
 
     /**
-     * Overlay a solid box with a title over the sensitive text.
+     * Cover the sensitive text with a Gaussian blur.
      */
-    // TODO: Split this into 'BOX' and 'BLUR' overlays
-    OVERLAY,
+    BLUR,
+
+    /**
+     * Cover the sensitive text with a solid box with a title.
+     */
+    BOX,
 
     /**
      * Replace the sensitive text with some placeholder text.

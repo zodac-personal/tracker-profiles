@@ -81,7 +81,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
-    private static final String DEFAULT_REDACTION_TYPES = "TEXT";
+    private static final String DEFAULT_REDACTION_TYPE = "BOX";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
@@ -192,7 +192,7 @@ public record ApplicationConfiguration(
     }
 
     private static Set<RedactionType> getRedactionTypes() {
-        return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPES, RedactionType::find);
+        return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPE, RedactionType::find);
     }
 
     private static ExistingScreenshotAction getScreenshotExistsAction() {

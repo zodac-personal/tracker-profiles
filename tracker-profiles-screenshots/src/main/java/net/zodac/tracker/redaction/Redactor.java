@@ -30,32 +30,31 @@ public interface Redactor {
      *
      * @param element     the {@link WebElement} to redact
      * @param description the {@link String} to describe what the sensitive information is
-     * @param buffer      the {@link OverlayBuffer} defining the pixel expansion on each side of the overlay
+     * @param buffer      the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    void redact(WebElement element, String description, OverlayBuffer buffer);
+    void redact(WebElement element, String description, RedactionBuffer buffer);
 
     /**
      * Redacts the user's passkey.
      *
      * @param element the {@link WebElement} containing the user's passkey
-     * @param buffer  the {@link OverlayBuffer} defining the pixel expansion on each side of the overlay
+     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    void redactPasskey(WebElement element, OverlayBuffer buffer);
+    void redactPasskey(WebElement element, RedactionBuffer buffer);
 
     /**
      * Redacts the user's email address.
      *
      * @param element the {@link WebElement} containing the user's email
-     * @param buffer  the {@link OverlayBuffer} defining the pixel expansion on each side of the overlay
+     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    void redactEmail(WebElement element, OverlayBuffer buffer);
+    void redactEmail(WebElement element, RedactionBuffer buffer);
 
     /**
      * Redacts the user's IP address.
      *
      * @param element the {@link WebElement} containing the user's IP address
-     * @param buffer  the {@link OverlayBuffer} defining the pixel expansion on each side of the overlay
+     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    void redactIpAddress(WebElement element, OverlayBuffer buffer);
-
+    void redactIpAddress(WebElement element, RedactionBuffer buffer);
 }

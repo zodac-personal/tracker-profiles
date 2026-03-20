@@ -36,7 +36,7 @@ import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
-import net.zodac.tracker.redaction.OverlayBuffer;
+import net.zodac.tracker.redaction.RedactionBuffer;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.TextSearcher;
@@ -95,15 +95,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final List<Extension> extensions = this instanceof UsesExtensions tracerExtensions ? tracerExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
-    }
-
-    /**
-     * Reloads the current profile page in the browser, restoring the page to its original state (clearing any DOM mutations from redaction). Waits
-     * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
-     */
-    public void reloadProfilePage() {
-        browserInteractionHelper.reloadPage(pageLoadDuration(), "bring profile page back to non-redacted state");
-        additionalActionOnProfilePage();
     }
 
     /**
@@ -217,7 +208,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     public void login(final String username, final String password, final String trackerName) {
         LOGGER.trace("Logging in to tracker '{}'", trackerName);
-        browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
+        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
         try {
             LOGGER.trace("Entering username");
@@ -349,9 +340,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Defines the {@link By} selector of the {@link WebElement} of the user's profile page.
+     * Defines the {@link By} selector of the {@link WebElement} that links to the user's profile page.
      *
-     * @return the profile page {@link By} selector
+     * @return the profile page link {@link By} selector
      */
     protected By profilePageSelector() {
         return XpathBuilder
@@ -368,8 +359,23 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * <p>
      * This method should be overridden as required.
      */
+    // TODO: Move to interface
     protected void additionalActionOnProfilePage() {
         // Do nothing by default
+    }
+
+    /**
+     * Reloads the current profile page in the browser, restoring the page to its original state (clearing any DOM mutations from redaction). Waits
+     * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
+     */
+    public void reloadProfilePage() {
+        LOGGER.trace("Reloading page to bring profile page back to non-redacted state");
+        driver.navigate().refresh();
+        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
+
+        // TODO: Add a selector to wait for on the profile page of each tracker, instead of sleeping
+        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "elements on the page to reload successfully");
+        additionalActionOnProfilePage();
     }
 
     /**
@@ -393,7 +399,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see Redactor
      */
-    // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port)
+    // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port, age/birthday)
     // TODO: Move redaction methods to another class?
     public int redactElements(final Redactor redactor) {
         LOGGER.trace("Redacting elements");
@@ -413,27 +419,25 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * The {@link OverlayBuffer} applied when redacting email elements. Override to adjust the buffer for a specific tracker.
+     * The {@link RedactionBuffer} applied when redacting email elements. Override to adjust the buffer for a specific tracker.
      *
-     * @return the {@link OverlayBuffer} for email redaction
+     * @return the {@link RedactionBuffer} for email redaction
      */
-    protected OverlayBuffer emailElementBuffer() {
-        return OverlayBuffer.DEFAULT;
+    protected RedactionBuffer emailElementBuffer() {
+        return RedactionBuffer.DEFAULT;
     }
 
     private int redactEmailElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting email elements");
-        final Collection<WebElement> emailElements = emailElements()
+        return emailElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.hasEmailAddress(element.getText(), browserInteractionHelper.getValue(element)))
-            .toList();
-
-        for (final WebElement element : emailElements) {
-            redactor.redactEmail(element, emailElementBuffer());
-        }
-
-        return emailElements.size();
+            .mapToInt(element -> {
+                redactor.redactEmail(element, emailElementBuffer());
+                return 1;
+            })
+            .sum();
     }
 
     /**
@@ -446,27 +450,25 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * The {@link OverlayBuffer} applied when redacting IP address elements. Override to adjust the buffer for a specific tracker.
+     * The {@link RedactionBuffer} applied when redacting IP address elements. Override to adjust the buffer for a specific tracker.
      *
-     * @return the {@link OverlayBuffer} for IP address redaction
+     * @return the {@link RedactionBuffer} for IP address redaction
      */
-    protected OverlayBuffer ipAddressElementBuffer() {
-        return OverlayBuffer.DEFAULT;
+    protected RedactionBuffer ipAddressElementBuffer() {
+        return RedactionBuffer.DEFAULT;
     }
 
     private int redactIpAddressElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting IP address elements");
-        final Collection<WebElement> ipAddressElements = ipAddressElements()
+        return ipAddressElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.hasIpAddress(element.getText(), browserInteractionHelper.getValue(element)))
-            .toList();
-
-        for (final WebElement element : ipAddressElements) {
-            redactor.redactIpAddress(element, ipAddressElementBuffer());
-        }
-
-        return ipAddressElements.size();
+            .mapToInt(element -> {
+                redactor.redactIpAddress(element, ipAddressElementBuffer());
+                return 1;
+            })
+            .sum();
     }
 
     /**
@@ -479,26 +481,24 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * The {@link OverlayBuffer} applied when redacting passkey elements. Override to adjust the buffer for a specific tracker.
+     * The {@link RedactionBuffer} applied when redacting passkey elements. Override to adjust the buffer for a specific tracker.
      *
-     * @return the {@link OverlayBuffer} for passkey redaction
+     * @return the {@link RedactionBuffer} for passkey redaction
      */
-    protected OverlayBuffer passkeyElementBuffer() {
-        return OverlayBuffer.DEFAULT;
+    protected RedactionBuffer passkeyElementBuffer() {
+        return RedactionBuffer.DEFAULT;
     }
 
     private int redactPasskeyElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting passkey elements");
-        final Collection<WebElement> passkeyElements = passkeyElements()
+        return passkeyElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .toList();
-
-        for (final WebElement element : passkeyElements) {
-            redactor.redactPasskey(element, passkeyElementBuffer());
-        }
-
-        return passkeyElements.size();
+            .mapToInt(element -> {
+                redactor.redactPasskey(element, passkeyElementBuffer());
+                return 1;
+            })
+            .sum();
     }
 
     /**
@@ -511,33 +511,32 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * The {@link OverlayBuffer} applied when redacting sensitive elements. Override to adjust the buffer for a specific tracker.
+     * The {@link RedactionBuffer} applied when redacting sensitive elements. Override to adjust the buffer for a specific tracker.
      *
-     * @return the {@link OverlayBuffer} for sensitive element redaction
+     * @return the {@link RedactionBuffer} for sensitive element redaction
      */
-    protected OverlayBuffer sensitiveElementBuffer() {
-        return OverlayBuffer.DEFAULT;
+    protected RedactionBuffer sensitiveElementBuffer() {
+        return RedactionBuffer.DEFAULT;
     }
 
     private int redactSensitiveElements(final Redactor redactor) {
         LOGGER.debug("\t\t- Redacting remaining sensitive elements");
-        for (final Map.Entry<String, By> entry : sensitiveElements().entrySet()) {
-            final String description = entry.getKey();
-            final By selector = entry.getValue();
-
-            for (final WebElement element : driver.findElements(selector)) {
-                redactor.redact(element, description, sensitiveElementBuffer());
-            }
-        }
-
-        return sensitiveElements().size();
+        return sensitiveElements().entrySet()
+            .stream()
+            .mapToInt(entry -> {
+                final String description = entry.getKey();
+                final By selector = entry.getValue();
+                driver.findElements(selector).forEach(element -> redactor.redact(element, description, sensitiveElementBuffer()));
+                return 1;
+            })
+            .sum();
     }
 
     /**
      * Any action to be taken by the {@link AbstractTrackerHandler} while on the profile page, prior to taking a screenshot.
      *
      * <p>
-     * By default, it hides the scrollbar without changing page dimensions, preventing layout shifts that would affect overlay redaction positioning.
+     * By default, it hides the scrollbar without changing page dimensions, preventing layout shifts that would affect redaction positioning.
      *
      * @see BrowserInteractionHelper#hideScrollbar()
      */

@@ -17,18 +17,10 @@
 
 package net.zodac.tracker.handler;
 
-import static net.zodac.tracker.framework.xpath.HtmlElement.table;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
-import static net.zodac.tracker.framework.xpath.HtmlElement.td;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
@@ -43,19 +35,6 @@ public class PtGtk extends NexusPhpHandler {
     @Override
     protected By loginButtonSelector() {
         return By.id("submit-btn");
-    }
-
-    @Override
-    protected Collection<By> emailElements() {
-        return List.of(
-            XpathBuilder
-                .from(table, withClass("main"))
-                .descendant(table, atIndex(1))
-                .child(tbody, atIndex(1))
-                .child(tr, atIndex(6))
-                .child(td, atIndex(2))
-                .build()
-        );
     }
 
     /**

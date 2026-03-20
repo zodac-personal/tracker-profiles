@@ -118,6 +118,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
+        // TODO: Logic should be part of profilePageContentSelector()
         final By selector = XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))

@@ -48,25 +48,25 @@ class TextRedactor implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final OverlayBuffer buffer) {
+    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         final String redactionText = String.format("%s: %s", description, DEFAULT_REDACTION_TEXT);
         driver.executeScript(String.format("arguments[0].innerText = '%s'", redactionText), element);
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final OverlayBuffer buffer) {
+    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
         redact(element, "Passkey", buffer);
     }
 
     @Override
-    public void redactEmail(final WebElement element, final OverlayBuffer buffer) {
+    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceEmail(htmlContent);
         setOuterHtml(element, substitutionHtmlContent);
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final OverlayBuffer buffer) {
+    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceIpAddresses(htmlContent);
         setOuterHtml(element, substitutionHtmlContent);
