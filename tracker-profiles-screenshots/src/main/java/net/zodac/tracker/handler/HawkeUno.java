@@ -20,20 +20,15 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
-import static net.zodac.tracker.framework.xpath.HtmlElement.table;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
-import static net.zodac.tracker.framework.xpath.HtmlElement.td;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
+import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
@@ -46,59 +41,83 @@ import org.openqa.selenium.WebElement;
 public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
-    protected By postLoginSelector() {
-        return By.id("hoe-header");
+    protected By loginButtonSelector() {
+        return XpathBuilder
+            .from(button, withType("submit"))
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link HawkeUno}, there is a mandatory 2FA check which must be completed.
+     */
+    @Override
+    protected void manualCheckAfterLoginClick() {
+        final String initialUrl = driver.getCurrentUrl();
+        LOGGER.info("\t\t >>> Waiting for user to enter 2FA code");
+
+        final By twoFactorSelector = XpathBuilder
+            .from(div, withClass("ds-auth__card"))
+            .child(form, atIndex(1))
+            .build();
+        final WebElement twoFactorElement = driver.findElement(twoFactorSelector);
+        browserInteractionHelper.highlightElement(twoFactorElement);
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code");
+
+        // If the user didn't click 'verify', do it for them
+        final String nextUrl = driver.getCurrentUrl();
+        if (nextUrl == null || nextUrl.equalsIgnoreCase(initialUrl)) {
+            final By verifyTwoFactorButtonSelector = XpathBuilder
+                .from(button, withType("submit"))
+                .build();
+            final WebElement verifyButton = driver.findElement(verifyTwoFactorButtonSelector);
+            clickButton(verifyButton);
+        }
     }
 
     @Override
     protected By profilePageSelector() {
-        openUserDropdownMenu();
         return XpathBuilder
-            .from(ul, withClass("dropdown-menu"))
-            .child(li, atIndex(1))
+            .from(div, withClass("ds-user-stats"))
+            .child(div, atIndex(1))
             .child(a, atIndex(1))
             .build();
     }
 
     @Override
     protected By profilePageContentSelector() {
-        throw new UnsupportedOperationException("Site has introduced mandatory 2FA & UI changes");
+        return XpathBuilder
+            .from(div, withClass("deep-space-user-hub"))
+            .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link HawkeUno}, there is no user details page in the 'hub', but there is a dropdown menu which exposes the stats.
+     */
     @Override
-    protected Collection<By> emailElements() {
-        return List.of(
-            XpathBuilder
-                .from(table, withClass("user-info"))
-                .child(tbody)
-                .child(tr)
-                .child(td, atIndex(2))
-                .build()
-        );
+    protected void additionalActionOnProfilePage() {
+        openUserDropdownMenu();
     }
 
     @Override
     protected By logoutButtonSelector() {
-        openUserDropdownMenu();
+        // The state of the drop-down menu is retained between page loads once opened, so we assume there is no need to open it again
         return XpathBuilder
-            .from(ul, withClass("dropdown-menu"))
-            .descendant(button, withType("submit"))
+            .from(button, withAttribute("title", "Sign Out"), withType("button"))
             .build();
     }
 
     private void openUserDropdownMenu() {
-        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
-        final By loginPopupSelector = XpathBuilder
-            .from(div, withClass("swal2-popup"), withClass("swal2-toast"))
+        LOGGER.debug("\t\t- Clicking user details toggle");
+        final By userDetailsToggleSelector = XpathBuilder
+            .from(button, withAttribute("title", "Toggle details"), withType("button"))
             .build();
-        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
-
-        LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
-        final By profileParentSelector = XpathBuilder
-            .from(li, withClass("hoe-header-profile"))
-            .child(a, withClass("dropdown-toggle"))
-            .build();
-        final WebElement profileParent = driver.findElement(profileParentSelector);
-        clickButton(profileParent);
+        final WebElement userDetailsToggleElement = driver.findElement(userDetailsToggleSelector);
+        clickButton(userDetailsToggleElement);
     }
 }
