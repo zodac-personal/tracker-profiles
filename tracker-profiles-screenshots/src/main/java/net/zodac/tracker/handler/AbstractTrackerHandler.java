@@ -292,7 +292,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @return the login button {@link By} selector
      */
-    @Nullable
+    @Nullable // TODO: I think nothing sets this to null anymore - confirm and remove
     protected By loginButtonSelector() {
         return By.id("login-button");
     }

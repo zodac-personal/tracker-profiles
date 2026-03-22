@@ -127,7 +127,6 @@ background:
 | [Cathode-Ray.Tube](https://www.cathode-ray.tube/) |
 | [Concertos](https://concertos.live/)              |
 | [D3Si.NET](https://d3si.net/)                     |
-| [DanishBytes](https://danishbytes.club/)          |
 | [DarkPeers](https://darkpeers.org/)               |
 | [DesiTorrents](https://desitorrents.tv/)          |
 | [DICMusic](https://dicmusic.com/)                 |
@@ -171,6 +170,7 @@ background:
 | [MoreThanTV](https://www.morethantv.me/)       |
 | [MyAnonaMouse](https://www.myanonamouse.net/)  |
 | [Nebulance](https://nebulance.io/)             |
+| [NordicBytes](https://nordicbytes.org/)        |
 | [NordicHD](http://nordichd.org/)               |
 | [OldToons.World](https://oldtoons.world/)      |
 | [OnlyEncodes](https://onlyencodes.cc/)         |
