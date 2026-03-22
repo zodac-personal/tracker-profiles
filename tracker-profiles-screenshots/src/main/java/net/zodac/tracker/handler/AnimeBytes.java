@@ -50,6 +50,11 @@ public class AnimeBytes extends AbstractTrackerHandler {
             .build();
     }
 
+    @Override
+    protected By profilePageContentSelector() {
+        return By.id("user_leftcol");
+    }
+
     /**
      * {@inheritDoc}
      *

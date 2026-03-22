@@ -68,6 +68,13 @@ public class Bakabt extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(table, withClass("userstats"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder

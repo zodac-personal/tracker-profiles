@@ -72,6 +72,11 @@ public class BwTorrents extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("details_info");
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder

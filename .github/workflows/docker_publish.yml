@@ -30,7 +30,7 @@ jobs:
 
       - name: Configure git user
         run: |
-          git config user.name "github-actions"
+          git config user.name "publisher"
           git config user.email "github-actions@github.com"
 
       - name: Read current version

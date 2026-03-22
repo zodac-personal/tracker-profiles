@@ -65,6 +65,11 @@ public class ExtremeBits extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("torrents");
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withClass("statsleft"))

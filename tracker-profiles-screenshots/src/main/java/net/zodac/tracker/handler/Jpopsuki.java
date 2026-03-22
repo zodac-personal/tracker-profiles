@@ -23,6 +23,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
@@ -43,6 +44,14 @@ public class Jpopsuki extends GazelleHandler {
         return XpathBuilder
             .from(div, withId("logo"))
             .child(a, atIndex(2))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Struggled to find anything unique, except for the clickable link to the user's email address
+        return XpathBuilder
+            .from(a, containsHref("mailto:"))
             .build();
     }
 

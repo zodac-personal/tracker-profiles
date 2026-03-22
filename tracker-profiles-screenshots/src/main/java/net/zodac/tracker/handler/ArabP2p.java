@@ -69,6 +69,11 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("userdeatils_tpl");
+    }
+
+    @Override
     public By headerSelector() {
         return XpathBuilder
             .from(div, withClass("toolbar_div"))

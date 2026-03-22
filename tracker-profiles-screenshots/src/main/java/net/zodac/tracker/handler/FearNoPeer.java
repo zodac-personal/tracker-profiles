@@ -28,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
@@ -37,6 +38,13 @@ import org.openqa.selenium.By;
  */
 @TrackerHandler(name = "FearNoPeer", url = "https://fearnopeer.com/login") // URL set to login page to bypass Cloudflare verification
 public class FearNoPeer extends Unit3dHandler {
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--premium-2026"))
+            .build();
+    }
 
     @Override
     protected Collection<By> emailElements() {

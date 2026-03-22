@@ -79,6 +79,18 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("ModalUploadAvatar");
+    }
+
+    @Override
+    public By headerSelector() {
+        return XpathBuilder
+            .from(nav, withClass("fixed-top"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -108,13 +120,6 @@ public class ExoticaZ extends AvistazNetworkHandler {
                 .child(td, atIndex(2))
                 .build()
         );
-    }
-
-    @Override
-    public By headerSelector() {
-        return XpathBuilder
-            .from(nav, withClass("fixed-top"))
-            .build();
     }
 
     @Override

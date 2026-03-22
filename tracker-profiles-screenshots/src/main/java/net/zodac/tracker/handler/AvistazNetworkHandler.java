@@ -117,6 +117,20 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(span, withClass("badge-user"))
+            .build();
+    }
+
+    @Override
+    public By headerSelector() {
+        return XpathBuilder
+            .from(nav, withClass("navbar-fixed-top"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -142,13 +156,6 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
                 .child(td, atIndex(2))
                 .build()
         );
-    }
-
-    @Override
-    public By headerSelector() {
-        return XpathBuilder
-            .from(nav, withClass("navbar-fixed-top"))
-            .build();
     }
 
     @Override

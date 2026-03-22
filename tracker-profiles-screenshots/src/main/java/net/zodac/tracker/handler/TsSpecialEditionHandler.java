@@ -89,6 +89,11 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("collapseobj_content2a");
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder

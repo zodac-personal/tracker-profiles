@@ -68,6 +68,11 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.tagName("tor-browse-list");
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         openUserDropdownMenu();
         return XpathBuilder

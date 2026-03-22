@@ -18,12 +18,14 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
@@ -71,6 +73,14 @@ public class DimeaDozen extends AbstractTrackerHandler {
             .descendant(table, atIndex(1))
             .descendant(table, atIndex(1))
             .descendant(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Struggled to find anything unique, except the flag for the user's country
+        return XpathBuilder
+            .from(img, containsSrc("images/flag/"))
             .build();
     }
 

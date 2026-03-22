@@ -64,6 +64,11 @@ public class SceneHd extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("community");
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder

@@ -76,6 +76,11 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("userDetailsTable");
+    }
+
+    @Override
     public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
         // Special case where the header is made fixed due to JS injection, not HTML/CSS.
         // To make the header unfixed, we inject some CSS to override the existing logic.

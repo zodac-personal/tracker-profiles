@@ -118,6 +118,11 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("seclog");
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             // IP address

@@ -45,13 +45,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code CGPeers} tracker.
+ * Extension of the {@link LuminanceHandler} for the {@code CGPeers} tracker.
  */
 @TrackerHandler(name = "CGPeers", type = TrackerType.CLOUDFLARE_CHECK, url = {
     "https://cgpeers.to/",
     "https://cgpeers.com/"
 })
-public class CgPeers extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleBanner {
+public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, HasDismissibleBanner {
 
     @Override
     public By loginPageSelector() {
@@ -68,27 +68,6 @@ public class CgPeers extends AbstractTrackerHandler implements HasCloudflareChec
             .from(div, withClass("cf-turnstile"))
             .child(div, atIndex(1))
             .build();
-    }
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(div, withId("username"))
-            .child(input, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(div, withId("password"))
-            .child(input, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return By.id("login_button");
     }
 
     /**

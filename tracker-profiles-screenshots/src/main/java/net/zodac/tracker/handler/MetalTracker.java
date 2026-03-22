@@ -21,6 +21,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
+import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
@@ -64,6 +65,13 @@ public class MetalTracker extends AbstractTrackerHandler {
             .from(NamedHtmlElement.of("h4"), withClass("nickname"))
             .child(span, atIndex(1))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(td, withClass("profile_left"))
             .build();
     }
 

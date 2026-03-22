@@ -18,6 +18,7 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -76,6 +77,13 @@ public class TorrentLeech extends AbstractTrackerHandler implements HasDismissib
     protected By profilePageSelector() {
         return XpathBuilder
             .from(span, withClass("user_superuser"))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("user-profile-container"))
             .build();
     }
 

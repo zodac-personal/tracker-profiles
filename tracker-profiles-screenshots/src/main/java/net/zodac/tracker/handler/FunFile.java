@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
@@ -62,6 +63,14 @@ public class FunFile extends AbstractTrackerHandler {
         return XpathBuilder
             .from(div, withId("avatar"))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Struggled to find anything unique, except for the clickable link to the user's email address
+        return XpathBuilder
+            .from(a, containsHref("mailto:"))
             .build();
     }
 

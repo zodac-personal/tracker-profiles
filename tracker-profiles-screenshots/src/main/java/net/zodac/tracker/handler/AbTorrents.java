@@ -72,17 +72,22 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("general");
+    }
+
+    @Override
+    public By headerSelector() {
+        return By.id("navbar");
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder
                 .from(span, withClass("has-text-green"))
                 .build()
         );
-    }
-
-    @Override
-    public By headerSelector() {
-        return By.id("navbar");
     }
 
     @Override

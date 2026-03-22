@@ -63,6 +63,11 @@ public class LuminanceHandler extends GazelleHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("community");
+    }
+
+    @Override
     protected Collection<By> passkeyElements() {
         return List.of(
             XpathBuilder

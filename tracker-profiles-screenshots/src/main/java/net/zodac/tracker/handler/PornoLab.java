@@ -56,6 +56,11 @@ public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("u_down_total");
+    }
+
+    @Override
     public void translatePageToEnglish() {
         // The default location of the cursor means a right-click won't always show the 'translate' option, so we move the cursor
         final By selector = XpathBuilder

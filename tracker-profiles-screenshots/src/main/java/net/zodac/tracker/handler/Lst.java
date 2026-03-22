@@ -27,6 +27,7 @@ import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
@@ -88,6 +89,13 @@ public class Lst extends Unit3dHandler {
     protected By profilePageSelector() {
         return XpathBuilder
             .from(img, withClass("top-nav__profile-image"))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--show"))
             .build();
     }
 

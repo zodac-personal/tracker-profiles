@@ -79,6 +79,13 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader, 
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(img, withClass("img-circle"))
+            .build();
+    }
+
+    @Override
     public By headerSelector() {
         return By.id("stickyBar");
     }

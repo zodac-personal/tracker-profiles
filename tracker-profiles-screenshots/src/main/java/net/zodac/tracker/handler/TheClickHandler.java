@@ -109,6 +109,17 @@ public class TheClickHandler extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(td, withClass("embedded"))
+            .child(table)
+            .child(tbody)
+            .child(tr)
+            .child(td, atIndex(2))
+            .build();
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder

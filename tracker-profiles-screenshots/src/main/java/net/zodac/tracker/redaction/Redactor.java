@@ -32,6 +32,7 @@ public interface Redactor {
      * @param description the {@link String} to describe what the sensitive information is
      * @param buffer      the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
+    // TODO: Add explicit entry for IRC keys, and look for 'IRC Key', etc. as a prefix and retain it when redacting
     void redact(WebElement element, String description, RedactionBuffer buffer);
 
     /**
@@ -40,6 +41,7 @@ public interface Redactor {
      * @param element the {@link WebElement} containing the user's passkey
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
+    // TODO: Look for 'Passkey:', 'Pass Key', etc. as a prefix and retain it when redacting
     void redactPasskey(WebElement element, RedactionBuffer buffer);
 
     /**

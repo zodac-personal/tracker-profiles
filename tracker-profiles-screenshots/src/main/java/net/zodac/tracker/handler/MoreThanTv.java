@@ -30,12 +30,12 @@ import org.openqa.selenium.By;
 public class MoreThanTv extends LuminanceHandler implements HasFixedHeader {
 
     @Override
-    protected Collection<By> passkeyElements() {
-        return List.of();
+    public By headerSelector() {
+        return By.cssSelector("#menu, .main-menu");
     }
 
     @Override
-    public By headerSelector() {
-        return By.cssSelector("#menu, .main-menu");
+    protected Collection<By> passkeyElements() {
+        return List.of();
     }
 }

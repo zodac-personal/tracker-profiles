@@ -135,6 +135,17 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("sidebar"))
+            .child(div, atIndex(5))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(3))
+            .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder

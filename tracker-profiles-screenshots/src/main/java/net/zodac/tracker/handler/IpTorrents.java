@@ -57,6 +57,17 @@ public class IpTorrents extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(table, withId("body"))
+            .descendant(table, atIndex(1))
+            .child(tbody, atIndex(1))
+            .child(tr, atIndex(4))
+            .child(td, atIndex(1))
+            .build();
+    }
+
+    @Override
     protected Collection<By> passkeyElements() {
         return List.of(
             XpathBuilder

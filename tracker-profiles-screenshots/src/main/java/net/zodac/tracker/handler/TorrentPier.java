@@ -117,6 +117,11 @@ public class TorrentPier extends AbstractTrackerHandler implements HasDismissibl
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("traf-stats-tbl");
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(img, withClass("log-out-icon"))

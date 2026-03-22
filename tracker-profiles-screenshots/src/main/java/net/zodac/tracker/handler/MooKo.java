@@ -70,6 +70,27 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("community_stats");
+    }
+
+    @Override
+    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
+        final WebElement headerElement = driver.findElement(headerSelector);
+        browserInteractionHelper.makeUnfixed(headerElement);
+
+        LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
+        browserInteractionHelper.addClass(headerElement, "is-scrolled");
+    }
+
+    @Override
+    public By headerSelector() {
+        return XpathBuilder
+            .from(header, withClass("HeaderNew"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -99,22 +120,6 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
                 .child(span, atIndex(3))
                 .build()
         );
-    }
-
-    @Override
-    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
-
-        LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
-        browserInteractionHelper.addClass(headerElement, "is-scrolled");
-    }
-
-    @Override
-    public By headerSelector() {
-        return XpathBuilder
-            .from(header, withClass("HeaderNew"))
-            .build();
     }
 
     @Override

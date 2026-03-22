@@ -30,13 +30,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttr
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
-import java.time.Duration;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -109,23 +107,13 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link DigitalCoreClub}, the page loads but the table with user details is not visible on the initial load. So we wait for the user
-     * details table to be visible before proceeding.
-     */
     @Override
-    protected void additionalActionOnProfilePage() {
-        // TODO: Logic should be part of profilePageContentSelector()
-        final By selector = XpathBuilder
+    protected By profilePageContentSelector() {
+        return XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))
             .descendant(td, withAttribute("translate", "STATUS.BONUS"))
             .build();
-        browserInteractionHelper.waitForElementToAppear(selector, maximumLinkResolutionDuration());
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "user details to load");
     }
 
     @Override

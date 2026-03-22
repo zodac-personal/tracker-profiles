@@ -62,6 +62,11 @@ public class TheMixingBowl extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("joined");
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             // Browser IP address

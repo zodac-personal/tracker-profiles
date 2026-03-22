@@ -64,6 +64,13 @@ public class GazelleHandler extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("box_userinfo_stats"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -100,10 +107,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final By logoutParentSelector = XpathBuilder
-            .from(a, withClass("username"))
-            .build();
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
+        final WebElement logoutParent = driver.findElement(profilePageSelector());
         browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder

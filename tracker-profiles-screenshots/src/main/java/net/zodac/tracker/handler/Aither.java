@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -33,6 +34,13 @@ import org.openqa.selenium.By;
  */
 @TrackerHandler(name = "Aither", url = "https://aither.cc/")
 public class Aither extends Unit3dHandler {
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--show"))
+            .build();
+    }
 
     @Override
     protected Collection<By> emailElements() {

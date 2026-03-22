@@ -35,7 +35,11 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Speed.CD} tracker.
  */
-@TrackerHandler(name = "Speed.CD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://speed.cd/")
+@TrackerHandler(name = "Speed.CD", type = TrackerType.CLOUDFLARE_CHECK, url = {
+    "https://speed.cd/",
+    "https://speed.click/",
+    "https://speeders.me/",
+})
 public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
@@ -79,6 +83,11 @@ public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareChec
             .from(div, withClass("tSta"))
             .child(a, atIndex(1))
             .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return By.id("Details");
     }
 
     @Override

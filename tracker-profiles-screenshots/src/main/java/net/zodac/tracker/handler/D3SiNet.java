@@ -47,6 +47,11 @@ public class D3SiNet extends GazelleHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("community");
+    }
+
+    @Override
     protected Collection<By> passkeyElements() {
         return List.of(
             XpathBuilder

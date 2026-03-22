@@ -35,6 +35,7 @@ import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -98,6 +99,13 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
             .from(div, withAttribute("role", "presentation"))
             .child(div, withAttribute("role", "group"), atIndex(1))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(NamedHtmlElement.of("code"))
             .build();
     }
 

@@ -84,6 +84,11 @@ public class DanishBytes extends AbstractTrackerHandler implements HasFixedHeade
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        throw new UnsupportedOperationException("Site has moved to NordicBytes");
+    }
+
+    @Override
     public By headerSelector() {
         return XpathBuilder
             .from(div, withClass("hoe-right-header"))

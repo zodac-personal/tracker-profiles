@@ -22,6 +22,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
@@ -87,6 +88,13 @@ public class PassThePopcorn extends AbstractTrackerHandler {
         return XpathBuilder
             .from(li, withId("nav_userinfo"))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(a, containsHref("bprate.php"))
             .build();
     }
 

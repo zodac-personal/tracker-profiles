@@ -66,6 +66,17 @@ public class Fappaizuri extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("myFrame-content"))
+            .descendant(div, withClass("box"))
+            .child(div, atIndex(1))
+            .child(div, atIndex(2))
+            .child(p, atIndex(3))
+            .build();
+    }
+
+    @Override
     protected Map<String, By> sensitiveElements() {
         return Map.of(
             "IRC Key", XpathBuilder

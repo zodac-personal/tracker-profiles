@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
@@ -74,6 +75,14 @@ public class BootyTape extends AbstractTrackerHandler {
             .child(span, atIndex(1))
             .child(NamedHtmlElement.of("strong"), atIndex(1))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Cannot easily find a uniquely identifiable element that isn't on the home page, other than the IP element that links to a lookup site
+        return XpathBuilder
+            .from(a, containsHref("whatismyipaddress.com/ip/"))
             .build();
     }
 

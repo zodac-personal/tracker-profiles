@@ -138,6 +138,24 @@ public final class XpathAttributePredicate {
     }
 
     /**
+     * Update the XPATH query to filter the element at the current position if it contains the provided {@code src} attribute.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query<u>[contains(@src, 'wanted-src')]</u>
+     * </pre>
+     *
+     * @param value the wanted {@code src} for the HTML element
+     * @return this {@link XpathAttributePredicate}
+     * @see #containsAttribute(String, String)
+     */
+    public static XpathPredicate containsSrc(final String value) {
+        return containsAttribute("src", value);
+    }
+
+    /**
      * Update the XPATH query to filter the element at the current position if it has an exact match for the provided attribute.
      *
      * <p>
@@ -212,6 +230,25 @@ public final class XpathAttributePredicate {
      */
     public static XpathPredicate withExactText(final String value) {
         return withAttributeFunction("normalize-space()", value);
+    }
+
+    /**
+     * Update the XPATH query to filter the element at the current position if it has exactly the provided number of direct children of the given
+     * {@link Element} type.
+     *
+     * <p>
+     * Adds:
+     *
+     * <pre>
+     *      //existing_query<u>[count(child-element)=count]</u>
+     * </pre>
+     *
+     * @param childElement the type of direct child {@link Element} to count
+     * @param count        the exact number of expected children
+     * @return this {@link XpathAttributePredicate}
+     */
+    public static XpathPredicate withNumberOfChildrenOfType(final Element childElement, final int count) {
+        return xpath -> xpath.append("[count(").append(childElement.tagName()).append(")=").append(count).append(']');
     }
 
     /**

@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withNumberOfChildrenOfType;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -94,6 +95,13 @@ public class Docspedia extends AbstractTrackerHandler {
         return XpathBuilder
             .from(div, withClass("status_avatar"))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("cblock-innercontent"), withNumberOfChildrenOfType(table, 2))
             .build();
     }
 

@@ -60,6 +60,11 @@ public class NordicHd extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return By.id("memberCard");
+    }
+
+    @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
             .from(div, withClass("eLinks"))

@@ -122,6 +122,19 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(NamedHtmlElement.of("main"))
+            .child(NamedHtmlElement.of("article"), withClass("sidebar2"))
+            .build();
+    }
+
+    @Override
+    public By headerSelector() {
+        return By.tagName("header");
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -151,11 +164,6 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
                 .child(td, atIndex(2))
                 .build()
         );
-    }
-
-    @Override
-    public By headerSelector() {
-        return By.tagName("header");
     }
 
     @Override

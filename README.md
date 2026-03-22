@@ -33,10 +33,16 @@ historical record of your stats on a tracker in case it goes down or becomes oth
 
 - Opens the selected trackers and logs in, navigating to the user's profile page
 - Requests user input for trackers with manual inputs (like Captcha, 2FA, etc.)
-- Redacts the user's sensitive information (either replacing the text, or drawing a box over the text):
-    - Email address
-    - IP address
-    - Passkey
+- Redacts the user's sensitive information
+    - There are several types of redaction:
+        - Blur (adds a Gaussian blur)
+        - Box (draws a solid box)
+        - Text (Replaces the text)
+        - None (no redaction)
+    - There following elements are currently redacted
+        - Email address
+        - IP address (including ISP)
+        - Passkey (for torrents or for IRC)
 - Takes a full-page screenshot of the redacted user profile
 
 ### Screenshots
@@ -407,7 +413,7 @@ The following are all possible configuration options, defined as environment var
 | *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                            |
 | *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                              |
 | *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                             |
-| *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails) (max of 5)                                                                                                             | 1                                |
+| *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) (max of 5)                                                                      | 1                                |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                       |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                 |
 | *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                              |

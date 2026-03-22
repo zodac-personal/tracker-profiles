@@ -63,6 +63,13 @@ public class XwtClassics extends AbstractTrackerHandler {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(table, withClass("details-table"))
+            .build();
+    }
+
+    @Override
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder

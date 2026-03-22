@@ -19,6 +19,7 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -27,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
@@ -77,6 +79,14 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
         openUserDropdownMenu();
         return XpathBuilder
             .from(a, withClass("myInfo"))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Struggled to find anything unique, except the flag for the user's country
+        return XpathBuilder
+            .from(img, containsSrc("pic/flags/"))
             .build();
     }
 

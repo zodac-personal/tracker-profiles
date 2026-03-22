@@ -19,6 +19,7 @@ package net.zodac.tracker.framework.xpath;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
@@ -31,6 +32,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atLastIn
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsAttributeFunction;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttributeFunction;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
@@ -38,6 +40,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withExac
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withNumberOfChildrenOfType;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withText;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
@@ -334,6 +337,30 @@ class XpathBuilderTest {
 
         assertThat(actual)
             .isEqualTo("//a[contains(@href, '/profile')]");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "div,1,//div[count(div)=1]",
+        "div,3,//div[count(div)=3]",
+        "span,2,//div[count(span)=2]"
+    })
+    void testWithNumberOfChildrenOfTypeShouldAppendCountPredicate(final HtmlElement childElement, final int count, final String expected) {
+        final String actual = XpathBuilder
+            .from(div, withNumberOfChildrenOfType(childElement, count))
+            .toString();
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void testContainsSrcShouldAppendContainsSrcPredicate() {
+        final String actual = XpathBuilder
+            .from(img, containsSrc("images/flag"))
+            .toString();
+
+        assertThat(actual)
+            .isEqualTo("//img[contains(@src, 'images/flag')]");
     }
 
     @Test

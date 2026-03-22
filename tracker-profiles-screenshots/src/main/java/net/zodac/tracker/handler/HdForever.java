@@ -19,19 +19,11 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
-import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.util.Collection;
-import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -39,23 +31,16 @@ import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 
 /**
- * Implementation of {@link AbstractTrackerHandler} for the {@code HD-Forever} tracker.
+ * Extension of the {@link GazelleHandler} for the {@code HD-Forever} tracker.
  */
 @TrackerHandler(name = "HD-Forever", type = TrackerType.MANUAL, url = "https://hdf.world/")
-public class HdForever extends AbstractTrackerHandler implements NeedsExplicitTranslation {
+public class HdForever extends GazelleHandler implements NeedsExplicitTranslation {
 
     @Override
     protected By loginPageSelector() {
         return XpathBuilder
             .from(div, withId("public-nav"))
             .child(a, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("submit"))
             .build();
     }
 
@@ -70,31 +55,6 @@ public class HdForever extends AbstractTrackerHandler implements NeedsExplicitTr
     @Override
     public void translatePageToEnglish() {
         browserInteractionHelper.translatePage();
-    }
-
-    @Override
-    protected Collection<By> emailElements() {
-        return List.of(
-            // Sidebar email address
-            XpathBuilder
-                .from(ul, withClass("stats"))
-                .child(li, atIndex(3))
-                .child(a, atIndex(1))
-                .build()
-        );
-    }
-
-    @Override
-    protected Collection<By> ipAddressElements() {
-        return List.of(
-            // Last connected IP address
-            XpathBuilder
-                .from(div, withId("footer"))
-                .child(p, atIndex(1))
-                .child(a, atIndex(1))
-                .child(span, atIndex(3))
-                .build()
-        );
     }
 
     @Override

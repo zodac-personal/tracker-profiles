@@ -25,6 +25,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
@@ -77,6 +78,14 @@ public class TranceTraffic extends AbstractTrackerHandler {
             .child(td, atIndex(1))
             .child(NamedHtmlElement.of("strong"), atIndex(1))
             .child(a, atIndex(1))
+            .build();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        // Struggled to find anything unique, so we're choosing the button to show all torrents being seeded
+        return XpathBuilder
+            .from(a, containsHref("sdlist=1"))
             .build();
     }
 

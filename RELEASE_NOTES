@@ -19,3 +19,7 @@ Added the value **BLUR** which will add a Gaussian blur effect over sensitive in
 ## Improved overlay redaction
 
 I've gone through every tracker to ensure overlay redaction is consistently covering sensitive information.
+
+## Profile page confirmation
+
+Each tracker now confirms that the user profile page has loaded prior to taking screenshots/redacting elements, so any failures should be clearer.

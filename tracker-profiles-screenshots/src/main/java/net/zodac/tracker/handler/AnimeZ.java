@@ -109,6 +109,20 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("datagrid-content "))
+            .child(div, withClass("input-group"))
+            .child(input, withType("password"))
+            .build();
+    }
+
+    @Override
+    public By headerSelector() {
+        return By.tagName("header");
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -117,11 +131,6 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
                 .descendant(div, withClass("datagrid-content"))
                 .build()
         );
-    }
-
-    @Override
-    public By headerSelector() {
-        return By.tagName("header");
     }
 
     @Override

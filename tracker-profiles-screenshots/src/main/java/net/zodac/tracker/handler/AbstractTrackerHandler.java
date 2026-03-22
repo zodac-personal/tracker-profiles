@@ -230,6 +230,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         manualCheckBeforeLoginClick();
 
         // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
+        //       Maybe even add a listener to the timer code and wait for a page update?
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
             browserInteractionHelper.waitForElementToAppear(loginButtonSelector, pageLoadDuration());
@@ -334,9 +335,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
-        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-        browserInteractionHelper.moveToOrigin();
-        additionalActionOnProfilePage();
+        try {
+            LOGGER.debug("\t\t- Waiting to confirm user profile page has loaded successfully");
+            browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
+            browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());
+            browserInteractionHelper.moveToOrigin();
+            additionalActionOnProfilePage();
+        } catch (final TimeoutException e) {
+            throw new TimeoutException("Unable to find user profile content, profile page may not have loaded", e);
+        }
     }
 
     /**
@@ -349,6 +356,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .from(a, withClass("username"))
             .build();
     }
+
+    /**
+     * Defines the {@link By} selector of a {@link WebElement} used to confirm that the user's details have loaded on the profile page.
+     *
+     * @return the profile page content {@link By} selector
+     */
+    protected abstract By profilePageContentSelector();
 
     /**
      * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and
@@ -369,12 +383,11 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
      */
     public void reloadProfilePage() {
-        LOGGER.trace("Reloading page to bring profile page back to non-redacted state");
+        LOGGER.trace("Reloading profile page to restore original state");
         driver.navigate().refresh();
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
-        // TODO: Add a selector to wait for on the profile page of each tracker, instead of sleeping
-        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "elements on the page to reload successfully");
+        browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());
         additionalActionOnProfilePage();
     }
 
@@ -400,7 +413,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @see Redactor
      */
     // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port, age/birthday)
-    // TODO: Move redaction methods to another class?
+    // TODO: Move redaction methods to interfaces
     public int redactElements(final Redactor redactor) {
         LOGGER.trace("Redacting elements");
         return redactEmailElements(redactor)

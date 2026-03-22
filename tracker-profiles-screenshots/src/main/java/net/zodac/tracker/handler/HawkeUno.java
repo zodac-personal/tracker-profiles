@@ -61,6 +61,11 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
     }
 
     @Override
+    protected By profilePageContentSelector() {
+        throw new UnsupportedOperationException("Site has introduced mandatory 2FA & UI changes");
+    }
+
+    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
