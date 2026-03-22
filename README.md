@@ -238,6 +238,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [GazelleGames](https://gazellegames.net/)           |
 | [HDFans](https://hdfans.org/)                       |
 | [HD-Forever](https://hdf.world/)                    |
+| [LemonHD](https://lemonhd.net/)                     |
 | [LetSeed](https://letseed.org/)                     |
 | [LST](https://lst.gg/)                              |
 | [PassThePopcorn](https://passthepopcorn.me/)        |
