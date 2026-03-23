@@ -83,6 +83,8 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
         );
     }
 
+    // TODO: IRC element
+
     @Override
     protected By logoutButtonSelector() {
         return XpathBuilder

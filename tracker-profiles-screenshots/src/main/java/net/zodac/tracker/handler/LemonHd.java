@@ -27,7 +27,7 @@ import org.openqa.selenium.By;
  * Extension of the {@link NexusPhpHandler} for the {@code LemonHD} tracker.
  */
 @TrackerHandler(name = "LemonHD", type = TrackerType.MANUAL, url = "https://lemonhd.net/")
-public class LemonHD extends NexusPhpHandler {
+public class LemonHd extends NexusPhpHandler {
 
     @Override
     protected By loginButtonSelector() {
@@ -38,7 +38,7 @@ public class LemonHD extends NexusPhpHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link LemonHD}, the IP address is already blurred and not visible in the screenshot.
+     * For {@link LemonHd}, the IP address is already blurred and not visible in the screenshot.
      *
      * @return an empty {@link Collection} to indicate no IP address elements to redact
      */

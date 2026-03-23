@@ -54,10 +54,14 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "DesiTorrents", url = "https://desitorrents.tv/")
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
+@TrackerHandler(name = "HDZone", url = "https://hdzero.org/")
 @TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
+@TrackerHandler(name = "InfinityLibrary", url = "https://infinitylibrary.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
+@TrackerHandler(name = "LDU", url = "https://theldu.to/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
 @TrackerHandler(name = "MalayaBits", url = "https://malayabits.cc/")
+@TrackerHandler(name = "NordicQuality", url = "https://nordicq.org/")
 @TrackerHandler(name = "OldToons.World", url = "https://oldtoons.world/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
@@ -92,9 +96,6 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
      */
     @Override
     public void dismissBanner() {
-        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
-        final By loginPopupSelector = By.id("swal2-title");
-        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();
@@ -181,6 +182,10 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
      * Opens the user's dropdown menu to expose links to the user profile and the logout button.
      */
     protected void openUserDropdownMenu() {
+        LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
+        final By loginPopupSelector = By.id("swal2-title");
+        browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
+
         LOGGER.debug("\t\t- Highlighting user dropdown menu to make profile/logout button interactable");
         final By logoutParentSelector = XpathBuilder
             .from(div, withClass("top-nav__right"))

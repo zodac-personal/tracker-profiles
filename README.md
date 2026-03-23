@@ -115,8 +115,10 @@ background:
 | [ArabicSource](https://arabicsource.net/)         |
 | [ArabP2P](https://www.arabp2p.net/)               |
 | [AsianCinema](https://eiga.moi/)                  |
+| [Aura4K](https://aura4k.net/)                     |
 | [BackUps](https://back-ups.me/)                   |
 | [BakaBT](https://bakabt.me/)                      |
+| [BitPorn](https://bitporn.eu/)                    |
 | [Blutopia](https://blutopia.cc/)                  |
 | [BootyTape](https://ssl.bootytape.com/)           |
 | [BrokenStones](https://brokenstones.is/)          |
@@ -147,9 +149,11 @@ background:
 | [GreatPosterWall](https://greatposterwall.com/) |
 | [HappyFappy](https://www.happyfappy.net/)       |
 | [HDUnited](https://hd-united.vn/)               |
+| [HDZone](https://hdzero.org/)                   |
 | [Hellenic-HD](https://hellenic-hd.cc/)          |
 | [ImmortalSeed](https://immortalseed.me/)        |
 | [InfinityHD](https://infinityhd.net/)           |
+| [InfinityLibrary](https://infinitylibrary.net/) |
 | [IPTorrents](https://iptorrents.com/)           |
 | [ItaTorrents](https://itatorrents.xyz/)         |
 | [JPopsuki](https://jpopsuki.eu/)                |
@@ -161,6 +165,7 @@ background:
 |------------------------------------------------|
 | [Kufirc](https://kufirc.com/)                  |
 | [Lat-Team](https://lat-team.com/)              |
+| [LDU](https://theldu.to/)                      |
 | [Libble](https://libble.me/)                   |
 | [Luminarr](https://luminarr.me/)               |
 | [MalayaBits](https://malayabits.cc/)           |
@@ -172,6 +177,7 @@ background:
 | [Nebulance](https://nebulance.io/)             |
 | [NordicBytes](https://nordicbytes.org/)        |
 | [NordicHD](http://nordichd.org/)               |
+| [NordicQuality](https://nordicq.org/)          |
 | [OldToons.World](https://oldtoons.world/)      |
 | [OnlyEncodes](https://onlyencodes.cc/)         |
 | [Orpheus](https://orpheus.network/)            |
@@ -267,6 +273,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [HDBits](https://hdbits.org/)               |
 | [Immortal-S](https://immortal-s.me/)        |
 | [PrivateHD](https://privatehd.to/)          |
+| [RoTorrent](https://rotorrent.info/)        |
 | [SceneTime](https://www.scenetime.com/)     |
 | [Speed.CD](https://speed.cd/)               |
 | [Torrenting](https://torrenting.com/)       |

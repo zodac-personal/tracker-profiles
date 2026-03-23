@@ -23,3 +23,7 @@ I've gone through every tracker to ensure overlay redaction is consistently cove
 ## Profile page confirmation
 
 Each tracker now confirms that the user profile page has loaded prior to taking screenshots/redacting elements, so any failures should be clearer.
+
+## New/update trackers
+
+Added or updated the UI for 20 or so trackers.
