@@ -159,7 +159,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(div, withClass("sidebar"))
@@ -176,7 +176,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
      * @return the {@link RedactionBuffer} for passkey redaction
      */
     @Override
-    protected RedactionBuffer passkeyElementBuffer() {
+    protected RedactionBuffer torrentPasskeyElementBuffer() {
         return RedactionBuffer.withRightOffset(13);
     }
 

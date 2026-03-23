@@ -119,7 +119,7 @@ public class Docspedia extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(div, withId("maincolumn"))

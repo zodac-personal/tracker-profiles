@@ -54,11 +54,6 @@ class TextRedactor implements Redactor {
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
-        redact(element, "Passkey", buffer);
-    }
-
-    @Override
     public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceEmail(htmlContent);
@@ -70,6 +65,16 @@ class TextRedactor implements Redactor {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceIpAddresses(htmlContent);
         setOuterHtml(element, substitutionHtmlContent);
+    }
+
+    @Override
+    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+        redact(element, "IRC Passkey", buffer);
+    }
+
+    @Override
+    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+        redact(element, "Passkey", buffer);
     }
 
     private String retrieveOuterHtml(final WebElement element) {

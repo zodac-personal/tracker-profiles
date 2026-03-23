@@ -45,11 +45,6 @@ class BlurRedactor implements Redactor {
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
-        redact(element, "", buffer);
-    }
-
-    @Override
     public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
@@ -161,5 +156,15 @@ class BlurRedactor implements Redactor {
             """;
 
         driver.executeScript(script, element);
+    }
+
+    @Override
+    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+        redact(element, "", buffer);
+    }
+
+    @Override
+    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+        redact(element, "", buffer);
     }
 }

@@ -77,7 +77,7 @@ public class TheMixingBowl extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             By.id("passkey")
         );

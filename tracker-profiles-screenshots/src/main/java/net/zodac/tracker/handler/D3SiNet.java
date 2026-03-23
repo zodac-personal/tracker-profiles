@@ -52,7 +52,7 @@ public class D3SiNet extends GazelleHandler {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(div, withClass("sidebar"))

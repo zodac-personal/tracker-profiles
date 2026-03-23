@@ -57,13 +57,6 @@ public class RedactorImpl implements Redactor {
     }
 
     @Override
-    public void redactPasskey(final WebElement element, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
-        redactor.redactPasskey(element, buffer);
-        LOGGER.trace("");
-    }
-
-    @Override
     public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redactEmail(element, buffer);
@@ -74,6 +67,20 @@ public class RedactorImpl implements Redactor {
     public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
         redactor.redactIpAddress(element, buffer);
+        LOGGER.trace("");
+    }
+
+    @Override
+    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+        logElementToBeRedacted(element);
+        redactor.redactIrcPasskey(element, buffer);
+        LOGGER.trace("");
+    }
+
+    @Override
+    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+        logElementToBeRedacted(element);
+        redactor.redactTorrentPasskey(element, buffer);
         LOGGER.trace("");
     }
 

@@ -109,7 +109,7 @@ public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCh
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(table, withClass("desc-table"))

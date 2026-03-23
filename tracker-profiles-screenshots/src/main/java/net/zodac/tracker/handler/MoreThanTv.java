@@ -35,7 +35,7 @@ public class MoreThanTv extends LuminanceHandler implements HasFixedHeader {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of();
     }
 }

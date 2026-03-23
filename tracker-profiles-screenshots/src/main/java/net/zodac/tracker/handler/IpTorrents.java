@@ -68,7 +68,7 @@ public class IpTorrents extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(table, withId("body"))

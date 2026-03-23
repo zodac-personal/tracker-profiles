@@ -72,7 +72,19 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> ircPasskeyElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withClass("sidebar"))
+                .child(div, atIndex(4))
+                .child(ul, atIndex(1))
+                .child(li, atIndex(5))
+                .build()
+        );
+    }
+
+    @Override
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(div, withClass("sidebar"))
@@ -82,8 +94,6 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
                 .build()
         );
     }
-
-    // TODO: IRC element
 
     @Override
     protected By logoutButtonSelector() {

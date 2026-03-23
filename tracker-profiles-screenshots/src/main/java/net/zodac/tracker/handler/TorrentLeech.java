@@ -113,7 +113,7 @@ public class TorrentLeech extends AbstractTrackerHandler implements HasDismissib
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(table, withClass("profileViewTable"))

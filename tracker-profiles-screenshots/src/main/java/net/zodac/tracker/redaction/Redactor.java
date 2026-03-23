@@ -36,15 +36,6 @@ public interface Redactor {
     void redact(WebElement element, String description, RedactionBuffer buffer);
 
     /**
-     * Redacts the user's passkey.
-     *
-     * @param element the {@link WebElement} containing the user's passkey
-     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
-     */
-    // TODO: Look for 'Passkey:', 'Pass Key', etc. as a prefix and retain it when redacting
-    void redactPasskey(WebElement element, RedactionBuffer buffer);
-
-    /**
      * Redacts the user's email address.
      *
      * @param element the {@link WebElement} containing the user's email
@@ -59,4 +50,22 @@ public interface Redactor {
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
     void redactIpAddress(WebElement element, RedactionBuffer buffer);
+
+    /**
+     * Redacts the user's IRC passkey.
+     *
+     * @param element     the {@link WebElement} to redact
+     * @param buffer      the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     */
+    // TODO: Look for 'IRC Key', etc. as a prefix and retain it when redacting
+    void redactIrcPasskey(WebElement element, RedactionBuffer buffer);
+
+    /**
+     * Redacts the user's torrent passkey.
+     *
+     * @param element the {@link WebElement} containing the user's passkey
+     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     */
+    // TODO: Look for 'Passkey:', 'Pass Key', etc. as a prefix and retain it when redacting
+    void redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
 }

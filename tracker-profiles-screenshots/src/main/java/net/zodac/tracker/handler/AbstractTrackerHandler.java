@@ -400,7 +400,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public final boolean hasSensitiveInformation() {
         return !emailElements().isEmpty()
             || !ipAddressElements().isEmpty()
-            || !passkeyElements().isEmpty()
+            || !ircPasskeyElements().isEmpty()
+            || !torrentPasskeyElements().isEmpty()
             || !sensitiveElements().isEmpty();
     }
 
@@ -419,7 +420,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         LOGGER.trace("Redacting elements");
         return redactEmailElements(redactor)
             + redactIpAddressElements(redactor)
-            + redactPasskeyElements(redactor)
+            + redactIrcPasskeyElements(redactor)
+            + redactTorrentPasskeyElements(redactor)
             + redactSensitiveElements(redactor);
     }
 
@@ -486,30 +488,60 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * A {@link Collection} of {@link By} selectors for the user's visible passkey on the profile page.
+     * A {@link Collection} of {@link By} selectors for the user's IRC passkey on the profile page.
      *
-     * @return {@link By} selectors for passkey HTML elements
+     * @return {@link By} selectors for IRC passkey HTML elements
      */
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> ircPasskeyElements() {
         return List.of();
     }
 
     /**
-     * The {@link RedactionBuffer} applied when redacting passkey elements. Override to adjust the buffer for a specific tracker.
+     * The {@link RedactionBuffer} applied when redacting IRC passkey elements. Override to adjust the buffer for a specific tracker.
      *
      * @return the {@link RedactionBuffer} for passkey redaction
      */
-    protected RedactionBuffer passkeyElementBuffer() {
+    protected RedactionBuffer ircPasskeyElementBuffer() {
         return RedactionBuffer.DEFAULT;
     }
 
-    private int redactPasskeyElements(final Redactor redactor) {
-        LOGGER.debug("\t\t- Redacting passkey elements");
-        return passkeyElements()
+    private int redactIrcPasskeyElements(final Redactor redactor) {
+        LOGGER.debug("\t\t- Redacting IRC passkey elements");
+        return ircPasskeyElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .mapToInt(element -> {
-                redactor.redactPasskey(element, passkeyElementBuffer());
+                redactor.redactIrcPasskey(element, ircPasskeyElementBuffer());
+                return 1;
+            })
+            .sum();
+    }
+
+    /**
+     * A {@link Collection} of {@link By} selectors for the user's visible torrent passkey on the profile page.
+     *
+     * @return {@link By} selectors for passkey HTML elements
+     */
+    protected Collection<By> torrentPasskeyElements() {
+        return List.of();
+    }
+
+    /**
+     * The {@link RedactionBuffer} applied when redacting torrent passkey elements. Override to adjust the buffer for a specific tracker.
+     *
+     * @return the {@link RedactionBuffer} for torrent passkey redaction
+     */
+    protected RedactionBuffer torrentPasskeyElementBuffer() {
+        return RedactionBuffer.DEFAULT;
+    }
+
+    private int redactTorrentPasskeyElements(final Redactor redactor) {
+        LOGGER.debug("\t\t- Redacting torrent passkey elements");
+        return torrentPasskeyElements()
+            .stream()
+            .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
+            .mapToInt(element -> {
+                redactor.redactTorrentPasskey(element, torrentPasskeyElementBuffer());
                 return 1;
             })
             .sum();

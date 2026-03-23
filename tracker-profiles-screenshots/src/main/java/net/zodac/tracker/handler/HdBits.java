@@ -141,7 +141,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
                 .from(tr, withId("seclog"))

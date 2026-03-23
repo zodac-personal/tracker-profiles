@@ -52,7 +52,7 @@ public class HappyFappy extends LuminanceHandler {
     }
 
     @Override
-    protected Collection<By> passkeyElements() {
+    protected Collection<By> torrentPasskeyElements() {
         return List.of();
     }
 }

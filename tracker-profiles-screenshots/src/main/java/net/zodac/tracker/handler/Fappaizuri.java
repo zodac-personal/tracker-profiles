@@ -27,7 +27,8 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -77,9 +78,9 @@ public class Fappaizuri extends AbstractTrackerHandler {
     }
 
     @Override
-    protected Map<String, By> sensitiveElements() {
-        return Map.of(
-            "IRC Key", XpathBuilder
+    protected Collection<By> ircPasskeyElements() {
+        return List.of(
+            XpathBuilder
                 .from(div, withClass("myFrame-content"))
                 .descendant(div, withClass("box"))
                 .child(div, atIndex(1))
