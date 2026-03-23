@@ -339,7 +339,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         try {
             LOGGER.debug("\t\t- Waiting to confirm user profile page has loaded successfully");
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-            browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());
+            browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());  // TODO: waitForElementToBeVisible?
             browserInteractionHelper.moveToOrigin();
             additionalActionOnProfilePage();
         } catch (final TimeoutException e) {
@@ -388,7 +388,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         driver.navigate().refresh();
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
-        browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());
+        browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());  // TODO: waitForElementToBeVisible, Libble
         additionalActionOnProfilePage();
     }
 

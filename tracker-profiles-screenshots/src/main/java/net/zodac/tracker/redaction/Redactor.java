@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.redaction;
 
+import java.util.List;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -24,6 +25,12 @@ import org.openqa.selenium.WebElement;
  * information.
  */
 public interface Redactor {
+
+    /**
+     * The known prefixes that may appear before an IRC passkey value. When one of these prefixes is found at the start of an element's text
+     * (case-insensitive), it is preserved and only the value following it is redacted by {@link #redactIrcPasskey(WebElement, RedactionBuffer)}.
+     */
+    List<String> IRC_KEY_PREFIXES = List.of("IRC Key");
 
     /**
      * Redacts the entire {@link WebElement}.
@@ -54,10 +61,13 @@ public interface Redactor {
     /**
      * Redacts the user's IRC passkey.
      *
-     * @param element     the {@link WebElement} to redact
-     * @param buffer      the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * <p>
+     * If the element's text begins with one of the prefixes in {@link #IRC_KEY_PREFIXES} (case-insensitive), that prefix is preserved and only the
+     * value after it is redacted.
+     *
+     * @param element the {@link WebElement} to redact
+     * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    // TODO: Look for 'IRC Key', etc. as a prefix and retain it when redacting
     void redactIrcPasskey(WebElement element, RedactionBuffer buffer);
 
     /**
@@ -66,6 +76,6 @@ public interface Redactor {
      * @param element the {@link WebElement} containing the user's passkey
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
      */
-    // TODO: Look for 'Passkey:', 'Pass Key', etc. as a prefix and retain it when redacting
+    // TODO: Look for 'Passkey', 'Pass Key', etc. as a prefix and retain it when redacting
     void redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
 }

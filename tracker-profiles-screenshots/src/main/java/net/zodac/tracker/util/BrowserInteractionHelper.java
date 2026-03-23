@@ -383,6 +383,25 @@ public class BrowserInteractionHelper {
     }
 
     /**
+     * Waits for the page that the {@link WebDriver} is loading to find the wanted {@link WebElement} and ensure it is visible.
+     *
+     * @param selector the {@link By} selector for the target {@link WebElement}
+     * @param timeout  the maximum {@link Duration} to wait
+     * @return the {@link WebElement} if found
+     * @throws TimeoutException thrown if the {@link WebElement} doesn't become visible in the specified {@link Duration}
+     */
+    public WebElement waitForElementToBeVisible(final By selector, final Duration timeout) {
+        try {
+            LOGGER.trace("Waiting {} for [{}] to be visible", timeout, selector);
+            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+        } catch (final TimeoutException e) {
+            LOGGER.trace("Element didn't become visible, page source: {}", driver.getPageSource());
+            throw e;
+        }
+    }
+
+    /**
      * Waits for the specified {@link WebElement} to become interactable.
      *
      * @param selector the {@link By} selector for the target {@link WebElement}
