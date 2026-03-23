@@ -26,7 +26,7 @@ Each tracker now confirms that the user profile page has loaded prior to taking 
 
 ## New/updated trackers
 
-Added or updated the UI for 20 or so trackers.
+Added or updated the UI for 20 or so trackers. See README.md for the full list of supported trackers.
 
 ## Retaining prefixes during redaction
 

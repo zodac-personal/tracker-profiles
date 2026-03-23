@@ -24,7 +24,6 @@ import static net.zodac.tracker.util.TextSearcher.IPV6;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
@@ -37,8 +36,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 class TextRedactor implements Redactor {
 
     private static final String DEFAULT_REDACTION_TEXT = "----";
-    private static final Pattern IRC_KEY_PREFIX = Pattern.compile(
-        "^\\s*(" + IRC_KEY_PREFIXES.stream().map(Pattern::quote).collect(Collectors.joining("|")) + ")\\s*:\\s*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern IRC_KEY_PREFIX = Pattern.compile("^\\s*(IRC Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TORRENT_PASSKEY_PREFIX = Pattern.compile("^\\s*(Passkey|Pass Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;
@@ -85,7 +84,13 @@ class TextRedactor implements Redactor {
 
     @Override
     public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        redact(element, "Passkey", buffer);
+        final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(element.getText());
+        if (matcher.find()) {
+            final String prefix = element.getText().substring(0, matcher.end());
+            driver.executeScript(String.format("arguments[0].innerText = '%s'", prefix + DEFAULT_REDACTION_TEXT), element);
+        } else {
+            redact(element, "Passkey", buffer);
+        }
     }
 
     private String retrieveOuterHtml(final WebElement element) {
