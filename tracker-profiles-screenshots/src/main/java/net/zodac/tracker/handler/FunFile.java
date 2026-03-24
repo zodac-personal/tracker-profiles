@@ -68,7 +68,6 @@ public class FunFile extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageContentSelector() {
-        // Struggled to find anything unique, except for the clickable link to the user's email address
         return XpathBuilder
             .from(a, containsHref("mailto:"))
             .build();

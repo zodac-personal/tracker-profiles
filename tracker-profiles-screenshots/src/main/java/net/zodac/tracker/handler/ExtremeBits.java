@@ -20,8 +20,10 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
@@ -66,7 +68,9 @@ public class ExtremeBits extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageContentSelector() {
-        return By.id("torrents");
+        return XpathBuilder
+            .from(img, containsSrc("img/flag/"))
+            .build();
     }
 
     @Override

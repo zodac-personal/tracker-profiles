@@ -20,6 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
+import static net.zodac.tracker.framework.xpath.HtmlElement.footer;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -34,13 +35,15 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasDismissibleBanner;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code NordicBytes} tracker.
  */
 @TrackerHandler(name = "NordicBytes", url = "https://nordicbytes.org/")
-public class NordicBytes extends AbstractTrackerHandler {
+public class NordicBytes extends AbstractTrackerHandler implements HasDismissibleBanner {
 
     @Override
     protected By loginButtonSelector() {
@@ -48,6 +51,36 @@ public class NordicBytes extends AbstractTrackerHandler {
             .from(form, atIndex(1))
             .child(button, atIndex(1))
             .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link NordicBytes}, there is sometimes a pop-up with the latest site updates, which blocks links to the profile page. We'll check for
+     * this, then close it if found.
+     */
+    @Override
+    public void dismissBanner() {
+        LOGGER.debug("\t\t- Checking for site changes modal");
+
+        final By siteChangesSelector = XpathBuilder
+            .from(footer, withClass("modal__footer"))
+            .descendant(button, withClass("btn-primary"))
+            .build();
+        final Collection<WebElement> siteChangesElements = driver.findElements(siteChangesSelector);
+
+        if (siteChangesElements.isEmpty()) {
+            LOGGER.debug("\t\t\t- No site changes found");
+            return;
+        }
+
+        LOGGER.debug("\t\t\t- Found {} site changes, clearing", siteChangesElements.size());
+        for (final WebElement siteChangesElement : siteChangesElements) {
+            clickButton(siteChangesElement);
+        }
+
+        LOGGER.debug("\t\t- Cleared site changes");
     }
 
     @Override

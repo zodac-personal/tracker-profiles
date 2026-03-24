@@ -22,6 +22,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.util.Collection;
@@ -68,6 +69,13 @@ public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck
 
         // Move the cursor out of the way, to avoid highlighting a tooltip for a badge
         browserInteractionHelper.moveToOrigin();
+    }
+
+    @Override
+    protected By profilePageContentSelector() {
+        return XpathBuilder
+            .from(div, withClass("user_profile"))
+            .build();
     }
 
     @Override

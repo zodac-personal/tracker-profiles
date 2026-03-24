@@ -163,7 +163,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final By loginLinkSelector = loginPageSelector();
 
         if (loginLinkSelector != null) {
-            final WebElement loginLink = driver.findElement(loginLinkSelector);
+            final WebElement loginLink = browserInteractionHelper.waitForElementToBeInteractable(loginLinkSelector, pageLoadDuration());
             clickButton(loginLink);
             cloudflareCheck(trackerName);
             browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), pageLoadDuration());
@@ -194,7 +194,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
-        final WebElement cloudflareElement = driver.findElement(trackerHasCloudflareCheck.cloudflareSelector());
+        final By cloudflareSelector = trackerHasCloudflareCheck.cloudflareSelector();
+        final WebElement cloudflareElement = browserInteractionHelper.waitForElementToAppear(cloudflareSelector, pageLoadDuration());
         browserInteractionHelper.highlightElement(cloudflareElement);
         DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
     }
@@ -332,14 +333,14 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         LOGGER.trace("Opening profile page");
         browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
 
-        final WebElement profilePageLink = driver.findElement(profilePageSelector());
+        final WebElement profilePageLink = browserInteractionHelper.waitForElementToBeInteractable(profilePageSelector(), pageTransitionsDuration());
         browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
         clickButton(profilePageLink);
 
         try {
             LOGGER.debug("\t\t- Waiting to confirm user profile page has loaded successfully");
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-            browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());  // TODO: waitForElementToBeVisible?
+            browserInteractionHelper.waitForElementToBeVisible(profilePageContentSelector(), pageLoadDuration());
             browserInteractionHelper.moveToOrigin();
             additionalActionOnProfilePage();
         } catch (final TimeoutException e) {
@@ -388,7 +389,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         driver.navigate().refresh();
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
-        browserInteractionHelper.waitForElementToAppear(profilePageContentSelector(), pageLoadDuration());  // TODO: waitForElementToBeVisible, Libble
+        browserInteractionHelper.waitForElementToBeVisible(profilePageContentSelector(), pageLoadDuration());
         additionalActionOnProfilePage();
     }
 

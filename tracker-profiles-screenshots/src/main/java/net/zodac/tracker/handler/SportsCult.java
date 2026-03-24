@@ -72,7 +72,6 @@ public class SportsCult extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageContentSelector() {
-        // Struggled to find anything unique, except the flag for the user's country
         return XpathBuilder
             .from(img, containsSrc("images/flag/"))
             .build();

@@ -22,6 +22,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.body;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
@@ -82,11 +83,14 @@ public class Aura4k extends Unit3dHandler {
             .from(body, atIndex(1))
             .child(div, atLastIndex())
             .build();
+        // The pop-up can be slow to load, so first wait for it to appear, then wait for it to disappear
+        browserInteractionHelper.waitForElementToBeVisible(loginPopupSelector, pageLoadDuration());
         browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
 
         super.openUserDropdownMenu();
         return XpathBuilder
-            .from(a, withClass("top-nav__username"))
+            .from(li, withClass("top-nav__dropdown"))
+            .descendant(a, withClass("top-nav__username"))
             .build();
     }
 

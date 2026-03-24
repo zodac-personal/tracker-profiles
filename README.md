@@ -94,7 +94,8 @@ There are currently **115** supported trackers listed below. The available track
 - Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides the
   **Manual** option)
 
-**Note:** Any tracker not listed in any section below has not been tested (most likely due to lack of an account).
+The implementation for these tracers can be found in
+the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
 
 ### Headless
 
@@ -412,8 +413,8 @@ The following are all possible configuration options, defined as environment var
 
 | Environment Variable            | Description                                                                                                                                                                                              | Default Value                    |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                             |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                             |
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                              | 1050                             |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                               | 1680                             |
 | *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                                |
 | *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                             |
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                             |

@@ -46,9 +46,18 @@ public class D3SiNet extends GazelleHandler {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link D3SiNet}, the {@code SOS} section loads in after the rest of the page, so we wait for this to ensure the page doesn't render any
+     * additional elements after we begin redaction.
+     */
     @Override
     protected By profilePageContentSelector() {
-        return By.id("community");
+        return XpathBuilder.from(li, withId("sos"))
+            .child(a, atIndex(1))
+            .build();
     }
 
     @Override

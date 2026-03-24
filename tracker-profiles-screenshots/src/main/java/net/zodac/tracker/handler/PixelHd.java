@@ -37,7 +37,6 @@ import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasDismissibleBanner;
-import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -168,16 +167,6 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
                 .child(li, atIndex(4))
                 .build()
         );
-    }
-
-    /**
-     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the right.
-     *
-     * @return the {@link RedactionBuffer} for passkey redaction
-     */
-    @Override
-    protected RedactionBuffer torrentPasskeyElementBuffer() {
-        return RedactionBuffer.withRightOffset(13);
     }
 
     @Override

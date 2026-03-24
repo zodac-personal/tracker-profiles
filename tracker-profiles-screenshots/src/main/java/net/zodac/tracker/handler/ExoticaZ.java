@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
@@ -80,7 +81,9 @@ public class ExoticaZ extends AvistazNetworkHandler {
 
     @Override
     protected By profilePageContentSelector() {
-        return By.id("ModalUploadAvatar");
+        return XpathBuilder
+            .from(button, withAttribute("title", "Upload Avatar"))
+            .build();
     }
 
     @Override

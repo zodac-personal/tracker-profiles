@@ -83,7 +83,6 @@ public class TranceTraffic extends AbstractTrackerHandler {
 
     @Override
     protected By profilePageContentSelector() {
-        // Struggled to find anything unique, so we're choosing the button to show all torrents being seeded
         return XpathBuilder
             .from(a, containsHref("sdlist=1"))
             .build();

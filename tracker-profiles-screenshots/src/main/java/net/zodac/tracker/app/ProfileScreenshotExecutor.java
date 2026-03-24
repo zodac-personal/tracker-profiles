@@ -86,7 +86,7 @@ final class ProfileScreenshotExecutor {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             if (attempt != FIRST_ATTEMPT) {
                 LOGGER.warn("");
-                LOGGER.warn("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
+                LOGGER.error("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
             }
 
             try {
@@ -206,7 +206,7 @@ final class ProfileScreenshotExecutor {
         try {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             ensureErrorDirectoryExists();
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, true, 0);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, false, 0);
             LOGGER.warn("\t\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
             LOGGER.debug("\t\t- Unable to take failure screenshot of '{}'", trackerName, e);

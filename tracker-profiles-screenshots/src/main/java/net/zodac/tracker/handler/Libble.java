@@ -80,15 +80,6 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
         return By.id("sos");
     }
 
-    /**
-     * Because {@link #profilePageContentSelector()} is only used to check for the existence of an element, we sometimes begin redaction too early. We
-     * add a check to ensure the element is also visible so no additional rendering occurs.
-     */
-    @Override
-    protected void additionalActionOnProfilePage() {
-        browserInteractionHelper.waitForElementToBeVisible(profilePageContentSelector(), pageLoadDuration());
-    }
-
     @Override
     public By headerSelector() {
         return By.id("header");

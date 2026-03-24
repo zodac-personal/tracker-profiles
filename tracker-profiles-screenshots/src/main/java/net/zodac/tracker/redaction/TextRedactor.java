@@ -21,6 +21,7 @@ import static net.zodac.tracker.util.TextSearcher.EMAIL;
 import static net.zodac.tracker.util.TextSearcher.IPV4;
 import static net.zodac.tracker.util.TextSearcher.IPV4_MASKED;
 import static net.zodac.tracker.util.TextSearcher.IPV6;
+import static net.zodac.tracker.util.TextSearcher.IPV6_PARTIAL;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,7 +115,8 @@ class TextRedactor implements Redactor {
     private static String replaceIpAddresses(final String input) {
         return IPV4.matcher(input).replaceAll(DEFAULT_REDACTION_TEXT)
             .replaceAll(IPV4_MASKED.pattern(), DEFAULT_REDACTION_TEXT)
-            .replaceAll(IPV6.pattern(), DEFAULT_REDACTION_TEXT);
+            .replaceAll(IPV6.pattern(), DEFAULT_REDACTION_TEXT)
+            .replaceAll(IPV6_PARTIAL.pattern(), DEFAULT_REDACTION_TEXT);
     }
 
     private static String escapeForJavaScriptString(final String input) {

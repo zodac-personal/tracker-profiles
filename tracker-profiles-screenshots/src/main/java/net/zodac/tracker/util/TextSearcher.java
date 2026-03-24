@@ -35,7 +35,7 @@ public final class TextSearcher {
     public static final Pattern IPV4 = Pattern.compile("((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)");
 
     /**
-     * Regex pattern to find an IPv4 address that has been masked ({@code 192.168.x.x}) substring.
+     * Regex pattern to find an IPv4 address that has been masked ({@code 192.168.x.x}).
      */
     public static final Pattern IPV4_MASKED = Pattern.compile("((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x");
 
@@ -43,6 +43,11 @@ public final class TextSearcher {
      * Regex pattern to find an IPv6 address substring.
      */
     public static final Pattern IPV6 = Pattern.compile("([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
+
+    /**
+     * Regex pattern to find an IPv6 address that has been partially masked ({@code 2404:111:506F:}).
+     */
+    public static final Pattern IPV6_PARTIAL = Pattern.compile("([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{0,4}");
 
     private TextSearcher() {
 
@@ -73,7 +78,8 @@ public final class TextSearcher {
      */
     public static boolean hasIpAddress(final String... inputs) {
         for (final String input : inputs) {
-            if (IPV4.matcher(input).find() || IPV4_MASKED.matcher(input).find() || IPV6.matcher(input).find()) {
+            if (IPV4.matcher(input).find() || IPV4_MASKED.matcher(input).find() || IPV6.matcher(input).find()
+            || IPV6_PARTIAL.matcher(input).find()) {
                 return true;
             }
         }
