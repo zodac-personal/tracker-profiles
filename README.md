@@ -149,7 +149,7 @@ background:
 | [GreatPosterWall](https://greatposterwall.com/) |
 | [HappyFappy](https://www.happyfappy.net/)       |
 | [HDUnited](https://hd-united.vn/)               |
-| [HDZone](https://hdzero.org/)                   |
+| [HDZero](https://hdzero.org/)                   |
 | [Hellenic-HD](https://hellenic-hd.cc/)          |
 | [ImmortalSeed](https://immortalseed.me/)        |
 | [InfinityHD](https://infinityhd.net/)           |
