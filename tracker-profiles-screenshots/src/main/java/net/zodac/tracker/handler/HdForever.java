@@ -24,9 +24,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import org.openqa.selenium.By;
 
@@ -34,7 +36,7 @@ import org.openqa.selenium.By;
  * Extension of the {@link GazelleHandler} for the {@code HD-Forever} tracker.
  */
 @TrackerHandler(name = "HD-Forever", type = TrackerType.MANUAL, url = "https://hdf.world/")
-public class HdForever extends GazelleHandler implements NeedsExplicitTranslation {
+public class HdForever extends GazelleHandler implements HasJumpButtons, NeedsExplicitTranslation {
 
     @Override
     protected By loginPageSelector() {
@@ -55,6 +57,14 @@ public class HdForever extends GazelleHandler implements NeedsExplicitTranslatio
     @Override
     public void translatePageToEnglish() {
         browserInteractionHelper.translatePage();
+    }
+
+    @Override
+    public List<By> jumpButtonSelectors() {
+        return List.of(
+            By.id("scroll-top"),
+            By.id("scroll-bottom")
+        );
     }
 
     @Override
