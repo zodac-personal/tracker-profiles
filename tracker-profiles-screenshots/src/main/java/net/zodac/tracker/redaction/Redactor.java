@@ -23,6 +23,7 @@ import org.openqa.selenium.WebElement;
  * Interface defining available redaction methods. These can be used prior to taking a screenshot of a tracker profile page to hide sensitive user
  * information.
  */
+// TODO: Have these return int for the number of elements redacted, even if it's always 1 for now
 public interface Redactor {
 
     /**

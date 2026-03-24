@@ -54,7 +54,7 @@ class TextRedactor implements Redactor {
     @Override
     public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         final String redactionText = String.format("%s: %s", description, DEFAULT_REDACTION_TEXT);
-        driver.executeScript(String.format("arguments[0].innerText = '%s'", redactionText), element);
+        setInnerText(element, redactionText);
     }
 
     @Override
@@ -74,23 +74,24 @@ class TextRedactor implements Redactor {
     @Override
     public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         final Matcher matcher = IRC_KEY_PREFIX.matcher(element.getText());
-        if (matcher.find()) {
-            final String prefix = element.getText().substring(0, matcher.end());
-            driver.executeScript(String.format("arguments[0].innerText = '%s'", prefix + DEFAULT_REDACTION_TEXT), element);
-        } else {
-            redact(element, "IRC Passkey", buffer);
-        }
+        final String prefix = getPrefixFromMatcher(element, matcher);
+        setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
     }
 
     @Override
     public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(element.getText());
-        if (matcher.find()) {
-            final String prefix = element.getText().substring(0, matcher.end());
-            driver.executeScript(String.format("arguments[0].innerText = '%s'", prefix + DEFAULT_REDACTION_TEXT), element);
-        } else {
-            redact(element, "Passkey", buffer);
-        }
+        final String prefix = getPrefixFromMatcher(element, matcher);
+
+        setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
+    }
+
+    private void setInnerText(final WebElement element, final String text) {
+        driver.executeScript(String.format("arguments[0].innerText = '%s'", text), element);
+    }
+
+    private static String getPrefixFromMatcher(WebElement element, Matcher matcher) {
+        return matcher.find() ? element.getText().substring(0, matcher.end()) : "";
     }
 
     private String retrieveOuterHtml(final WebElement element) {
