@@ -67,7 +67,7 @@ public class AnimeBytes extends AbstractTrackerHandler {
         final By logoutConfirmSelector = XpathBuilder
             .from(input, withName("yes"), withType("submit"))
             .build();
-        final WebElement logoutConfirm = browserInteractionHelper.waitForElementToAppear(logoutConfirmSelector, pageTransitionsDuration());
+        final WebElement logoutConfirm = browserInteractionHelper.waitForElementToBePresent(logoutConfirmSelector, pageTransitionsDuration());
         clickButton(logoutConfirm);
     }
 

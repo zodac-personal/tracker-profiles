@@ -166,7 +166,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             final WebElement loginLink = browserInteractionHelper.waitForElementToBeInteractable(loginLinkSelector, pageLoadDuration());
             clickButton(loginLink);
             cloudflareCheck(trackerName);
-            browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), pageLoadDuration());
+            browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
         } else {
             cloudflareCheck(trackerName);
         }
@@ -195,7 +195,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
 
         final By cloudflareSelector = trackerHasCloudflareCheck.cloudflareSelector();
-        final WebElement cloudflareElement = browserInteractionHelper.waitForElementToAppear(cloudflareSelector, pageLoadDuration());
+        final WebElement cloudflareElement = browserInteractionHelper.waitForElementToBePresent(cloudflareSelector, pageLoadDuration());
         browserInteractionHelper.highlightElement(cloudflareElement);
         DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
     }
@@ -213,7 +213,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         try {
             LOGGER.trace("Entering username");
-            browserInteractionHelper.waitForElementToAppear(usernameFieldSelector(), pageLoadDuration());
+            browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
             final WebElement usernameField = browserInteractionHelper.waitForElementToBeInteractable(usernameFieldSelector(), pageLoadDuration());
             usernameField.clear();
             usernameField.sendKeys(username);
@@ -223,7 +223,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         LOGGER.trace("Entering password");
         final By passwordFieldSelector = passwordFieldSelector();
-        browserInteractionHelper.waitForElementToAppear(passwordFieldSelector, pageLoadDuration());
+        browserInteractionHelper.waitForElementToBePresent(passwordFieldSelector, pageLoadDuration());
         final WebElement passwordField = browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector, pageLoadDuration());
         passwordField.clear();
         passwordField.sendKeys(password);
@@ -234,7 +234,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         //       Maybe even add a listener to the timer code and wait for a page update?
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
-            browserInteractionHelper.waitForElementToAppear(loginButtonSelector, pageLoadDuration());
+            browserInteractionHelper.waitForElementToBePresent(loginButtonSelector, pageLoadDuration());
             final WebElement loginButton = browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector, pageLoadDuration());
             LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
@@ -244,7 +244,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         try {
             final By postLoginSelector = postLoginSelector();
             LOGGER.trace("Logged in, waiting for post-login selector: {}", postLoginSelector);
-            browserInteractionHelper.waitForElementToAppear(postLoginSelector, pageLoadDuration());
+            browserInteractionHelper.waitForElementToBePresent(postLoginSelector, pageLoadDuration());
         } catch (final TimeoutException e) {
             throw new TimeoutException("Timed out waiting for post-login selector, cannot confirm login was successful", e);
         }
@@ -619,12 +619,12 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public final void logout() {
         LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToAppear(logoutButtonSelector, pageLoadDuration());
+        browserInteractionHelper.waitForElementToBePresent(logoutButtonSelector, pageLoadDuration());
         final WebElement logoutButton = browserInteractionHelper.waitForElementToBeInteractable(logoutButtonSelector, pageTransitionsDuration());
         clickButton(logoutButton);
 
         additionalActionAfterLogoutClick();
-        browserInteractionHelper.waitForElementToAppear(postLogoutElementSelector(), pageTransitionsDuration());
+        browserInteractionHelper.waitForElementToBePresent(postLogoutElementSelector(), pageTransitionsDuration());
     }
 
     /**
