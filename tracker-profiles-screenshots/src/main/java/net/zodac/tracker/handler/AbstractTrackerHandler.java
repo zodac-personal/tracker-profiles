@@ -287,12 +287,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Defines the {@link By} selector of the {@link WebElement} of the login button. Can be {@link Nullable} if there is no login button, and a user
-     * interaction is required instead,
+     * Defines the {@link By} selector of the {@link WebElement} of the login button.
      *
      * @return the login button {@link By} selector
      */
-    @Nullable // TODO: I think nothing sets this to null anymore - confirm and remove
     protected By loginButtonSelector() {
         return By.id("login-button");
     }

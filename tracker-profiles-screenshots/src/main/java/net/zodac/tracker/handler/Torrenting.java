@@ -103,8 +103,7 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
 
     @Override
     public By headerSelector() {
-        // Not actually used
-        return By.cssSelector("#navBarOuter");
+        throw new IllegalStateException("Should not be called, unfixHeader() has been overridden");
     }
 
     @Override
