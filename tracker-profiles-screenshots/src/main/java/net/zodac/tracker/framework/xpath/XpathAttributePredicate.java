@@ -207,8 +207,8 @@ public final class XpathAttributePredicate {
      * </pre>
      *
      * <p>
-     * Note that this query will also match on partial class names. For example, the above query would match on {@code <div class="wanted-class">} and
-     * also on {@code <div class="wanted-class-another">}.
+     * Note that this query will also match on partial class names. For example, the above query would match on {@code <div class="wanted-class"/>}
+     * and also on {@code <div class="wanted-class-another"/>}.
      *
      * @param value the wanted {@code class} for the HTML element
      * @return this {@link XpathAttributePredicate}

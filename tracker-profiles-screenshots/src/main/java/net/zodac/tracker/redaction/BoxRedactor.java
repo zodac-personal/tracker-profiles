@@ -40,7 +40,7 @@ class BoxRedactor implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
+    public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var bounding_rectangle = element.getBoundingClientRect()
@@ -80,10 +80,11 @@ class BoxRedactor implements Redactor {
             "orange", "white", description);
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
+    public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
@@ -168,10 +169,11 @@ class BoxRedactor implements Redactor {
             "blue", "white", "Email");
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             
@@ -268,10 +270,11 @@ class BoxRedactor implements Redactor {
             "yellow", "black", "IP");
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var full_text = element.textContent
@@ -378,10 +381,11 @@ class BoxRedactor implements Redactor {
             """.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "gray", "IRC", IRC_KEY_PREFIX_ALTERNATION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var full_text = element.textContent
@@ -468,5 +472,6 @@ class BoxRedactor implements Redactor {
             """.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "red", "Passkey", TORRENT_PASSKEY_PREFIX_ALTERNATION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 }

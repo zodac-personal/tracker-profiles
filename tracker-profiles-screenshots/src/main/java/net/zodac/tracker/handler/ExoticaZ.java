@@ -21,6 +21,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -39,7 +40,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -97,7 +97,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
-                .from(NamedHtmlElement.of("main"), withId("content-area"))
+                .from(main, withId("content-area"))
                 .child(div, atIndex(1))
                 .child(div, atIndex(2))
                 .child(div, atIndex(3))
@@ -113,7 +113,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     protected Collection<By> ipAddressElements() {
         return List.of(
             XpathBuilder
-                .from(NamedHtmlElement.of("main"), withId("content-area"))
+                .from(main, withId("content-area"))
                 .child(div, atIndex(1))
                 .child(div, atIndex(2))
                 .child(div, atIndex(3))

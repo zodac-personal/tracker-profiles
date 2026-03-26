@@ -18,11 +18,11 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -42,7 +42,7 @@ public class BitPorn extends Unit3dHandler {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--show"))
+            .from(main, withClass("page__user-profile--show"))
             .build();
     }
 }

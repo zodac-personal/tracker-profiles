@@ -450,10 +450,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.hasEmailAddress(element.getText(), browserInteractionHelper.getValue(element)))
-            .mapToInt(element -> {
-                redactor.redactEmail(element, emailElementBuffer());
-                return 1;
-            })
+            .mapToInt(element -> redactor.redactEmail(element, emailElementBuffer()))
             .sum();
     }
 
@@ -481,10 +478,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
             .filter(element -> TextSearcher.hasIpAddress(element.getText(), browserInteractionHelper.getValue(element)))
-            .mapToInt(element -> {
-                redactor.redactIpAddress(element, ipAddressElementBuffer());
-                return 1;
-            })
+            .mapToInt(element -> redactor.redactIpAddress(element, ipAddressElementBuffer()))
             .sum();
     }
 
@@ -511,10 +505,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return ircPasskeyElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .mapToInt(element -> {
-                redactor.redactIrcPasskey(element, ircPasskeyElementBuffer());
-                return 1;
-            })
+            .mapToInt(element -> redactor.redactIrcPasskey(element, ircPasskeyElementBuffer()))
             .sum();
     }
 
@@ -541,10 +532,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return torrentPasskeyElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .mapToInt(element -> {
-                redactor.redactTorrentPasskey(element, torrentPasskeyElementBuffer());
-                return 1;
-            })
+            .mapToInt(element -> redactor.redactTorrentPasskey(element, torrentPasskeyElementBuffer()))
             .sum();
     }
 
@@ -573,8 +561,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             .mapToInt(entry -> {
                 final String description = entry.getKey();
                 final By selector = entry.getValue();
-                driver.findElements(selector).forEach(element -> redactor.redact(element, description, sensitiveElementBuffer()));
-                return 1;
+                return driver.findElements(selector)
+                    .stream()
+                    .mapToInt(element -> redactor.redact(element, description, sensitiveElementBuffer()))
+                    .sum();
             })
             .sum();
     }

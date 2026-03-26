@@ -23,7 +23,6 @@ import org.openqa.selenium.WebElement;
  * Interface defining available redaction methods. These can be used prior to taking a screenshot of a tracker profile page to hide sensitive user
  * information.
  */
-// TODO: Have these return int for the number of elements redacted, even if it's always 1 for now
 public interface Redactor {
 
     /**
@@ -32,24 +31,27 @@ public interface Redactor {
      * @param element     the {@link WebElement} to redact
      * @param description the {@link String} to describe what the sensitive information is
      * @param buffer      the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * @return the number of elements redacted
      */
-    void redact(WebElement element, String description, RedactionBuffer buffer);
+    int redact(WebElement element, String description, RedactionBuffer buffer);
 
     /**
      * Redacts the user's email address.
      *
      * @param element the {@link WebElement} containing the user's email
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * @return the number of elements redacted
      */
-    void redactEmail(WebElement element, RedactionBuffer buffer);
+    int redactEmail(WebElement element, RedactionBuffer buffer);
 
     /**
      * Redacts the user's IP address.
      *
      * @param element the {@link WebElement} containing the user's IP address
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * @return the number of elements redacted
      */
-    void redactIpAddress(WebElement element, RedactionBuffer buffer);
+    int redactIpAddress(WebElement element, RedactionBuffer buffer);
 
     /**
      * Redacts the user's IRC passkey.
@@ -59,8 +61,9 @@ public interface Redactor {
      *
      * @param element the {@link WebElement} to redact
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * @return the number of elements redacted
      */
-    void redactIrcPasskey(WebElement element, RedactionBuffer buffer);
+    int redactIrcPasskey(WebElement element, RedactionBuffer buffer);
 
     /**
      * Redacts the user's torrent passkey.
@@ -70,6 +73,7 @@ public interface Redactor {
      *
      * @param element the {@link WebElement} containing the user's passkey
      * @param buffer  the {@link RedactionBuffer} defining the pixel expansion on each side of the redaction, if needed
+     * @return the number of elements redacted
      */
-    void redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
+    int redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
 }

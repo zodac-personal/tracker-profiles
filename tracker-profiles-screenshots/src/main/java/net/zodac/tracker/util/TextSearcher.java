@@ -78,8 +78,10 @@ public final class TextSearcher {
      */
     public static boolean hasIpAddress(final String... inputs) {
         for (final String input : inputs) {
-            if (IPV4.matcher(input).find() || IPV4_MASKED.matcher(input).find() || IPV6.matcher(input).find()
-            || IPV6_PARTIAL.matcher(input).find()) {
+            if (IPV4.matcher(input).find()
+                || IPV4_MASKED.matcher(input).find()
+                || IPV6.matcher(input).find()
+                || IPV6_PARTIAL.matcher(input).find()) {
                 return true;
             }
         }

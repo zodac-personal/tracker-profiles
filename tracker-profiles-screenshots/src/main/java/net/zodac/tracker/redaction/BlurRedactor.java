@@ -42,12 +42,13 @@ class BlurRedactor implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
+    public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         driver.executeScript(String.format("arguments[0].style.filter = '%s'", BLUR_DEFINITION), element);
+        return 1;
     }
 
     @Override
-    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
+    public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
@@ -95,10 +96,11 @@ class BlurRedactor implements Redactor {
             """.formatted(BLUR_DEFINITION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             
@@ -158,10 +160,11 @@ class BlurRedactor implements Redactor {
             """.formatted(BLUR_DEFINITION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var full_text = element.textContent
@@ -212,10 +215,11 @@ class BlurRedactor implements Redactor {
             """.formatted(IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 
     @Override
-    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
             var full_text = element.textContent
@@ -266,5 +270,6 @@ class BlurRedactor implements Redactor {
             """.formatted(TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION);
 
         driver.executeScript(script, element);
+        return 1;
     }
 }

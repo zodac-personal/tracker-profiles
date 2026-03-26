@@ -93,7 +93,10 @@ public enum HtmlElement implements Element {
      */
     li,
 
-    // TODO: Add main
+    /**
+     * Main {@link Element}: {@code <main>}.
+     */
+    main,
 
     /**
      * Navigation {@link Element}: {@code <nav>}.

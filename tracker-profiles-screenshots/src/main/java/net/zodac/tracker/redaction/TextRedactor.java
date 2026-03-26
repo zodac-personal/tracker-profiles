@@ -53,45 +53,49 @@ class TextRedactor implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
+    public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         final String redactionText = String.format("%s: %s", description, DEFAULT_REDACTION_TEXT);
         setInnerText(element, redactionText);
+        return 1;
     }
 
     @Override
-    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
+    public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceEmail(htmlContent);
         setOuterHtml(element, substitutionHtmlContent);
+        return 1;
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
         final String substitutionHtmlContent = replaceIpAddresses(htmlContent);
         setOuterHtml(element, substitutionHtmlContent);
+        return 1;
     }
 
     @Override
-    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         final Matcher matcher = IRC_KEY_PREFIX.matcher(element.getText());
         final String prefix = getPrefixFromMatcher(element, matcher);
         setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
+        return 1;
     }
 
     @Override
-    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(element.getText());
         final String prefix = getPrefixFromMatcher(element, matcher);
-
         setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
+        return 1;
     }
 
     private void setInnerText(final WebElement element, final String text) {
         driver.executeScript(String.format("arguments[0].innerText = '%s'", text), element);
     }
 
-    private static String getPrefixFromMatcher(WebElement element, Matcher matcher) {
+    private static String getPrefixFromMatcher(final WebElement element, final Matcher matcher) {
         return matcher.find() ? element.getText().substring(0, matcher.end()) : "";
     }
 

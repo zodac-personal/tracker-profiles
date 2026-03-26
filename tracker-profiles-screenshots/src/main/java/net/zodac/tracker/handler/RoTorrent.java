@@ -19,13 +19,13 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
@@ -47,7 +47,7 @@ public class RoTorrent extends Unit3dHandler implements HasCloudflareCheck {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--show"))
+            .from(main, withClass("page__user-profile--show"))
             .build();
     }
 

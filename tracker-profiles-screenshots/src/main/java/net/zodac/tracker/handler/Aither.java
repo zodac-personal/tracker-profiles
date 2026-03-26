@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
@@ -25,7 +26,6 @@ import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -38,7 +38,7 @@ public class Aither extends Unit3dHandler {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--show"))
+            .from(main, withClass("page__user-profile--show"))
             .build();
     }
 

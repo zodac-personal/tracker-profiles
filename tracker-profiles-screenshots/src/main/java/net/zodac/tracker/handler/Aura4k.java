@@ -23,6 +23,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
@@ -36,7 +37,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
@@ -97,7 +97,7 @@ public class Aura4k extends Unit3dHandler {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(NamedHtmlElement.of("main"), withClass("profile-page-wow"))
+            .from(main, withClass("profile-page-wow"))
             .build();
     }
 

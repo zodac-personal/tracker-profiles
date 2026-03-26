@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -28,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
@@ -42,7 +42,7 @@ public class FearNoPeer extends Unit3dHandler {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(NamedHtmlElement.of("main"), withClass("page__user-profile--premium-2026"))
+            .from(main, withClass("page__user-profile--premium-2026"))
             .build();
     }
 

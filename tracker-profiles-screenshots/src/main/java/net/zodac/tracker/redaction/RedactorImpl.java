@@ -50,38 +50,43 @@ public class RedactorImpl implements Redactor {
     }
 
     @Override
-    public void redact(final WebElement element, final String description, final RedactionBuffer buffer) {
+    public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redact(element, description, buffer);
+        final int numberOfRedactedElements = redactor.redact(element, description, buffer);
         LOGGER.trace("");
+        return numberOfRedactedElements;
     }
 
     @Override
-    public void redactEmail(final WebElement element, final RedactionBuffer buffer) {
+    public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactEmail(element, buffer);
+        final int numberOfRedactedElements = redactor.redactEmail(element, buffer);
         LOGGER.trace("");
+        return numberOfRedactedElements;
     }
 
     @Override
-    public void redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactIpAddress(element, buffer);
+        final int numberOfRedactedElements = redactor.redactIpAddress(element, buffer);
         LOGGER.trace("");
+        return numberOfRedactedElements;
     }
 
     @Override
-    public void redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactIrcPasskey(element, buffer);
+        final int numberOfRedactedElements = redactor.redactIrcPasskey(element, buffer);
         LOGGER.trace("");
+        return numberOfRedactedElements;
     }
 
     @Override
-    public void redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
+    public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         logElementToBeRedacted(element);
-        redactor.redactTorrentPasskey(element, buffer);
+        final int numberOfRedactedElements = redactor.redactTorrentPasskey(element, buffer);
         LOGGER.trace("");
+        return numberOfRedactedElements;
     }
 
     private static void logElementToBeRedacted(final WebElement element) {
