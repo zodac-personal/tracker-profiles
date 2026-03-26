@@ -34,7 +34,6 @@ import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.config.ExistingScreenshotAction;
 import net.zodac.tracker.framework.config.RedactionType;
 import net.zodac.tracker.framework.exception.CancelledInputException;
-import net.zodac.tracker.framework.exception.DriverAttachException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
@@ -86,7 +85,7 @@ final class ProfileScreenshotExecutor {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             if (attempt != FIRST_ATTEMPT) {
                 LOGGER.warn("");
-                LOGGER.error("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
+                LOGGER.info("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
             }
 
             try {
@@ -116,9 +115,6 @@ final class ProfileScreenshotExecutor {
         } catch (final CancelledInputException e) {
             LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- User cancelled manual input for tracker '{}'", trackerCredential.name());
-        } catch (final DriverAttachException e) {
-            LOGGER.debug("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name(), e);
-            LOGGER.warn("\t- Unable to attach to Python Selenium web browser for tracker '{}'", trackerCredential.name());
         } catch (final FileNotFoundException e) {
             LOGGER.debug("\t- Unable to find expected file for tracker '{}'", trackerCredential.name());
             LOGGER.warn("\t- Unable to find expected file for tracker '{}': {}", trackerCredential.name(), e.getMessage());

@@ -45,9 +45,13 @@ public final class TextSearcher {
     public static final Pattern IPV6 = Pattern.compile("([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
 
     /**
-     * Regex pattern to find an IPv6 address that has been partially masked ({@code 2404:111:506F:}).
+     * Regex pattern to find an IPv6 address that has been partially masked ({@code 2404:1111:506f:}).
+     *
+     * <p>
+     * Requires at least 3 groups of exactly 4 hex characters each followed by {@code :}, with an optional trailing partial octet of 1–4 hex
+     * characters. This avoids false positives on time strings such as {@code 12:59:05}.
      */
-    public static final Pattern IPV6_PARTIAL = Pattern.compile("([0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{0,4}");
+    public static final Pattern IPV6_PARTIAL = Pattern.compile("([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}");
 
     private TextSearcher() {
 

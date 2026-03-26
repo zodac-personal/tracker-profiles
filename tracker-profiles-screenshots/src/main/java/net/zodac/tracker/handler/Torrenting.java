@@ -39,7 +39,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Torrenting} tracker.
  */
-@TrackerHandler(name = "Torrenting", type = TrackerType.CLOUDFLARE_CHECK, url = "https://www.torrenting.com/")
+@TrackerHandler(name = "Torrenting", type = TrackerType.MANUAL, url = "https://www.torrenting.com/")
 public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollDuringScreenshot, HasCloudflareCheck, HasFixedHeader {
 
     @Override

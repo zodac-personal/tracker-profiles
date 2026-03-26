@@ -15,16 +15,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework.driver.python;
+package net.zodac.tracker.handler;
 
-import com.google.gson.annotations.SerializedName;
+import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 
 /**
- * A simple class containing the information of the Selenium web browser session that was launched by Python and returned in the REST response.
- *
- * @param sessionId  the ID of the Selenium web browser session
- * @param sessionUrl the URL of the Selenium web browser session
+ * Extension of the {@link Unit3dHandler} for the {@code HDZero} tracker.
  */
-public record SeleniumSession(@SerializedName("session_id") String sessionId, @SerializedName("session_url") String sessionUrl) {
+@TrackerHandler(name = "HDZero", type = TrackerType.MANUAL, url = "https://hdzero.org/")
+public class HdZero extends Unit3dHandler implements HasCloudflareCheck {
 
 }

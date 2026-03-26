@@ -37,7 +37,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Hawke-Uno} tracker.
  */
-@TrackerHandler(name = "Hawke-Uno", type = TrackerType.CLOUDFLARE_CHECK, url = "https://hawke.uno/")
+@TrackerHandler(name = "Hawke-Uno", type = TrackerType.MANUAL, url = "https://hawke.uno/")
 public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override

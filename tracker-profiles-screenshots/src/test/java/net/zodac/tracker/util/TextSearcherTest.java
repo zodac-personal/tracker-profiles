@@ -119,9 +119,8 @@ class TextSearcherTest {
 
         @ParameterizedTest
         @ValueSource(strings = {
-            "2404:4400:4101:",
-            "Connection from 2001:0db8:85a3: detected",
-            "2001:db8::1" // compressed IPv6 detected via partial pattern
+            "2404:1111:506f:",
+            "Connection from 2001:0db8:85a3: detected"
         })
         void testPartialIpv6PresentShouldReturnTrue(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))
@@ -133,7 +132,10 @@ class TextSearcherTest {
             "",
             "plain text only",
             "999.999.999.999",
-            "192.168.1"
+            "192.168.1",
+            "12:59:05",
+            "Logged at 08:30:00 UTC",
+            "2001:db8::1" // compressed IPv6 with short octets does not match the strict partial pattern
         })
         void testNoValidIpPresentShouldReturnFalse(final String input) {
             assertThat(TextSearcher.hasIpAddress(input))

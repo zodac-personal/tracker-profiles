@@ -1,6 +1,10 @@
 # Backwards Incompatible Changes
 
-I've made some updates to the `REDACTION_TYPE` environment variable listed below.
+I've made some updates to the environment variable listed below.
+
+## Removed `TRACKER_EXECUTION_ORDER` CLOUDFLARE-CHECK value
+
+All cloudflare verifications are handled like other manual user inputs, so we only have two types: **HEADLESS** and **MANUAL**.
 
 ## New default for `REDACTION_TYPE`
 
@@ -31,3 +35,7 @@ Added or updated the UI for 20 or so trackers. See README.md for the full list o
 ## Retaining prefixes during redaction
 
 When redacting a torrent or IRC passkey, the prefix (`Passkey:` or `IRC Key:`) is now kept unredacted.
+
+## Removal of Python
+
+I was using some Python code to assist with bypassing Cloudflare detection through Java, but now I patch the binary in the Docker image so no Python is needed at runtime.

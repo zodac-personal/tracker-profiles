@@ -5,7 +5,7 @@
     - [Screenshots](#screenshots)
 - [Trackers](#trackers)
     - [Headless](#headless)
-    - [Non-Headless](#non-headless)
+    - [Manual Interaction](#manual-interaction)
 - [How To Use](#how-to-use)
     - [Tracker Definitions](#tracker-definitions)
     - [Running In Docker](#running-in-docker)
@@ -21,7 +21,7 @@
     - [Debugging Application](#debugging-application)
     - [Building And Developing In Docker](#building-and-developing-in-docker)
     - [Implementing Support For New Trackers](#implementing-support-for-new-trackers)
-    - [Cloudflare Trackers](#cloudflare-trackers)
+    - [Cloudflare Verification](#cloudflare-verification)
 
 ## Overview
 
@@ -91,8 +91,6 @@ There are currently **115** supported trackers listed below. The available track
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
-- Cloudflare-Check: The tracker has a Cloudflare verification check this will need a UI browser to bypass (overrides the
-  **Manual** option)
 
 The implementation for these tracers can be found in
 the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
@@ -150,7 +148,6 @@ background:
 | [GreatPosterWall](https://greatposterwall.com/) |
 | [HappyFappy](https://www.happyfappy.net/)       |
 | [HDUnited](https://hd-united.vn/)               |
-| [HDZero](https://hdzero.org/)                   |
 | [Hellenic-HD](https://hellenic-hd.cc/)          |
 | [ImmortalSeed](https://immortalseed.me/)        |
 | [InfinityHD](https://infinityhd.net/)           |
@@ -225,7 +222,7 @@ background:
 </tr>
 </table>
 
-### Non-Headless
+### Manual InteraCTION
 
 If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in
 `TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
@@ -234,50 +231,45 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 <tr>
 <td valign="top">
 
-| Manual                                              |
-|-----------------------------------------------------|
-| [52PT](https://52pt.site/)                          |
-| [AnimeZ](https://animez.to/)                        |
-| [BeyondHD](https://beyond-hd.me/)                   |
-| [DigitalCore.Club](https://digitalcore.club/)       |
-| [DocsPedia](https://docspedia.world/)               |
-| [GazelleGames](https://gazellegames.net/)           |
-| [HDFans](https://hdfans.org/)                       |
-| [HD-Forever](https://hdf.world/)                    |
-| [LemonHD](https://lemonhd.net/)                     |
-| [LetSeed](https://letseed.org/)                     |
-| [LST](https://lst.gg/)                              |
-| [PassThePopcorn](https://passthepopcorn.me/)        |
-| [PornoLab](https://pornolab.net/forum/tracker.php)  |
-| [PT.GTK](https://pt.gtk.pw/)                        |
-| [SocietyGlitch](https://stalker.societyglitch.com/) |
-| [TheEmpire](https://theempire.click/)               |
-| [TheGeeks](https://thegeeks.click/)                 |
-| [TheKitchen](https://thekitchen.click/)             |
-| [TheOccult](https://theoccult.click/)               |
-| [ThePlace](https://theplace.click/)                 |
-| [TheShow](https://theshow.click/)                   |
-| [TheVault](https://thevault.click/)                 |
-
-</td>
-<td valign="top">
-
-| Cloudflare-Check                            |
-|---------------------------------------------|
-| [AvistaZ](https://avistaz.to/)              |
-| [BroadcasThe.Net](https://broadcasthe.net/) |
-| [CGPeers](https://cgpeers.to/)              |
-| [CinemaZ](https://cinemaz.to/)              |
-| [ExoticaZ](https://exoticaz.to/)            |
-| [Hawke-Uno](https://hawke.uno/)             |
-| [HDBits](https://hdbits.org/)               |
-| [Immortal-S](https://immortal-s.me/)        |
-| [PrivateHD](https://privatehd.to/)          |
-| [RoTorrent](https://rotorrent.info/)        |
-| [SceneTime](https://www.scenetime.com/)     |
-| [Speed.CD](https://speed.cd/)               |
-| [Torrenting](https://torrenting.com/)       |
-| [UploadCX](https://upload.cx/)              |
+| Tracker Name                                        | Reason                                          |
+|-----------------------------------------------------|-------------------------------------------------|
+| [52PT](https://52pt.site/)                          | Captcha                                         |
+| [AnimeZ](https://animez.to/)                        | Captcha                                         |
+| [AvistaZ](https://avistaz.to/)                      | Captcha & Cloudflare verificaiton               |
+| [BeyondHD](https://beyond-hd.me/)                   | Captcha                                         |
+| [DigitalCore.Club](https://digitalcore.club/)       | Captcha                                         |
+| [DocsPedia](https://docspedia.world/)               | Captcha                                         |
+| [GazelleGames](https://gazellegames.net/)           | Question on login                               |
+| [HD-Forever](https://hdf.world/)                    | Needs to be explicitly translated               |
+| [HDFans](https://hdfans.org/)                       | Captcha                                         |
+| [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
+| [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
+| [LetSeed](https://letseed.org/)                     | Captcha                                         |
+| [LST](https://lst.gg/)                              | Question on login                               |
+| [PassThePopcorn](https://passthepopcorn.me/)        | Question on login                               |
+| [PornoLab](https://pornolab.net/forum/tracker.php)  | Needs to be explicitly translated               |
+| [PT.GTK](https://pt.gtk.pw/)                        | Captcha                                         |
+| [SocietyGlitch](https://stalker.societyglitch.com/) | Captcha                                         |
+| [TheEmpire](https://theempire.click/)               | Captcha                                         |
+| [TheGeeks](https://thegeeks.click/)                 | Captcha                                         |
+| [TheKitchen](https://thekitchen.click/)             | Captcha                                         |
+| [TheOccult](https://theoccult.click/)               | Captcha                                         |
+| [ThePlace](https://theplace.click/)                 | Captcha                                         |
+| [TheShow](https://theshow.click/)                   | Captcha                                         |
+| [TheVault](https://thevault.click/)                 | Captcha                                         |
+| [BroadcasThe.Net](https://broadcasthe.net/)         | Captcha & Cloudflare verification               |
+| [CGPeers](https://cgpeers.to/)                      | 2FA & Cloudflare verification                   |
+| [CinemaZ](https://cinemaz.to/)                      | Captcha & Cloudflare verification               |
+| [ExoticaZ](https://exoticaz.to/)                    | Captcha & Cloudflare verification               |
+| [Hawke-Uno](https://hawke.uno/)                     | 2FA & Cloudflare verification                   |
+| [HDBits](https://hdbits.org/)                       | 2FA, Cloudflare verification, question on login |
+| [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
+| [PrivateHD](https://privatehd.to/)                  | Captcha & Cloudflare verification               |
+| [RoTorrent](https://rotorrent.info/)                | Cloudflare verification                         |
+| [SceneTime](https://www.scenetime.com/)             | Cloudflare verification                         |
+| [Speed.CD](https://speed.cd/)                       | Cloudflare verification                         |
+| [Torrenting](https://torrenting.com/)               | Cloudflare verification                         |
+| [UploadCX](https://upload.cx/)                      | Captcha                                         |
 
 </td>
 </tr>
@@ -326,7 +318,7 @@ docker run \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \
@@ -358,7 +350,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /c/tmp/screenshots:/app/screenshots \
     --name tracker-profiles \
@@ -373,11 +365,9 @@ MSYS_NO_PATHCONV=1 docker run \
 ### Browser UI
 
 There are two ways to execute the application - with a UI browser and without. The default commands will
-execute [trackers that require a UI](#non-headless), so the UI will need to be configured to run through Docker. A UI
-browser is needed for trackers that:
-
-- Require some user input during login, like a Captcha or 2FA (if `TRACKER_EXECUTION_ORDER` includes **manual**)
-- Have a Cloudflare verification check (if `TRACKER_EXECUTION_ORDER` includes **cloudflare-check**)
+execute [trackers that require a UI](#manual-interaction), so the UI will need to be configured to run through Docker.
+A UI browser is needed for trackers that require some user input during login, like a Captcha, Cloudflare verification
+check, 2FA, etc.
 
 Below will define how to do this for your host system.
 
@@ -402,34 +392,33 @@ the configuration:
 #### Disable UI
 
 To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
-`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **manual** and **cloudflare-check** from
-`TRACKER_EXECUTION_ORDER`. You can also remove `--env DISPLAY` and/or `-v /tmp/.X11-unix:/tmp/.X11-unix` from the
-`docker run` command.
+`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **manual** from `TRACKER_EXECUTION_ORDER`.
+You can then remove `--env DISPLAY` and/or `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
 ### Configuration Options
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable            | Description                                                                                                                                                                                              | Default Value                    |
-|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                              | 1050                             |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                               | 1680                             |
-| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                                |
-| *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                             |
-| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                             |
-| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                            |
-| *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                            |
-| *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                              |
-| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                             |
-| *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) (max of 5)                                                                      | 1                                |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                       |
-| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                 |
-| *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                              |
-| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                   |
-| *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                            |
-| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                              |
-| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | headless,manual,cloudflare-check |
-| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv    |
+| Environment Variable            | Description                                                                                                                                                                                              | Default Value                 |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                              | 1050                          |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                               | 1680                          |
+| *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
+| *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
+| *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
+| *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                         |
+| *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
+| *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                           |
+| *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
+| *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) (max of 5)                                                                      | 1                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
+| *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
+| *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                           |
+| *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
+| *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
+| *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
+| *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
+| *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv |
 
 ## Versioning
 
@@ -451,7 +440,6 @@ Tracker additions and removals will be released as `PATCH` versions.
 - [Docker](https://docs.docker.com/engine/install/)
 - [Google Chrome](https://www.google.com/chrome/)
 - [Java](https://jdk.java.net/25/)
-- [Python](https://www.python.org/downloads/release/python-314/)
 
 ### Install Git Hooks
 
@@ -462,15 +450,6 @@ bash ./ci/hooks/setup-hooks.sh
 ```
 
 ### Debugging Application
-
-If `TRACKER_EXECUTION_ORDER` contains **cloudflare-check**, then Python must be configured for your environment. From
-the root directory, execute the following:
-
-```bash
-source venv/bin/activate
-pip install -r ./python/requirements.txt
-./venv/bin/python ./python/selenium_manager.py
-```
 
 Using IntelliJ, and click on **Run**> **Edit Configurations** and add the environment variables for the application.
 Once done, open
@@ -509,7 +488,7 @@ docker run \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=true \
     --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=headless,manual,cloudflare-check \
+    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \
@@ -520,27 +499,18 @@ docker run \
 ### Implementing Support For New Trackers
 
 All supported private trackers have an implementation found in
-the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package. To add a new one,
-extend [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java),
+the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package. To add a new one, extend
+[AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java),
 following the convention from an existing implementation
 like [AbTorrents.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbTorrents.java).
 
 Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/TrackerType.java) is
 set correctly for your tracker.
 
-### Cloudflare Trackers
+### Cloudflare Verification
 
-The `Cloudflare-check` trackers listed in [Trackers> Non-Headless](#non-headless) are implemented differently from the
-other trackers, since this verification check cannot be passed using stock
-Selenium. [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is used to create a
-web browser that is capable of bypassing Cloudflare detection.
-
-Unfortunately, this is a Python-only package. While a *reasonable* person would migrate the project to Python, I'd
-prefer to keep writing this in Java. So a [Python web-server](./python/selenium_manager/server.py) is spun up that
-exposes endpoints to open/close a Selenium web browser that can bypass detection. There is a Java implementation of
-the [Selenium WebDriver class](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/driver/python/AttachedRemoteWebDriver.java)
-which can attach to the Selenium browser that was launched by Python.
-
-This is all handled by the framework, so an implementation of a tracker can be done following
-like [any other tracker](#implementing-support-for-new-trackers), without needing to worry about whether the browser is
-launched by Java or Python.
+Some of the `Manual` trackers listed in [Trackers> Manual Interaction](#manual-interaction) contain a Cloudflare
+verification check. This check cannot be passed simply by opening the browser UI like other `manual` trackers. Instead,
+[undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is used to patch the Google
+Chrome binary, making it possibly to successfully check the
+Cloudflare box (by a user's manual input), bypassing Cloudflare detection.

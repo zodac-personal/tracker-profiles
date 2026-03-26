@@ -29,7 +29,7 @@ import org.openqa.selenium.By;
 /**
  * Extension of the {@link Unit3dHandler} for the {@code Immortal-S} tracker.
  */
-@TrackerHandler(name = "Immortal-S", type = TrackerType.CLOUDFLARE_CHECK, url = "https://immortal-s.me/login/")
+@TrackerHandler(name = "Immortal-S", type = TrackerType.MANUAL, url = "https://immortal-s.me/login/")
 public class ImmortalS extends XenForoHandler implements HasCloudflareCheck {
 
     @Override

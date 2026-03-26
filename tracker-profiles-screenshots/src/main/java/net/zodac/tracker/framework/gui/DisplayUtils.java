@@ -224,9 +224,9 @@ public final class DisplayUtils {
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
 
-        // X is left + margin, Y is vertically centered
+        // X is left + margin, Y is vertically 60% down the page to get out of the way of Cloudflare elements
         final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN;
-        final int y = bounds.y + (bounds.height - dialog.getHeight()) / 2;
+        final int y = bounds.y + (((bounds.height - dialog.getHeight()) / 10) * 6);
         dialog.setLocation(x, y);
     }
 

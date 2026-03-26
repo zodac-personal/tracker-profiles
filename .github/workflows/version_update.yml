@@ -101,7 +101,6 @@ jobs:
         if: env.has_changes == 'true'
         run: |
           mvn clean install -Dall
-          bash .github/scripts/python_lint_and_tests.sh
 
       - name: Commit changes
         id: change_commit

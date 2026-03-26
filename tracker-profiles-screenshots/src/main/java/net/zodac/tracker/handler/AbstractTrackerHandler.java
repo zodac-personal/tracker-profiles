@@ -27,9 +27,8 @@ import java.util.Map;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.framework.driver.JavaWebDriverFactory;
 import net.zodac.tracker.framework.driver.extension.Extension;
-import net.zodac.tracker.framework.driver.java.JavaWebDriverFactory;
-import net.zodac.tracker.framework.driver.python.PythonWebDriverFactory;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
@@ -684,14 +683,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<Extension> requiredExtensions) {
-        if (trackerType == TrackerType.CLOUDFLARE_CHECK) {
-            if (!requiredExtensions.isEmpty()) {
-                LOGGER.trace("Attempting to create python driver with extensions; extensions will be installed but cannot be configured: {}",
-                    requiredExtensions);
-            }
-            return PythonWebDriverFactory.createDriver(requiredExtensions);
-        }
-
         final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation;
         final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
 

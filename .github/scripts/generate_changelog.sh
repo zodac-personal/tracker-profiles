@@ -17,7 +17,7 @@
 #   - Reads all commits between the given tag and HEAD
 #   - Parses commit messages expecting a format like: [category] message
 #   - Categorises commits by their bracketed prefix (e.g., [ci], [framework])
-#   - Preferred categories (ci, deployment, doc, framework, python) are printed first
+#   - Preferred categories (ci, deployment, doc, framework) are printed first
 #   - Other categories are grouped under the "Trackers" section
 #   - Commit messages are linked using the provided repository URL
 #   - Outputs the changelog in a format suitable for use in GitHub Actions via $GITHUB_ENV
@@ -65,7 +65,7 @@ done <<<"${commit_messages}"
 changelog_content=$(mktemp)
 
 {
-    preferred=("ci" "deployment" "documentation" "framework" "python" "removal")
+    preferred=("ci" "deployment" "documentation" "framework" "removal")
     declare -A printed
 
     # Print preferred categories

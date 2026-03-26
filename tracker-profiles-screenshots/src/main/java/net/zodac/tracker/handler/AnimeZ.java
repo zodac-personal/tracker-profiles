@@ -110,11 +110,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
 
     @Override
     protected By profilePageContentSelector() {
-        return XpathBuilder
-            .from(div, withClass("datagrid-content "))
-            .child(div, withClass("input-group"))
-            .child(input, withType("password"))
-            .build();
+        return By.tagName("code");
     }
 
     @Override

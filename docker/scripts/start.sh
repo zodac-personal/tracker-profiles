@@ -13,18 +13,13 @@
 #   - Java installed and available on the system PATH
 #   - `tracker-profiles.jar` available at /app/tracker-profiles.jar
 #   - X display server running and accessible at DISPLAY=:0
-#   - Python is installed and available on the system PATH and requirements.txt installed
-#   - `selenium_manager.py` present in the working directory
 #
 # Behavior:
-#   - If the environment variable TRACKER_EXECUTION_ORDER contains the string
-#     "cloudflare-check":
-#       - Starts `selenium_manager.py` in the background
 #   - Starts the web browser
 #   - Executes the Java JAR file
 #   - Outputs a colored success or error message based on Java's exit code
 #   - Tracks and prints total execution time in a natural format
-#   - On SIGINT (Ctrl+C), gracefully terminates the browser and the Python process (if started)
+#   - On SIGINT (Ctrl+C), gracefully terminates the browser and Java PID (if started)
 #
 # Exit Codes:
 #   - 0: Success
@@ -36,28 +31,6 @@ set -eu
 
 main() {
     start_time=$(date +%s)
-
-    case "${TRACKER_EXECUTION_ORDER:-}" in
-    *cloudflare-check*)
-        /app/venv/bin/python -m selenium_manager.server &
-        PYTHON_PID=$!
-
-        i=1
-        while [ "${i}" -le 5 ]; do
-            if wget -q --spider http://127.0.0.1:5000/ping 2>/dev/null; then
-                break
-            fi
-            sleep 1
-
-            if [ "${i}" -eq 5 ]; then
-                echo "Failed to start Python service" >&2
-                kill "${PYTHON_PID}" 2>/dev/null || true
-                exit 1
-            fi
-            i=$((i + 1))
-        done
-        ;;
-    esac
 
     chromium --display=:0 >/dev/null 2>&1 &
     BROWSER_PID=$!
@@ -109,12 +82,6 @@ cleanup() {
     if [ -n "${BROWSER_PID:-}" ]; then
         kill -TERM "${BROWSER_PID:-}" 2>/dev/null || true
         wait "${BROWSER_PID:-}" 2>/dev/null || true
-    fi
-
-    # Stop Python service
-    if [ -n "${PYTHON_PID:-}" ]; then
-        kill -TERM "${PYTHON_PID}" 2>/dev/null || true
-        wait "${PYTHON_PID}" 2>/dev/null || true
     fi
 
     exit 130

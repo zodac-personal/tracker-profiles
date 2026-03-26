@@ -35,7 +35,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Speed.CD} tracker.
  */
-@TrackerHandler(name = "Speed.CD", type = TrackerType.CLOUDFLARE_CHECK, url = {
+@TrackerHandler(name = "Speed.CD", type = TrackerType.MANUAL, url = {
     "https://speed.cd/",
     "https://speed.click/",
     "https://speeders.me/",

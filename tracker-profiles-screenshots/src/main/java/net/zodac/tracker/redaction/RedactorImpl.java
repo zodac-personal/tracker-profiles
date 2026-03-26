@@ -51,7 +51,7 @@ public class RedactorImpl implements Redactor {
 
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
+        logElementToBeRedacted(element, "");
         final int numberOfRedactedElements = redactor.redact(element, description, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;
@@ -59,7 +59,7 @@ public class RedactorImpl implements Redactor {
 
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
+        logElementToBeRedacted(element, "email");
         final int numberOfRedactedElements = redactor.redactEmail(element, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;
@@ -67,7 +67,7 @@ public class RedactorImpl implements Redactor {
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
+        logElementToBeRedacted(element, "IP Address");
         final int numberOfRedactedElements = redactor.redactIpAddress(element, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;
@@ -75,7 +75,7 @@ public class RedactorImpl implements Redactor {
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
+        logElementToBeRedacted(element, "IRC passkey");
         final int numberOfRedactedElements = redactor.redactIrcPasskey(element, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;
@@ -83,22 +83,24 @@ public class RedactorImpl implements Redactor {
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element);
+        logElementToBeRedacted(element, "torrent passkey");
         final int numberOfRedactedElements = redactor.redactTorrentPasskey(element, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;
     }
 
-    private static void logElementToBeRedacted(final WebElement element) {
+    private static void logElementToBeRedacted(final WebElement element, final String elementType) {
         final String elementText = element.getText();
+        final String type = elementType.isBlank() ? "" : elementType + " ";  // Add trailing space for the log output only if there is a type
+
         if (!elementText.isBlank()) {
-            LOGGER.info("\t\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
+            LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
             return;
         }
 
         final String elementValue = element.getAttribute("value");
         if (elementValue != null && !elementValue.isBlank()) {
-            LOGGER.info("\t\t\t- Found: '{}' in <{}>", NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
+            LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
             return;
         }
 

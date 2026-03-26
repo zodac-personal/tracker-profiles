@@ -47,7 +47,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link LuminanceHandler} for the {@code CGPeers} tracker.
  */
-@TrackerHandler(name = "CGPeers", type = TrackerType.CLOUDFLARE_CHECK, url = {
+@TrackerHandler(name = "CGPeers", type = TrackerType.MANUAL, url = {
     "https://cgpeers.to/",
     "https://cgpeers.com/"
 })

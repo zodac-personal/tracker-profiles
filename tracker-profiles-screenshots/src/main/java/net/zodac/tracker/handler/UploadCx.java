@@ -25,7 +25,7 @@ import org.openqa.selenium.By;
 /**
  * Extension of the {@link Unit3dHandler} for the {@code UploadCX} tracker.
  */
-@TrackerHandler(name = "UploadCX", type = TrackerType.CLOUDFLARE_CHECK, url = "https://upload.cx/")
+@TrackerHandler(name = "UploadCX", type = TrackerType.MANUAL, url = "https://upload.cx/")
 public class UploadCx extends Unit3dHandler implements HasCloudflareCheck {
 
     @Override

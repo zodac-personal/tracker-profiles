@@ -45,7 +45,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code HDBits} tracker.
  */
-@TrackerHandler(name = "HDBits", type = TrackerType.CLOUDFLARE_CHECK, url = {
+@TrackerHandler(name = "HDBits", type = TrackerType.MANUAL, url = {
     "https://hdbits.org/",
     "https://backup.hdbits.org/"
 })

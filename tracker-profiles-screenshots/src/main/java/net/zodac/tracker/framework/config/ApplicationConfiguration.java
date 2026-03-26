@@ -84,7 +84,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_REDACTION_TYPE = "BOX";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
     private static final String DEFAULT_TIMEZONE = "UTC";
-    private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "headless,manual,cloudflare-check";
+    private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "HEADLESS,MANUAL";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
 
     private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(

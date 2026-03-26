@@ -23,7 +23,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
-import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
@@ -48,16 +47,8 @@ import org.openqa.selenium.WebElement;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code SceneTime} tracker.
  */
-@TrackerHandler(name = "SceneTime", type = TrackerType.CLOUDFLARE_CHECK, url = "https://scenetime.com/")
+@TrackerHandler(name = "SceneTime", type = TrackerType.MANUAL, url = "https://scenetime.com/")
 public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleBanner {
-
-    @Override
-    protected By loginPageSelector() {
-        return XpathBuilder
-            .from(nav, withId("navbar"))
-            .child(a, atIndex(2))
-            .build();
-    }
 
     @Override
     protected By loginButtonSelector() {
@@ -79,6 +70,7 @@ public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCh
             .build();
         final Collection<WebElement> announcements = driver.findElements(promotionCloseSelector);
         if (announcements.isEmpty()) {
+            LOGGER.debug("\t\t\t- No promotion pop-up found");
             return;
         }
 

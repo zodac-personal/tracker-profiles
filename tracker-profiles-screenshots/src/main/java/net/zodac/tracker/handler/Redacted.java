@@ -65,5 +65,4 @@ public class Redacted extends GazelleHandler {
             throw e;
         }
     }
-
 }

@@ -53,9 +53,9 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code AvistaZ} Network of trackers.
  */
 @CommonTrackerHandler("AvistaZNetwork")
-@TrackerHandler(name = "AvistaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://avistaz.to/")
-@TrackerHandler(name = "CinemaZ", type = TrackerType.CLOUDFLARE_CHECK, url = "https://cinemaz.to/")
-@TrackerHandler(name = "PrivateHD", type = TrackerType.CLOUDFLARE_CHECK, url = "https://privatehd.to/")
+@TrackerHandler(name = "AvistaZ", type = TrackerType.MANUAL, url = "https://avistaz.to/")
+@TrackerHandler(name = "CinemaZ", type = TrackerType.MANUAL, url = "https://cinemaz.to/")
+@TrackerHandler(name = "PrivateHD", type = TrackerType.MANUAL, url = "https://privatehd.to/")
 public class AvistazNetworkHandler extends AbstractTrackerHandler implements HasCloudflareCheck, HasFixedHeader {
 
     @Override

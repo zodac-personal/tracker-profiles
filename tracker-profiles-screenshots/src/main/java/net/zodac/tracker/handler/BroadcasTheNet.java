@@ -37,7 +37,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link GazelleHandler} for the {@code BroadcasThe.Net} tracker.
  */
-@TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.CLOUDFLARE_CHECK, url = "https://broadcasthe.net/")
+@TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.MANUAL, url = "https://broadcasthe.net/")
 public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck {
 
     @Override

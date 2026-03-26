@@ -15,7 +15,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework.driver.java;
+package net.zodac.tracker.framework.driver;
 
 import java.io.File;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import net.zodac.tracker.framework.driver.extension.Extension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -35,6 +36,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public final class JavaWebDriverFactory {
 
+    private static final File CHROMEDRIVER_EXECUTABLE_FILEPATH = new File("/usr/local/chromium/chromedriver-linux64/chromedriver");
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -117,7 +119,16 @@ public final class JavaWebDriverFactory {
         }
 
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);
-        return new ChromeDriver(chromeOptions);
+        if (!CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
+            LOGGER.trace("Creating driver without chromedriver executable filepath");
+            return new ChromeDriver(chromeOptions);
+        }
+
+        LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
+        final ChromeDriverService service = new ChromeDriverService.Builder()
+            .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
+            .build();
+        return new ChromeDriver(service, chromeOptions);
     }
 
     private static Map<String, String> getTranslationWhitelist() {
@@ -141,7 +152,6 @@ public final class JavaWebDriverFactory {
         return translateWhitelists;
     }
 
-    // No need to check for CLOUDFLARE_CHECK, since that is handled by Python
     private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType, final boolean needsExplicitTranslation) {
         if (CONFIG.forceUiBrowser()) {
             LOGGER.trace("UI browser is forced");

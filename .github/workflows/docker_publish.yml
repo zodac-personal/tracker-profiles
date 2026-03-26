@@ -5,10 +5,7 @@ on:
     branches: [ master ]
     paths:
       - 'ci/java/**'
-      - 'ci/python/**'
       - 'docker/**'
-      - 'python/**/*.py'
-      - 'python/requirements.txt'
       - 'tracker-profiles-screenshots/**'
       - 'pom.xml'
   workflow_dispatch: # allows manual trigger
@@ -66,17 +63,6 @@ jobs:
       - name: Set Maven version from VERSION file
         run: |
           mvn versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false -DprocessAllModules
-
-      - name: Set up Ruff cache
-        uses: actions/cache@v4
-        with:
-          path: .ruff_cache
-          key: ruff-${{ runner.os }}-${{ hashFiles('**/*.py', 'ci/python/ruff.toml') }}
-          restore-keys: |
-            ruff-${{ runner.os }}-
-
-      - name: Run Python lints and tests with Ruff
-        run: bash .github/scripts/python_lint_and_tests.sh
 
       # Output is not used in Docker image, this step is only used to smoke-test the version update
       - name: Build source with updated versions

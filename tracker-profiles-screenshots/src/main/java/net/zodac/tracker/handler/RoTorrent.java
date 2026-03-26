@@ -24,6 +24,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
+import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -34,7 +35,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Extension of the {@link Unit3dHandler} for the {@code RoTorrent} tracker.
  */
-@TrackerHandler(name = "RoTorrent", type = TrackerType.CLOUDFLARE_CHECK, url = "https://rotorrent.info/")
+@TrackerHandler(name = "RoTorrent", type = TrackerType.MANUAL, url = "https://rotorrent.info/")
 public class RoTorrent extends Unit3dHandler implements HasCloudflareCheck {
 
     @Override
@@ -42,6 +43,33 @@ public class RoTorrent extends Unit3dHandler implements HasCloudflareCheck {
         return XpathBuilder
             .from(div, withClass("cf-turnstile"))
             .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link RoTorrent} there is potentially a pop-up with a daily reward of bonus points that can be cleared. We still use
+     * {@link #dismissBanner()} from {@link Unit3dHandler} to clear the cookie banner.
+     */
+    @Override
+    public void dismissBanner() {
+        super.dismissBanner();
+
+        LOGGER.debug("\t\t- Checking for daily reward");
+        final By dailyRewardSelector = By.id("notification-content");
+        final Collection<WebElement> dailyRewardElements = driver.findElements(dailyRewardSelector);
+        if (dailyRewardElements.isEmpty()) {
+            LOGGER.debug("\t\t\t- No daily reward found");
+            return;
+        }
+
+        // There should only be one of these, so we'll load it and click it
+        LOGGER.debug("\t\t\t- Found daily reward, closing");
+        final WebElement dailyRewardElement = browserInteractionHelper.waitForElementToBeInteractable(dailyRewardSelector, pageLoadDuration());
+        clickButton(dailyRewardElement);
+
+        LOGGER.debug("\t\t\t- Cleared daily reward");
     }
 
     @Override
