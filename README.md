@@ -191,7 +191,6 @@ background:
 | [PixelCove](https://www.pixelcove.me/)               |
 | [PixelHD](https://pixelhd.me/)                       |
 | [PolishTorrent](https://polishtorrent.top/)          |
-| [PornBay](https://pornbay.org/)                      |
 | [Rastastugan](https://rastastugan.org/)              |
 | [Redacted](https://redacted.sh/)                     |
 | [ReelFlix](https://reelflix.cc/)                     |

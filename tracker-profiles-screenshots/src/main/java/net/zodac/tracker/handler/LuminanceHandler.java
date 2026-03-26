@@ -38,7 +38,6 @@ import org.openqa.selenium.By;
 @CommonTrackerHandler("Luminance")
 @TrackerHandler(name = "Kufirc", adult = true, url = "https://kufirc.com/")
 @TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
-@TrackerHandler(name = "PornBay", adult = true, url = "https://pornbay.org/")
 public class LuminanceHandler extends GazelleHandler {
 
     @Override
