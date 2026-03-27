@@ -227,7 +227,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         passwordField.clear();
         passwordField.sendKeys(password);
 
-        manualCheckBeforeLoginClick();
+        preLoginClickAction();
 
         // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
         //       Maybe even add a listener to the timer code and wait for a page update?
@@ -238,7 +238,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
         }
-        manualCheckAfterLoginClick();
+        postLoginClickAction();
 
         try {
             final By postLoginSelector = postLoginSelector();
@@ -282,7 +282,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         // Do nothing by default
     }
 
@@ -305,7 +305,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
     // TODO: Naming, this isn't always manual, it can be some extra work needed
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         // Do nothing by default
     }
 

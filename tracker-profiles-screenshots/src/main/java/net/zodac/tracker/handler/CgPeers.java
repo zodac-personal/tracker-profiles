@@ -85,7 +85,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
      * </ol>
      */
     @Override
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button");
 

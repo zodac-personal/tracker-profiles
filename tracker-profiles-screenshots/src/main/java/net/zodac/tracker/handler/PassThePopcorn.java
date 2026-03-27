@@ -64,7 +64,7 @@ public class PassThePopcorn extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button");
 

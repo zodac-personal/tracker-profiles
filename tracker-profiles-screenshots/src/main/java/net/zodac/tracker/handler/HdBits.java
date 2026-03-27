@@ -79,7 +79,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         final By twoFactorPasscodeSelector = XpathBuilder
             .from(input, withName("twostep_code"), withType("number"))
             .navigateTo(parent(td))

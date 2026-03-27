@@ -53,7 +53,7 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = By.id("regimage");

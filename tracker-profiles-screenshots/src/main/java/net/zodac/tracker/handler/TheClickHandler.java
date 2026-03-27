@@ -81,7 +81,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         LOGGER.info("\t\t >>> Waiting for user to solve the captcha");
 
         final By captchaSelector = XpathBuilder

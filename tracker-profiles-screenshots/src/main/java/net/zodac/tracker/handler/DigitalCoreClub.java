@@ -81,7 +81,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = XpathBuilder

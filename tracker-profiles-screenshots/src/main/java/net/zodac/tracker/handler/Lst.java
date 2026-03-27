@@ -54,7 +54,7 @@ public class Lst extends Unit3dHandler {
      * </ol>
      */
     @Override
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button");
 

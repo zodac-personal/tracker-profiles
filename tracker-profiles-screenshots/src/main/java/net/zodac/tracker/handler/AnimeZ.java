@@ -68,7 +68,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
      * </ol>
      */
     @Override
-    protected void manualCheckBeforeLoginClick() {
+    protected void preLoginClickAction() {
         LOGGER.info("\t\t >>> Waiting for user to enter captcha");
 
         final By captchaSelector = XpathBuilder

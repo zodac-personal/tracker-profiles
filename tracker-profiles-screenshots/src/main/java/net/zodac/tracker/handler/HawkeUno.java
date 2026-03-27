@@ -54,7 +54,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
      * For {@link HawkeUno}, there is a mandatory 2FA check which must be completed.
      */
     @Override
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to enter 2FA code");
 

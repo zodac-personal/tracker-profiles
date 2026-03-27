@@ -48,7 +48,7 @@ public class TeamOs extends XenForoHandler implements UsesExtensions {
      * If it exists, we'll open the page (forcing it into the current tab). We'll then continue with the rest of the flow.
      */
     @Override
-    protected void manualCheckAfterLoginClick() {
+    protected void postLoginClickAction() {
         browserInteractionHelper.stopPageLoad();
 
         // When an update to site rules occurs, there is a single button with a link to the rules thread
