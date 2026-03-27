@@ -247,6 +247,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
 | [LetSeed](https://letseed.org/)                     | Captcha                                         |
+| [LP-Bits](https://lp-bits.com/)                     | Captcha                                         |
 | [LST](https://lst.gg/)                              | Question on login                               |
 | [PassThePopcorn](https://passthepopcorn.me/)        | Question on login                               |
 | [PornoLab](https://pornolab.net/forum/tracker.php)  | Needs to be explicitly translated               |
