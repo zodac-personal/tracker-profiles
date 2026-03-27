@@ -61,8 +61,7 @@ jobs:
         run: mvn clean install -Dall -Dsonarqube
 
       - name: Set Maven version from VERSION file
-        run: |
-          mvn versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false -DprocessAllModules
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false -DprocessAllModules
 
       # Output is not used in Docker image, this step is only used to smoke-test the version update
       - name: Build source with updated versions

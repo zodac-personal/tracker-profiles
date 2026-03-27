@@ -91,7 +91,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         this.trackerDefinition = trackerDefinition;
-        final List<Extension> extensions = this instanceof UsesExtensions tracerExtensions ? tracerExtensions.requiredExtensions() : List.of();
+        final List<Extension> extensions = this instanceof UsesExtensions trackerExtensions ? trackerExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
     }

@@ -92,7 +92,7 @@ There are currently **124** supported trackers listed below. The available track
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
 
-The implementation for these tracers can be found in
+The implementation for these trackers can be found in
 the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
 
 ### Headless
@@ -187,6 +187,7 @@ background:
 |------------------------------------------------------|
 | [PixelCove](https://www.pixelcove.me/)               |
 | [PixelHD](https://pixelhd.me/)                       |
+| [Podzemlje](https://podzemlje.net/)                  |
 | [PolishTorrent](https://polishtorrent.top/)          |
 | [Rastastugan](https://rastastugan.org/)              |
 | [Redacted](https://redacted.sh/)                     |
@@ -197,6 +198,7 @@ background:
 | [SecretCinema](https://secret-cinema.pw/)            |
 | [SeedPool](https://seedpool.org/)                    |
 | [SexTorrent](https://sextorrent.myds.me/)            |
+| [SlobitMedia](https://media.slo-bitcloud.eu/)        |
 | [SportsCult](https://sportscult.org/)                |
 | [T3nnis](https://t3nnis.tv/)                         |
 | [Tasmanites](https://tasmanit.es/)                   |
@@ -222,7 +224,7 @@ background:
 </tr>
 </table>
 
-### Manual InteraCTION
+### Manual Interaction
 
 If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in
 `TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
