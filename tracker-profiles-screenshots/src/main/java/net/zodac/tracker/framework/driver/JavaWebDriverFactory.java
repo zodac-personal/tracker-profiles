@@ -26,6 +26,7 @@ import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.Extension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -76,7 +77,6 @@ public final class JavaWebDriverFactory {
         if (canTrackerUseHeadlessBrowser(trackerType, needsExplicitTranslation)) {
             LOGGER.trace("Using headless browser");
             chromeOptions.addArguments("--headless=new");
-            chromeOptions.addArguments("--start-maximized");
         }
 
         // Cache to avoid reloading data on subsequent runs
@@ -117,18 +117,41 @@ public final class JavaWebDriverFactory {
             final File extensionFile = new File(extension.path());
             chromeOptions.addExtensions(extensionFile);
         }
-
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);
+
         if (!CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
             LOGGER.trace("Creating driver without chromedriver executable filepath");
             return new ChromeDriver(chromeOptions);
         }
 
-        LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
-        final ChromeDriverService service = new ChromeDriverService.Builder()
-            .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
-            .build();
-        return new ChromeDriver(service, chromeOptions);
+        try (final ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH).build()) {
+            LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
+            final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
+            applyConfiguredSize(driver);
+            return driver;
+        }
+    }
+
+    private static void applyConfiguredSize(final ChromeDriver driver) {
+        final Dimension size = parseDimensions();
+        driver.manage().window().setSize(size);
+
+        driver.executeCdpCommand("Emulation.setDeviceMetricsOverride",
+            Map.of(
+                "width", size.getWidth(),
+                "height", size.getHeight(),
+                "deviceScaleFactor", 1,
+                "mobile", false
+            )
+        );
+    }
+
+    // No need to perform any validation, browserDimensions has been parsed already
+    private static Dimension parseDimensions() {
+        final String[] parts = CONFIG.browserDimensions().split(",");
+        final int width = Integer.parseInt(parts[0].trim());
+        final int height = Integer.parseInt(parts[1].trim());
+        return new Dimension(width, height);
     }
 
     private static Map<String, String> getTranslationWhitelist() {
