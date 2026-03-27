@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/docker.yml'
       - 'ci/docker/.hadolint.yaml'
-      - 'docker/Dockerfile'
+      - 'docker/java.dockerfile'
       - 'docker/entrypoint.sh'
       - 'docker/start.sh'
   workflow_dispatch: # allows manual trigger
@@ -31,6 +31,6 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           config: ./ci/docker/.hadolint.yaml
-          dockerfile: Dockerfile
+          dockerfile: java.dockerfile
           output-file: hadolint-report.json
           recursive: true

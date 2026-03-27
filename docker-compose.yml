@@ -1,0 +1,47 @@
+networks:
+  tracker-profiles:
+    name: tracker-profiles
+    driver: bridge
+
+services:
+
+  tracker-profiles-chrome:
+    image: zodac/tracker-profiles-chrome:latest
+    container_name: tracker-profiles-chrome
+    hostname: tracker-profiles-chrome
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4444/status" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tracker-profiles
+    ports:
+      - "7900:7900"
+    restart: unless-stopped
+    shm_size: 2gb
+    volumes:
+      - x11_socket:/tmp/.X11-unix
+
+  tracker-profiles:
+    image: zodac/tracker-profiles:latest
+    container_name: tracker-profiles
+    hostname: tracker-profiles
+    depends_on:
+      tracker-profiles-chrome:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - tracker-profiles
+    volumes:
+      - /tmp/screenshots:/app/screenshots
+      - /tmp/tracker-vnc-signal:/run/vnc-signal
+      - x11_socket:/tmp/.X11-unix
+    restart: no
+
+volumes:
+  # Shares the chrome container's Xvfb socket so Java Swing renders inside the VNC virtual display inside chrome
+  x11_socket:

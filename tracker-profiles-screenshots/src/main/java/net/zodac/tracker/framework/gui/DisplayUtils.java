@@ -104,6 +104,7 @@ public final class DisplayUtils {
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(createButtons(dialog, userProvidedInput), BorderLayout.PAGE_END);
 
+        dialog.setUndecorated(true);  // Remove title bar so the pop-up cannot be dragged/moved
         dialog.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
         dialog.pack();  // Respects preferredSize but allows it to be larger if needed based on the text
         dialog.setLocationRelativeTo(null);

@@ -2,26 +2,26 @@
 # ------------------------------------------------------------------------------
 # Script Name:     update_dependency_versions.sh
 #
-# Description:     Updates version-pinned package declarations in both a Dockerfile
+# Description:     Updates version-pinned package declarations in both a java.dockerfile
 #                  and a Python requirements.txt file. Fetches the latest versions
 #                  of Python, Debian, and Python pip packages, then rewrites the
-#                  Dockerfile and requirements files with those values.
+#                  java.dockerfile and requirements files with those values.
 #
 # Usage:           ./update_dependency_versions.sh <path_to_Dockerfile> <path_to_requirements.txt>
 #
 # Requirements:
 #   - bash, awk, grep, jq, curl
-#   - Dockerfile must contain specific marker comments for python and debian package installs:
+#   - java.dockerfile must contain specific marker comments for python and debian package installs:
 #       # BEGIN PYTHON PACKAGES / # END PYTHON PACKAGES
 #       # BEGIN DEBIAN PACKAGES / # END DEBIAN PACKAGES
 #   - requirements.txt should contain lines in the format: `package>=version` or `package==version`
 #   - Internet access to fetch latest versions from PyPI and apt
 #
 # Behavior:
-#   - For the Dockerfile:
-#       - Updates Debian packages (defined in the Dockerfile) with the latest candidate versions from apt
-#       - Updates Python tools (defined in the Dockerfile) with the latest versions from PyPI
-#       - Rewrites the install blocks in the Dockerfile between respective markers
+#   - For the java.dockerfile:
+#       - Updates Debian packages (defined in the java.dockerfile) with the latest candidate versions from apt
+#       - Updates Python tools (defined in the java.dockerfile) with the latest versions from PyPI
+#       - Rewrites the install blocks in the java.dockerfile between respective markers
 #   - For requirements.txt:
 #       - Updates packages defined with `>=` to their latest PyPI versions
 #       - Leaves `==` pinned packages untouched
@@ -192,11 +192,16 @@ update_pom_versions() {
 }
 
 # Default paths assume the script is being run from the root of the project
-dockerfile="${1:-./docker/Dockerfile}"
+java_dockerfile="${1:-./docker/java.dockerfile}"
+chrome_dockerfile="${1:-./docker/chrome.dockerfile}"
 requirements="${2:-./docker/config/requirements.txt}"
 
-if [[ ! -f "${dockerfile}" ]]; then
-    echo "❌ Dockerfile not found: ${dockerfile}"
+if [[ ! -f "${java_dockerfile}" ]]; then
+    echo "❌ Java Dockerfile not found: ${java_dockerfile}"
+    exit 1
+fi
+if [[ ! -f "${chrome_dockerfile}" ]]; then
+    echo "❌ Chrome Dockerfile not found: ${chrome_dockerfile}"
     exit 1
 fi
 if [[ ! -f "${requirements}" ]]; then
@@ -204,6 +209,7 @@ if [[ ! -f "${requirements}" ]]; then
     exit 1
 fi
 
-update_debian_packages "${dockerfile}"
+update_debian_packages "${java_dockerfile}"
+update_debian_packages "${chrome_dockerfile}"
 update_requirements "${requirements}"
 update_pom_versions

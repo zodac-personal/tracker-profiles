@@ -91,7 +91,7 @@ public class RedactorImpl implements Redactor {
 
     private static void logElementToBeRedacted(final WebElement element, final String elementType) {
         final String elementText = element.getText();
-        final String type = elementType.isBlank() ? "" : elementType + " ";  // Add trailing space for the log output only if there is a type
+        final String type = elementType.isBlank() ? "" : " " + elementType;  // Add leading space for the log output only if there is a type
 
         if (!elementText.isBlank()) {
             LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());

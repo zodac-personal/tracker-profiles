@@ -10,9 +10,6 @@
     - [Tracker Definitions](#tracker-definitions)
     - [Running In Docker](#running-in-docker)
     - [Browser UI](#browser-ui)
-        - [UI In Debian](#ui-in-debian)
-        - [UI In Windows](#ui-in-windows)
-        - [Disable UI](#disable-ui)
     - [Configuration Options](#configuration-options)
 - [Versioning](#versioning)
 - [Contributing](#contributing)
@@ -92,7 +89,7 @@ There are currently **124** supported trackers listed below. The available track
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
 
-The implementation for these tracers can be found in
+The implementation for these trackers can be found in
 the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
 
 ### Headless
@@ -222,7 +219,7 @@ background:
 </tr>
 </table>
 
-### Manual InteraCTION
+### Manual Interaction
 
 If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in
 `TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
@@ -316,6 +313,7 @@ docker run \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
+    --env SELENIUM_REMOTE_URL=http://tracker-profiles-chrome:4444 \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
@@ -348,6 +346,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
+    --env SELENIUM_REMOTE_URL=http://tracker-profiles-chrome:4444 \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
     --env TIMEZONE=UTC \
     --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
@@ -369,31 +368,8 @@ execute [trackers that require a UI](#manual-interaction), so the UI will need t
 A UI browser is needed for trackers that require some user input during login, like a Captcha, Cloudflare verification
 check, 2FA, etc.
 
-Below will define how to do this for your host system.
-
-#### UI in Debian
-
-To run through Docker with a UI, local connections to the host display must be enabled:
-
-```bash
-# This seems to be reset upon reboot and may need to be reapplied
-xhost +local:
-```
-
-#### UI in Windows
-
-I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcXsrv, make sure to set the following in
-the configuration:
-
-- Multiple windows
-- Display number 0
-- Disable access control
-
-#### Disable UI
-
-To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
-`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **manual** from `TRACKER_EXECUTION_ORDER`.
-You can then remove `--env DISPLAY` and/or `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
+The [run_application.sh](./run_application.sh) script will manage the integration to the Chrome container so the main
+application can launch a UI as needed.
 
 ### Configuration Options
 
@@ -415,10 +391,12 @@ The following are all possible configuration options, defined as environment var
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
 | *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                           |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
+| *SELENIUM_REMOTE_URL*           | The URL of the remote Selenium/Chrome node to connect to                                                                                                                                                 | http://chrome:4444            |
 | *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
 | *TRACKER_EXECUTION_ORDER*       | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
 | *TRACKER_INPUT_FILE_PATH*       | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv |
+| *VNC_SIGNAL_FILE_PATH*          | The path to signal to the host system to open a VNC browser window for MANUAL tracker execution (should not need to be overridden)                                                                       | /run/vnc-signal               |
 
 ## Versioning
 

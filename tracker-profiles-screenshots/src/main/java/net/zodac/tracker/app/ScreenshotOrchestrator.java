@@ -18,6 +18,9 @@
 package net.zodac.tracker.app;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 import net.zodac.tracker.framework.ExitState;
@@ -80,6 +83,12 @@ public final class ScreenshotOrchestrator {
                 continue;
             }
 
+            if (trackerType == TrackerType.MANUAL) {
+                if (!signalVnc()) {
+                    continue;
+                }
+            }
+
             LOGGER.info("");
             LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
             for (final TrackerCredential trackerCredential : trackersByType.get(trackerType).second()) {
@@ -91,6 +100,23 @@ public final class ScreenshotOrchestrator {
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
+    }
+
+    private static boolean signalVnc() {
+        final String signalFilePath = CONFIG.vncSignalFile();
+        if (signalFilePath.isEmpty()) {
+            LOGGER.error("VNC signal file path not set");
+            return false;
+        }
+
+        try {
+            LOGGER.trace("Signalling VNC via '{}'", signalFilePath);
+            Files.writeString(Paths.get(signalFilePath), "\n");
+            return true;
+        } catch (final IOException e) {
+            LOGGER.error("Could not signal VNC via '{}'", signalFilePath, e);
+            return false;
+        }
     }
 
     private static void printExecutionTime(final String trackerName, final long startNanos) {

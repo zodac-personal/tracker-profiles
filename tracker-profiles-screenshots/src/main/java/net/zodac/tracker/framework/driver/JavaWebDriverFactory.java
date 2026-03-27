@@ -18,6 +18,8 @@
 package net.zodac.tracker.framework.driver;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
@@ -26,8 +28,6 @@ import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.driver.extension.Extension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -36,7 +36,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public final class JavaWebDriverFactory {
 
-    private static final File CHROMEDRIVER_EXECUTABLE_FILEPATH = new File("/usr/local/chromium/chromedriver-linux64/chromedriver");
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -119,16 +118,13 @@ public final class JavaWebDriverFactory {
         }
 
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);
-        if (!CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
-            LOGGER.trace("Creating driver without chromedriver executable filepath");
-            return new ChromeDriver(chromeOptions);
+        try {
+            final var remoteUrl = URI.create(CONFIG.seleniumRemoteUrl()).toURL();
+            LOGGER.trace("Connecting to remote Selenium node at '{}'", remoteUrl);
+            return new RemoteWebDriver(remoteUrl, chromeOptions);
+        } catch (final MalformedURLException e) {
+            throw new IllegalStateException(String.format("Invalid Selenium remote URL: '%s'", CONFIG.seleniumRemoteUrl()), e);
         }
-
-        LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
-        final ChromeDriverService service = new ChromeDriverService.Builder()
-            .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
-            .build();
-        return new ChromeDriver(service, chromeOptions);
     }
 
     private static Map<String, String> getTranslationWhitelist() {

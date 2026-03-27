@@ -12,6 +12,11 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 target/
 
+# Dev files
+.env.dev
+application_dev.sh
+docker-compose-dev.yml
+
 # Python
 __pycache__/
 *.pyc

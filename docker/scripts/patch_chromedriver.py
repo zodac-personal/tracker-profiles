@@ -8,7 +8,7 @@ except ImportError:
     sys.exit(1)
 
 def main():
-    driver_path = "/usr/local/chromium/chromedriver-linux64/chromedriver"
+    driver_path = sys.argv[1] if len(sys.argv) > 1 else "/usr/local/chromium/chromedriver-linux64/chromedriver"
 
     print(f"Patching chromedriver at: {driver_path}")
 

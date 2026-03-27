@@ -29,62 +29,30 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
     strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
     find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
 
-# Stage 3: Patch chromedriver
-FROM python:3.14.3-slim-trixie AS chromedriver_builder
-
-# Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
-# - ca-certificates (SSL)
-# - chromium (web browser)
-# BEGIN DEBIAN PACKAGES
-RUN apt-get update && \
-    apt-get install -yqq --no-install-recommends \
-        ca-certificates="20250419" \
-        chromium="146.0.7680.164-1~deb13u1" \
-    && \
-    apt-get autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-# END DEBIAN PACKAGES
-
-# Copy Python requirements
-COPY ./docker/config/requirements.txt .
-RUN python3 -m pip install --upgrade pip && python3 -m pip install -r ./requirements.txt
-
-# Download latest chromedriver for chromium verison then patch with undetected-chromedriver
-COPY ./docker/scripts/patch_chromedriver.py /usr/local/bin/patch_chromedriver.py
-RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip && \
-    mkdir -p /usr/local/chromium && \
-    chromium_major_version=$(chromium --version | awk '{print $2}' | cut -d. -f1) && \
-    chromedriver_version=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${chromium_major_version}") && \
-    curl -fL "https://storage.googleapis.com/chrome-for-testing-public/${chromedriver_version}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip && \
-    unzip /tmp/chromedriver.zip -d /usr/local/chromium && rm -f /tmp/chromedriver.zip && \
-    apt-get purge -yqq curl unzip && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    chmod -R 0755 /usr/local/chromium && \
-    chmod +x /usr/local/bin/patch_chromedriver.py && \
-    python3 /usr/local/bin/patch_chromedriver.py
-
 # Runtime
 FROM debian:13.3-slim AS runtime
 # Set the working directory
 WORKDIR /app
 
-# Suppress 'dbind-WARNING' error logs
-ENV NO_AT_BRIDGE=1
-
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
-# - ca-certificates (SSL)
-# - chromium (web browser)
-# - fonts-arphic-ukai (Chinese fonts)
-# - fonts-ipafont (Japanese fonts)
-# - wmctrl (force browser to be active window)
+# - Fonts for Java Swing rendering for ther UI dialogs
+#   - fontconfig
+#   - fonts-dejavu-core
+# - X11 libraries for Java AWT on Linux
+#   - libx11-6
+#   - libxext6
+#   - libxi6
+#   - libxrender1
+#   - libxtst6
 # BEGIN DEBIAN PACKAGES
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
-        ca-certificates="20250419" \
-        chromium="146.0.7680.164-1~deb13u1" \
-        fonts-arphic-ukai="0.2.20080216.2-5" \
-        fonts-ipafont="00303-23" \
-        wmctrl="1.07+git20240228.1105759-1" \
+        fontconfig="2.15.0-2.3" \
+        libx11-6="2:1.8.12-1" \
+        libxext6="2:1.3.4-1+b3" \
+        libxi6="2:1.8.2-1" \
+        libxrender1="1:0.9.12-1" \
+        libxtst6="2:1.2.5-1" \
     && \
     apt-get autoremove && \
     apt-get clean && \
@@ -93,9 +61,6 @@ RUN apt-get update && \
 
 # Copy Google Chrome extensions
 COPY ./docker/browser_extensions/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphecmpfh_2026_2_22.crx /app/ublock_origin_lite.crx
-
-# Copy patched chromedriver
-COPY --from=chromedriver_builder /usr/local/chromium/chromedriver-linux64/chromedriver /usr/local/chromium/chromedriver-linux64/chromedriver
 
 # Copy JDK & JAR
 COPY --from=java_builder /opt/jdk /opt/jdk

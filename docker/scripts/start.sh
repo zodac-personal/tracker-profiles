@@ -2,24 +2,20 @@
 # ------------------------------------------------------------------------------
 # Script Name:     start.sh
 #
-# Description:     Launches a headless instance of a web browser and runs a Java
-#                  application (`tracker-profiles.jar`) that performs screenshot
-#                  capture.
+# Description:     Runs a Java application (`tracker-profiles.jar`) that performs
+#                  screenshot capture via a remote Selenium/Chrome container.
 #
 # Usage:           ./start.sh
 #
 # Requirements:
-#   - Browser (Chromium or Firefox) installed
 #   - Java installed and available on the system PATH
 #   - `tracker-profiles.jar` available at /app/tracker-profiles.jar
-#   - X display server running and accessible at DISPLAY=:0
 #
 # Behavior:
-#   - Starts the web browser
 #   - Executes the Java JAR file
 #   - Outputs a colored success or error message based on Java's exit code
 #   - Tracks and prints total execution time in a natural format
-#   - On SIGINT (Ctrl+C), gracefully terminates the browser and Java PID (if started)
+#   - On SIGINT (Ctrl+C), gracefully terminates the Java PID (if started)
 #
 # Exit Codes:
 #   - 0: Success
@@ -31,9 +27,6 @@ set -eu
 
 main() {
     start_time=$(date +%s)
-
-    chromium --display=:0 >/dev/null 2>&1 &
-    BROWSER_PID=$!
 
     java -jar /app/tracker-profiles.jar &
     JAVA_PID=$!
@@ -76,12 +69,6 @@ cleanup() {
     if [ -n "${JAVA_PID:-}" ]; then
         kill -TERM "${JAVA_PID}" 2>/dev/null || true
         wait "${JAVA_PID}" 2>/dev/null || true
-    fi
-
-    # Stop browser
-    if [ -n "${BROWSER_PID:-}" ]; then
-        kill -TERM "${BROWSER_PID:-}" 2>/dev/null || true
-        wait "${BROWSER_PID:-}" 2>/dev/null || true
     fi
 
     exit 130

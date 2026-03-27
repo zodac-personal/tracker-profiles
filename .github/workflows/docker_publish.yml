@@ -77,18 +77,27 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Java Docker image
         id: docker_build
         uses: docker/build-push-action@v5
         with:
-          cache-from: type=registry,ref=zodac/tracker-profiles:cache
-          cache-to: type=registry,ref=zodac/tracker-profiles:cache,mode=max
           context: .
-          file: ./docker/Dockerfile
+          file: ./docker/java.dockerfile
           push: true
           tags: |
             zodac/tracker-profiles:${{ steps.version.outputs.version }}
             zodac/tracker-profiles:latest
+
+      - name: Build and push Chrome Docker image
+        id: docker_build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/chrome.dockerfile
+          push: true
+          tags: |
+            zodac/tracker-profiles-chrome:${{ steps.version.outputs.version }}
+            zodac/tracker-profiles-chrome:latest
 
       - name: Get previous tag
         id: prev_tag

@@ -17,6 +17,8 @@
 
 package net.zodac.tracker.framework.config;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DateTimeException;
@@ -49,9 +51,11 @@ import org.apache.logging.log4j.Logger;
  * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
  * @param redactionTypes             the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
+ * @param seleniumRemoteUrl          the URL of the remote Selenium/Chrome node to connect to
  * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
+ * @param vncSignalFilePath          the path to write to in order to signal the host to open the VNC browser window, or empty to disable
  */
 public record ApplicationConfiguration(
     String browserDataStoragePath,
@@ -67,9 +71,11 @@ public record ApplicationConfiguration(
     int numberOfTrackerAttempts,
     Path outputDirectory,
     Set<RedactionType> redactionTypes,
+    String seleniumRemoteUrl,
     boolean takeScreenshotOnError,
     Set<TrackerType> trackerExecutionOrder,
-    Path trackerInputFilePath
+    Path trackerInputFilePath,
+    String vncSignalFilePath
 ) {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -83,9 +89,11 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
     private static final String DEFAULT_REDACTION_TYPE = "BOX";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
+    private static final String DEFAULT_SELENIUM_REMOTE_URL = "http://chrome:4444";
     private static final String DEFAULT_TIMEZONE = "UTC";
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "HEADLESS,MANUAL";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
+    private static final String DEFAULT_VNC_SIGNAL_FILE_PATH = "";
 
     private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(
         "TRACE",
@@ -129,9 +137,11 @@ public record ApplicationConfiguration(
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
             getRedactionTypes(),
+            getSeleniumRemoteUrl(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
-            getTrackerInputFilePath()
+            getTrackerInputFilePath(),
+            getOrDefault("VNC_SIGNAL_FILE_PATH", DEFAULT_VNC_SIGNAL_FILE_PATH)
         );
 
         applicationConfiguration.print();
@@ -193,6 +203,16 @@ public record ApplicationConfiguration(
 
     private static Set<RedactionType> getRedactionTypes() {
         return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPE, RedactionType::find);
+    }
+
+    private static String getSeleniumRemoteUrl() {
+        final String rawUrl = getOrDefault("SELENIUM_REMOTE_URL", DEFAULT_SELENIUM_REMOTE_URL);
+        try {
+            final var _ = URI.create(rawUrl).toURL();
+        } catch (final MalformedURLException | IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("[SELENIUM_REMOTE_URL] Invalid URL: '%s'", rawUrl), e);
+        }
+        return rawUrl;
     }
 
     private static ExistingScreenshotAction getScreenshotExistsAction() {
@@ -272,8 +292,10 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
+        LOGGER.debug("\t- seleniumRemoteUrl={}", seleniumRemoteUrl);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);
+        LOGGER.debug("\t- vncSignalFilePath={}", vncSignalFilePath);
     }
 }
