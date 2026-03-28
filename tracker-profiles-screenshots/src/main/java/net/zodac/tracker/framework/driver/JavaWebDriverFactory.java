@@ -125,8 +125,10 @@ public final class JavaWebDriverFactory {
             return new ChromeDriver(chromeOptions);
         }
 
-        // Not closing the ChromeDriverService since it takes 5 seconds to close
-        final ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH).build();
+        final ChromeDriverService service = new ChromeDriverService  // NOPMD: CloseResource - Not closing since it takes 5 seconds to close
+                .Builder()
+                .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
+                .build();
         LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
         final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
         applyConfiguredSize(driver);
