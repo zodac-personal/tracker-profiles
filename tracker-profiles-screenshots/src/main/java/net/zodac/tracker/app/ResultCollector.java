@@ -20,6 +20,7 @@ package net.zodac.tracker.app;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerType;
@@ -57,7 +58,7 @@ final class ResultCollector {
      * @param trackerExecutionOrder the execution order of the {@link TrackerType}s
      * @return the {@link ExitState} based on success/failure counts
      */
-    ExitState generateSummary(final Iterable<TrackerType> trackerExecutionOrder) {
+    ExitState generateSummary(final Set<TrackerType> trackerExecutionOrder) {
         final int totalSuccessful = successfulTrackers.values()
             .stream()
             .mapToInt(Collection::size)

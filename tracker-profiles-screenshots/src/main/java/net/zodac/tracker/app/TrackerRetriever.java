@@ -19,6 +19,7 @@ package net.zodac.tracker.app;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -118,7 +119,7 @@ final class TrackerRetriever {
      * @param trackerExecutionOrder the execution order of the {@link TrackerType}s
      */
     static void printTrackersInfo(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType,
-                                  final Iterable<TrackerType> trackerExecutionOrder
+                                  final Set<TrackerType> trackerExecutionOrder
     ) {
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : trackerExecutionOrder) {

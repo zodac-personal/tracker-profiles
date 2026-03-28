@@ -214,8 +214,7 @@ public class BrowserInteractionHelper {
      */
     public void removeElement(final WebElement element) {
         LOGGER.trace("Removing element {}", element);
-        final String script = "arguments[0].remove();";
-        driver.executeScript(script, element);
+        driver.executeScript("arguments[0].remove();", element);
     }
 
     /**

@@ -90,6 +90,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @param trackerDefinition the {@link TrackerDefinition} for this {@link AbstractTrackerHandler}
      */
     public void configure(final TrackerDefinition trackerDefinition) {
+        LOGGER.trace("Configuring {}: {}", this.getClass().getSimpleName(), trackerDefinition);
         this.trackerDefinition = trackerDefinition;
         final List<Extension> extensions = this instanceof UsesExtensions trackerExtensions ? trackerExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
@@ -212,6 +213,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         try {
             LOGGER.trace("Entering username");
+
+            // TODO: Is there a need to check for presence before interactable-ness?
             browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
             final WebElement usernameField = browserInteractionHelper.waitForElementToBeInteractable(usernameFieldSelector(), pageLoadDuration());
             usernameField.clear();
@@ -228,9 +231,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         passwordField.sendKeys(password);
 
         preLoginClickAction();
-
-        // TODO: Check if the web page has changed (user clicked login during manual operation), and skip this?
-        //       Maybe even add a listener to the timer code and wait for a page update?
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
             browserInteractionHelper.waitForElementToBePresent(loginButtonSelector, pageLoadDuration());
@@ -682,12 +682,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<Extension> requiredExtensions) {
         final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation;
+        LOGGER.trace("Creating driver of type: {}", trackerType);
         final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
 
+        LOGGER.trace("Configuring extensions: {}", requiredExtensions);
         for (final Extension extension : requiredExtensions) {
             extension.configure(configurationDriver);
         }
 
+        LOGGER.trace("Returning created driver");
         return configurationDriver;
     }
 }

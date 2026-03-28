@@ -19,6 +19,7 @@ package net.zodac.tracker.framework.driver;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
@@ -67,7 +68,7 @@ public final class JavaWebDriverFactory {
      */
     public static RemoteWebDriver createDriver(final TrackerType trackerType,
                                                final boolean needsExplicitTranslation,
-                                               final Iterable<Extension> extensions
+                                               final List<Extension> extensions
     ) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
@@ -124,15 +125,17 @@ public final class JavaWebDriverFactory {
             return new ChromeDriver(chromeOptions);
         }
 
-        try (final ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH).build()) {
-            LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
-            final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
-            applyConfiguredSize(driver);
-            return driver;
-        }
+        // Not closing the ChromeDriverService since it takes 5 seconds to close
+        final ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH).build();
+        LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
+        final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
+        applyConfiguredSize(driver);
+        LOGGER.trace("Returning created driver");
+        return driver;
     }
 
     private static void applyConfiguredSize(final ChromeDriver driver) {
+        LOGGER.trace("Applying display size for driver");
         final Dimension size = parseDimensions();
         driver.manage().window().setSize(size);
 

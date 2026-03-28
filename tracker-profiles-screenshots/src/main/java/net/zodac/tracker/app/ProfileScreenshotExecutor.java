@@ -262,7 +262,8 @@ final class ProfileScreenshotExecutor {
             }
         }
 
-        for (int i = 0; i < effectiveRedactions.size(); i++) {
+        final int numberOfRedactions = effectiveRedactions.size();
+        for (int i = 0; i < numberOfRedactions; i++) {
             if (i > 0) {
                 // Reload to restore page to original state (clears DOM mutations from previous redaction) before next redaction
                 LOGGER.debug("\t\t- Reloading profile page for next redaction");

@@ -52,6 +52,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utility class used to display pop-up windows and confirmation boxes to the user.
  */
+// TODO: Add a listener to the timer code and wait for a page update, then autoclose it
 public final class DisplayUtils {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();

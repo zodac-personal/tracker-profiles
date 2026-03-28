@@ -55,7 +55,7 @@ public class UblockOriginLiteExtension implements Extension {
      * @param settings the {@link Map} of {@link UblockOriginSetting}s to apply when configuring the {@link Extension}
      */
     public UblockOriginLiteExtension(final Map<UblockOriginSetting, Boolean> settings) {
-        this.settings = settings;
+        this.settings = Map.copyOf(settings);
     }
 
     @Override
