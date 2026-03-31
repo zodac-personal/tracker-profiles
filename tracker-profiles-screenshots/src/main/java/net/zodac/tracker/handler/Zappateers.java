@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.handler.definition.HasJumpButtons;
@@ -46,7 +46,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link Zappateers} for the {@code Zappateers} tracker.
  */
 @TrackerHandler(name = "Zappateers", url = "https://zappateers.com/")
-public class Zappateers extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader, HasFixedSidebar, HasJumpButtons {
+public class Zappateers extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedHeader, HasFixedSidebar, HasJumpButtons {
 
     /**
      * {@inheritDoc}
@@ -71,7 +71,7 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
     }
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Waiting for login/rules pop-up to disappear");
         final By loginPopupSelector = By.id("swal2-title");
         browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());

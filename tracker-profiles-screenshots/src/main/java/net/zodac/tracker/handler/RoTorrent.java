@@ -50,11 +50,11 @@ public class RoTorrent extends Unit3dHandler implements HasCloudflareCheck {
      *
      * <p>
      * For {@link RoTorrent} there is potentially a pop-up with a daily reward of bonus points that can be cleared. We still use
-     * {@link #dismissBanner()} from {@link Unit3dHandler} to clear the cookie banner.
+     * {@link #dismiss()} from {@link Unit3dHandler} to clear the cookie banner.
      */
     @Override
-    public void dismissBanner() {
-        super.dismissBanner();
+    public void dismiss() {
+        super.dismiss();
 
         LOGGER.debug("\t\t- Checking for daily reward");
         final By dailyRewardSelector = By.id("notification-content");

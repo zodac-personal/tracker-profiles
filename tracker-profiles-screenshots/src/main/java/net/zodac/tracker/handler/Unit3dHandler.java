@@ -37,7 +37,7 @@ import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
@@ -73,7 +73,7 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 @TrackerHandler(name = "VietMediaF", url = "https://tracker.vietmediaf.store/")
 @TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
-public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
+public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedHeader {
 
     @Override
     protected By loginButtonSelector() {
@@ -97,7 +97,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
      * exist.
      */
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         final By cookieSelector = XpathBuilder
             .from(button, withClass("cookie-consent__agree"))
             .build();

@@ -39,7 +39,7 @@ import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.driver.extension.adblock.UblockOriginLiteExtension;
 import net.zodac.tracker.framework.driver.extension.adblock.UblockOriginSetting;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -52,7 +52,7 @@ import org.openqa.selenium.WebElement;
     "https://rutracker.org/forum/tracker.php",
     "https://rutracker.net/forum/tracker.php"
 })
-public class TorrentPier extends AbstractTrackerHandler implements HasDismissibleBanner, UsesExtensions {
+public class TorrentPier extends AbstractTrackerHandler implements HasDismissibleElement, UsesExtensions {
 
     @Override
     protected By usernameFieldSelector() {
@@ -79,7 +79,7 @@ public class TorrentPier extends AbstractTrackerHandler implements HasDismissibl
     }
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Checking for donation notice");
 
         // Donation banner at the bottom of the screen

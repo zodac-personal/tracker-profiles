@@ -40,7 +40,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -48,7 +48,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code SceneTime} tracker.
  */
 @TrackerHandler(name = "SceneTime", type = TrackerType.MANUAL, url = "https://scenetime.com/")
-public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleBanner {
+public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleElement {
 
     @Override
     protected By loginButtonSelector() {
@@ -63,7 +63,7 @@ public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCh
      * For {@link SceneTime}, a pop-up may appear for VIP membership, which we close before proceeding.
      */
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Checking for promotion pop-up");
         final By promotionCloseSelector = XpathBuilder
             .from(button, withAttribute("aria-label", "Close promotion"))

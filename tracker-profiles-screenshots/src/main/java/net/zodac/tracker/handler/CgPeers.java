@@ -39,7 +39,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -51,7 +51,7 @@ import org.openqa.selenium.WebElement;
     "https://cgpeers.to/",
     "https://cgpeers.com/"
 })
-public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, HasDismissibleBanner {
+public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, HasDismissibleElement {
 
     @Override
     public By loginPageSelector() {
@@ -113,7 +113,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
     }
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Checking for 2FA announcements");
 
         final By announcementSelector = XpathBuilder

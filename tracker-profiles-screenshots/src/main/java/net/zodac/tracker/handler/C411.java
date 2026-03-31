@@ -37,7 +37,7 @@ import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.StringUtils;
@@ -48,7 +48,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code C411} tracker.
  */
 @TrackerHandler(name = "C411", url = "https://c411.org/")
-public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedHeader {
+public class C411 extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedHeader {
 
     @Override
     protected By usernameFieldSelector() {
@@ -78,7 +78,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleBanner
     }
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         // Remove the login pop-up (if it exists) since it covers the user drop down menu
         final By loginPopupsSelector = XpathBuilder
             .from(span, withClass("i-lucide:x"))

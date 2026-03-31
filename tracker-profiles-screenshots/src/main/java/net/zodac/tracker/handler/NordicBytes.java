@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +43,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code NordicBytes} tracker.
  */
 @TrackerHandler(name = "NordicBytes", url = "https://nordicbytes.org/")
-public class NordicBytes extends AbstractTrackerHandler implements HasDismissibleBanner {
+public class NordicBytes extends AbstractTrackerHandler implements HasDismissibleElement {
 
     @Override
     protected By loginButtonSelector() {
@@ -61,7 +61,7 @@ public class NordicBytes extends AbstractTrackerHandler implements HasDismissibl
      * this, then close it if found.
      */
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Checking for site changes modal");
 
         final By siteChangesSelector = XpathBuilder

@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -44,7 +44,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code PixelHD} tracker.
  */
 @TrackerHandler(name = "PixelHD", url = "https://pixelhd.me/")
-public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBanner {
+public class PixelHd extends AbstractTrackerHandler implements HasDismissibleElement {
 
     @Override
     protected By loginPageSelector() {
@@ -97,7 +97,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleBan
      * announcement link before continuing.
      */
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         LOGGER.debug("\t\t- Checking for announcement");
         final By announcementSelector = XpathBuilder
             .from(div, withId("newAnnouncementSlideDown"))

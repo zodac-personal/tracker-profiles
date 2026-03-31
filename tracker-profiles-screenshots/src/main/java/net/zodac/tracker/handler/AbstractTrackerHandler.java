@@ -115,7 +115,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
                 driver.navigate().to(trackerUrl);
 
                 // Explicit check for Cloudflare Error 523 if a site is unavailable
-                final String bodyText = driver.findElement(By.tagName("body")).getText();
+                final WebElement body = browserInteractionHelper.waitForElementToBePresent(By.tagName("body"), pageLoadDuration());
+                final String bodyText = body.getText();
                 if (bodyText.contains("HTTP ERROR 523") || bodyText.contains("Error code 523")) {
                     LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
                 } else {
@@ -213,9 +214,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         try {
             LOGGER.trace("Entering username");
-
-            // TODO: Is there a need to check for presence before interactable-ness?
-            browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
             final WebElement usernameField = browserInteractionHelper.waitForElementToBeInteractable(usernameFieldSelector(), pageLoadDuration());
             usernameField.clear();
             usernameField.sendKeys(username);
@@ -225,7 +223,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         LOGGER.trace("Entering password");
         final By passwordFieldSelector = passwordFieldSelector();
-        browserInteractionHelper.waitForElementToBePresent(passwordFieldSelector, pageLoadDuration());
         final WebElement passwordField = browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector, pageLoadDuration());
         passwordField.clear();
         passwordField.sendKeys(password);
@@ -233,7 +230,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         preLoginClickAction();
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
-            browserInteractionHelper.waitForElementToBePresent(loginButtonSelector, pageLoadDuration());
             final WebElement loginButton = browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector, pageLoadDuration());
             LOGGER.trace("Clicking login button: {}", loginButton);
             clickButton(loginButton);
@@ -304,7 +300,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
-    // TODO: Naming, this isn't always manual, it can be some extra work needed
     protected void postLoginClickAction() {
         // Do nothing by default
     }
@@ -606,7 +601,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     public final void logout() {
         LOGGER.debug("\t- Logging out of tracker");
         final By logoutButtonSelector = logoutButtonSelector();
-        browserInteractionHelper.waitForElementToBePresent(logoutButtonSelector, pageLoadDuration());
         final WebElement logoutButton = browserInteractionHelper.waitForElementToBeInteractable(logoutButtonSelector, pageTransitionsDuration());
         clickButton(logoutButton);
 
@@ -667,7 +661,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             driver.manage().timeouts().pageLoadTimeout(maximumClickResolutionDuration());
             buttonToClick.click();
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page still loading after {}, force stopping page load", maximumClickResolutionDuration());
+            LOGGER.debug("\t\t- Page still loading after {}, force stopping page load", maximumClickResolutionDuration());
             LOGGER.trace(e);
             browserInteractionHelper.stopPageLoad();
         } catch (final Exception e) {

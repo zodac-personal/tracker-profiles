@@ -38,7 +38,7 @@ import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.handler.definition.HasJumpButtons;
@@ -240,8 +240,8 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
         trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
 
-        if (trackerHandler instanceof HasDismissibleBanner trackerWithBanner) {
-            trackerWithBanner.dismissBanner();
+        if (trackerHandler instanceof HasDismissibleElement trackerWithBanner) {
+            trackerWithBanner.dismiss();
             LOGGER.info("\t- Banner has been cleared");
         }
 

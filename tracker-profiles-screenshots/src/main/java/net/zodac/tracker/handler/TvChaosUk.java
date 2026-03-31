@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.handler.definition.HasJumpButtons;
 import org.openqa.selenium.By;
@@ -45,10 +45,10 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code TVChaosUK} tracker.
  */
 @TrackerHandler(name = "TVChaosUK", url = "https://tvchaosuk.com/")
-public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleBanner, HasFixedSidebar, HasJumpButtons {
+public class TvChaosUk extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedSidebar, HasJumpButtons {
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         final By cookieSelector = XpathBuilder
             .from(div, withId("alert_system_notice"))
             .child(div, atIndex(1))

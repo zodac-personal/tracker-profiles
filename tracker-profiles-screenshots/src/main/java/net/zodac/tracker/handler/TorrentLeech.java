@@ -36,7 +36,7 @@ import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleBanner;
+import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -50,7 +50,7 @@ import org.openqa.selenium.WebElement;
     "https://www.tleechreload.org/",
     "https://www.tlgetin.cc/"
 })
-public class TorrentLeech extends AbstractTrackerHandler implements HasDismissibleBanner {
+public class TorrentLeech extends AbstractTrackerHandler implements HasDismissibleElement {
 
     @Override
     protected By usernameFieldSelector() {
@@ -88,7 +88,7 @@ public class TorrentLeech extends AbstractTrackerHandler implements HasDismissib
     }
 
     @Override
-    public void dismissBanner() {
+    public void dismiss() {
         // IP address warning banner
         final By cookieSelector = XpathBuilder
             .from(button, withClass("close"), withAttribute("title", "Dismiss"))
