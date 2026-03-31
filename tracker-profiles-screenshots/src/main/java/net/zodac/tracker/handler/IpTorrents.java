@@ -19,15 +19,11 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
+import static net.zodac.tracker.framework.xpath.HtmlElement.code;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
-import static net.zodac.tracker.framework.xpath.HtmlElement.table;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
-import static net.zodac.tracker.framework.xpath.HtmlElement.td;
-import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -59,11 +55,7 @@ public class IpTorrents extends AbstractTrackerHandler {
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(table, withId("body"))
-            .descendant(table, atIndex(1))
-            .child(tbody, atIndex(1))
-            .child(tr, atIndex(4))
-            .child(td, atIndex(1))
+            .from(div, withClass("up-header"))
             .build();
     }
 
@@ -71,11 +63,7 @@ public class IpTorrents extends AbstractTrackerHandler {
     protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
-                .from(table, withId("body"))
-                .descendant(table, atIndex(1))
-                .child(tbody, atIndex(1))
-                .child(tr, atIndex(4))
-                .child(td, atIndex(1))
+                .from(code, atIndex(1))
                 .build()
         );
     }

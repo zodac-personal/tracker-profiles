@@ -54,6 +54,11 @@ public enum HtmlElement implements Element {
     button,
 
     /**
+     * Code {@link Element}: {@code <code>}.
+     */
+    code,
+
+    /**
      * Generic container {@link Element}: {@code <div>}.
      */
     div,
