@@ -28,7 +28,6 @@ import org.openqa.selenium.By;
  * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a Cloudflare verification check on the login page that must be passed
  * before logging in.
  */
-// TODO: Remove 'Has' prefix?
 public interface HasCloudflareCheck {
 
     /**

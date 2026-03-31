@@ -87,7 +87,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **127** supported trackers listed below. The available trackers come in the following types:
+There are currently **130** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -107,6 +107,7 @@ background:
 | Tracker Name (A–E)                                |
 |---------------------------------------------------|
 | [ABTorrents](https://usefultrash.net/)            |
+| [Aidoru!Online](https://aidoru-online.me/)        |
 | [Aither](https://aither.cc/)                      |
 | [AlphaRatio](https://alpharatio.cc/)              |
 | [AnimeBytes](https://animebytes.tv/)              |
@@ -117,6 +118,7 @@ background:
 | [Aura4K](https://aura4k.net/)                     |
 | [BackUps](https://back-ups.me/)                   |
 | [BakaBT](https://bakabt.me/)                      |
+| [bitGAMER](https://bitgamer.ch/)                  |
 | [BitPorn](https://bitporn.eu/)                    |
 | [Blutopia](https://blutopia.cc/)                  |
 | [BootyTape](https://ssl.bootytape.com/)           |
@@ -204,6 +206,7 @@ background:
 | [Tasmanites](https://tasmanit.es/)                   |
 | [TeamOS](https://teamos.xyz/)                        |
 | [TheMixingBowl](https://themixingbowl.org/)          |
+| [Torr9](https://torr9.net/)                          |
 | [TorrentLeech](https://www.torrentleech.org/)        |
 | [TranceTraffic](https://www.trancetraffic.com/)      |
 | [TVChaosUK](https://tvchaosuk.com/)                  |
