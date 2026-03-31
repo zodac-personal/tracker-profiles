@@ -27,7 +27,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link Redactor} that delegates calls to another concrete implementation, based on the provided {@link RedactionType}.
  */
-public class RedactorImpl implements Redactor {
+public class RedactorDelegator implements Redactor {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
@@ -40,7 +40,7 @@ public class RedactorImpl implements Redactor {
      * @param driver        the {@link RemoteWebDriver}
      * @param redactionType the {@link RedactionType} to use for redaction
      */
-    public RedactorImpl(final RemoteWebDriver driver, final RedactionType redactionType) {
+    public RedactorDelegator(final RemoteWebDriver driver, final RedactionType redactionType) {
         redactor = switch (redactionType) {
             case BLUR -> new BlurRedactor(driver);
             case BOX -> new BoxRedactor(driver);

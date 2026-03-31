@@ -44,7 +44,7 @@ import net.zodac.tracker.handler.definition.HasFixedSidebar;
 import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.redaction.Redactor;
-import net.zodac.tracker.redaction.RedactorImpl;
+import net.zodac.tracker.redaction.RedactorDelegator;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
@@ -291,7 +291,7 @@ final class ProfileScreenshotExecutor {
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {
-            final Redactor redactor = new RedactorImpl(trackerHandler.driver(), redactionType);
+            final Redactor redactor = new RedactorDelegator(trackerHandler.driver(), redactionType);
             LOGGER.info("\t\t- Redacting elements with sensitive information");
 
             final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
