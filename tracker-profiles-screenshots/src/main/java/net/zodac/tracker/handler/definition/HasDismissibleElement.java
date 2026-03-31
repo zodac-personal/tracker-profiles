@@ -18,15 +18,15 @@
 package net.zodac.tracker.handler.definition;
 
 /**
- * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a banner that can be dismissed before taking the screenshot. This may
- * be a cookie consent banner, a warning banner, or a login pop-up that can obscure content or expose unwanted information.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a {@link org.openqa.selenium.WebElement} that can be dismissed before
+ * taking the screenshot. This may be a cookie consent banner, a warning banner, or a login pop-up that can obscure content or expose unwanted
+ * information.
  */
-// TODO: Not always banners?
 @FunctionalInterface
-public interface HasDismissibleBanner {
+public interface HasDismissibleElement {
 
     /**
      * Finds any banner on the tracker web page, and closes it.
      */
-    void dismissBanner();
+    void dismiss();
 }
