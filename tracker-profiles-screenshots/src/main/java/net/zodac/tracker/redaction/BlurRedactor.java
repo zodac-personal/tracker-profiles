@@ -51,9 +51,10 @@ class BlurRedactor implements Redactor {
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
+            var blur_definition = '%s'
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
             var counter = 0
-            
+
             // Use TreeWalker to process only text nodes, so attribute values are never modified
             var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false)
             var text_nodes = []
@@ -61,7 +62,7 @@ class BlurRedactor implements Redactor {
             while (node = walker.nextNode()) {
               text_nodes.push(node)
             }
-            
+
             for (var t = 0; t < text_nodes.length; t++) {
               var text_node = text_nodes[t]
               var text = text_node.textContent
@@ -87,11 +88,21 @@ class BlurRedactor implements Redactor {
               }
               text_node.parentNode.replaceChild(fragment, text_node)
             }
-            
+
             // Apply blur directly to each matched span
             var target_spans = element.querySelectorAll('.redact-target')
             for (var i = 0; i < target_spans.length; i++) {
-              target_spans[i].style.filter = '%s'
+              target_spans[i].style.filter = blur_definition
+            }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              email_regex.lastIndex = 0
+              if (val && email_regex.test(val)) {
+                value_elements[e].style.filter = blur_definition
+              }
             }
             """.formatted(BLUR_DEFINITION);
 
@@ -103,12 +114,14 @@ class BlurRedactor implements Redactor {
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
-            
+            var blur_definition = '%s'
+
             var ipv4_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)/g
             var ipv4_masked_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x/g
-            var ipv6_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
+            var ipv6_full_regex = /([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g
+            var ipv6_partial_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
             var counter = 0
-            
+
             function wrap_matches_in_text_node(text_node, regex) {
               var text = text_node.textContent
               regex.lastIndex = 0
@@ -133,7 +146,7 @@ class BlurRedactor implements Redactor {
               }
               text_node.parentNode.replaceChild(fragment, text_node)
             }
-            
+
             // Use TreeWalker to process only text nodes, so attribute values are never modified
             // Order matters: check masked IPv4 before regular IPv4 to avoid partial matches
             function apply_regex(regex) {
@@ -147,15 +160,27 @@ class BlurRedactor implements Redactor {
                 wrap_matches_in_text_node(text_nodes[t], regex)
               }
             }
-            
+
             apply_regex(ipv4_masked_regex)
             apply_regex(ipv6_regex)
             apply_regex(ipv4_regex)
-            
+
             // Apply blur directly to each matched span
             var target_spans = element.querySelectorAll('.redact-target')
             for (var i = 0; i < target_spans.length; i++) {
-              target_spans[i].style.filter = '%s'
+              target_spans[i].style.filter = blur_definition
+            }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              ipv4_masked_regex.lastIndex = 0
+              ipv6_regex.lastIndex = 0
+              ipv4_regex.lastIndex = 0
+              if (val && (ipv4_masked_regex.test(val) || ipv6_regex.test(val) || ipv4_regex.test(val))) {
+                value_elements[e].style.filter = blur_definition
+              }
             }
             """.formatted(BLUR_DEFINITION);
 
@@ -212,6 +237,15 @@ class BlurRedactor implements Redactor {
                 past_prefix = true
               }
             }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              if (val) {
+                value_elements[e].style.filter = '%2$s'
+              }
+            }
             """.formatted(IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION);
 
         driver.executeScript(script, element);
@@ -265,6 +299,15 @@ class BlurRedactor implements Redactor {
                 sensitive_span.style.filter = '%2$s'
                 parent.replaceChild(sensitive_span, tn)
                 past_prefix = true
+              }
+            }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              if (val) {
+                value_elements[e].style.filter = '%2$s'
               }
             }
             """.formatted(TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION);

@@ -89,7 +89,11 @@ class BoxRedactor implements Redactor {
             var element = arguments[0]
             var email_regex = /[a-zA-Z0-9._+\\-*]+@[a-zA-Z0-9.\\-*]+\\.[a-zA-Z*]{2,}/g
             var counter = 0
-            
+
+            var scroll_top = window.pageYOffset || document.documentElement.scrollTop
+            var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
+            var computed_style = window.getComputedStyle(element)
+
             // Use TreeWalker to process only text nodes, so attribute values are never modified
             var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false)
             var text_nodes = []
@@ -97,7 +101,7 @@ class BoxRedactor implements Redactor {
             while (node = walker.nextNode()) {
               text_nodes.push(node)
             }
-            
+
             for (var t = 0; t < text_nodes.length; t++) {
               var text_node = text_nodes[t]
               var text = text_node.textContent
@@ -123,47 +127,72 @@ class BoxRedactor implements Redactor {
               }
               text_node.parentNode.replaceChild(fragment, text_node)
             }
-            
+
             // Get all redaction target spans
             var target_spans = element.querySelectorAll('.redact-target')
             var overlay_ids = []
-            
-            var scroll_top = window.pageYOffset || document.documentElement.scrollTop
-            var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
-            
-            // Get computed styles to check for any overhanging text
-            var computed_style = window.getComputedStyle(element)
-            
+
             // Create overlay for each target
             for (var i = 0; i < target_spans.length; i++) {
               var bounding_rectangle = target_spans[i].getBoundingClientRect()
               var overlay = document.createElement('div')
-            
+
               overlay.style.position = 'absolute'
-              overlay.style.left = (bounding_rectangle.left + scroll_left - %d) + 'px'
-              overlay.style.top = (bounding_rectangle.top + scroll_top - %d) + 'px'
-              overlay.style.width = (bounding_rectangle.width + %d + %d) + 'px'
-              overlay.style.height = (bounding_rectangle.height + %d + %d) + 'px'
-            
-              overlay.style.backgroundColor = '%s'
+              overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+              overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+              overlay.style.width = (bounding_rectangle.width + %1$d + %4$d) + 'px'
+              overlay.style.height = (bounding_rectangle.height + %2$d + %6$d) + 'px'
+
+              overlay.style.backgroundColor = '%7$s'
               overlay.style.zIndex = '9999'
               overlay.style.pointerEvents = 'none'
               overlay.style.boxSizing = 'border-box'
               overlay.id = 'redact-' + Date.now() + '-' + i
               document.body.appendChild(overlay)
               overlay_ids.push(overlay.id)
-            
+
               // Add white text centered on the overlay
               overlay.style.display = 'flex'
               overlay.style.alignItems = 'center'
               overlay.style.justifyContent = 'center'
-              overlay.style.color = '%s'
+              overlay.style.color = '%8$s'
               overlay.style.fontSize = computed_style.fontSize
               overlay.style.fontFamily = computed_style.fontFamily
               overlay.style.fontWeight = 'bold'
-              overlay.textContent = '%s'
+              overlay.textContent = '%9$s'
             }
-            
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              email_regex.lastIndex = 0
+              if (val && email_regex.test(val)) {
+                var bounding_rectangle = value_elements[e].getBoundingClientRect()
+                var overlay = document.createElement('div')
+                overlay.style.position = 'absolute'
+                overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+                overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+                overlay.style.width = (bounding_rectangle.width + %1$d + %4$d) + 'px'
+                overlay.style.height = (bounding_rectangle.height + %2$d + %6$d) + 'px'
+                overlay.style.backgroundColor = '%7$s'
+                overlay.style.zIndex = '9999'
+                overlay.style.pointerEvents = 'none'
+                overlay.style.boxSizing = 'border-box'
+                overlay.style.display = 'flex'
+                overlay.style.alignItems = 'center'
+                overlay.style.justifyContent = 'center'
+                overlay.style.color = '%8$s'
+                overlay.style.fontSize = computed_style.fontSize
+                overlay.style.fontFamily = computed_style.fontFamily
+                overlay.style.fontWeight = 'bold'
+                overlay.textContent = '%9$s'
+                overlay.id = 'redact-' + Date.now() + '-v-' + e
+                document.body.appendChild(overlay)
+                overlay_ids.push(overlay.id)
+              }
+            }
+
             return overlay_ids.join(',')
             """.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
             "blue", "white", "Email");
@@ -176,12 +205,17 @@ class BoxRedactor implements Redactor {
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String script = """
             var element = arguments[0]
-            
+
             var ipv4_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)/g
             var ipv4_masked_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x/g
-            var ipv6_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
+            var ipv6_full_regex = /([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g
+            var ipv6_partial_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
             var counter = 0
-            
+
+            var scroll_top = window.pageYOffset || document.documentElement.scrollTop
+            var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
+            var computed_style = window.getComputedStyle(element)
+
             function wrap_matches_in_text_node(text_node, regex) {
               var text = text_node.textContent
               regex.lastIndex = 0
@@ -206,7 +240,7 @@ class BoxRedactor implements Redactor {
               }
               text_node.parentNode.replaceChild(fragment, text_node)
             }
-            
+
             // Use TreeWalker to process only text nodes, so attribute values are never modified
             // Order matters: check masked IPv4 before regular IPv4 to avoid partial matches
             function apply_regex(regex) {
@@ -220,51 +254,80 @@ class BoxRedactor implements Redactor {
                 wrap_matches_in_text_node(text_nodes[t], regex)
               }
             }
-            
+
             apply_regex(ipv4_masked_regex)
-            apply_regex(ipv6_regex)
+            apply_regex(ipv6_full_regex)
+            apply_regex(ipv6_partial_regex)
             apply_regex(ipv4_regex)
-            
+
             // Get all redaction target spans
             var target_spans = element.querySelectorAll('.redact-target')
             var overlay_ids = []
-            
-            var scroll_top = window.pageYOffset || document.documentElement.scrollTop
-            var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
-            
-            // Get computed styles to check for any overhanging text
-            var computed_style = window.getComputedStyle(element)
-            
+
             // Create overlay for each target
             for (var i = 0; i < target_spans.length; i++) {
               var bounding_rectangle = target_spans[i].getBoundingClientRect()
               var overlay = document.createElement('div')
-            
+
               overlay.style.position = 'absolute'
-              overlay.style.left = (bounding_rectangle.left + scroll_left - %d) + 'px'
-              overlay.style.top = (bounding_rectangle.top + scroll_top - %d) + 'px'
-              overlay.style.width = (bounding_rectangle.width + %d + %d) + 'px'
-              overlay.style.height = (bounding_rectangle.height + %d + %d) + 'px'
-            
-              overlay.style.backgroundColor = '%s'
+              overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+              overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+              overlay.style.width = (bounding_rectangle.width + %1$d + %4$d) + 'px'
+              overlay.style.height = (bounding_rectangle.height + %2$d + %6$d) + 'px'
+
+              overlay.style.backgroundColor = '%7$s'
               overlay.style.zIndex = '9999'
               overlay.style.pointerEvents = 'none'
               overlay.style.boxSizing = 'border-box'
               overlay.id = 'redact-' + Date.now() + '-' + i
               document.body.appendChild(overlay)
               overlay_ids.push(overlay.id)
-            
+
               // Add white text centered on the overlay
               overlay.style.display = 'flex'
               overlay.style.alignItems = 'center'
               overlay.style.justifyContent = 'center'
-              overlay.style.color = '%s'
+              overlay.style.color = '%8$s'
               overlay.style.fontSize = computed_style.fontSize
               overlay.style.fontFamily = computed_style.fontFamily
               overlay.style.fontWeight = 'bold'
-              overlay.textContent = '%s'
+              overlay.textContent = '%9$s'
             }
-            
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              ipv4_masked_regex.lastIndex = 0
+              ipv6_full_regex.lastIndex = 0
+              ipv6_partial_regex.lastIndex = 0
+              ipv4_regex.lastIndex = 0
+              if (val && (ipv4_masked_regex.test(val) || ipv6_full_regex.test(val) || ipv6_partial_regex.test(val) || ipv4_regex.test(val))) {
+                var bounding_rectangle = value_elements[e].getBoundingClientRect()
+                var overlay = document.createElement('div')
+                overlay.style.position = 'absolute'
+                overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+                overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+                overlay.style.width = (bounding_rectangle.width + %1$d + %4$d) + 'px'
+                overlay.style.height = (bounding_rectangle.height + %2$d + %6$d) + 'px'
+                overlay.style.backgroundColor = '%7$s'
+                overlay.style.zIndex = '9999'
+                overlay.style.pointerEvents = 'none'
+                overlay.style.boxSizing = 'border-box'
+                overlay.style.display = 'flex'
+                overlay.style.alignItems = 'center'
+                overlay.style.justifyContent = 'center'
+                overlay.style.color = '%8$s'
+                overlay.style.fontSize = computed_style.fontSize
+                overlay.style.fontFamily = computed_style.fontFamily
+                overlay.style.fontWeight = 'bold'
+                overlay.textContent = '%9$s'
+                overlay.id = 'redact-' + Date.now() + '-v-' + e
+                document.body.appendChild(overlay)
+                overlay_ids.push(overlay.id)
+              }
+            }
+
             return overlay_ids.join(',')
             """.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
             "yellow", "black", "IP");
@@ -377,6 +440,36 @@ class BoxRedactor implements Redactor {
               document.body.appendChild(overlay)
               overlay_ids.push(overlay.id)
             }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              if (val) {
+                var bounding_rectangle = value_elements[e].getBoundingClientRect()
+                var overlay = document.createElement('div')
+                overlay.style.position = 'absolute'
+                overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+                overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+                overlay.style.width = (bounding_rectangle.width + %1$d + %3$d) + 'px'
+                overlay.style.height = (bounding_rectangle.height + %2$d + %4$d) + 'px'
+                overlay.style.backgroundColor = '%5$s'
+                overlay.style.zIndex = '9999'
+                overlay.style.pointerEvents = 'none'
+                overlay.style.boxSizing = 'border-box'
+                overlay.style.display = 'flex'
+                overlay.style.alignItems = 'center'
+                overlay.style.justifyContent = 'center'
+                overlay.style.color = 'white'
+                overlay.style.fontSize = computed_style.fontSize
+                overlay.style.fontFamily = computed_style.fontFamily
+                overlay.style.fontWeight = 'bold'
+                overlay.textContent = '%6$s'
+                overlay.id = 'redact-' + Date.now() + '-v-' + e
+                document.body.appendChild(overlay)
+                overlay_ids.push(overlay.id)
+              }
+            }
             return overlay_ids.join(',')
             """.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "gray", "IRC", IRC_KEY_PREFIX_ALTERNATION);
 
@@ -467,6 +560,36 @@ class BoxRedactor implements Redactor {
               overlay.id = 'redact-' + Date.now() + (j > 0 ? '-' + j : '')
               document.body.appendChild(overlay)
               overlay_ids.push(overlay.id)
+            }
+
+            // Also check 'value' attributes on the element and its descendants
+            var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+            for (var e = 0; e < value_elements.length; e++) {
+              var val = value_elements[e].getAttribute('value')
+              if (val) {
+                var bounding_rectangle = value_elements[e].getBoundingClientRect()
+                var overlay = document.createElement('div')
+                overlay.style.position = 'absolute'
+                overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
+                overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
+                overlay.style.width = (bounding_rectangle.width + %1$d + %3$d) + 'px'
+                overlay.style.height = (bounding_rectangle.height + %2$d + %4$d) + 'px'
+                overlay.style.backgroundColor = '%5$s'
+                overlay.style.zIndex = '9999'
+                overlay.style.pointerEvents = 'none'
+                overlay.style.boxSizing = 'border-box'
+                overlay.style.display = 'flex'
+                overlay.style.alignItems = 'center'
+                overlay.style.justifyContent = 'center'
+                overlay.style.color = 'white'
+                overlay.style.fontSize = computed_style.fontSize
+                overlay.style.fontFamily = computed_style.fontFamily
+                overlay.style.fontWeight = 'bold'
+                overlay.textContent = '%6$s'
+                overlay.id = 'redact-' + Date.now() + '-v-' + e
+                document.body.appendChild(overlay)
+                overlay_ids.push(overlay.id)
+              }
             }
             return overlay_ids.join(',')
             """.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "red", "Passkey", TORRENT_PASSKEY_PREFIX_ALTERNATION);
