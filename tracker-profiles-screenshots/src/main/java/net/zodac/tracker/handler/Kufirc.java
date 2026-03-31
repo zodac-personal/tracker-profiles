@@ -17,63 +17,37 @@
 
 package net.zodac.tracker.handler;
 
+import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.util.Collection;
 import java.util.List;
-import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
- * Common implementation of {@link GazelleHandler} for {@code Luminance}-based trackers.
+ * Extension of the {@link Kufirc} for the {@code Empornium} tracker.
  */
-@CommonTrackerHandler("Luminance")
-@TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
-public class LuminanceHandler extends GazelleHandler {
+@TrackerHandler(name = "Kufirc", adult = true, url = "https://kufirc.com/")
+public class Kufirc extends LuminanceHandler {
 
     @Override
-    protected By usernameFieldSelector() {
+    protected By loginPageSelector() {
         return XpathBuilder
-            .from(div, withId("username"))
-            .child(input, atIndex(1))
+            .from(div, withId("menu"))
+            .child(ul, atIndex(1))
+            .child(li, atIndex(2))
+            .child(a, atIndex(1))
             .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(div, withId("password"))
-            .child(input, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By loginButtonSelector() {
-        return By.id("login_button");
-    }
-
-    @Override
-    protected By profilePageContentSelector() {
-        return By.id("community");
     }
 
     @Override
     protected Collection<By> torrentPasskeyElements() {
-        return List.of(
-            XpathBuilder
-                .from(div, withClass("sidebar"))
-                .child(div, atIndex(8))
-                .child(ul, atIndex(1))
-                .child(li, atIndex(4))
-                .build()
-        );
+        return List.of();
     }
 }
