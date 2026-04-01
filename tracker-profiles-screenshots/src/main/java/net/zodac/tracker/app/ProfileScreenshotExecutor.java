@@ -262,15 +262,7 @@ final class ProfileScreenshotExecutor {
             }
         }
 
-        final int numberOfRedactions = effectiveRedactions.size();
-        for (int i = 0; i < numberOfRedactions; i++) {
-            if (i > 0) {
-                // Reload to restore page to original state (clears DOM mutations from previous redaction) before next redaction
-                LOGGER.debug("\t\t- Reloading profile page for next redaction");
-                trackerHandler.reloadProfilePage();
-            }
-
-            final RedactionType redactionType = effectiveRedactions.get(i);
+        for (final RedactionType redactionType : effectiveRedactions) {
             takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
         }
 
@@ -286,8 +278,59 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
         final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
 
-        updatingProfilePage(trackerHandler);
+        final int numberOfUpdates = updateProfilePage(trackerHandler);
+        final int numberOfRedactions = performRedaction(trackerHandler, redactionType);
 
+        trackerHandler.actionBeforeScreenshot();
+        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName, scrollDuringScreenshot,
+            screenshotIndex(baseName));
+        trackerHandler.actionAfterScreenshot();
+        LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+        // Reload to restore page to original state (clears DOM mutations from previous redaction, and restore elements to original positions
+        if (numberOfUpdates > 0 || numberOfRedactions > 0) {
+            LOGGER.debug("\t\t- Updates were made to profile page, reloading to undo");
+            trackerHandler.reloadProfilePage();
+        }
+    }
+
+    // Perform modifications to the user profile page before redaction so redaction positions are computed against the settled layout
+    private static int updateProfilePage(final AbstractTrackerHandler trackerHandler) {
+        LOGGER.info("\t\t- Performing updates to profile page, if needed");
+        int numberOfUpdates = 0;
+
+        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
+            LOGGER.info("\t\t\t- Translating profile page to English");
+            trackerNeedsTranslation.translatePageToEnglish();
+            numberOfUpdates++;
+        }
+
+        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
+            LOGGER.debug("\t\t\t- Unfixing header");
+            trackerWithFixedHeader.unfixHeader(trackerHandler.driver(), trackerWithFixedHeader.headerSelector());
+            LOGGER.info("\t\t\t- Header has been updated to not be fixed");
+            numberOfUpdates++;
+        }
+
+        if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
+            LOGGER.debug("\t\t\t- Unfixing sidebar");
+            trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
+            LOGGER.info("\t\t\t- Sidebar has been updated to not be fixed");
+            numberOfUpdates++;
+        }
+
+        if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
+            LOGGER.debug("\t\t\t- Hiding jump to top/bottom buttons");
+            trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
+            LOGGER.info("\t\t\t- Top/bottom jump buttons have been hidden");
+            numberOfUpdates++;
+        }
+
+        LOGGER.debug("\t\t\t- Made {} updates", numberOfUpdates);
+        return numberOfUpdates;
+    }
+
+    private static int performRedaction(final AbstractTrackerHandler trackerHandler, final RedactionType redactionType) {
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {
@@ -300,45 +343,12 @@ final class ProfileScreenshotExecutor {
             } else {
                 LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
             }
+            return numberOfRedactedElements;
         } else {
             LOGGER.debug("\t\t- Nothing to redact");
         }
 
-        trackerHandler.actionBeforeScreenshot();
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName, scrollDuringScreenshot,
-            screenshotIndex(baseName));
-        trackerHandler.actionAfterScreenshot();
-        LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
-
-        // TODO: Undo redaction here, instead of reloading the page in the calling message?
-    }
-
-    // Perform modifications to the user profile page before redaction so redaction positions are computed against the settled layout
-    private static void updatingProfilePage(final AbstractTrackerHandler trackerHandler) {
-        LOGGER.info("\t\t- Performing updates to profile page, if needed");
-
-        if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
-            LOGGER.info("\t\t\t- Translating profile page to English");
-            trackerNeedsTranslation.translatePageToEnglish();
-        }
-
-        if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
-            LOGGER.debug("\t\t\t- Unfixing header");
-            trackerWithFixedHeader.unfixHeader(trackerHandler.driver(), trackerWithFixedHeader.headerSelector());
-            LOGGER.info("\t\t\t- Header has been updated to not be fixed");
-        }
-
-        if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
-            LOGGER.debug("\t\t\t- Unfixing sidebar");
-            trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
-            LOGGER.info("\t\t\t- Sidebar has been updated to not be fixed");
-        }
-
-        if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
-            LOGGER.debug("\t\t\t- Hiding jump to top/bottom buttons");
-            trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
-            LOGGER.info("\t\t\t- Top/bottom jump buttons have been hidden");
-        }
+        return 0;
     }
 
     private static List<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {
