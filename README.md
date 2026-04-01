@@ -87,7 +87,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **132** supported trackers listed below. The available trackers come in the following types:
+There are currently **133** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -144,6 +144,7 @@ background:
 | Tracker Name (F–J)                              |
 |-------------------------------------------------|
 | [F1Carreras](https://f1carreras.xyz/)           |
+| [F1GP](https://f1gp.site/)                      |
 | [Fappaizuri](https://fappaizuri.me/)            |
 | [FearNoPeer](https://fearnopeer.com/)           |
 | [FileList](https://filelist.io/)                |

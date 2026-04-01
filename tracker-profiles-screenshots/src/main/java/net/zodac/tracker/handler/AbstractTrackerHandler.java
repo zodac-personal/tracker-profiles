@@ -605,7 +605,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         clickButton(logoutButton);
 
         additionalActionAfterLogoutClick();
-        browserInteractionHelper.waitForElementToBePresent(postLogoutElementSelector(), pageTransitionsDuration());
+        browserInteractionHelper.waitForElementToBePresent(postLogoutElementSelector(), pageLoadDuration());
     }
 
     /**
