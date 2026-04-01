@@ -1,0 +1,293 @@
+# New Tracker Handler Learnings
+
+This file captures mistakes and discoveries made while building new `TrackerHandler` implementations,
+to avoid repeating them across sessions.
+
+---
+
+## Key Patterns (from codebase review)
+
+### Minimal required overrides (extending `AbstractTrackerHandler` directly)
+- `usernameFieldSelector()` — defaults to `By.id("username")`; override only if different
+- `passwordFieldSelector()` — defaults to `By.id("password")`; override only if different
+- `loginButtonSelector()` — defaults to `By.id("login-button")`; override only if different
+- `postLoginSelector()` — defaults to `profilePageSelector()`; **must override** if `profilePageSelector()`
+  performs any action (e.g. opening a dropdown) — provide a simple presence-only selector instead
+- `profilePageSelector()` — **required**, no default; element clicked to navigate to profile page
+- `profilePageContentSelector()` — **required**, no default; element that confirms profile page loaded
+- `logoutButtonSelector()` — **required**, no default; element clicked to log out
+
+### Common optional overrides
+- `loginPageSelector()` — return non-null if the homepage doesn't auto-redirect to login
+- `ipAddressElements()` — returns `List.of()` by default; override to redact IP fields
+- `emailElements()` — returns `List.of()` by default; override to redact email fields
+- `torrentPasskeyElements()` — returns `List.of()` by default; override to redact passkeys
+- `sensitiveElements()` — returns `List.of()` by default; override for other sensitive data
+- `hasFixedHeader()` / `headerSelector()` — implement `HasFixedHeader` interface if there's a sticky header
+- `dismissBanner()` — implement `HasDismissibleElement` interface if there's a cookie/warning banner
+- `manualCheckBeforeLoginClick()` / `manualCheckAfterLoginClick()` — for captcha/2FA (MANUAL type)
+
+### Selector construction
+Always use `XpathBuilder` — never raw XPath strings:
+```java
+XpathBuilder
+    .from(div, withClass("some-class"))
+    .child(span, withId("some-id"))
+    .build();
+```
+Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `atIndex`, `atLastIndex`
+Available axes: `followingSibling`, `descendant`, `child`, `parent`, `precedingSibling`, etc.
+For non-enum HTML tags: `NamedHtmlElement.of("article")`
+
+### Common base handlers
+If the tracker uses a known platform, extend the appropriate base:
+- `Unit3dHandler` — UNIT3D platform; handles login, dropdown nav, cookie banners, fixed header
+- `GazelleHandler` — Gazelle platform
+- `NexusPhpHandler` — NexusPHP platform
+- `LuminanceHandler` — Luminance platform
+- `TorrentPier` — TorrentPier platform
+Check existing handlers before writing from scratch.
+
+### TrackerType
+- `HEADLESS` (default, omit `type =` in annotation) — no UI needed
+- `MANUAL` — requires browser UI for captcha/2FA
+Annotation: `@TrackerHandler(name = "Name", url = "https://...")`
+For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
+
+### CSV entry
+Add to `docker/trackers_example.csv` after implementing.
+
+### README entry
+Add to `README.md` after implementing: insert a row in the correct alphabetical position in the tracker
+table, and increment the tracker count on the "There are currently **N** supported trackers" line.
+
+---
+
+## Mistakes / Learnings from Implementation Sessions
+
+### 1. `profilePageContentSelector()` must be unique to the profile page
+
+**Mistake:** Returned `XpathBuilder.from(main).build()` (i.e. `<main>`) as a placeholder.
+
+**Why it's wrong:** `<main>` is present on every page of the site, so it does not confirm the profile page
+has loaded. The selector must match an element that only exists on the profile page (e.g. a profile-specific
+section, heading, or container).
+
+**Rule:** Always ask "is this element unique to the profile page?" before using it as `profilePageContentSelector()`.
+
+---
+
+### 2. Always override `profilePageSelector()` — the default is rarely correct
+
+**Mistake:** Left `profilePageSelector()` as the inherited default (`<a class="username">`), which did not
+match the site's actual nav structure.
+
+**Why it's wrong:** The default assumes a simple clickable anchor with class `username`. Many modern sites
+(especially React/Next.js SPAs) use a dropdown menu: a parent element (often `<div>`) is clicked to open
+the menu, and then the profile link is the first `<a>` inside it.
+
+**Rule:** Always inspect the nav HTML and override `profilePageSelector()` explicitly. If a dropdown must be
+opened first, call a private `openUserDropdownMenu()` helper (see `MooKo`, `C411`, `Zappateers`) that clicks
+the parent element, then return the selector for the link inside the opened dropdown.
+
+**Dropdown pattern:**
+```java
+@Override
+protected By profilePageSelector() {
+    openUserDropdownMenu();
+    return XpathBuilder
+        .from(div, withClass("dropdown-menu"))
+        .child(a, atIndex(1))
+        .build();
+}
+
+private void openUserDropdownMenu() {
+    LOGGER.debug("\t\t- Clicking user dropdown menu to make profile/logout button interactable");
+    final By usernameDropdownSelector = XpathBuilder
+        .from(div, withClass("username"))
+        .build();
+    final WebElement usernameDropdown = driver.findElement(usernameDropdownSelector);
+    clickButton(usernameDropdown);
+}
+```
+
+The same `openUserDropdownMenu()` call must be repeated in `logoutButtonSelector()`. Use `atLastIndex()` for
+the logout link when it is the last item in the dropdown, or use the specific `atIndex(n)` if known.
+
+---
+
+### 3. Check for a fixed header on every new tracker
+
+**Mistake:** Did not implement `HasFixedHeader` even though the profile page has a sticky header that
+obscures part of the screenshot.
+
+**Why it's wrong:** Fixed/sticky headers overlap page content in full-page screenshots, cutting off
+information at the top of the visible area.
+
+**Rule:** Always check whether the tracker has a `position: fixed` or `position: sticky` header. If it
+does, implement `HasFixedHeader` and provide the correct `headerSelector()`. Use
+`XpathBuilder.from(header, atIndex(1)).build()` for a plain `<header>` element; only override
+`unfixHeader()` when CSS alone is insufficient (see `Torrenting.java` for a JS-injection example).
+
+---
+
+### 4. Always identify sensitive fields before submitting the implementation
+
+**Mistake:** Did not add `emailElements()` or `torrentPasskeyElements()` overrides despite the profile page
+displaying both in plaintext.
+
+**Why it's wrong:** The purpose of the handler is to produce a shareable screenshot; user email and passkey
+are sensitive and must be redacted before the screenshot is taken.
+
+**Rule:** Before considering the implementation complete, inspect the user's profile page and identify all
+sensitive fields: email, IP address, torrent passkey, API key, or any other personal data. Add the
+appropriate redaction override(s) for each.
+
+### 4a. Use semantic HTML attributes to locate sensitive fields — don't guess CSS classes
+
+**Mistake:** Used `withText("@")` on a `<td>` to find the email field, instead of inspecting the HTML for
+a more reliable signal.
+
+**Why it's wrong:** Many profile pages render the email in an `<input type="email">` field (even if it is
+read-only). The `type="email"` attribute is an unambiguous HTML5 signal that is far more reliable than
+pattern-matching on the value content.
+
+**Rule:** Before writing a text- or class-based selector for a sensitive field, check whether the element
+has a semantic `type` attribute (`type="email"`, `type="password"`, etc.) or a distinctive `name`/`id`.
+These are always preferable to guessing class names or matching on value content.
+
+```java
+// Prefer this:
+XpathBuilder.from(input, withType("email")).build()
+
+// Over this:
+XpathBuilder.from(td, withText("@")).build()
+```
+
+---
+
+### 4b. Prefer DOM structure over CSS styling attributes when locating sensitive fields
+
+**Mistake:** Used `withAttribute("align", "left")` to find an IP address cell, relying on a CSS
+presentation attribute to identify the element.
+
+**Why it's wrong:** CSS styling attributes (`align`, `style`, etc.) are fragile — they can change when
+the site is restyled without any change to the underlying data. The element's position within the DOM
+table structure is a more stable signal.
+
+**Rule:** When a sensitive field has no semantic `id`, `name`, or `type`, navigate to it via table
+structure (`table[n]/tbody[n]/tr[n]/td[n]`) anchored on a stable parent container, rather than relying
+on CSS/styling attributes.
+
+```java
+// Prefer this — anchored on a stable container, uses DOM position:
+XpathBuilder
+    .from(td, withClass("embedded"))
+    .child(table, atIndex(1))
+    .child(tbody, atIndex(1))
+    .child(tr, atIndex(3))
+    .child(td, atIndex(2))
+    .build()
+
+// Over this — relies on a CSS presentation attribute that may change:
+XpathBuilder.from(td, withAttribute("align", "left")).build()
+```
+
+---
+
+### 5. Override `postLoginSelector()` whenever `profilePageSelector()` performs an action
+
+**Mistake:** Left `postLoginSelector()` delegating to `profilePageSelector()`, which calls
+`openUserDropdownMenu()` before returning the selector.
+
+**Why it's wrong:** `postLoginSelector()` is called immediately after the login click, purely to confirm
+the login succeeded. The default implementation calls `profilePageSelector()`, which is fine for simple
+link selectors — but if `profilePageSelector()` opens a dropdown (or does any other interaction), that
+action fires at the wrong time, against the wrong page state.
+
+**Rule:** Any time `profilePageSelector()` contains a side effect (clicking, hovering, scrolling), override
+`postLoginSelector()` with a plain presence-only selector. Prefer a user-stats element (e.g. `div.user-stats`,
+`ul.top-nav__ratio-bar`) over a generic nav element — the post-login page often shows the user's stats and
+this provides a more meaningful confirmation of a successful login.
+
+```java
+// profilePageSelector() clicks a dropdown — must not be reused for post-login check
+@Override
+protected By postLoginSelector() {
+    return XpathBuilder
+        .from(div, withClass("user-stats"))
+        .build();
+}
+```
+
+---
+
+### 6. Always check the homepage for `loginPageSelector()` — don't assume direct navigation to `/login`
+
+**Mistake:** Verified that `/login` renders a login form and concluded `loginPageSelector()` was not needed,
+without checking whether the homepage itself redirects to login or requires clicking a link.
+
+**Why it's wrong:** The framework always navigates to the tracker's root URL first. If the homepage shows a
+landing page (e.g. "Please login to view torrents") rather than auto-redirecting to the login form,
+`loginPageSelector()` must return the selector for the login link to click. The login form being available
+at `/login` does not mean the homepage redirects there.
+
+**Rule:** Always fetch the tracker's **homepage** (not `/login`) to determine the login flow. If it renders
+the login form directly → `return null`. If it renders a landing page with a login link → return the
+selector for that link. Prefer a nav-bar login anchor over inline paragraph links.
+
+```java
+// Homepage shows a nav-bar "Login" link — return its selector
+@Override
+public By loginPageSelector() {
+    return XpathBuilder
+        .from(a, withClass("nav-link"), withAttribute("href", "/login"))
+        .build();
+}
+```
+
+---
+
+### 7. Prefer semantic, user-focused elements for `profilePageContentSelector()`
+
+**Mistake:** Used `div.col-lg-4` (a Bootstrap grid class) as `profilePageContentSelector()`, relying on
+CSS layout structure to confirm the profile page.
+
+**Why it's wrong:** Bootstrap grid classes (`col-lg-4`, `card-body`, `container`) appear on many pages
+with different layouts. They confirm a layout, not a specific page. If the tracker reskins or adds
+new pages with the same grid structure, the selector will produce false positives.
+
+**Rule:** Look for an element whose class name describes the content concept, not its visual position.
+Username displays, profile headings, or user-stats containers are ideal — their class names are tied
+to the feature, not the layout.
+
+```java
+// Prefer this — class name describes the content:
+XpathBuilder.from(span, withClass("username-user")).build()
+
+// Over this — class name describes the layout:
+XpathBuilder.from(div, withClass("col-lg-4")).child(div, atIndex(2)).child(div, withClass("card-header")).build()
+```
+
+---
+
+### 8. Never use `withText()` or `withExactText()` in selectors
+
+**Mistake:** Used `withText("Login")` to identify the login dropdown toggle button.
+
+**Why it's wrong:** Text content is language-dependent. Non-English users will see "Connexion", "Anmelden",
+etc. — the selector silently fails for them.
+
+**Rule:** Always use structural HTML attributes (`id`, `name`, `class`, `type`, `href`, `action`, etc.) or
+DOM position. If an element has no distinguishing attribute, navigate to it from a nearby element that does:
+
+```java
+// WRONG — breaks for non-English users:
+XpathBuilder.from(button, withClass("dropdown-toggle"), withText("Login")).build()
+
+// CORRECT — navigate from the login form's preceding sibling button:
+XpathBuilder
+    .from(form, withAttribute("action", "index.php?page=login"))
+    .navigateTo(precedingSibling(button))
+    .build()
+```

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(du:*)",
+      "Bash(echo:*)",
+      "Bash(for f:*)",
+      "Bash(git stash:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(mvn:*)",
+      "Bash(mvn.cmd:*)",
+      "Bash(tr:*)",
+      "Bash(wc:*)",
+      "Bash(wget:*)",
+      "Edit",
+      "Read(//tmp/**)",
+      "Read(.claude/**)",
+      "WebFetch",
+      "WebSearch",
+      "Write"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/approve-logic.js"
+          }
+        ]
+      }
+    ]
+  }
+}

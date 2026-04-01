@@ -15,6 +15,11 @@
         - [Disable UI](#disable-ui)
     - [Configuration Options](#configuration-options)
 - [Versioning](#versioning)
+- [AI Usage](#ai-usage)
+    - [AI Agents](#ai-agents)
+    - [Established Patterns](#established-patterns)
+    - [Human Review](#human-review)
+    - [Exceptions](#exceptions)
 - [Contributing](#contributing)
     - [Requirements](#requirements)
     - [Install Git Hooks](#install-git-hooks)
@@ -440,6 +445,56 @@ This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PA
 Adding or removing tracker support is **not** considered a `MINOR` change. Trackers are external to the application and
 not part of its public API, as their availability depends on third-party sites that can change or disappear at any time.
 Tracker additions and removals will be released as `PATCH` versions.
+
+## AI Usage
+
+I use AI agents to perform the "first-pass" implementation for a new tracker site. The AI will investigate and evaluate
+the generate structure of the site and build an initial handler. Based off of this, I'll refine and test until I'm
+happy that it matches the same standards as the existing implementations.
+
+Since there were over 100 implementations prior to using AI, there are established patterns and styles to follow,
+hopefully guiding the AI to follow the same standards.
+
+### AI Agents
+
+[Claude Code](https://claude.com/claude-code) employs a multi-agent pipeline to implement each new tracker handler:
+
+| Agent              | Responsibility                                                                                                                                                          |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Orchestrator**   | Coordinates the full workflow, delegating to specialised sub-agents in sequence                                                                                         |
+| **Login Agent**    | Inspects the tracker's login page to determine the correct selectors for the username field, password field, login button, and post-login confirmation element          |
+| **Profile Agent**  | Navigates the user's profile page to identify the navigation selector that reaches it, the content selector that confirms it has loaded, and the logout button selector |
+| **Redactor Agent** | Reviews the profile page for sensitive fields and determines the appropriate redaction selectors                                                                        |
+
+### Established Patterns
+
+Every implementation relies on:
+
+- **Existing handler code**: The agents study the handlers already in
+  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project
+  conventions, selector construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`,
+  etc.)
+- **[CLAUDE.md](./.claude/CLAUDE.md)**: Defined project-level guidance covering architecture, selector conventions,
+  linting rules, and the mandatory post-implementation checklist (README count, tracker table row, CSV entry)
+- **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the
+  tracker to build the handler, which is refined over time
+- **[new_tracker_learnings.md](.claude/agents/new_tracker_learnings.md)**: A history of mistakes and guidance from prior
+  implementation sessions, reviewed by the agents before writing any new handler
+
+### Human Review
+
+All AI-generated code is reviewed and approved before being merged, including manual testing of the new handler. Since
+each handler needs to be tested against a real site, there's no value to automating any testing, so each implementation
+will be verified manually.
+
+### Exceptions
+
+The one exception for the above is the JavaScript code used
+in [BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java)
+and [BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java).
+
+I don't know JavaScript well enough to perform this overlay-based redaction, but I verify against all tracker handlers
+when updates are made, to cover as many cases as possible.
 
 ## Contributing
 
