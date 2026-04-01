@@ -16,6 +16,7 @@
       "Bash(wc:*)",
       "Bash(wget:*)",
       "Edit",
+      "Edit(.claude/**)",
       "Read(//tmp/**)",
       "Read(.claude/**)",
       "WebFetch",

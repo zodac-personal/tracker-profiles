@@ -12,6 +12,18 @@ checklist.
 
 ## Workflow
 
+### Starting
+
+Use the following prompt:
+
+```
+Implement a new TrackerHandler for `TrackerName` (https://tracker.site/, credentials: username/password).
+
+Start by reading .claude/agents/orchestrator.md and .claude/agents/new_tracker_learnings.md then coordinate the specialist agents.
+
+Notes: Add any additional notes specific to this tracker here.
+```
+
 ### Step 1 — Determine base class
 
 Before spawning agents, inspect existing handlers to determine whether this tracker uses a known platform:
@@ -39,11 +51,12 @@ Write the final `.java` file to:
 `tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/<TrackerName>.java`
 
 Rules:
+
 - BSD Zero Clause License header (copy from any existing handler)
 - Package: `net.zodac.tracker.handler`
 - Annotation: `@TrackerHandler(name = "Name", url = "https://...")`
-  - For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
-  - For MANUAL type: add `type = TrackerType.MANUAL`
+    - For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
+    - For MANUAL type: add `type = TrackerType.MANUAL`
 - Only include overrides that differ from the base class defaults
 - Use `XpathBuilder` exclusively — never raw XPath strings
 - Imports must be sorted (static first, then standard, alphabetical within each group)

@@ -54,12 +54,19 @@ Check existing handlers before writing from scratch.
 Annotation: `@TrackerHandler(name = "Name", url = "https://...")`
 For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
 
+### Tracker display name vs Java class name
+The Java class name follows PascalCase (e.g. `AsianDvdClub`), but the `name =` value in
+`@TrackerHandler`, the CSV entry, and the README row must use the tracker's **actual display name**
+(e.g. `AsianDVDClub`). Check the site's title or logo for the canonical capitalisation before writing.
+
 ### CSV entry
-Add to `docker/trackers_example.csv` after implementing.
+Add to `docker/trackers_example.csv` after implementing. Use the tracker's display name, not the Java
+class name casing.
 
 ### README entry
 Add to `README.md` after implementing: insert a row in the correct alphabetical position in the tracker
-table, and increment the tracker count on the "There are currently **N** supported trackers" line.
+table, and increment the tracker count on the "There are currently **N** supported trackers" line. Use
+the tracker's display name, not the Java class name casing.
 
 ---
 
@@ -74,6 +81,10 @@ has loaded. The selector must match an element that only exists on the profile p
 section, heading, or container).
 
 **Rule:** Always ask "is this element unique to the profile page?" before using it as `profilePageContentSelector()`.
+Additionally, prefer **non-user-configurable** elements (username display, stats container, join date) over
+user-configurable ones (profile avatar, banner image). A user who has not set an avatar may have no avatar
+element, so that selector would fail for them. Platform-rendered elements are always present regardless of
+user settings.
 
 ---
 

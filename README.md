@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **133** supported trackers listed below. The available trackers come in the following types:
+There are currently **134** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -120,6 +120,7 @@ background:
 | [ArabicSource](https://arabicsource.net/)         |
 | [ArabP2P](https://www.arabp2p.net/)               |
 | [AsianCinema](https://eiga.moi/)                  |
+| [AsianDVDClub](https://asiandvdclub.org/)         |
 | [Aura4K](https://aura4k.net/)                     |
 | [BackUps](https://back-ups.me/)                   |
 | [BakaBT](https://bakabt.me/)                      |
@@ -237,7 +238,7 @@ background:
 
 ### Manual Interaction
 
-If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or their type is included in
+If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or **MANUAL** is included in
 `TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
 <table>
@@ -297,8 +298,9 @@ First, copy the [trackers_example.csv](./docker/trackers_example.csv) file. This
 user's login information for each tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL`
 environment variable so they are excluded. The tracker names are case-insensitive.
 
-The file can be saved anywhere, and it will be referenced by the `TRACKER_INPUT_FILE_PATH` environment variable when
-running the application, so remember where it is saved and what it is named.
+The file can be saved anywhere but needs to be mounted into the Docker container, and it will be referenced by the
+`TRACKER_INPUT_FILE_PATH` environment variable when running the application, so remember where it is saved and what it
+is named.
 
 ### Running In Docker
 
@@ -387,7 +389,7 @@ Below will define how to do this for your host system.
 
 #### UI in Debian
 
-To run through Docker with a UI, local connections to the host display must be enabled:
+To run through Docker with a UI, local connections to the host display might need to be enabled:
 
 ```bash
 # This seems to be reset upon reboot and may need to be reapplied
@@ -406,7 +408,7 @@ the configuration:
 #### Disable UI
 
 To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
-`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **manual** from `TRACKER_EXECUTION_ORDER`.
+`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
 You can then remove `--env DISPLAY` and/or `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
 ### Configuration Options
@@ -474,8 +476,8 @@ Every implementation relies on:
   the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project
   conventions, selector construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`,
   etc.)
-- **[CLAUDE.md](./.claude/CLAUDE.md)**: Defined project-level guidance covering architecture, selector conventions,
-  linting rules, and the mandatory post-implementation checklist (README count, tracker table row, CSV entry)
+- **[CLAUDE.md](./.claude/CLAUDE.md)**: This defines project-level standards covering structure, selector conventions,
+  linting rules, and the mandatory post-implementation checklist
 - **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the
   tracker to build the handler, which is refined over time
 - **[new_tracker_learnings.md](.claude/agents/new_tracker_learnings.md)**: A history of mistakes and guidance from prior
@@ -484,7 +486,7 @@ Every implementation relies on:
 ### Human Review
 
 All AI-generated code is reviewed and approved before being merged, including manual testing of the new handler. Since
-each handler needs to be tested against a real site, there's no value to automating any testing, so each implementation
+each handler needs to be tested against a real site, there's no value to automating much testing, so each implementation
 will be verified manually.
 
 ### Exceptions
