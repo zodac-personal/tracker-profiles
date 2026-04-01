@@ -42,8 +42,9 @@ import org.openqa.selenium.By;
  * Common implementation of {@link AbstractTrackerHandler} for {@code TS Special Edition}-based trackers.
  */
 @CommonTrackerHandler("TSSpecialEdition")
+@TrackerHandler(name = "AussieRul.es", url = "https://aussierul.es/")
 @TrackerHandler(name = "ImmortalSeed", url = "https://immortalseed.me/")
-@TrackerHandler(name = "Tasmanites", url = "https://tasmanit.es/")
+@TrackerHandler(name = "Tasmanit.es", url = "https://tasmanit.es/")
 @TrackerHandler(name = "T3nnis", url = "https://t3nnis.tv/")
 public class TsSpecialEditionHandler extends AbstractTrackerHandler {
 

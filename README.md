@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **134** supported trackers listed below. The available trackers come in the following types:
+There are currently **135** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -122,6 +122,7 @@ background:
 | [AsianCinema](https://eiga.moi/)                  |
 | [AsianDVDClub](https://asiandvdclub.org/)         |
 | [Aura4K](https://aura4k.net/)                     |
+| [AussieRul.es](https://aussierul.es/)             |
 | [BackUps](https://back-ups.me/)                   |
 | [BakaBT](https://bakabt.me/)                      |
 | [bitGAMER](https://bitgamer.ch/)                  |
@@ -212,7 +213,7 @@ background:
 | [SlobitMedia](https://media.slo-bitcloud.eu/)        |
 | [SportsCult](https://sportscult.org/)                |
 | [T3nnis](https://t3nnis.tv/)                         |
-| [Tasmanites](https://tasmanit.es/)                   |
+| [Tasmanit.es](https://tasmanit.es/)                  |
 | [TeamOS](https://teamos.xyz/)                        |
 | [TheMixingBowl](https://themixingbowl.org/)          |
 | [Torr9](https://torr9.net/)                          |
