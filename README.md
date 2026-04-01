@@ -87,7 +87,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **131** supported trackers listed below. The available trackers come in the following types:
+There are currently **132** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -120,6 +120,7 @@ background:
 | [BakaBT](https://bakabt.me/)                      |
 | [bitGAMER](https://bitgamer.ch/)                  |
 | [BitPorn](https://bitporn.eu/)                    |
+| [BlueTorrents](https://bluetorrents.com/)         |
 | [Blutopia](https://blutopia.cc/)                  |
 | [BootyTape](https://ssl.bootytape.com/)           |
 | [BrokenStones](https://brokenstones.is/)          |
