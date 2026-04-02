@@ -302,3 +302,89 @@ XpathBuilder
     .navigateTo(precedingSibling(button))
     .build()
 ```
+
+---
+
+### 9. Be consistent when selecting `<li>` children of the same parent element
+
+**Mistake:** Used `withClass("logoutlink")` to select the logout `<li>` inside `ul.isuser`, while
+`profilePageSelector()` used `atIndex(3)` for the profile `<li>` in the same list.
+
+**Why it's wrong:** When two selectors (`profilePageSelector()` and `logoutButtonSelector()`) both navigate
+into the same parent element, mixing `withClass` and `atIndex` for their respective `<li>` children is
+inconsistent. It makes it harder to reason about their positions relative to each other and to verify
+correctness at a glance.
+
+**Rule:** When `profilePageSelector()` and `logoutButtonSelector()` (or any two selectors) both descend
+into the same parent element to select sibling `<li>` items, use the same predicate type for both —
+either `atIndex` for both, or `withClass` for both. It is fine to use `withClass` on one and `atIndex`
+on another only when they target entirely different parent elements.
+
+```java
+// ul.isuser: index 1 = Logout, index 2 = Settings, index 3 = My Profile
+
+// CORRECT — both use atIndex, consistent within the same parent:
+@Override
+protected By profilePageSelector() {
+    return XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a, atIndex(1)).build();
+}
+
+@Override
+protected By logoutButtonSelector() {
+    return XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(1)).child(a, atIndex(1)).build();
+}
+
+// ALSO CORRECT — both use withClass, consistent within the same parent:
+// profilePageSelector:  .child(li, withClass("profilelink")).child(a, atIndex(1))
+// logoutButtonSelector: .child(li, withClass("logoutlink")).child(a, atIndex(1))
+
+// WRONG — inconsistent within the same parent:
+// profilePageSelector:  .child(li, atIndex(3)).child(a, atIndex(1))
+// logoutButtonSelector: .child(li, withClass("logoutlink")).child(a, atIndex(1))
+```
+
+---
+
+### 10. Always specify `atIndex(1)` on terminal `<a>` children — never use bare `.child(a)`
+
+**Mistake:** Used `.child(a)` (no index) as the final step in a selector chain, e.g. to get the link
+inside a `<li>`.
+
+**Why it's wrong:** `.child(a)` without an index matches *all* `<a>` children, which can be ambiguous if
+the `<li>` ever contains more than one anchor (e.g. an icon link alongside a text link). Being explicit
+prevents silent breakage if the DOM gains extra elements.
+
+**Rule:** Always write `.child(a, atIndex(1))` (or the appropriate index) when targeting a specific anchor.
+This applies to the final `<a>` in any selector chain, not just logout/profile links.
+
+```java
+// CORRECT:
+XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a, atIndex(1)).build()
+
+// WRONG — ambiguous if <li> contains multiple anchors:
+XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a).build()
+```
+
+---
+
+### 11. Always check the logout link for a JavaScript confirmation alert
+
+**Mistake:** Did not add `additionalActionAfterLogoutClick()` despite the logout anchor triggering a
+JavaScript `confirm()` alert before completing the logout.
+
+**Why it's wrong:** If the JS alert is not accepted, the logout never completes, leaving the session active
+and causing the framework to fail when it checks for the post-logout state.
+
+**Rule:** Inspect the logout anchor's `onclick` attribute (or nearby `<script>` blocks) for a `confirm(`
+call. If present, override `additionalActionAfterLogoutClick()` to accept the alert. Some platforms
+(vBulletin, TS Special Edition) use this pattern consistently — always check the logout link HTML even
+when the site otherwise appears straightforward.
+
+```java
+// Logout anchor has onclick="return confirm('...')" — must accept the alert:
+@Override
+protected void additionalActionAfterLogoutClick() {
+    LOGGER.debug("\t\t- Clicking JavaScript alert to confirm logout");
+    browserInteractionHelper.acceptAlert();
+}
+```

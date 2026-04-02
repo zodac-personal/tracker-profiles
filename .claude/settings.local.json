@@ -18,7 +18,6 @@
       "Edit",
       "Edit(.claude/**)",
       "Read(//tmp/**)",
-      "Read(.claude/**)",
       "WebFetch",
       "WebSearch",
       "Write"

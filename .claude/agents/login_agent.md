@@ -30,7 +30,12 @@ Determine the correct selectors and overrides for:
 
 ### Logout flow
 - `logoutButtonSelector()` — **required**, no default; must be interactable from the profile page
-- `additionalActionAfterLogoutClick()` — only if a confirmation dialog appears after clicking logout
+- `additionalActionAfterLogoutClick()` — override if a confirmation dialog (e.g. a JavaScript `confirm()`
+  alert) appears after clicking logout. To detect this: look for `confirm(` calls in the page's JavaScript
+  that are triggered by the logout link's `onclick` handler, or check the logout anchor for an `onclick`
+  attribute containing `confirm`. If found, override with `browserInteractionHelper.acceptAlert()`. Some
+  platforms (vBulletin, TS Special Edition) consistently use this pattern — check the logout link HTML
+  carefully even when the site appears straightforward.
 - `postLogoutElementSelector()` — only if logout does not redirect to the login page
 - `pageTransitionsDuration()` — override (e.g. `Duration.ofSeconds(2L)`) if logout redirects through an
   intermediate landing page before reaching the login page. The default 500ms is not enough for a two-step
