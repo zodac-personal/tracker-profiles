@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Utility class to define {@link Pattern}s and methods to find and/or replace matches in {@link String}s.
  */
+// TODO: Are the functions here needed? Do I need to check instead of just applying the redaction?
 public final class TextSearcher {
 
     /**

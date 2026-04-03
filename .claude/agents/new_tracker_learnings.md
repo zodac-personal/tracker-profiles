@@ -28,17 +28,27 @@ to avoid repeating them across sessions.
 - `manualCheckBeforeLoginClick()` / `manualCheckAfterLoginClick()` — for captcha/2FA (MANUAL type)
 
 ### Selector construction
-Always use `XpathBuilder` — never raw XPath strings. Exception: use `By.id("stable-id")` when the element
-has a **stable** (non-dynamic) `id` attribute — it is simpler and faster than an equivalent XpathBuilder
-expression. If the `id` is dynamic (e.g. session-based suffix like `username_LH8F8`), fall back to a
-stable attribute such as `name` or `type`.
+Always use `XpathBuilder` — never raw XPath strings. Exceptions: prefer Selenium's built-in `By` methods
+when a single stable attribute uniquely identifies the element — they are simpler and faster than an
+equivalent XpathBuilder expression. This applies to **all** selectors in **all** methods.
+
+- Use `By.id("stable-id")` when the element has a stable (non-dynamic) `id` attribute.
+- Use `By.name("stable-name")` when the element has a stable `name` attribute and no stable `id`.
+- Fall back to `XpathBuilder` when the `id`/`name` is dynamic or absent, or when additional predicates
+  (class, type, position) are needed to uniquely identify the element.
 
 ```java
-// Prefer By.id() when the id is stable:
+// Prefer By.id() when the id is stable (applies everywhere, not just specific methods):
 By.id("login-button")
+By.id("user-view")
 
-// Fall back to XpathBuilder when the id is dynamic or absent:
+// Prefer By.name() when the name is stable and no id exists:
+By.name("username")
+By.name("password")
+
+// Fall back to XpathBuilder when id/name is absent or additional predicates are needed:
 XpathBuilder.from(input, withName("username"), withType("text")).build();
+XpathBuilder.from(button, withType("submit")).build();
 ```
 
 Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `containsHref`,
@@ -272,11 +282,12 @@ the login form directly → `return null`. If it renders a landing page with a l
 selector for that link. Prefer a nav-bar login anchor over inline paragraph links.
 
 ```java
-// Homepage shows a nav-bar "Login" link — return its selector
+// Homepage shows a nav-bar "Login" link — return its selector.
+// Use containsHref() rather than withAttribute("href", ...) for href-based matching:
 @Override
 public By loginPageSelector() {
     return XpathBuilder
-        .from(a, withClass("nav-link"), withAttribute("href", "/login"))
+        .from(a, withClass("nav-link"), containsHref("/login"))
         .build();
 }
 ```

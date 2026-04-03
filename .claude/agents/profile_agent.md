@@ -121,3 +121,8 @@ public By headerSelector() {
 
 // NOTE: profilePageSelector() has no side effects — postLoginSelector() override not needed
 ```
+
+## Shell Conventions
+
+- Do not add inline comments in bash commands (no `# ...` at end of lines or as standalone explanation lines
+  within command blocks).

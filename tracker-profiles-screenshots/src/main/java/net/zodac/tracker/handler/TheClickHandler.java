@@ -72,7 +72,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link TheClickHandler}, prior to clicking the login button with a captcha that needs to be clicked (and verified if necessary).
+     * For {@link TheClickHandler}, prior to clicking the login button with a captcha that needs to be clicked and verified.
      *
      * <p>
      * Manual user interaction:

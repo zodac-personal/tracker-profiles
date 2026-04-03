@@ -12,16 +12,18 @@
       "Bash(ls:*)",
       "Bash(mvn:*)",
       "Bash(mvn.cmd:*)",
+      "Bash(node .claude/hooks/approve-logic.js:*)",
+      "Bash(python3 -m json.tool)",
       "Bash(tr:*)",
       "Bash(wc:*)",
       "Bash(wget:*)",
       "Edit",
       "Edit(.claude/**)",
       "Read(//tmp/**)",
+      "Skill(update-config)",
       "WebFetch",
       "WebSearch",
-      "Write",
-      "Bash(node .claude/hooks/approve-logic.js:*)"
+      "Write"
     ]
   },
   "hooks": {
