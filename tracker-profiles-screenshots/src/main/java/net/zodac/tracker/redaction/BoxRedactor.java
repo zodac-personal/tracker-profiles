@@ -116,7 +116,7 @@ class BoxRedactor implements Redactor {
                   fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 var span = document.createElement('span')
-                span.className = 'redact-target'
+                span.className = 'redact-box-email'
                 span.dataset.index = counter++
                 span.textContent = match[0]
                 fragment.appendChild(span)
@@ -129,7 +129,7 @@ class BoxRedactor implements Redactor {
             }
 
             // Get all redaction target spans
-            var target_spans = element.querySelectorAll('.redact-target')
+            var target_spans = element.querySelectorAll('.redact-box-email')
             var overlay_ids = []
 
             // Create overlay for each target
@@ -229,7 +229,7 @@ class BoxRedactor implements Redactor {
                   fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 var span = document.createElement('span')
-                span.className = 'redact-target'
+                span.className = 'redact-box-ip'
                 span.dataset.index = counter++
                 span.textContent = match[0]
                 fragment.appendChild(span)
@@ -261,7 +261,7 @@ class BoxRedactor implements Redactor {
             apply_regex(ipv4_regex)
 
             // Get all redaction target spans
-            var target_spans = element.querySelectorAll('.redact-target')
+            var target_spans = element.querySelectorAll('.redact-box-ip')
             var overlay_ids = []
 
             // Create overlay for each target

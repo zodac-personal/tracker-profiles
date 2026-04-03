@@ -77,7 +77,7 @@ class BlurRedactor implements Redactor {
                   fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 var span = document.createElement('span')
-                span.className = 'redact-target'
+                span.className = 'redact-blur-email'
                 span.dataset.index = counter++
                 span.textContent = match[0]
                 fragment.appendChild(span)
@@ -90,7 +90,7 @@ class BlurRedactor implements Redactor {
             }
 
             // Apply blur directly to each matched span
-            var target_spans = element.querySelectorAll('.redact-target')
+            var target_spans = element.querySelectorAll('.redact-blur-email')
             for (var i = 0; i < target_spans.length; i++) {
               target_spans[i].style.filter = blur_definition
             }
@@ -135,7 +135,7 @@ class BlurRedactor implements Redactor {
                   fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 var span = document.createElement('span')
-                span.className = 'redact-target'
+                span.className = 'redact-blur-ip'
                 span.dataset.index = counter++
                 span.textContent = match[0]
                 fragment.appendChild(span)
@@ -167,7 +167,7 @@ class BlurRedactor implements Redactor {
             apply_regex(ipv4_regex)
 
             // Apply blur directly to each matched span
-            var target_spans = element.querySelectorAll('.redact-target')
+            var target_spans = element.querySelectorAll('.redact-blur-ip')
             for (var i = 0; i < target_spans.length; i++) {
               target_spans[i].style.filter = blur_definition
             }
