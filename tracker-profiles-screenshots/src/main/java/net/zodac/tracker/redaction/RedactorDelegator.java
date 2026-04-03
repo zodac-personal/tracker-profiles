@@ -51,7 +51,7 @@ public class RedactorDelegator implements Redactor {
 
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        logElementToBeRedacted(element, "");
+        logElementToBeRedacted(element, description);
         final int numberOfRedactedElements = redactor.redact(element, description, buffer);
         LOGGER.trace("");
         return numberOfRedactedElements;

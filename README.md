@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **137** supported trackers listed below. The available trackers come in the following types:
+There are currently **138** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -252,8 +252,9 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [52PT](https://52pt.site/)                          | Captcha                                         |
 | [AnimeZ](https://animez.to/)                        | Captcha                                         |
 | [AvistaZ](https://avistaz.to/)                      | Captcha & Cloudflare verificaiton               |
-| [BroadcasThe.Net](https://broadcasthe.net/)         | Captcha & Cloudflare verification               |
 | [BeyondHD](https://beyond-hd.me/)                   | Captcha                                         |
+| [BroadcasThe.Net](https://broadcasthe.net/)         | Captcha & Cloudflare verification               |
+| [BTArg](https://www.btarg.com.ar/tracker/)          | Needs to be explicitly translated               |
 | [CGPeers](https://cgpeers.to/)                      | 2FA & Cloudflare verification                   |
 | [CinemaZ](https://cinemaz.to/)                      | Captcha & Cloudflare verification               |
 | [DigitalCore.Club](https://digitalcore.club/)       | Captcha                                         |

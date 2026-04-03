@@ -20,7 +20,8 @@
       "Read(//tmp/**)",
       "WebFetch",
       "WebSearch",
-      "Write"
+      "Write",
+      "Bash(node .claude/hooks/approve-logic.js:*)"
     ]
   },
   "hooks": {
