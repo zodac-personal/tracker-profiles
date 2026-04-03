@@ -268,6 +268,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [HDFans](https://hdfans.org/)                       | Captcha                                         |
 | [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
 | [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
+| [Leech24](https://leech24.net/)                     | Captcha                                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
 | [LetSeed](https://letseed.org/)                     | Captcha                                         |
 | [LP-Bits](https://lp-bits.com/)                     | Captcha                                         |
