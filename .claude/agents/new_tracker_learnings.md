@@ -28,14 +28,21 @@ to avoid repeating them across sessions.
 - `manualCheckBeforeLoginClick()` / `manualCheckAfterLoginClick()` — for captcha/2FA (MANUAL type)
 
 ### Selector construction
-Always use `XpathBuilder` — never raw XPath strings:
+Always use `XpathBuilder` — never raw XPath strings. Exception: use `By.id("stable-id")` when the element
+has a **stable** (non-dynamic) `id` attribute — it is simpler and faster than an equivalent XpathBuilder
+expression. If the `id` is dynamic (e.g. session-based suffix like `username_LH8F8`), fall back to a
+stable attribute such as `name` or `type`.
+
 ```java
-XpathBuilder
-    .from(div, withClass("some-class"))
-    .child(span, withId("some-id"))
-    .build();
+// Prefer By.id() when the id is stable:
+By.id("login-button")
+
+// Fall back to XpathBuilder when the id is dynamic or absent:
+XpathBuilder.from(input, withName("username"), withType("text")).build();
 ```
-Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `atIndex`, `atLastIndex`
+
+Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `containsHref`,
+`atIndex`, `atLastIndex`
 Available axes: `followingSibling`, `descendant`, `child`, `parent`, `precedingSibling`, etc.
 For non-enum HTML tags: `NamedHtmlElement.of("article")`
 
@@ -124,6 +131,23 @@ private void openUserDropdownMenu() {
 
 The same `openUserDropdownMenu()` call must be repeated in `logoutButtonSelector()`. Use `atLastIndex()` for
 the logout link when it is the last item in the dropdown, or use the specific `atIndex(n)` if known.
+
+**`onmouseover` vs `onclick` dropdowns:** Some dropdown triggers use `onmouseover` instead of `onclick`
+to show the menu. For these, **do not call `clickButton()`** — clicking will also follow the element's
+`href`, navigating away from the page before the logout link can be clicked. Instead, use
+`browserInteractionHelper.moveTo(element)` to hover over the trigger without clicking:
+
+```java
+private void openUserDropdownMenu() {
+    LOGGER.debug("\t\t- Hovering over dropdown trigger to make logout button interactable");
+    final By triggerSelector = By.id("editout");
+    final WebElement trigger = driver.findElement(triggerSelector);
+    browserInteractionHelper.moveTo(trigger);  // hover only — do NOT call clickButton()
+}
+```
+
+To tell them apart: if the element has `onmouseover="showMenu(...)"` and a non-`#` `href`, use `moveTo`.
+If it has `onclick` or `href="#"`, use `clickButton`.
 
 ---
 
@@ -367,6 +391,43 @@ XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a).build(
 
 ---
 
+### 12. Use curl with a cookie jar to access authenticated profile pages
+
+**Mistake:** Attempted to use `WebFetch` to access the authenticated profile page to inspect IP address,
+email, and passkey fields — and when it returned the login page, spawned progressively more speculative
+agents searching GitHub, Gitee, and Wayback Machine for the page's HTML structure.
+
+**Why it's wrong:** `WebFetch` cannot authenticate. Any page that requires login will return the login
+page instead. The correct approach is to follow the login → profile → logout flow as a real user would,
+using `curl` with a cookie jar to maintain the session:
+
+```bash
+# 1. Fetch the homepage — if cookies from a previous step already have a valid session, you may
+#    already be logged in (check for username in the response)
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/" \
+  -H "User-Agent: Mozilla/5.0 ..." -o /tmp/home.html
+grep -i "username\|logout" /tmp/home.html | head -10
+
+# 2. If not logged in, POST to the login endpoint with the form fields
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/login.php" \
+  --data "username=USER&password=PASS&..." -o /tmp/post_login.html
+
+# 3. Fetch the profile page with the established session
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt \
+  "https://tracker.site/profile.php?uid=X" -o /tmp/profile.html
+
+# 4. Inspect the HTML for sensitive fields
+grep -i "ip\|email\|passkey\|key" /tmp/profile.html
+sed -n '100,150p' /tmp/profile.html
+```
+
+**Rule:** Before giving up on finding sensitive fields, always attempt to access the authenticated
+profile page via `curl`. Do not fall back to source-code archaeology (GitHub, Gitee, Wayback Machine)
+unless the `curl` approach fails. If `curl` also fails (e.g. CAPTCHA, JS-only auth), escalate to the
+user with a clear description of what was tried and what additional information is needed.
+
+---
+
 ### 11. Always check the logout link for a JavaScript confirmation alert
 
 **Mistake:** Did not add `additionalActionAfterLogoutClick()` despite the logout anchor triggering a
@@ -386,5 +447,32 @@ when the site otherwise appears straightforward.
 protected void additionalActionAfterLogoutClick() {
     LOGGER.debug("\t\t- Clicking JavaScript alert to confirm logout");
     browserInteractionHelper.acceptAlert();
+}
+```
+
+---
+
+### 13. Always add `{@inheritDoc}` Javadoc to Duration method overrides explaining why
+
+**Mistake:** Overrode `pageTransitionsDuration()` with a longer value but left no explanation of why.
+
+**Why it's wrong:** The default is 500ms. A reader seeing `Duration.ofSeconds(3L)` with no comment has no
+way to know whether it was a rough guess or a measured requirement.
+
+**Rule:** Any override of `pageTransitionsDuration()` (or `pageLoadDuration()`) must include a Javadoc
+block starting with `{@inheritDoc}` followed by a site-specific explanation of what causes the delay:
+
+```java
+/**
+ * {@inheritDoc}
+ *
+ * <p>
+ * For {@link MyTracker}, after clicking logout the server issues a JavaScript {@code setTimeout}
+ * redirect with a 2-second delay before reaching the login page. The default 500ms is
+ * insufficient for this redirect chain.
+ */
+@Override
+public Duration pageTransitionsDuration() {
+    return Duration.ofSeconds(3L);
 }
 ```

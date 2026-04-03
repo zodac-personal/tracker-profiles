@@ -58,12 +58,35 @@ XpathBuilder
     .build()
 ```
 
-## Only inspect the profile page
+## Accessing the profile page
 
-Only fetch and inspect the **public profile page**. Do not fetch the settings page, control panel, or any
-other URL. If a sensitive field is not visible on the profile page HTML you fetched, it does not need
-redacting — its presence elsewhere is irrelevant. Fetching other pages to "confirm" a field is absent is
-wasted effort.
+Only inspect the **public profile page**. Do not fetch the settings page, control panel, or any other URL.
+
+If `WebFetch` returns the login page instead of the profile page, **do not give up** — use `curl` with a
+cookie jar to follow the real login flow and access the authenticated page:
+
+```bash
+# Fetch the homepage — if a prior step already set cookies you may already be logged in
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/" \
+  -H "User-Agent: Mozilla/5.0 ..." -o /tmp/home.html
+grep -i "logout\|username" /tmp/home.html | head -5  # check if already logged in
+
+# If not logged in, POST the login form
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/login.php" \
+  --data "username=USER&password=PASS" -o /tmp/post_login.html
+
+# Fetch the profile page with the established session
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt \
+  "https://tracker.site/profile.php?uid=X" -o /tmp/profile.html
+
+# Inspect for sensitive fields
+grep -i "ip\|email\|passkey\|key" /tmp/profile.html
+sed -n '300,400p' /tmp/profile.html  # read the stats section
+```
+
+Do NOT fall back to searching GitHub, Gitee, or Wayback Machine for page structure — those sources
+do not have site-specific customisations. If `curl` also fails (e.g. CAPTCHA blocks the login),
+stop and escalate to the user.
 
 ## Selector Strategy
 

@@ -118,7 +118,8 @@ class BlurRedactor implements Redactor {
 
             var ipv4_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)/g
             var ipv4_masked_regex = /((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){2}x\\.x/g
-            var ipv6_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
+            var ipv6_full_regex = /([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g
+            var ipv6_partial_regex = /([0-9a-fA-F]{4}:){3,7}[0-9a-fA-F]{0,4}/g
             var counter = 0
 
             function wrap_matches_in_text_node(text_node, regex) {
@@ -161,7 +162,8 @@ class BlurRedactor implements Redactor {
             }
 
             apply_regex(ipv4_masked_regex)
-            apply_regex(ipv6_regex)
+            apply_regex(ipv6_full_regex)
+            apply_regex(ipv6_partial_regex)
             apply_regex(ipv4_regex)
 
             // Apply blur directly to each matched span
@@ -175,9 +177,10 @@ class BlurRedactor implements Redactor {
             for (var e = 0; e < value_elements.length; e++) {
               var val = value_elements[e].getAttribute('value')
               ipv4_masked_regex.lastIndex = 0
-              ipv6_regex.lastIndex = 0
+              ipv6_full_regex.lastIndex = 0
+              ipv6_partial_regex.lastIndex = 0
               ipv4_regex.lastIndex = 0
-              if (val && (ipv4_masked_regex.test(val) || ipv6_regex.test(val) || ipv4_regex.test(val))) {
+              if (val && (ipv4_masked_regex.test(val) || ipv6_full_regex.test(val) || ipv6_partial_regex.test(val) || ipv4_regex.test(val))) {
                 value_elements[e].style.filter = blur_definition
               }
             }

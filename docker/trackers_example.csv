@@ -97,6 +97,7 @@ XSpeeds,username,password
 XWT-Classics,username,password
 YUSCENE,username,password
 Zappateers,username,password
+
 #,Manual trackers,UI required for user input
 52PT,username,password
 AnimeZ,username,password
@@ -125,6 +126,7 @@ PrivateHD,username,password
 PT.GTK,username,password
 RoTorrent,username,password
 SceneTime,username,password
+SkyeySnow,username,password
 SocietyGlitch,username,password
 Speed.CD,username,password
 TheEmpire,username,password

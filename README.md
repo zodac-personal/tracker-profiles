@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **136** supported trackers listed below. The available trackers come in the following types:
+There are currently **137** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -252,12 +252,19 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [52PT](https://52pt.site/)                          | Captcha                                         |
 | [AnimeZ](https://animez.to/)                        | Captcha                                         |
 | [AvistaZ](https://avistaz.to/)                      | Captcha & Cloudflare verificaiton               |
+| [BroadcasThe.Net](https://broadcasthe.net/)         | Captcha & Cloudflare verification               |
 | [BeyondHD](https://beyond-hd.me/)                   | Captcha                                         |
+| [CGPeers](https://cgpeers.to/)                      | 2FA & Cloudflare verification                   |
+| [CinemaZ](https://cinemaz.to/)                      | Captcha & Cloudflare verification               |
 | [DigitalCore.Club](https://digitalcore.club/)       | Captcha                                         |
 | [DocsPedia](https://docspedia.world/)               | Captcha                                         |
+| [ExoticaZ](https://exoticaz.to/)                    | Captcha & Cloudflare verification               |
 | [GazelleGames](https://gazellegames.net/)           | Question on login                               |
+| [Hawke-Uno](https://hawke.uno/)                     | 2FA & Cloudflare verification                   |
 | [HD-Forever](https://hdf.world/)                    | Needs to be explicitly translated               |
+| [HDBits](https://hdbits.org/)                       | 2FA, Cloudflare verification, question on login |
 | [HDFans](https://hdfans.org/)                       | Captcha                                         |
+| [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
 | [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
 | [LetSeed](https://letseed.org/)                     | Captcha                                         |
@@ -265,8 +272,13 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [LST](https://lst.gg/)                              | Question on login                               |
 | [PassThePopcorn](https://passthepopcorn.me/)        | Question on login                               |
 | [PornoLab](https://pornolab.net/forum/tracker.php)  | Needs to be explicitly translated               |
+| [PrivateHD](https://privatehd.to/)                  | Captcha & Cloudflare verification               |
 | [PT.GTK](https://pt.gtk.pw/)                        | Captcha                                         |
+| [RoTorrent](https://rotorrent.info/)                | Cloudflare verification                         |
+| [SceneTime](https://www.scenetime.com/)             | Cloudflare verification                         |
+| [SkyeySnow](https://skyeysnow.com/)                 | Needs to be explicitly translated               |
 | [SocietyGlitch](https://stalker.societyglitch.com/) | Captcha                                         |
+| [Speed.CD](https://speed.cd/)                       | Cloudflare verification                         |
 | [TheEmpire](https://theempire.click/)               | Captcha                                         |
 | [TheGeeks](https://thegeeks.click/)                 | Captcha                                         |
 | [TheKitchen](https://thekitchen.click/)             | Captcha                                         |
@@ -274,17 +286,6 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [ThePlace](https://theplace.click/)                 | Captcha                                         |
 | [TheShow](https://theshow.click/)                   | Captcha                                         |
 | [TheVault](https://thevault.click/)                 | Captcha                                         |
-| [BroadcasThe.Net](https://broadcasthe.net/)         | Captcha & Cloudflare verification               |
-| [CGPeers](https://cgpeers.to/)                      | 2FA & Cloudflare verification                   |
-| [CinemaZ](https://cinemaz.to/)                      | Captcha & Cloudflare verification               |
-| [ExoticaZ](https://exoticaz.to/)                    | Captcha & Cloudflare verification               |
-| [Hawke-Uno](https://hawke.uno/)                     | 2FA & Cloudflare verification                   |
-| [HDBits](https://hdbits.org/)                       | 2FA, Cloudflare verification, question on login |
-| [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
-| [PrivateHD](https://privatehd.to/)                  | Captcha & Cloudflare verification               |
-| [RoTorrent](https://rotorrent.info/)                | Cloudflare verification                         |
-| [SceneTime](https://www.scenetime.com/)             | Cloudflare verification                         |
-| [Speed.CD](https://speed.cd/)                       | Cloudflare verification                         |
 | [Torrenting](https://torrenting.com/)               | Cloudflare verification                         |
 | [UploadCX](https://upload.cx/)                      | Captcha                                         |
 

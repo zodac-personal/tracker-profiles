@@ -96,6 +96,42 @@ private void openUserDropdownMenu() {
 
 The same `openUserDropdownMenu()` call must appear in both `profilePageSelector()` and `logoutButtonSelector()`.
 
+## Accessing the site as an authenticated user
+
+`WebFetch` cannot maintain login sessions — any authenticated page will return the login page instead.
+To verify login and logout HTML (dropdown structure, form fields, etc.), use `curl` with a cookie jar:
+
+```bash
+# Fetch homepage — may already be logged in if cookies were set by a prior step
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/" \
+  -H "User-Agent: Mozilla/5.0 ..." -o /tmp/home.html
+grep -i "logout\|dropdown\|username\|formhash" /tmp/home.html | head -20
+
+# Inspect the logout dropdown structure
+grep -n "editout\|logout_menu\|logout" /tmp/home.html
+```
+
+**`onmouseover` vs `onclick` dropdowns:** Always check the dropdown trigger's attributes:
+- `onmouseover="showMenu(...)"` with a navigable `href` → use `browserInteractionHelper.moveTo(element)`
+  (hover only — `clickButton()` would follow the `href` and navigate away before the menu is usable)
+- `onclick` or `href="#"` → use `clickButton()` as normal
+
+```java
+// onmouseover trigger — hover only:
+private void openUserDropdownMenu() {
+    LOGGER.debug("\t\t- Hovering over dropdown trigger to make logout button interactable");
+    final WebElement trigger = driver.findElement(By.id("editout"));
+    browserInteractionHelper.moveTo(trigger);
+}
+
+// onclick trigger — click as normal:
+private void openUserDropdownMenu() {
+    LOGGER.debug("\t\t- Clicking user dropdown menu to make logout button interactable");
+    final WebElement trigger = driver.findElement(XpathBuilder.from(div, withClass("user-menu")).build());
+    clickButton(trigger);
+}
+```
+
 ## Intermediate Page Navigation Pattern
 
 Some trackers only show the logout link on a specific page (e.g. a settings/control panel), not on the
