@@ -63,8 +63,8 @@ class BoxRedactor implements Redactor {
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
-            "yellow", "black", "IP");
+        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(),
+            buffer.down(), "yellow", "black", "IP");
         driver.executeScript(script, element);
         return 1;
     }
