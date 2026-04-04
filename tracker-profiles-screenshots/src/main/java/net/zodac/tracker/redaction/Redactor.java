@@ -17,6 +17,9 @@
 
 package net.zodac.tracker.redaction;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -76,4 +79,22 @@ public interface Redactor {
      * @return the number of elements redacted
      */
     int redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
+
+    /**
+     * Loads a JavaScript resource file from the same package as this interface.
+     *
+     * @param scriptName the name of the script resource
+     * @return the script content as a {@link String}
+     * @throws IllegalStateException if the resource cannot be found or read
+     */
+    static String loadScript(final String scriptName) {
+        try (final InputStream inputStream = Redactor.class.getResourceAsStream(scriptName)) {
+            if (inputStream == null) {
+                throw new IllegalStateException(String.format("Could not find redaction script: '%s'", scriptName));
+            }
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (final IOException e) {
+            throw new IllegalStateException(String.format("Unable to load redaction script: '%s'", scriptName), e);
+        }
+    }
 }
