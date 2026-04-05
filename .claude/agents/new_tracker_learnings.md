@@ -8,7 +8,6 @@ to avoid repeating them across sessions.
 ## Key Patterns (from codebase review)
 
 ### Minimal required overrides (extending `AbstractTrackerHandler` directly)
-
 - `usernameFieldSelector()` — defaults to `By.id("username")`; override only if different
 - `passwordFieldSelector()` — defaults to `By.id("password")`; override only if different
 - `loginButtonSelector()` — defaults to `By.id("login-button")`; override only if different
@@ -19,7 +18,6 @@ to avoid repeating them across sessions.
 - `logoutButtonSelector()` — **required**, no default; element clicked to log out
 
 ### Common optional overrides
-
 - `loginPageSelector()` — return non-null if the homepage doesn't auto-redirect to login
 - `ipAddressElements()` — returns `List.of()` by default; override to redact IP fields
 - `emailElements()` — returns `List.of()` by default; override to redact email fields
@@ -30,7 +28,6 @@ to avoid repeating them across sessions.
 - `manualCheckBeforeLoginClick()` / `manualCheckAfterLoginClick()` — for captcha/2FA (MANUAL type)
 
 ### Selector construction
-
 Always use `XpathBuilder` — never raw XPath strings. Exceptions: prefer Selenium's built-in `By` methods
 when a single stable attribute uniquely identifies the element — they are simpler and faster than an
 equivalent XpathBuilder expression. This applies to **all** selectors in **all** methods.
@@ -45,34 +42,18 @@ equivalent XpathBuilder expression. This applies to **all** selectors in **all**
 ```java
 // Prefer By.id() when the id is stable (applies everywhere, not just specific methods):
 By.id("login-button")
-By.
-
-id("user-view")
+By.id("user-view")
 
 // Prefer By.name() when the name is stable and no id exists:
-By.
-
-name("username")
-By.
-
-name("password")
+By.name("username")
+By.name("password")
 
 // Prefer By.className() when the class is unique on the page and no id/name exists:
-By.
-
-className("auth-button")
+By.className("auth-button")
 
 // Fall back to XpathBuilder when id/name/unique-class is absent or additional predicates are needed:
-XpathBuilder.
-
-from(input, withName("username"),withType("text")).
-
-build();
-XpathBuilder.
-
-from(button, withType("submit")).
-
-build();
+XpathBuilder.from(input, withName("username"), withType("text")).build();
+XpathBuilder.from(button, withType("submit")).build();
 ```
 
 Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `containsHref`,
@@ -81,36 +62,30 @@ Available axes: `followingSibling`, `descendant`, `child`, `parent`, `precedingS
 For non-enum HTML tags: `NamedHtmlElement.of("article")`
 
 ### Common base handlers
-
 If the tracker uses a known platform, extend the appropriate base:
-
 - `Unit3dHandler` — UNIT3D platform; handles login, dropdown nav, cookie banners, fixed header
 - `GazelleHandler` — Gazelle platform
 - `NexusPhpHandler` — NexusPHP platform
 - `LuminanceHandler` — Luminance platform
 - `TorrentPier` — TorrentPier platform
-  Check existing handlers before writing from scratch.
+Check existing handlers before writing from scratch.
 
 ### TrackerType
-
 - `HEADLESS` (default, omit `type =` in annotation) — no UI needed
 - `MANUAL` — requires browser UI for captcha/2FA
-  Annotation: `@TrackerHandler(name = "Name", url = "https://...")`
-  For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
+Annotation: `@TrackerHandler(name = "Name", url = "https://...")`
+For multiple fallback URLs: `url = {"https://url1", "https://url2"}`
 
 ### Tracker display name vs Java class name
-
 The Java class name follows PascalCase (e.g. `AsianDvdClub`), but the `name =` value in
 `@TrackerHandler`, the CSV entry, and the README row must use the tracker's **actual display name**
 (e.g. `AsianDVDClub`). Check the site's title or logo for the canonical capitalisation before writing.
 
 ### CSV entry
-
 Add to `docker/trackers_example.csv` after implementing. Use the tracker's display name, not the Java
 class name casing.
 
 ### README entry
-
 Add to `README.md` after implementing: insert a row in the correct alphabetical position in the tracker
 table, and increment the tracker count on the "There are currently **N** supported trackers" line. Use
 the tracker's display name, not the Java class name casing.
@@ -149,9 +124,7 @@ opened first, call a private `openUserDropdownMenu()` helper (see `MooKo`, `C411
 the parent element, then return the selector for the link inside the opened dropdown.
 
 **Dropdown pattern:**
-
 ```java
-
 @Override
 protected By profilePageSelector() {
     openUserDropdownMenu();
@@ -235,16 +208,10 @@ These are always preferable to guessing class names or matching on value content
 
 ```java
 // Prefer this:
-XpathBuilder.from(input, withType("email")).
-
-build()
+XpathBuilder.from(input, withType("email")).build()
 
 // Over this:
-XpathBuilder.
-
-from(td, withText("@")).
-
-build()
+XpathBuilder.from(td, withText("@")).build()
 ```
 
 ---
@@ -266,28 +233,14 @@ on CSS/styling attributes.
 // Prefer this — anchored on a stable container, uses DOM position:
 XpathBuilder
     .from(td, withClass("embedded"))
-    .
-
-child(table, atIndex(1))
-    .
-
-child(tbody, atIndex(1))
-    .
-
-child(tr, atIndex(3))
-    .
-
-child(td, atIndex(2))
-    .
-
-build()
+    .child(table, atIndex(1))
+    .child(tbody, atIndex(1))
+    .child(tr, atIndex(3))
+    .child(td, atIndex(2))
+    .build()
 
 // Over this — relies on a CSS presentation attribute that may change:
-XpathBuilder.
-
-from(td, withAttribute("align", "left")).
-
-build()
+XpathBuilder.from(td, withAttribute("align", "left")).build()
 ```
 
 ---
@@ -361,20 +314,10 @@ to the feature, not the layout.
 
 ```java
 // Prefer this — class name describes the content:
-XpathBuilder.from(span, withClass("username-user")).
-
-build()
+XpathBuilder.from(span, withClass("username-user")).build()
 
 // Over this — class name describes the layout:
-XpathBuilder.
-
-from(div, withClass("col-lg-4")).
-
-child(div, atIndex(2)).
-
-child(div, withClass("card-header")).
-
-build()
+XpathBuilder.from(div, withClass("col-lg-4")).child(div, atIndex(2)).child(div, withClass("card-header")).build()
 ```
 
 ---
@@ -391,21 +334,13 @@ DOM position. If an element has no distinguishing attribute, navigate to it from
 
 ```java
 // WRONG — breaks for non-English users:
-XpathBuilder.from(button, withClass("dropdown-toggle"),withText("Login")).
-
-build()
+XpathBuilder.from(button, withClass("dropdown-toggle"), withText("Login")).build()
 
 // CORRECT — navigate from the login form's preceding sibling button:
 XpathBuilder
-    .
-
-from(form, withAttribute("action", "index.php?page=login"))
-    .
-
-navigateTo(precedingSibling(button))
-    .
-
-build()
+    .from(form, withAttribute("action", "index.php?page=login"))
+    .navigateTo(precedingSibling(button))
+    .build()
 ```
 
 ---
@@ -464,24 +399,10 @@ This applies to the final `<a>` in any selector chain, not just logout/profile l
 
 ```java
 // CORRECT:
-XpathBuilder.from(ul, withClass("isuser")).
-
-child(li, atIndex(3)).
-
-child(a, atIndex(1)).
-
-build()
+XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a, atIndex(1)).build()
 
 // WRONG — ambiguous if <li> contains multiple anchors:
-XpathBuilder.
-
-from(ul, withClass("isuser")).
-
-child(li, atIndex(3)).
-
-child(a).
-
-build()
+XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a).build()
 ```
 
 ---

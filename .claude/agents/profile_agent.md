@@ -16,17 +16,16 @@ specified by the orchestrator.
 Determine the correct selectors and overrides for:
 
 ### Profile page navigation
-
 - `profilePageSelector()` — **required**; element clicked to navigate to the user's profile page
-    - Default is `<a class="username">` — almost always needs overriding
-    - If a dropdown must be opened first, flag this for the login agent (shared `openUserDropdownMenu()`)
+  - Default is `<a class="username">` — almost always needs overriding
+  - If a dropdown must be opened first, flag this for the login agent (shared `openUserDropdownMenu()`)
 - `profilePageContentSelector()` — **required**; confirms the profile page has loaded
-    - **Must be unique to the profile page** — not a generic `<main>` or `<body>`
-    - Ask: "is this element present on any other page?" If yes, find a more specific one
-    - **Prefer user-focused semantic elements** over CSS layout/grid classes (e.g. `col-lg-4`, `card-body`).
-      A username display element, profile avatar container, or user-stats heading is far more stable than a
-      Bootstrap grid class that may appear on any page. Look for elements with `class` attributes that name
-      the concept (e.g. `username-user`, `profile-header`, `user-avatar`) rather than structural positioning.
+  - **Must be unique to the profile page** — not a generic `<main>` or `<body>`
+  - Ask: "is this element present on any other page?" If yes, find a more specific one
+  - **Prefer user-focused semantic elements** over CSS layout/grid classes (e.g. `col-lg-4`, `card-body`).
+    A username display element, profile avatar container, or user-stats heading is far more stable than a
+    Bootstrap grid class that may appear on any page. Look for elements with `class` attributes that name
+    the concept (e.g. `username-user`, `profile-header`, `user-avatar`) rather than structural positioning.
 - `additionalActionOnProfilePage()` — only if extra interaction is needed after navigation (e.g. expanding a tab)
 
 ### Verify you have the PUBLIC profile, not a settings page
@@ -45,11 +44,7 @@ use the full href — it won't match other users. Instead, use a structural sele
 
 ```java
 // The username link is the only <a> inside the welcome <h1>
-XpathBuilder.from(NamedHtmlElement.of("h1")).
-
-child(a).
-
-build()
+XpathBuilder.from(NamedHtmlElement.of("h1")).child(a).build()
 ```
 
 If reaching the public profile requires clicking through the settings page first, use the intermediate
@@ -86,45 +81,19 @@ a nearby element that does (e.g. via `precedingSibling`, `followingSibling`, or 
 
 ```java
 // Element with class
-XpathBuilder.from(div, withClass("profile-header")).
-
-build()
+XpathBuilder.from(div, withClass("profile-header")).build()
 
 // Nested element
-XpathBuilder.
-
-from(nav, withClass("main-nav")).
-
-child(a, withClass("profile-link")).
-
-build()
+XpathBuilder.from(nav, withClass("main-nav")).child(a, withClass("profile-link")).build()
 
 // Index-based (1-indexed)
-XpathBuilder.
-
-from(ul, withClass("user-menu")).
-
-child(li, atIndex(1)).
-
-child(a).
-
-build()
+XpathBuilder.from(ul, withClass("user-menu")).child(li, atIndex(1)).child(a).build()
 
 // Descendant (not just direct child)
-XpathBuilder.
-
-from(section, withId("user-info")).
-
-descendant(h1).
-
-build()
+XpathBuilder.from(section, withId("user-info")).descendant(h1).build()
 
 // Non-standard tag
-XpathBuilder.
-
-from(NamedHtmlElement.of("article"),withClass("profile")).
-
-build()
+XpathBuilder.from(NamedHtmlElement.of("article"), withClass("profile")).build()
 ```
 
 Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `atIndex`, `atLastIndex`
