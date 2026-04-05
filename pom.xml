@@ -5,7 +5,7 @@
 
     <groupId>net.zodac</groupId>
     <artifactId>tracker-profiles</artifactId>
-    <version>8.0.12-SNAPSHOT</version>
+    <version>8.0.13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>[${project.artifactId}] project</name>
 
