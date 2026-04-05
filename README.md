@@ -407,15 +407,14 @@ xhost +local:
 I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcXsrv, make sure to set the following in
 the configuration:
 
-- Multiple windows
-- Display number 0
-- Disable access control
+- **Multiple windows**
+- Display number **-1** or **0**
+- **Disable access control**
 
 #### Disable UI
 
 To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
 `ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
-You can then remove `--env DISPLAY` and/or `-v /tmp/.X11-unix:/tmp/.X11-unix` from the `docker run` command.
 
 ### Configuration Options
 
@@ -423,9 +422,10 @@ The following are all possible configuration options, defined as environment var
 
 | Environment Variable            | Description                                                                                                                                                                                              | Default Value                 |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                              | 1050                          |
-| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots (non-headless mode only)                                                                                                               | 1680                          |
+| *BROWSER_HEIGHT*                | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                          |
+| *BROWSER_WIDTH*                 | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                          |
 | *CSV_COMMENT_SYMBOL*            | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
+| *DISPLAY*                       | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)               |
 | *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                         |
@@ -479,9 +479,8 @@ hopefully guiding the AI to follow the same standards.
 Every implementation relies on:
 
 - **Existing handler code**: The agents study the handlers already in
-  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project
-  conventions, selector construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`,
-  etc.)
+  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project conventions, selector
+  construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`, etc.)
 - **[CLAUDE.md](./.claude/CLAUDE.md)**: This defines project-level standards covering structure, selector conventions,
   linting rules, and the mandatory post-implementation checklist
 - **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the

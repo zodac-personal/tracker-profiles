@@ -17,6 +17,8 @@
 
 package net.zodac.tracker;
 
+import java.awt.AWTError;
+import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.ExitState;
@@ -42,8 +44,25 @@ public final class ApplicationLauncher {
      * @see ScreenshotOrchestrator
      */
     static void main() {
+        checkDisplay();
         setupApplication();
         startApplication();
+    }
+
+    private static void checkDisplay() {
+        final String display = System.getenv("DISPLAY");
+        if (display == null || display.isBlank()) {
+            LOGGER.error("Environment variable 'DISPLAY' is not configured");
+            exit(ExitState.FAILURE);
+        }
+
+        try {
+            final GraphicsEnvironment _ = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        } catch (final AWTError e) {
+            LOGGER.debug("Unable to connect to X11 display '{}'", display, e);
+            LOGGER.error("Unable to connect to X11 display '{}'", display);
+            exit(ExitState.FAILURE);
+        }
     }
 
     private static void setupApplication() {
