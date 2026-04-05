@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.redaction;
 
+import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -30,11 +31,10 @@ class BlurRedactor implements Redactor {
     private static final String IRC_KEY_PREFIX_ALTERNATION = "IRC Key";
     private static final String TORRENT_PASSKEY_PREFIX_ALTERNATION = "Passkey|Pass Key";
 
-    private static final String REDACT_ELEMENT_SCRIPT = Redactor.loadScript("redact_element_blur.js");
-    private static final String REDACT_EMAIL_SCRIPT = Redactor.loadScript("redact_email_blur.js");
-    private static final String REDACT_IP_ADDRESS_SCRIPT = Redactor.loadScript("redact_ip_address_blur.js");
-    private static final String REDACT_IRC_PASSKEY_SCRIPT = Redactor.loadScript("redact_irc_passkey_blur.js");
-    private static final String REDACT_TORRENT_PASSKEY_SCRIPT = Redactor.loadScript("redact_torrent_passkey_blur.js");
+    private static final String REDACT_ELEMENT_SCRIPT = Redactor.loadScript("redact_element.js");
+    private static final String REDACT_EMAIL_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_email.js"));
+    private static final String REDACT_IP_ADDRESS_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_ip_address.js"));
+    private static final String REDACT_PASSKEY_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_passkey.js"));
 
     private final RemoteWebDriver driver;
 
@@ -49,35 +49,35 @@ class BlurRedactor implements Redactor {
 
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        final String script = REDACT_ELEMENT_SCRIPT.formatted(BLUR_DEFINITION);
+        final String script = REDACT_ELEMENT_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_EMAIL_SCRIPT.formatted(BLUR_DEFINITION);
+        final String script = REDACT_EMAIL_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(BLUR_DEFINITION);
+        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IRC_PASSKEY_SCRIPT.formatted(IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION);
+        final String script = REDACT_PASSKEY_SCRIPT.formatted(0, 0, 0, 0, "", "", IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_TORRENT_PASSKEY_SCRIPT.formatted(TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION);
+        final String script = REDACT_PASSKEY_SCRIPT.formatted(0, 0, 0, 0, "", "", TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
         driver.executeScript(script, element);
         return 1;
     }

@@ -20,6 +20,7 @@ package net.zodac.tracker.redaction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -96,5 +97,20 @@ public interface Redactor {
         } catch (final IOException e) {
             throw new IllegalStateException(String.format("Unable to load redaction script: '%s'", scriptName), e);
         }
+    }
+
+    /**
+     * Loads multiple JavaScript resource files from the same package as this interface, concatenating them in order with a newline separator.
+     *
+     * @param scriptNames the names of the script resources, in the order they should be concatenated
+     * @return the combined script content as a {@link String}
+     * @throws IllegalStateException if any resource cannot be found or read
+     */
+    static String loadScripts(final Collection<String> scriptNames) {
+        final StringBuilder combined = new StringBuilder();
+        for (final String scriptName : scriptNames) {
+            combined.append(loadScript(scriptName)).append('\n');
+        }
+        return combined.toString();
     }
 }

@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.redaction;
 
+import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -28,11 +29,10 @@ class BoxRedactor implements Redactor {
     private static final String IRC_KEY_PREFIX_ALTERNATION = "IRC Key";
     private static final String TORRENT_PASSKEY_PREFIX_ALTERNATION = "Passkey|Pass Key";
 
-    private static final String REDACT_ELEMENT_SCRIPT = Redactor.loadScript("redact_element_box.js");
-    private static final String REDACT_EMAIL_SCRIPT = Redactor.loadScript("redact_email_box.js");
-    private static final String REDACT_IP_ADDRESS_SCRIPT = Redactor.loadScript("redact_ip_address_box.js");
-    private static final String REDACT_IRC_PASSKEY_SCRIPT = Redactor.loadScript("redact_irc_passkey_box.js");
-    private static final String REDACT_TORRENT_PASSKEY_SCRIPT = Redactor.loadScript("redact_torrent_passkey_box.js");
+    private static final String REDACT_ELEMENT_SCRIPT = Redactor.loadScript("redact_element.js");
+    private static final String REDACT_EMAIL_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_email.js"));
+    private static final String REDACT_IP_ADDRESS_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_ip_address.js"));
+    private static final String REDACT_PASSKEY_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_passkey.js"));
 
     private final RemoteWebDriver driver;
 
@@ -47,40 +47,40 @@ class BoxRedactor implements Redactor {
 
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        final String script = REDACT_ELEMENT_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
-            "orange", "white", description);
+        final String script = REDACT_ELEMENT_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "orange", "white",
+            description, "", "box");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_EMAIL_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(), buffer.down(),
-            "blue", "white", "Email");
+        final String script = REDACT_EMAIL_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "blue", "white", "Email",
+            "", "box");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.left(), buffer.right(), buffer.up(),
-            buffer.down(), "yellow", "black", "IP");
+        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "yellow", "black",
+            "IP", "", "box");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IRC_PASSKEY_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(),
-            "gray", "IRC", IRC_KEY_PREFIX_ALTERNATION);
+        final String script = REDACT_PASSKEY_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "gray", "IRC",
+            IRC_KEY_PREFIX_ALTERNATION, "", "box");
         driver.executeScript(script, element);
         return 1;
     }
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_TORRENT_PASSKEY_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(),
-            "red", "Passkey", TORRENT_PASSKEY_PREFIX_ALTERNATION);
+        final String script = REDACT_PASSKEY_SCRIPT.formatted(buffer.left(), buffer.up(), buffer.right(), buffer.down(), "red", "Passkey",
+            TORRENT_PASSKEY_PREFIX_ALTERNATION, "", "box");
         driver.executeScript(script, element);
         return 1;
     }

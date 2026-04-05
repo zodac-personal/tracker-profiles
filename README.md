@@ -496,9 +496,10 @@ will be verified manually.
 
 ### Exceptions
 
-The one exception for the above is the JavaScript code used
-in [BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java)
-and [BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java).
+The one exception for the above is the
+[JavaScript code](./tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction) used in
+[BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java) and
+[BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java).
 
 I don't know JavaScript well enough to perform this overlay-based redaction, but I verify against all tracker handlers
 when updates are made, to cover as many cases as possible.
