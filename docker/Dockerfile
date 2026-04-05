@@ -98,17 +98,15 @@ COPY ./docker/browser_extensions/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphec
 COPY --from=chromedriver_builder /usr/local/chromium/chromedriver-linux64/chromedriver /usr/local/chromium/chromedriver-linux64/chromedriver
 
 # Copy application script
-COPY ./docker/scripts/start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+COPY --chmod=755 ./docker/scripts/start.sh /app/start.sh
 
 # Configure nonroot user
-ENV PUID=1000
-ENV PGID=1000
+ARG PUID=1000
+ARG PGID=1000
 # Create user and group
 RUN groupadd -g ${PGID} nonroot && \
-    useradd -u ${PUID} -g nonroot -d /tmp/chrome-home -m nonroot
-# Ensure the home directory has proper ownership
-RUN chown -R nonroot:nonroot /tmp/chrome-home
+    useradd -u ${PUID} -g nonroot -d /tmp/chrome-home -m nonroot && \
+    chown -R nonroot:nonroot /tmp/chrome-home
 # Set environment and user
 ENV HOME=/tmp/chrome-home
 USER nonroot

@@ -58,6 +58,7 @@ public final class ScreenshotOrchestrator {
      */
     public static ExitState start() {
         final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = TrackerRetriever.getTrackers();
+        LOGGER.trace("Printing trackersByType: {}", trackersByType);
         final int numberOfTrackers = trackersByType.values()
             .stream()
             .mapToInt(pair -> pair.second().size())
