@@ -467,12 +467,13 @@ hopefully guiding the AI to follow the same standards.
 
 [Claude Code](https://claude.com/claude-code) employs a multi-agent pipeline to implement each new tracker handler:
 
-| Agent              | Responsibility                                                                                                                                                          |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Orchestrator**   | Coordinates the full workflow, delegating to specialised sub-agents in sequence                                                                                         |
-| **Login Agent**    | Inspects the tracker's login page to determine the correct selectors for the username field, password field, login button, and post-login confirmation element          |
-| **Profile Agent**  | Navigates the user's profile page to identify the navigation selector that reaches it, the content selector that confirms it has loaded, and the logout button selector |
-| **Redactor Agent** | Reviews the profile page for sensitive fields and determines the appropriate redaction selectors                                                                        |
+| Agent                    | Responsibility                                                                                                                                                             |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Orchestrator**         | Coordinates the full workflow, delegating to specialised sub-agents in sequence                                                                                            |
+| **Login Agent**          | Inspects the tracker's login page to determine the correct selectors for the username field, password field, login button, and post-login confirmation element             |
+| **Profile Agent**        | Navigates the user's profile page to identify the navigation selector that reaches it, the content selector that confirms it has loaded, and the logout button selector    |
+| **Page Structure Agent** | Invoked when the profile agent flags structural elements and  detects cookie/consent banners, fixed headers, and fixed sidebars that must be handled before screenshotting |
+| **Redactor Agent**       | Reviews the profile page for sensitive fields and determines the appropriate redaction selectors                                                                           |
 
 ### Established Patterns
 

@@ -4,6 +4,7 @@
 # Static allowed categories
 # -----------------------------
 static_categories=(
+  "AI"
   "CI"
   "Deployment"
   "Documentation"

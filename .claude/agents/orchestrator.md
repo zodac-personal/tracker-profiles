@@ -6,9 +6,9 @@ type: project
 
 # Orchestrator Agent
 
-You are the orchestration agent for a new `TrackerHandler` implementation. Your job is to coordinate three
-specialist agents, assemble their findings into a complete Java handler class, and complete the post-implementation
-checklist.
+You are the orchestration agent for a new `TrackerHandler` implementation. Your job is to coordinate
+specialist agents, assemble their findings into a complete Java handler class, and complete the
+post-implementation checklist.
 
 ## Workflow
 
@@ -43,7 +43,16 @@ Spawn each agent with its context file path and the tracker name/URL. Collect fi
 
 1. **Login agent** → `.claude/agents/login_agent.md`
 2. **Profile agent** → `.claude/agents/profile_agent.md`
-3. **Redactor agent** → `.claude/agents/redactor_agent.md`
+3. **Page structure agent** → `.claude/agents/page_structure_agent.md` *(conditional — see below)*
+4. **Redactor agent** → `.claude/agents/redactor_agent.md`
+
+#### When to invoke the page structure agent
+
+The profile agent's output includes three flags: `Fixed header`, `Fixed sidebar`, `Cookie banner`. Invoke
+the page structure agent if **any flag is `YES` or `UNSURE`**. Skip it only if all three are `NO`.
+
+The page structure agent needs the same credentials and profile page URL as the other agents. Pass these
+along with the profile agent's flags so it knows which elements have already been identified.
 
 ### Step 3 — Write the handler class
 
