@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **140** supported trackers listed below. The available trackers come in the following types:
+There are currently **141** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -198,6 +198,7 @@ background:
 
 | Tracker Name (P–T)                                   |
 |------------------------------------------------------|
+| [P2PBG](https://www.p2pbg.com/)                      |
 | [PixelCove](https://www.pixelcove.me/)               |
 | [PixelHD](https://pixelhd.me/)                       |
 | [Podzemlje](https://podzemlje.net/)                  |
