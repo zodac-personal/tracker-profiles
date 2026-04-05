@@ -1,35 +1,4 @@
-# Stage 1: Build the Java artefact
-FROM maven:3.9.12-eclipse-temurin-25-alpine AS maven_builder
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the pom.xml files and build dependencies (to cache them)
-COPY pom.xml .
-COPY tracker-profiles-screenshots/pom.xml ./tracker-profiles-screenshots/pom.xml
-RUN mvn dependency:go-offline
-
-# Copy source code and build the project, with dependencies cached
-COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
-RUN mvn clean install
-
-# Stage 2: Create minimal JDK
-FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
-
-# Copy JAR so we can extract jdeps dependencies
-COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar /tmp/tracker-profiles.jar
-
-RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
-        jlink --compress=zip-9 \
-        --no-header-files \
-        --no-man-pages \
-        --strip-debug \
-        --add-modules $(jdeps --multi-release BASE --print-module-deps --ignore-missing-deps /tmp/tracker-profiles.jar) \
-        --output "/opt/jdk" && \
-    strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
-    find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
-
-# Stage 3: Patch chromedriver
+# Stage 1: Patch chromedriver
 FROM python:3.14.3-slim-trixie AS chromedriver_builder
 
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
@@ -62,6 +31,37 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip &&
     chmod -R 0755 /usr/local/chromium && \
     chmod +x /usr/local/bin/patch_chromedriver.py && \
     python3 /usr/local/bin/patch_chromedriver.py
+
+# Stage 2: Build the Java artefact
+FROM maven:3.9.12-eclipse-temurin-25-alpine AS maven_builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the pom.xml files and build dependencies (to cache them)
+COPY pom.xml .
+COPY tracker-profiles-screenshots/pom.xml ./tracker-profiles-screenshots/pom.xml
+RUN mvn dependency:go-offline
+
+# Copy source code and build the project, with dependencies cached
+COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
+RUN mvn clean install
+
+# Stage 3: Create minimal JDK
+FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
+
+# Hardcoding the required modules instead of using $(jdeps --multi-release BASE --print-module-deps --ignore-missing-deps /tmp/tracker-profiles.jar)
+# Dependencies are unlikely to change, so this extra step is unnecessary for every build
+#COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar /tmp/tracker-profiles.jar
+RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
+        jlink --compress=zip-9 \
+        --no-header-files \
+        --no-man-pages \
+        --strip-debug \
+        --add-modules java.base,java.compiler,java.desktop,java.instrument,java.management,java.naming,java.net.http,java.rmi,java.scripting,java.sql,jdk.unsupported \
+        --output "/opt/jdk" && \
+    strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
+    find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
 
 # Runtime
 FROM debian:13.3-slim AS runtime
@@ -97,12 +97,6 @@ COPY ./docker/browser_extensions/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphec
 # Copy patched chromedriver
 COPY --from=chromedriver_builder /usr/local/chromium/chromedriver-linux64/chromedriver /usr/local/chromium/chromedriver-linux64/chromedriver
 
-# Copy JDK & JAR
-COPY --from=java_builder /opt/jdk /opt/jdk
-ENV JAVA_HOME="/opt/jdk"
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
-COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
-
 # Copy application script
 COPY ./docker/scripts/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
@@ -119,6 +113,12 @@ RUN chown -R nonroot:nonroot /tmp/chrome-home
 ENV HOME=/tmp/chrome-home
 USER nonroot
 VOLUME /tmp/chrome-home
+
+# Copy JDK & JAR
+COPY --from=java_builder /opt/jdk /opt/jdk
+ENV JAVA_HOME="/opt/jdk"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
 
 # Start application
 CMD ["/app/start.sh"]
