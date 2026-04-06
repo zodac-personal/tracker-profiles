@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -74,14 +72,13 @@ public enum TrackerType {
      *
      * @param trackersByType all user-defined trackers by the {@link TrackerType}
      */
-    public void printSummary(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType) {
-        final Pair<TrackerHandler, Set<TrackerCredential>> entry = trackersByType.get(this);
-        if (entry == null) {
+    public void printSummary(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        final Set<TrackerCredential> trackers = trackersByType.get(this);
+        if (trackers == null) {
             LOGGER.trace("Tracker type {} not in execution order", this);
             return;
         }
 
-        final Set<TrackerCredential> trackers = entry.second();
         if (!trackers.isEmpty()) {
             LOGGER.info(String.format("- %-12s: %d", formattedName(), trackers.size()));
             for (final TrackerCredential trackerCredential : trackers) {

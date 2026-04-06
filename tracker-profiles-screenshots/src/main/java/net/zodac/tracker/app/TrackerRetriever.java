@@ -32,7 +32,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
-import net.zodac.tracker.util.Pair;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +54,7 @@ final class TrackerRetriever {
      * @return {@link Map} of {@link TrackerType} to their credentials
      * @throws InvalidCsvInputException thrown if there is an error with the CSV input
      */
-    static Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> getTrackers() {
+    static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
         final Set<TrackerType> trackerExecutionOrder = CONFIG.trackerExecutionOrder();
         LOGGER.debug("Tracker execution order: {}", CONFIG.trackerExecutionOrder());
@@ -70,7 +69,7 @@ final class TrackerRetriever {
                 LOGGER.warn("Unknown tracker{} in CSV: {}", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers);
             }
 
-            final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType = new EnumMap<>(TrackerType.class);
+            final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
 
             for (final TrackerCredential trackerCredential : trackerCredentials) {
                 final Optional<TrackerHandler> trackerHandlerOptional = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
@@ -91,14 +90,7 @@ final class TrackerRetriever {
                     continue;
                 }
 
-                final Pair<TrackerHandler, Set<TrackerCredential>> existingPair = trackersByType.get(trackerType);
-                if (existingPair == null) {
-                    final Set<TrackerCredential> trackerSet = new TreeSet<>();
-                    trackerSet.add(trackerCredential);
-                    trackersByType.put(trackerType, Pair.of(trackerHandler, trackerSet));
-                } else {
-                    existingPair.second().add(trackerCredential);
-                }
+                trackersByType.computeIfAbsent(trackerType, _ -> new TreeSet<>()).add(trackerCredential);
             }
 
             return trackersByType;
@@ -117,9 +109,7 @@ final class TrackerRetriever {
      * @param trackersByType        the {@link Map} of trackers organised by {@link TrackerType}
      * @param trackerExecutionOrder the execution order of the {@link TrackerType}s
      */
-    static void printTrackersInfo(final Map<TrackerType, Pair<TrackerHandler, Set<TrackerCredential>>> trackersByType,
-                                  final Set<TrackerType> trackerExecutionOrder
-    ) {
+    static void printTrackersInfo(final Map<TrackerType, Set<TrackerCredential>> trackersByType, final Set<TrackerType> trackerExecutionOrder) {
         if (LOGGER.isDebugEnabled()) {
             for (final TrackerType trackerType : trackerExecutionOrder) {
                 trackerType.printSummary(trackersByType);
