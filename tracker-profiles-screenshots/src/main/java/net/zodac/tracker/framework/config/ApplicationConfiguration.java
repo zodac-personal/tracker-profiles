@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
  * @param enableAdultContent         whether to enable screenshots for trackers primarily hosting adult content
  * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
  * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
+ * @param failOnUnsupportedTracker   whether to fail if an unsupported tracker is found in the CSV file
  * @param forceUiBrowser             whether to use a UI-based browser or not
  * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
@@ -60,6 +61,7 @@ public record ApplicationConfiguration(
     boolean enableAdultContent,
     boolean enableTranslationToEnglish,
     ExistingScreenshotAction existingScreenshotAction,
+    boolean failOnUnsupportedTracker,
     boolean forceUiBrowser,
     Duration inputTimeoutDuration,
     boolean inputTimeoutEnabled,
@@ -122,6 +124,7 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("ENABLE_ADULT_TRACKERS", true),
             getBooleanEnvironmentVariable("ENABLE_TRANSLATION_TO_ENGLISH", true),
             getScreenshotExistsAction(),
+            getBooleanEnvironmentVariable("FAIL_ON_UNSUPPORTED_TRACKER", true),
             getBooleanEnvironmentVariable("FORCE_UI_BROWSER", false),
             getInputTimeoutDuration(),
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
@@ -265,6 +268,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- enableAdultContent={}", enableAdultContent);
         LOGGER.debug("\t- enableTranslationToEnglish={}", enableTranslationToEnglish);
         LOGGER.debug("\t- existingScreenshotAction={}", existingScreenshotAction);
+        LOGGER.debug("\t- failOnUnsupportedTracker={}", failOnUnsupportedTracker);
         LOGGER.debug("\t- forceUiBrowser={}", forceUiBrowser);
         LOGGER.debug("\t- inputTimeoutDuration={}", inputTimeoutDuration);
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);

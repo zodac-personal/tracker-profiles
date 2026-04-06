@@ -330,6 +330,7 @@ docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
+    --env FAIL_ON_UNSUPPORTED_TRACKER=true \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
@@ -362,6 +363,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
+    --env FAIL_ON_UNSUPPORTED_TRACKER=true \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
@@ -429,6 +431,7 @@ The following are all possible configuration options, defined as environment var
 | *DISPLAY*                       | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)               |
 | *ENABLE_ADULT_TRACKERS*         | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
 | *ENABLE_TRANSLATION_TO_ENGLISH* | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
+| *FAIL_ON_UNSUPPORTED_TRACKER*   | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                          |
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                         |
 | *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
 | *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                           |
@@ -551,6 +554,7 @@ docker run \
     --env CSV_COMMENT_SYMBOL='#' \
     --env ENABLE_ADULT_TRACKERS=true \
     --env ENABLE_TRANSLATION_TO_ENGLISH=true \
+    --env FAIL_ON_UNSUPPORTED_TRACKER=false \
     --env FORCE_UI_BROWSER=true \
     --env INPUT_TIMEOUT_ENABLED=true \
     --env INPUT_TIMEOUT_SECONDS=300 \

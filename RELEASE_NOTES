@@ -1,0 +1,3 @@
+## New option `FAIL_ON_UNSUPPORTED_TRACKER`
+
+New option that will end execution if the *trackers.csv* contains an unsupported entry. Mostly for debugging, but can be useful if a tracker becomes obsolete or renamed.

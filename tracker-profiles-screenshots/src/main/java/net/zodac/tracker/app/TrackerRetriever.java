@@ -66,7 +66,11 @@ final class TrackerRetriever {
                 .filter(name -> TrackerHandlerFactory.findMatchingHandler(name).isEmpty())
                 .collect(Collectors.toCollection(TreeSet::new));
             if (!trackersWithNoHandlers.isEmpty()) {
-                LOGGER.warn("Unknown tracker{} in CSV: {}", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers);
+                if (CONFIG.failOnUnsupportedTracker()) {
+                    throw new IllegalArgumentException(String.format("Unknown tracker%s in CSV: %s", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers));
+                } else {
+                    LOGGER.debug("Unknown tracker{} in CSV: {}", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers);
+                }
             }
 
             final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
