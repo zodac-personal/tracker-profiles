@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerCsvReader;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
@@ -32,7 +31,6 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
-import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,24 +55,12 @@ final class TrackerRetriever {
     static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
         final Set<TrackerType> trackerExecutionOrder = CONFIG.trackerExecutionOrder();
-        LOGGER.debug("Tracker execution order: {}", CONFIG.trackerExecutionOrder());
+        LOGGER.debug("Tracker execution order: {}", trackerExecutionOrder);
 
         try {
-            final Set<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerInfo();
-            final Set<String> trackersWithNoHandlers = trackerCredentials.stream()
-                .map(TrackerCredential::name)
-                .filter(name -> TrackerHandlerFactory.findMatchingHandler(name).isEmpty())
-                .collect(Collectors.toCollection(TreeSet::new));
-            if (!trackersWithNoHandlers.isEmpty()) {
-                if (CONFIG.failOnUnsupportedTracker()) {
-                    throw new IllegalArgumentException(String.format("Unknown tracker%s in CSV: %s", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers));
-                } else {
-                    LOGGER.debug("Unknown tracker{} in CSV: {}", StringUtils.pluralise(trackersWithNoHandlers), trackersWithNoHandlers);
-                }
-            }
+            final Set<TrackerCredential> trackerCredentials = TrackerCsvReader.readTrackerCredentials();
 
             final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
-
             for (final TrackerCredential trackerCredential : trackerCredentials) {
                 final Optional<TrackerHandler> trackerHandlerOptional = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
                 if (trackerHandlerOptional.isEmpty()) {
@@ -85,7 +71,7 @@ final class TrackerRetriever {
                 final TrackerHandler trackerHandler = trackerHandlerOptional.get();
                 final TrackerType trackerType = trackerHandler.type();
                 if (!trackerExecutionOrder.contains(trackerType)) {
-                    LOGGER.debug("Skipping {} ({})", trackerHandler.name(), trackerType);
+                    LOGGER.trace("Skipping {} ({})", trackerHandler.name(), trackerType);
                     continue;
                 }
 

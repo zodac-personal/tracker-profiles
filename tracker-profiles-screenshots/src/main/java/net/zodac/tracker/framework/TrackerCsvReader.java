@@ -28,13 +28,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.exception.InvalidCsvInputException;
+import net.zodac.tracker.util.StringUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility class to read the {@link ApplicationConfiguration#trackerInputFilePath()} file.
@@ -42,6 +46,7 @@ import org.apache.commons.csv.CSVRecord;
 public final class TrackerCsvReader {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String[] CSV_HEADERS = {"trackerName", "username", "password"};
     private static final CSVFormat DEFAULT_FORMAT = CSVFormat.DEFAULT
         .builder()
@@ -61,10 +66,35 @@ public final class TrackerCsvReader {
      * @throws IOException thrown if there is a problem reading the file or skipping the first record
      * @see TrackerCredential#fromCsv(CSVRecord)
      */
-    public static Set<TrackerCredential> readTrackerInfo() throws IOException {
+    public static Set<TrackerCredential> readTrackerCredentials() throws IOException {
         final Path csvPath = CONFIG.trackerInputFilePath();
         validateFilePath(csvPath);
 
+        final Set<TrackerCredential> trackerCredentials = extractTrackerCredentials(csvPath);
+        return validateCredentials(trackerCredentials);
+    }
+
+    private static Set<TrackerCredential> validateCredentials(final Set<TrackerCredential> trackerCredentials) {
+        final Set<String> trackersWithNoHandlers = trackerCredentials.stream()
+            .map(TrackerCredential::name)
+            .filter(name -> TrackerHandlerFactory.findMatchingHandler(name).isEmpty())
+            .collect(Collectors.toCollection(TreeSet::new));
+
+        if (!trackersWithNoHandlers.isEmpty()) {
+            final String plural = StringUtils.pluralise(trackersWithNoHandlers);
+            if (CONFIG.failOnUnsupportedTracker()) {
+                throw new IllegalArgumentException(String.format("Unknown tracker%s in CSV: %s", plural, trackersWithNoHandlers));
+            } else {
+                LOGGER.debug("Unknown tracker{} in CSV: {}", plural, trackersWithNoHandlers);
+            }
+        }
+
+        final Set<TrackerCredential> result = new LinkedHashSet<>(trackerCredentials);
+        result.removeIf(credential -> trackersWithNoHandlers.contains(credential.name()));
+        return result;
+    }
+
+    private static Set<TrackerCredential> extractTrackerCredentials(final Path csvPath) throws IOException {
         try (final InputStream inputStream = Files.newInputStream(CONFIG.trackerInputFilePath());
              final Reader reader = new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
              final CSVParser csvParser = CSVParser.builder().setReader(reader).setFormat(DEFAULT_FORMAT).get()

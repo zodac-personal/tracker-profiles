@@ -46,7 +46,7 @@ public final class StringUtils {
      * Returns the plural suffix ({@code "s"}) if the provided count is not equal to {@code 1}.
      *
      * @param count the number of elements
-     * @return an empty string if {@code count == 1}, otherwise {@code "s"}
+     * @return an empty {@link String} if {@code count == 1}, otherwise {@code "s"}
      */
     public static String pluralise(final int count) {
         return count == 1 ? "" : "s";
@@ -57,7 +57,7 @@ public final class StringUtils {
      *
      * @param collection the collection whose size determines pluralisation
      * @param <E>        the element type of the collection
-     * @return an empty string if the collection size is {@code 1}, otherwise {@code "s"}
+     * @return an empty {@link String} if the collection size is {@code 1}, otherwise {@code "s"}
      * @see #pluralise(int)
      */
     public static <E> String pluralise(final Collection<E> collection) {
