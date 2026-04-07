@@ -20,16 +20,14 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.nav;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atLastIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.precedingSibling;
 
@@ -48,21 +46,7 @@ public class BlueTorrents extends AbstractTrackerHandler implements HasFixedHead
     @Override
     public By loginPageSelector() {
         return XpathBuilder
-            .from(a, withClass("nav-link"), withAttribute("href", "/login"))
-            .build();
-    }
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"))
+            .from(a, withClass("nav-link"), containsHref("/login"))
             .build();
     }
 
@@ -86,7 +70,7 @@ public class BlueTorrents extends AbstractTrackerHandler implements HasFixedHead
         return XpathBuilder
             .from(ul, withClass("dropdown-menu-end"))
             .child(li, atIndex(1))
-            .child(a)
+            .child(a, atIndex(1))
             .build();
     }
 

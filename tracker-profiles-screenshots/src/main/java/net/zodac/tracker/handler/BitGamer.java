@@ -24,9 +24,8 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -44,20 +43,6 @@ import org.openqa.selenium.WebElement;
 public class BitGamer extends AbstractTrackerHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"))
-            .build();
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(input, withClass("btn"), withType("submit"))
@@ -67,7 +52,7 @@ public class BitGamer extends AbstractTrackerHandler {
     @Override
     protected By postLoginSelector() {
         return XpathBuilder
-            .from(a, withAttribute("href", "/my.php"))
+            .from(a, containsHref("/my.php"))
             .build();
     }
 
@@ -76,7 +61,7 @@ public class BitGamer extends AbstractTrackerHandler {
         openControlPanel();
         return XpathBuilder
             .from(NamedHtmlElement.of("h1"))
-            .child(a)
+            .child(a, atIndex(1))
             .build();
     }
 
@@ -105,14 +90,14 @@ public class BitGamer extends AbstractTrackerHandler {
     protected By logoutButtonSelector() {
         openControlPanel();
         return XpathBuilder
-            .from(a, withAttribute("href", "logout.php"))
+            .from(a, containsHref("logout.php"))
             .build();
     }
 
     private void openControlPanel() {
         LOGGER.debug("\t\t- Navigating to control panel to access logout links");
         final By controlPanelSelector = XpathBuilder
-            .from(a, withAttribute("href", "/my.php"))
+            .from(a, containsHref("/my.php"))
             .build();
         final WebElement controlPanelLink = browserInteractionHelper.waitForElementToBeInteractable(controlPanelSelector, pageTransitionsDuration());
         clickButton(controlPanelLink);

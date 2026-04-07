@@ -18,13 +18,10 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,20 +36,8 @@ import org.openqa.selenium.By;
 public class Nebulance extends LuminanceHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.id("username");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.id("password");
-    }
-
-    @Override
     protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("submit"))
-            .build();
+        return By.name("login");
     }
 
     /**

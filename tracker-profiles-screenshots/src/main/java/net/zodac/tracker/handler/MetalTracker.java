@@ -19,13 +19,10 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
@@ -39,24 +36,8 @@ import org.openqa.selenium.By;
 public class MetalTracker extends AbstractTrackerHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
-
-    @Override
     protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(input, withName("go"), withType("submit"))
-            .build();
+        return By.name("go");
     }
 
     @Override

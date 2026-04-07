@@ -21,7 +21,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.body;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
@@ -31,7 +30,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atLastIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -47,22 +45,6 @@ import org.openqa.selenium.By;
 public class Aura4k extends Unit3dHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(div, withClass("input-group"))
-            .child(input, withName("username"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(div, withClass("input-group"))
-            .child(input, withName("password"))
-            .build();
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(button, withType("submit"))
@@ -74,7 +56,7 @@ public class Aura4k extends Unit3dHandler {
      *
      * <p>
      * For {@link Aura4k}, the welcome banner doesn't use the normal HTML element as other {@link Unit3dHandler}s, so we wait for it to disappear. But
-     * we only need it for the profile page, bot logout.
+     * we only need it for the profile page, not logout.
      */
     @Override
     protected By profilePageSelector() {
@@ -101,6 +83,12 @@ public class Aura4k extends Unit3dHandler {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link Aura4k}, the email address is not visible on the profile page.
+     */
     @Override
     protected Collection<By> emailElements() {
         return List.of();

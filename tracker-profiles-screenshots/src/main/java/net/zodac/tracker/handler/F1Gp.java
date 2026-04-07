@@ -37,6 +37,7 @@ import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code F1GP} tracker.
@@ -48,15 +49,24 @@ public class F1Gp extends AbstractTrackerHandler implements HasFixedHeader {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link F1Gp}, the login form is inside a Bootstrap dropdown on the homepage. The dropdown toggle must be clicked first to reveal the
-     * username and password fields.
+     * For {@link F1Gp}, the login form is inside a dropdown on the homepage. The dropdown toggle must be clicked first to reveal the username and
+     * password fields.
      */
     @Override
-    public By loginPageSelector() {
-        return XpathBuilder
+    protected By usernameFieldSelector() {
+        LOGGER.debug("\t\t- Clicking 'login' form to make username/password fields interactable");
+        final By loginFormSelector = XpathBuilder
             .from(form, withAttribute("action", "index.php?page=login"))
             .navigateTo(precedingSibling(button))
             .build();
+        final WebElement loginForm = browserInteractionHelper.waitForElementToBeInteractable(loginFormSelector, pageLoadDuration());
+        clickButton(loginForm);
+        return By.id("username");
+    }
+
+    @Override
+    protected By passwordFieldSelector() {
+        return By.id("password");
     }
 
     @Override
@@ -93,7 +103,7 @@ public class F1Gp extends AbstractTrackerHandler implements HasFixedHeader {
         return XpathBuilder
             .from(ul, withClass("level1"))
             .child(li, atIndex(1))
-            .child(a)
+            .child(a, atIndex(1))
             .build();
     }
 }

@@ -18,14 +18,11 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -45,9 +42,7 @@ public class AnimeBytes extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("submit"))
-            .build();
+        return By.name("login");
     }
 
     @Override
@@ -64,9 +59,7 @@ public class AnimeBytes extends AbstractTrackerHandler {
     @Override
     protected void additionalActionAfterLogoutClick() {
         LOGGER.debug("\t\t- Logout button clicked, clicking confirmation button");
-        final By logoutConfirmSelector = XpathBuilder
-            .from(input, withName("yes"), withType("submit"))
-            .build();
+        final By logoutConfirmSelector = By.name("yes");
         final WebElement logoutConfirm = browserInteractionHelper.waitForElementToBePresent(logoutConfirmSelector, pageTransitionsDuration());
         clickButton(logoutConfirm);
     }

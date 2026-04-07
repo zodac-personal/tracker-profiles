@@ -42,16 +42,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "Leech24", type = TrackerType.MANUAL, url = "https://leech24.net/")
 public class Leech24 extends AbstractTrackerHandler {
 
-    @Override
-    protected By usernameFieldSelector() {
-        return By.name("username");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.name("password");
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -117,6 +107,7 @@ public class Leech24 extends AbstractTrackerHandler {
 
     @Override
     protected Collection<By> emailElements() {
+        // The email address and IP address are both contained within this single cell
         return List.of(
             XpathBuilder
                 .from(div, withClass("myFrame-content"))
@@ -128,6 +119,7 @@ public class Leech24 extends AbstractTrackerHandler {
 
     @Override
     protected Collection<By> ipAddressElements() {
+        // The email address and IP address are both contained within this single cell
         return List.of(
             XpathBuilder
                 .from(div, withClass("myFrame-content"))

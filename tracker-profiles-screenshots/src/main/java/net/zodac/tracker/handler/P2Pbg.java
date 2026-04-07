@@ -74,7 +74,8 @@ public class P2Pbg extends AbstractTrackerHandler implements HasDismissibleEleme
     @Override
     protected By profilePageContentSelector() {
         return XpathBuilder
-            .from(div, withClass("profile-shell__title"))
+            .from(div, withClass("profile-shell__stack"))
+            .child(NamedHtmlElement.of("section"), atIndex(4))
             .build();
     }
 

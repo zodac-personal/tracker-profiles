@@ -28,9 +28,10 @@ import org.openqa.selenium.By;
 public class AlphaRatio extends GazelleHandler {
 
     /**
-     * Unlike the other {@link GazelleHandler} trackers, {@link AlphaRatio} redirects to the login page immediately.
+     * {@inheritDoc}
      *
-     * @return the login page {@link By} selector
+     * <p>
+     * Unlike the other {@link GazelleHandler} trackers, {@link AlphaRatio} redirects to the login page immediately.
      */
     @Nullable
     @Override

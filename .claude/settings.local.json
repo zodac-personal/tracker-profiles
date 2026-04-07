@@ -6,6 +6,7 @@
       "Bash(done)",
       "Bash(du:*)",
       "Bash(echo:*)",
+      "Bash(find .*)",
       "Bash(for f:*)",
       "Bash(git stash:*)",
       "Bash(grep:*)",

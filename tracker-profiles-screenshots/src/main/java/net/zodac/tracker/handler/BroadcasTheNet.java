@@ -78,11 +78,23 @@ public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link BroadcasTheNet}, the email address is not visible on the profile page.
+     */
     @Override
     protected Collection<By> emailElements() {
         return List.of();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link BroadcasTheNet}, the IP address is not visible on the profile page.
+     */
     @Override
     protected Collection<By> ipAddressElements() {
         return List.of();

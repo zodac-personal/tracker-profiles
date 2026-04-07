@@ -53,16 +53,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
 
     @Override
     protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("uname"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
+        return By.name("uname");
     }
 
     /**

@@ -18,10 +18,6 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.form;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
@@ -33,24 +29,6 @@ import org.openqa.selenium.By;
  */
 @TrackerHandler(name = "InfinityHD", url = "https://infinityhd.net/")
 public class InfinityHd extends Unit3dHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(form, atIndex(1))
-            .child(div, atIndex(1))
-            .child(input, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(form, atIndex(1))
-            .child(div, atIndex(2))
-            .child(input, atIndex(1))
-            .build();
-    }
 
     @Override
     protected By loginButtonSelector() {

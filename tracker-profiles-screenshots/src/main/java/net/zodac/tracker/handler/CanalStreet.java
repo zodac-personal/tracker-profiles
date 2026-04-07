@@ -46,8 +46,6 @@ public class CanalStreet extends GazelleHandler {
      * <p>
      * For {@link CanalStreet}, the profile dropdown menu is not opened by hovering/clicking on the user link, but instead there is a separate
      * button that must be clicked, before returning the logout {@link By} selector itself.
-     *
-     * @return the {@link By} selector for the logout button
      */
     @Override
     protected By logoutButtonSelector() {

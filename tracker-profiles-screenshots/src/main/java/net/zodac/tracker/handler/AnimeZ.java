@@ -21,12 +21,9 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
-import static net.zodac.tracker.framework.xpath.HtmlElement.img;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
@@ -34,8 +31,8 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -44,7 +41,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code AnimeZ} tracker.
  */
 @TrackerHandler(name = "AnimeZ", type = TrackerType.MANUAL, url = "https://animez.to/")
-public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
+public class AnimeZ extends AbstractTrackerHandler implements HasCloudflareCheck, HasFixedHeader {
 
     @Override
     public By loginPageSelector() {
@@ -54,32 +51,12 @@ public class AnimeZ extends AbstractTrackerHandler implements HasFixedHeader {
             .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * For {@link AnimeZ}, prior to clicking the login button with a successful username/password there is another field where a
-     * Captcha needs to be entered.
-     *
-     * <p>
-     * Manual user interaction:
-     * <ol>
-     *     <li>Enter correct captcha value</li>
-     * </ol>
-     */
     @Override
-    protected void preLoginClickAction() {
-        LOGGER.info("\t\t >>> Waiting for user to enter captcha");
-
-        final By captchaSelector = XpathBuilder
-            .from(input, withName("captcha"))
-            .navigateTo(parent(div))
+    public By cloudflareSelector() {
+        return XpathBuilder
+            .from(div, withClass("cf-turnstile"))
             .child(div, atIndex(1))
-            .child(img, atIndex(1))
             .build();
-        final WebElement captchaElement = driver.findElement(captchaSelector);
-        browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

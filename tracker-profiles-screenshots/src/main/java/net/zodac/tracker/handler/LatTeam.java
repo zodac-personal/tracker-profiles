@@ -54,8 +54,6 @@ public class LatTeam extends Unit3dHandler {
      * <p>
      * For {@link LatTeam}, unlike most other {@code UNIT3D}-based trackers, the user profile dropdown does not open when the mouse hovers
      * over it. Instead, we need to click it.
-     *
-     * @return {@link By} the selector for the logout link
      */
     @Override
     protected By logoutButtonSelector() {

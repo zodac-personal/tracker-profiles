@@ -196,33 +196,34 @@ background:
 </td>
 <td valign="top">
 
-| Tracker Name (P–T)                                   |
-|------------------------------------------------------|
-| [P2PBG](https://www.p2pbg.com/)                      |
-| [PixelCove](https://www.pixelcove.me/)               |
-| [PixelHD](https://pixelhd.me/)                       |
-| [Podzemlje](https://podzemlje.net/)                  |
-| [PolishTorrent](https://polishtorrent.top/)          |
-| [Rastastugan](https://rastastugan.org/)              |
-| [Redacted](https://redacted.sh/)                     |
-| [ReelFlix](https://reelflix.cc/)                     |
-| [RetroMoviesClub](https://retro-movies.club/)        |
-| [RocketHD](https://rocket-hd.cc/)                    |
-| [RUTracker](https://rutracker.org/forum/tracker.php) |
-| [SceneHD](https://scenehd.org/)                      |
-| [SecretCinema](https://secret-cinema.pw/)            |
-| [SeedPool](https://seedpool.org/)                    |
-| [SexTorrent](https://sextorrent.myds.me/)            |
-| [SlobitMedia](https://media.slo-bitcloud.eu/)        |
-| [SportsCult](https://sportscult.org/)                |
-| [T3nnis](https://t3nnis.tv/)                         |
-| [Tasmanit.es](https://tasmanit.es/)                  |
-| [TeamOS](https://teamos.xyz/)                        |
-| [TheMixingBowl](https://themixingbowl.org/)          |
-| [Torr9](https://torr9.net/)                          |
-| [TorrentLeech](https://www.torrentleech.org/)        |
-| [TranceTraffic](https://www.trancetraffic.com/)      |
-| [TVChaosUK](https://tvchaosuk.com/)                  |
+| Tracker Name (P–T)                                    |
+|-------------------------------------------------------|
+| [P2PBG](https://www.p2pbg.com/)                       |
+| [PixelCove](https://www.pixelcove.me/)                |
+| [PixelHD](https://pixelhd.me/)                        |
+| [Podzemlje](https://podzemlje.net/)                   |
+| [PolishTorrent](https://polishtorrent.top/)           |
+| [Rastastugan](https://rastastugan.org/)               |
+| [Redacted](https://redacted.sh/)                      |
+| [ReelFlix](https://reelflix.cc/)                      |
+| [RetroMoviesClub](https://retro-movies.club/)         |
+| [RocketHD](https://rocket-hd.cc/)                     |
+| [RUTracker](https://rutracker.org/forum/tracker.php)  |
+| [SceneHD](https://scenehd.org/)                       |
+| [SceneTime](https://www.scenetime.com/)               |
+| [SecretCinema](https://secret-cinema.pw/)             |
+| [SeedPool](https://seedpool.org/)                     |
+| [SexTorrent](https://sextorrent.myds.me/)             |
+| [SlobitMedia](https://media.slo-bitcloud.eu/)         |
+| [SportsCult](https://sportscult.org/)                 |
+| [T3nnis](https://t3nnis.tv/)                          |
+| [Tasmanit.es](https://tasmanit.es/)                   |
+| [TeamOS](https://teamos.xyz/)                         |
+| [TheMixingBowl](https://themixingbowl.org/)           |
+| [Torr9](https://torr9.net/)                           |
+| [TorrentLeech](https://www.torrentleech.org/)         |
+| [TranceTraffic](https://www.trancetraffic.com/)       |
+| [TVChaosUK](https://tvchaosuk.com/)                   |
 
 </td>
 <td valign="top">
@@ -279,7 +280,6 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [PrivateHD](https://privatehd.to/)                  | Captcha & Cloudflare verification               |
 | [PT.GTK](https://pt.gtk.pw/)                        | Captcha                                         |
 | [RoTorrent](https://rotorrent.info/)                | Cloudflare verification                         |
-| [SceneTime](https://www.scenetime.com/)             | Cloudflare verification                         |
 | [SkyeySnow](https://skyeysnow.com/)                 | Needs to be explicitly translated               |
 | [SocietyGlitch](https://stalker.societyglitch.com/) | Captcha                                         |
 | [Speed.CD](https://speed.cd/)                       | Cloudflare verification                         |
@@ -451,12 +451,14 @@ The following are all possible configuration options, defined as environment var
 This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`):
 
 - **MAJOR**: incompatible changes to the public API (e.g. removed or renamed configuration options, changed CSV format)
-- **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options)
+- **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options or trackers)
 - **PATCH**: backwards-compatible bug fixes or code changes
 
-Adding or removing tracker support is **not** considered a `MINOR` change. Trackers are external to the application and
-not part of its public API, as their availability depends on third-party sites that can change or disappear at any time.
-Tracker additions and removals will be released as `PATCH` versions.
+Changes to the [trackers_example.csv](./docker/trackers_example.csv) file are considered `MINOR` (new trackers) or
+`MAJOR` (updates to the tracker name). However, removing a tracker due to the site no longer being available is **not**
+considered a `MAJOR` change. Trackers are external to the application and not part of its public API, as their
+availability depends on third-party sites that can change or disappear at any time. Tracker removals will be released as
+`PATCH` versions.
 
 ## AI Usage
 
@@ -484,8 +486,9 @@ hopefully guiding the AI to follow the same standards.
 Every implementation relies on:
 
 - **Existing handler code**: The agents study the handlers already in
-  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project conventions, selector
-  construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`, etc.)
+  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project
+  conventions, selector construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`,
+  etc.)
 - **[CLAUDE.md](./.claude/CLAUDE.md)**: This defines project-level standards covering structure, selector conventions,
   linting rules, and the mandatory post-implementation checklist
 - **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the

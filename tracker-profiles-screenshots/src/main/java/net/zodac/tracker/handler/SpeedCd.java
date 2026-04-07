@@ -23,7 +23,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.form;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
@@ -43,13 +42,6 @@ import org.openqa.selenium.WebElement;
 public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"))
-            .build();
-    }
-
-    @Override
     protected By passwordFieldSelector() {
         // The password field doesn't load until the username is entered and the 'Next' button is clicked
         final By usernameNextButtonSelector = XpathBuilder
@@ -61,9 +53,7 @@ public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareChec
         clickButton(usernameNextButton);
 
         LOGGER.trace("Waiting for username to be accepted and password field to appear");
-        final By passwordFieldSelector = XpathBuilder
-            .from(input, withName("pwd"))
-            .build();
+        final By passwordFieldSelector = By.name("pwd");
         browserInteractionHelper.waitForElementToBeInteractable(passwordFieldSelector, pageLoadDuration());
         return passwordFieldSelector;
     }

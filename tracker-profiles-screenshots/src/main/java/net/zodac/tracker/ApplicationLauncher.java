@@ -43,6 +43,7 @@ public final class ApplicationLauncher {
      *
      * @see ScreenshotOrchestrator
      */
+    // TODO: Investigate whether it's worth not logging out
     static void main() {
         checkDisplay();
         setupApplication();

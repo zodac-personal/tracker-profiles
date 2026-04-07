@@ -32,7 +32,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.contains
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -76,16 +75,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         }
 
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
+        return super.usernameFieldSelector();
     }
 
     /**

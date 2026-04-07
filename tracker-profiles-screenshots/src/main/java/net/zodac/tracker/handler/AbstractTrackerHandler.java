@@ -254,7 +254,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @return the username field {@link By} selector
      */
     protected By usernameFieldSelector() {
-        return By.id("username");
+        return By.name("username");
     }
 
     /**
@@ -266,7 +266,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @return the password field {@link By} selector
      */
     protected By passwordFieldSelector() {
-        return By.id("password");
+        return By.name("password");
     }
 
     /**

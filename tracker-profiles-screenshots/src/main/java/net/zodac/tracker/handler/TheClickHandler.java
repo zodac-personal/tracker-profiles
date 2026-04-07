@@ -27,7 +27,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.td;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -53,20 +52,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "TheShow", type = TrackerType.MANUAL, url = "https://theshow.click/")
 @TrackerHandler(name = "TheVault", type = TrackerType.MANUAL, url = "https://thevault.click/")
 public class TheClickHandler extends AbstractTrackerHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
 
     /**
      * {@inheritDoc}

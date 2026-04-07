@@ -100,8 +100,6 @@ public class GazelleHandler extends AbstractTrackerHandler {
      * For {@link GazelleHandler}-based trackers, sometimes the logout button is not visible until the link to the user's profile is hovered over.
      * This is not required for all trackers, but since it is a simple mouse move, we can execute it for all trackers and then return the appropriate
      * {@link By} selector.
-     *
-     * @return the {@link By} selector for the logout button
      */
     @Override
     protected By logoutButtonSelector() {

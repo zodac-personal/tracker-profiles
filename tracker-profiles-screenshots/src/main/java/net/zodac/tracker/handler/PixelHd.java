@@ -30,6 +30,7 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.followingSibling;
 
 import java.util.Collection;
@@ -71,12 +72,7 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleEle
     @Override
     protected By passwordFieldSelector() {
         return XpathBuilder
-            .from(form, withClass("fade_in"))
-            .child(table, atIndex(1))
-            .child(tbody, atIndex(1))
-            .child(tr, atIndex(2))
-            .child(td, atIndex(2))
-            .child(input, atIndex(1))
+            .from(input, withType("password"))
             .build();
     }
 

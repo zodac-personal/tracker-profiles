@@ -78,8 +78,6 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * Depending on the specific {@link TsSpecialEditionHandler} tracker, the type HTML element with ID <b>collapseobj_loginbox</b> not consistent. In
      * addition, the user profile link is sometimes a direct child of this element, or sometimes nested below other HTML elements. This general XPATH
      * query should work for all trackers of this type.
-     *
-     * @return the profile page {@link By} selector
      */
     @Override
     protected By profilePageSelector() {

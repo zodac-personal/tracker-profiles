@@ -45,13 +45,6 @@ import org.openqa.selenium.By;
 public class FunFile extends AbstractTrackerHandler {
 
     @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"))
-            .build();
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(input, withName("login"), withType("submit"))

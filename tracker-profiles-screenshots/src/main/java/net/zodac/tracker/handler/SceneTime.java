@@ -36,25 +36,26 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.util.Collection;
 import java.util.List;
-import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code SceneTime} tracker.
+ *
+ * <p>
+ * We use the login URL because the tracker sometimes redirects to the login page itself, but sometimes does not. This way we have a consistent entry
+ * to the tracker.
  */
-@TrackerHandler(name = "SceneTime", type = TrackerType.MANUAL, url = "https://scenetime.com/")
-public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCheck, HasDismissibleElement {
+@TrackerHandler(name = "SceneTime", url = "https://scenetime.com/login.php")
+public class SceneTime extends AbstractTrackerHandler implements HasDismissibleElement {
 
     @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(form, withId("login-form"))
-            .child(div, atIndex(1))
             .child(button, atIndex(1))
             .build();
     }
@@ -111,12 +112,7 @@ public class SceneTime extends AbstractTrackerHandler implements HasCloudflareCh
     @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of(
-            XpathBuilder
-                .from(table, withClass("desc-table"))
-                .child(tbody, atIndex(1))
-                .child(tr, atIndex(4))
-                .child(td, atIndex(2))
-                .build()
+            By.id("passkey-val")
         );
     }
 

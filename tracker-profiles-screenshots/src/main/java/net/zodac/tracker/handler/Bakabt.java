@@ -20,7 +20,6 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.form;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.td;
@@ -29,8 +28,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,20 +41,6 @@ import org.openqa.selenium.WebElement;
  */
 @TrackerHandler(name = "BakaBT", url = "https://bakabt.me/")
 public class Bakabt extends AbstractTrackerHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
 
     @Override
     protected By loginButtonSelector() {

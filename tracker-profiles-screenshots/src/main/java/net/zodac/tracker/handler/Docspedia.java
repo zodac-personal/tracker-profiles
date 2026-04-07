@@ -28,7 +28,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withNumberOfChildrenOfType;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
@@ -46,20 +45,6 @@ import org.openqa.selenium.WebElement;
  */
 @TrackerHandler(name = "Docspedia", type = TrackerType.MANUAL, url = "https://docspedia.world/")
 public class Docspedia extends AbstractTrackerHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
 
     /**
      * {@inheritDoc}

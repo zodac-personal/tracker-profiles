@@ -23,7 +23,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -40,20 +39,6 @@ import org.openqa.selenium.By;
     "https://bwtorrents.cc/"
 })
 public class BwTorrents extends AbstractTrackerHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
 
     @Override
     protected By loginButtonSelector() {

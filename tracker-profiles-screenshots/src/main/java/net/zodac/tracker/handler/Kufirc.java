@@ -46,6 +46,12 @@ public class Kufirc extends LuminanceHandler {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link Kufirc}, the torrent passkey is not visible on the profile page.
+     */
     @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of();

@@ -96,6 +96,7 @@ final class ResultCollector {
             return ExitState.SUCCESS;
         }
 
+        // TODO: Print the number of successful/failed
         LOGGER.warn("");
         LOGGER.warn("Failures for following tracker{}:", StringUtils.pluralise(totalUnsuccessful));
 

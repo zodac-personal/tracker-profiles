@@ -76,7 +76,7 @@ public class Empornium extends LuminanceHandler {
             final Collection<WebElement> sectionToggles = driver.findElements(toggleSelector);
             for (final WebElement sectionToggle : sectionToggles) {
                 // Only click the toggle if it is already open
-                if (sectionToggle.getText().contains("Hide")) {
+                if (sectionToggle.getText().contains("Hide")) {  // TODO: Can't avoid this English text, no other identifier that I can see?
                     LOGGER.debug("\t\t- Closing section {}", toggleSelector);
                     clickButton(sectionToggle);
                     BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "section to close");
@@ -85,11 +85,23 @@ public class Empornium extends LuminanceHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link Empornium}, the IP address is not visible on the profile page.
+     */
     @Override
     protected Collection<By> ipAddressElements() {
         return List.of();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link Empornium}, the torrent passkey is not visible on the profile page.
+     */
     @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of();

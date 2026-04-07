@@ -20,11 +20,9 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.span;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
@@ -44,16 +42,7 @@ public class XenForoHandler extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
+        return By.name("login");
     }
 
     @Override

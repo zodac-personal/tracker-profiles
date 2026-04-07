@@ -53,8 +53,6 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
      *
      * <p>
      * For {@link Zappateers}, the login button uses a different class than normal.
-     *
-     * @return {@link By} the selector for the login button
      */
     @Override
     protected By loginButtonSelector() {

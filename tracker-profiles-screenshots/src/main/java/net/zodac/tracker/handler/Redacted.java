@@ -46,6 +46,7 @@ public class Redacted extends GazelleHandler {
      */
     @Override
     protected By profilePageContentSelector() {
+        // TODO: Extract this to GazelleHandler
         try {
             LOGGER.debug("\t\t- Looking for Last.fm section for user");
             final By lastFmSectionSelector = XpathBuilder

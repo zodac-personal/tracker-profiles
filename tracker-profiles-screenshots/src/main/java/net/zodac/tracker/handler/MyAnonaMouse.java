@@ -31,7 +31,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -50,16 +49,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("email"), withType("email"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
+        return By.name("email");
     }
 
     @Override
@@ -103,9 +93,10 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
     }
 
     /**
-     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
+     * {@inheritDoc}
      *
-     * @return the {@link RedactionBuffer} for IP address redaction
+     * <p>
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      */
     @Override
     protected RedactionBuffer ipAddressElementBuffer() {

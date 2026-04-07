@@ -46,11 +46,23 @@ public class HappyFappy extends LuminanceHandler {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link HappyFappy}, the IP address is not visible on the profile page.
+     */
     @Override
     protected Collection<By> ipAddressElements() {
         return List.of();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link HappyFappy}, the torrent passkey is not visible on the profile page.
+     */
     @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of();

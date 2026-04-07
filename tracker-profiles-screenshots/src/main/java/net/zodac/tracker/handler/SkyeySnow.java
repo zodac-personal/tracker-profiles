@@ -18,17 +18,13 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
-import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -47,24 +43,8 @@ import org.openqa.selenium.WebElement;
 public class SkyeySnow extends AbstractTrackerHandler implements NeedsExplicitTranslation {
 
     @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
-
-    @Override
     protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(button, withType("submit"), withName("loginsubmit"))
-            .build();
+        return By.name("loginsubmit");
     }
 
     @Override
@@ -122,7 +102,7 @@ public class SkyeySnow extends AbstractTrackerHandler implements NeedsExplicitTr
      */
     @Override
     public Duration pageTransitionsDuration() {
-        return Duration.ofSeconds(3L);
+        return Duration.ofSeconds(5L);
     }
 
     private void openEditOutDropdownMenu() {

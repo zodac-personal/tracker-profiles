@@ -29,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsSrc;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.annotation.TrackerHandler;
@@ -44,16 +43,12 @@ public class SportsCult extends AbstractTrackerHandler {
 
     @Override
     protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("uid"), withType("text"))
-            .build();
+        return By.name("uid");
     }
 
     @Override
     protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("pwd"), withType("password"))
-            .build();
+        return By.name("pwd");
     }
 
     @Override

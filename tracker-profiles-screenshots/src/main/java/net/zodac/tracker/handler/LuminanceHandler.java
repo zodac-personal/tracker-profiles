@@ -18,12 +18,10 @@
 package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,22 +36,6 @@ import org.openqa.selenium.By;
 @CommonTrackerHandler("Luminance")
 @TrackerHandler(name = "PixelCove", url = "https://www.pixelcove.me/")
 public class LuminanceHandler extends GazelleHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(div, withId("username"))
-            .child(input, atIndex(1))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(div, withId("password"))
-            .child(input, atIndex(1))
-            .build();
-    }
 
     @Override
     protected By loginButtonSelector() {

@@ -37,8 +37,6 @@ public class DarkPeers extends Unit3dHandler implements HasJumpButtons {
      *
      * <p>
      * For {@link DarkPeers}, the login button uses a different class than normal.
-     *
-     * @return {@link By} the selector for the login button
      */
     @Override
     protected By loginButtonSelector() {

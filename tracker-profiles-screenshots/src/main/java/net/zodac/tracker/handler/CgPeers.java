@@ -20,7 +20,6 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.table;
 import static net.zodac.tracker.framework.xpath.HtmlElement.tbody;
@@ -29,8 +28,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 
 import java.util.Collection;
 import java.util.List;
@@ -89,9 +86,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
         final String initialUrl = driver.getCurrentUrl();
         LOGGER.info("\t\t >>> Waiting for user to enter the 2FA code and click the 'Verify Code' button");
 
-        final By selectionSelector = XpathBuilder
-            .from(input, withClass("form-input"), withName("code"))
-            .build();
+        final By selectionSelector = By.name("code");
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
         DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code and click the 'Verify Code' button");
@@ -115,10 +110,8 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
     @Override
     public void dismiss() {
         LOGGER.debug("\t\t- Checking for 2FA announcements");
-
         final By announcementSelector = XpathBuilder
-            .from(div, withId("announcement-bar"))
-            .descendant(button, withClass("announcement-dismiss"))
+            .from(button, withClass("announcement-dismiss"))
             .build();
         final Collection<WebElement> announcements = driver.findElements(announcementSelector);
 
@@ -162,7 +155,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
                 .child(tbody)
                 .child(tr, atIndex(2))
                 .child(td, atIndex(2))
-                .child(a)
+                .child(a, atIndex(1))
                 .build()
         );
     }

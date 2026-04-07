@@ -77,9 +77,10 @@ public class DicMusic extends GazelleHandler implements HasJumpButtons {
     }
 
     /**
-     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
+     * {@inheritDoc}
      *
-     * @return the {@link RedactionBuffer} for email redaction
+     * <p>
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      */
     @Override
     protected RedactionBuffer emailElementBuffer() {

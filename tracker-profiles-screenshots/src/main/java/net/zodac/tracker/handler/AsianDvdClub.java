@@ -20,7 +20,7 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.img;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
@@ -44,7 +44,7 @@ public class AsianDvdClub extends AbstractTrackerHandler {
     @Override
     protected By profilePageSelector() {
         return XpathBuilder
-            .from(a, withAttribute("href", "/profile"))
+            .from(a, containsHref("/profile"))
             .build();
     }
 
@@ -58,7 +58,7 @@ public class AsianDvdClub extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         return XpathBuilder
-            .from(a, withAttribute("href", "/logout"))
+            .from(a, containsHref("/logout"))
             .build();
     }
 }

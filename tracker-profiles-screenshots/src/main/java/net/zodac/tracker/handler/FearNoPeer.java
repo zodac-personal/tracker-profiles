@@ -56,10 +56,11 @@ public class FearNoPeer extends Unit3dHandler {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * <p>
      * The {@link RedactionBuffer} set in {@link Unit3dHandler} is excessive for {@link FearNoPeer}, so we use {@link RedactionBuffer#DEFAULT}
      * instead.
-     *
-     * @return the {@link RedactionBuffer} for email address redaction
      */
     @Override
     protected RedactionBuffer emailElementBuffer() {

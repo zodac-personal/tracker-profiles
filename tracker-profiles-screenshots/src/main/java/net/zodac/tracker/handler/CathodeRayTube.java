@@ -17,16 +17,9 @@
 
 package net.zodac.tracker.handler;
 
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.li;
-import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 
 /**
@@ -35,15 +28,14 @@ import org.openqa.selenium.By;
 @TrackerHandler(name = "Cathode-Ray.Tube", url = "https://www.cathode-ray.tube/")
 public class CathodeRayTube extends LuminanceHandler {
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link CathodeRayTube}, the passkey is hidden by default.
+     */
     @Override
     protected Collection<By> torrentPasskeyElements() {
-        return List.of(
-            XpathBuilder
-                .from(div, withClass("sidebar"))
-                .child(div, atIndex(10))
-                .child(ul, atIndex(1))
-                .child(li, atIndex(4))
-                .build()
-        );
+        return List.of();
     }
 }

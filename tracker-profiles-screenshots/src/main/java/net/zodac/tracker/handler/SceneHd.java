@@ -44,11 +44,6 @@ import org.openqa.selenium.By;
 public class SceneHd extends AbstractTrackerHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.id("cname");
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return By.id("loginsubmit");
     }

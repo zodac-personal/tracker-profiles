@@ -49,16 +49,6 @@ public class GreatPosterWall extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.id("«r1»");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.id("«r2»");
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(button, withName("login"), withType("submit"))

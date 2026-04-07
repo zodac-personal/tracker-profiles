@@ -67,7 +67,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "Podzemlje", url = "https://podzemlje.net/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
 @TrackerHandler(name = "Rastastugan", url = "https://rastastugan.org/")
-@TrackerHandler(name = "RetroMoviesClub", url = "https://retro-movies.club/")
 @TrackerHandler(name = "RocketHD", url = "https://rocket-hd.cc/")
 @TrackerHandler(name = "SexTorrent", adult = true, url = "https://sextorrent.myds.me/")
 @TrackerHandler(name = "SlobitMedia", url = "https://media.slo-bitcloud.eu/")
@@ -149,9 +148,10 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     /**
-     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
+     * {@inheritDoc}
      *
-     * @return the {@link RedactionBuffer} for email address redaction
+     * <p>
+     * The redaction doesn't cover the full {@code <li>} element for some reason, so we extend it to the left.
      */
     @Override
     protected RedactionBuffer emailElementBuffer() {

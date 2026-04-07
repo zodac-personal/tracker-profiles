@@ -24,7 +24,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.p;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import net.zodac.tracker.framework.TrackerType;
@@ -46,20 +45,6 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     public By cloudflareSelector() {
         return XpathBuilder
             .from(div, withClass("cf-turnstile"))
-            .build();
-    }
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
             .build();
     }
 
@@ -103,7 +88,8 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
 
     @Override
     public By headerSelector() {
-        throw new IllegalStateException("Should not be called, unfixHeader() has been overridden");
+        // Not needed, unfixHeader() has been overridden and doesn't need a selector
+        return By.name("dummy");
     }
 
     @Override

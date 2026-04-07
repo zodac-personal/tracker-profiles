@@ -37,16 +37,6 @@ import org.openqa.selenium.By;
 public class AidoruOnline extends AbstractTrackerHandler {
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.id("quick_login_username");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.id("quick_login_password");
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(input, withType("submit"))

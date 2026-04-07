@@ -42,8 +42,6 @@ public class PtGtk extends NexusPhpHandler {
      *
      * <p>
      * For {@link PtGtk}, the IP address is already blurred and not visible in the screenshot.
-     *
-     * @return an empty {@link Collection} to indicate no IP address elements to redact
      */
     @Override
     protected Collection<By> ipAddressElements() {

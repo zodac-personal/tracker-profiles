@@ -27,7 +27,6 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.tr;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
@@ -44,20 +43,6 @@ import org.openqa.selenium.WebElement;
  */
 @TrackerHandler(name = "SocietyGlitch", type = TrackerType.MANUAL, url = "https://stalker.societyglitch.com/")
 public class SocietyGlitch extends AbstractTrackerHandler {
-
-    @Override
-    protected By usernameFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("username"), withType("text"))
-            .build();
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return XpathBuilder
-            .from(input, withName("password"), withType("password"))
-            .build();
-    }
 
     /**
      * {@inheritDoc}
@@ -78,6 +63,8 @@ public class SocietyGlitch extends AbstractTrackerHandler {
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
+
+        // TODO: This blocks the input, add an override option for positioning
         DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
     }
 

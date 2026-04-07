@@ -37,8 +37,6 @@ public class SeedPool extends Unit3dHandler {
      * For {@link SeedPool}, unlike most other {@code UNIT3D}-based trackers, there is no link to the username available in the nav bar.
      * Instead, we must move the mouse over the profile icon in the nav bar. This will activate the dropdown menu and make the profile link button
      * interactive.
-     *
-     * @return {@link By} the selector for the profile link
      */
     @Override
     protected By profilePageSelector() {

@@ -19,14 +19,11 @@ package net.zodac.tracker.handler;
 
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.HtmlElement.li;
 import static net.zodac.tracker.framework.xpath.HtmlElement.ul;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withName;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
 import java.util.List;
@@ -50,20 +47,8 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.id("username");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.id("password");
-    }
-
-    @Override
     protected By loginButtonSelector() {
-        return XpathBuilder
-            .from(input, withName("login"), withType("submit"))
-            .build();
+        return By.name("login");
     }
 
     /**
@@ -72,8 +57,6 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
      * <p>
      * For {@link Libble}, the {@code SOS} section loads in after the rest of the page, so we wait for this to ensure the page doesn't render any
      * additional elements after we begin redaction.
-     *
-     * @return the profile page content {@link By} selector
      */
     @Override
     protected By profilePageContentSelector() {

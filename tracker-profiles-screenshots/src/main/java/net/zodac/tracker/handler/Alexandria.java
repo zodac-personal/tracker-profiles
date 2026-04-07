@@ -50,16 +50,6 @@ public class Alexandria extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By usernameFieldSelector() {
-        return By.name("username");
-    }
-
-    @Override
-    protected By passwordFieldSelector() {
-        return By.name("password");
-    }
-
-    @Override
     protected By loginButtonSelector() {
         return XpathBuilder
             .from(button, withType("submit"))
