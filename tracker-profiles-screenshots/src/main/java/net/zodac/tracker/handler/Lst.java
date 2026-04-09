@@ -84,14 +84,14 @@ public class Lst extends Unit3dHandler {
      * must move the mouse over the profile icon in the nav bar. This will activate the dropdown menu and make the profile link button interactive.
      */
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(img, withClass("top-nav__profile-image"))
             .build();
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main, withClass("page__user-profile--show"))
             .build();

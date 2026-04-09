@@ -52,7 +52,7 @@ public class FunFile extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("avatar"))
             .child(a, atIndex(1))
@@ -60,7 +60,7 @@ public class FunFile extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(a, containsHref("mailto:"))
             .build();

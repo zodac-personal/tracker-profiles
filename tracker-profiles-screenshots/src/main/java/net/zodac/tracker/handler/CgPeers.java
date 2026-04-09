@@ -129,7 +129,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(div, withClass("dropdown-quick-actions-grid"))

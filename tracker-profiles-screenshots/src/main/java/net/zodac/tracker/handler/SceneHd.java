@@ -49,7 +49,7 @@ public class SceneHd extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("user-information"))
             .child(div, atIndex(1))
@@ -59,7 +59,7 @@ public class SceneHd extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("community");
     }
 

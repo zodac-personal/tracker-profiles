@@ -61,14 +61,14 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
      * stats but there is no new page loaded.
      */
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(button, withClass("profile-button"))
             .build();
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.tagName("tor-browse-list");
     }
 
@@ -88,7 +88,7 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
         LOGGER.debug("\t\t- Clicking user dropdown menu to make logout button interactable");
         reloadProfilePage();
 
-        final By profilePageSelector = profilePageSelector();
+        final By profilePageSelector = profileLinkSelector();
         final WebElement logoutParent = browserInteractionHelper.waitForElementToBePresent(profilePageSelector, maximumLinkResolutionDuration());
         clickButton(logoutParent);
     }

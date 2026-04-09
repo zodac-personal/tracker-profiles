@@ -51,7 +51,7 @@ public class Bakabt extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(table, withClass("userstats"))
             .build();
@@ -72,7 +72,7 @@ public class Bakabt extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the nav bar to make the logout button interactable
-        final WebElement logoutParent = driver.findElement(profilePageSelector());
+        final WebElement logoutParent = driver.findElement(profileLinkSelector());
         browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder

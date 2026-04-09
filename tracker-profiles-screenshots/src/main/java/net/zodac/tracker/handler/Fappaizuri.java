@@ -47,7 +47,7 @@ public class Fappaizuri extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("myBlock-content"))
             .child(div, atIndex(1))
@@ -57,7 +57,7 @@ public class Fappaizuri extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("myFrame-content"))
             .descendant(div, withClass("box"))

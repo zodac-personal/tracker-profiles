@@ -73,7 +73,7 @@ public class RoTorrent extends Unit3dHandler implements HasCloudflareCheck {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main, withClass("page__user-profile--show"))
             .build();

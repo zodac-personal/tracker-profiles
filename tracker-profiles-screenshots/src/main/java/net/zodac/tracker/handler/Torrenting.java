@@ -56,12 +56,12 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return By.id("usrnm");
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("userDetailsTable");
     }
 

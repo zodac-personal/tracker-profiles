@@ -47,7 +47,7 @@ public class HdForever extends GazelleHandler implements HasJumpButtons, NeedsEx
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("userinfo_left"))
             .descendant(span, withClass("class_2"))

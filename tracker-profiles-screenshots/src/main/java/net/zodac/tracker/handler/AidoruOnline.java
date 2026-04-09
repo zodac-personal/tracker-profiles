@@ -44,7 +44,7 @@ public class AidoruOnline extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("myBlock-content"))
             .descendant(a, atIndex(1))
@@ -52,7 +52,7 @@ public class AidoruOnline extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(td, withClass("prof-lbl"))
             .build();

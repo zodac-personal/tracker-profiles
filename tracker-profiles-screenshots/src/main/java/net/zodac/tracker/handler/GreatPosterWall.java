@@ -56,12 +56,12 @@ public class GreatPosterWall extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return By.id("header-username-value");
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("community_stats");
     }
 

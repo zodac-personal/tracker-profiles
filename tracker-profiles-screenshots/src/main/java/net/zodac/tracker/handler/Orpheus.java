@@ -49,7 +49,7 @@ public class Orpheus extends GazelleHandler {
      * For {@link Orpheus}, we check for a linked {@code Last.fm} account.
      */
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return profilePageContentSelectorWithLastFm();
     }
 }

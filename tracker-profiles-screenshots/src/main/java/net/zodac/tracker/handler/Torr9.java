@@ -50,7 +50,7 @@ public class Torr9 extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(footer, atIndex(1))
             .child(div, atIndex(1))
@@ -63,7 +63,7 @@ public class Torr9 extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.tagName("code");
     }
 

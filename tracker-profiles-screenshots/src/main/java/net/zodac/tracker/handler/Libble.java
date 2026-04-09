@@ -59,7 +59,7 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
      * additional elements after we begin redaction.
      */
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("sos");
     }
 

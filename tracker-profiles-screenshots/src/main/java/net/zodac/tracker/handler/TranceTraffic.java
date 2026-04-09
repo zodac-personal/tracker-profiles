@@ -50,7 +50,7 @@ public class TranceTraffic extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(body, atIndex(1))
             .child(table, atIndex(1))
@@ -67,7 +67,7 @@ public class TranceTraffic extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(a, containsHref("sdlist=1"))
             .build();

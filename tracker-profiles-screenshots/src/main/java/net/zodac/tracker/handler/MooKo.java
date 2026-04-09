@@ -60,7 +60,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(div, withClass("HeaderNew-user"))
@@ -70,7 +70,7 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("community_stats");
     }
 

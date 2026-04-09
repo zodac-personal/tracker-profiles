@@ -85,7 +85,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(span, withClass("statuslink"))
             .child(NamedHtmlElement.of("b"), atIndex(1))
@@ -94,7 +94,7 @@ public class TheClickHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(td, withClass("embedded"))
             .child(table)

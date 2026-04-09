@@ -82,7 +82,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleElemen
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(div, withAttribute("role", "presentation"))
@@ -92,7 +92,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleElemen
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.of("code"))
             .build();

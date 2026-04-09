@@ -39,7 +39,7 @@ public class SeedPool extends Unit3dHandler {
      * interactive.
      */
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(a, withClass("top-nav__username"))

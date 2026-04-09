@@ -72,7 +72,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(span, withClass("user-group"))
             .navigateTo(parent(a))
@@ -80,7 +80,7 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(button, withAttribute("title", "Upload Avatar"))
             .build();

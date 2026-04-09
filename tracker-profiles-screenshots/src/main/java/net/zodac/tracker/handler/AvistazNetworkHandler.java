@@ -109,7 +109,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(span, withClass("badge-user"))
             .navigateTo(parent(a))
@@ -117,7 +117,7 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(span, withClass("badge-user"))
             .build();

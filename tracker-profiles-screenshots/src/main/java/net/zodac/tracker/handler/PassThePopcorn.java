@@ -84,7 +84,7 @@ public class PassThePopcorn extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(li, withId("nav_userinfo"))
             .child(a, atIndex(1))
@@ -92,7 +92,7 @@ public class PassThePopcorn extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(a, containsHref("bprate.php"))
             .build();

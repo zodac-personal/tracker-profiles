@@ -84,14 +84,14 @@ public class SceneTime extends AbstractTrackerHandler implements HasDismissibleE
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(a, withClass("st-status-username"))
             .build();
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, containsSrc("pic/flag/"))
             .build();

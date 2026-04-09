@@ -60,7 +60,7 @@ public class XenForoHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         navigateToUserPage();
         return XpathBuilder
             .from(div, withClass("p-body-sideNavContent"))
@@ -72,7 +72,7 @@ public class XenForoHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(span, withClass("memberHeader-nameWrapper"))
             .build();

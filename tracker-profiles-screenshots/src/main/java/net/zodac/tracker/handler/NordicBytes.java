@@ -84,7 +84,7 @@ public class NordicBytes extends AbstractTrackerHandler implements HasDismissibl
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("header--user"))
             .child(div, atIndex(1))
@@ -96,7 +96,7 @@ public class NordicBytes extends AbstractTrackerHandler implements HasDismissibl
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("__header-profile"))
             .build();

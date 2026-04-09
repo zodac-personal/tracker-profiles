@@ -38,7 +38,7 @@ import org.openqa.selenium.WebElement;
 public class LatTeam extends Unit3dHandler {
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(nav, withClass("user-sidebar__nav"))

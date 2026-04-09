@@ -76,7 +76,7 @@ public class SocietyGlitch extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("sbleft"))
             .child(a, atIndex(1))
@@ -84,7 +84,7 @@ public class SocietyGlitch extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withId("contentcontainer"))
             .child(table, atIndex(2))

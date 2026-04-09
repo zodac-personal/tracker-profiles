@@ -65,7 +65,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(a, withClass("myInfo"))
@@ -73,7 +73,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, containsSrc("pic/flags/"))
             .build();

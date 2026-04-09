@@ -42,14 +42,14 @@ public class AsianDvdClub extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(a, containsHref("/profile"))
             .build();
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, withClass("profile-avatar"))
             .build();

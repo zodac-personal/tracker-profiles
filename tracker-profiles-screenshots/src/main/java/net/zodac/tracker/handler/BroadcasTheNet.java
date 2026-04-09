@@ -72,7 +72,7 @@ public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("user_profile"))
             .build();

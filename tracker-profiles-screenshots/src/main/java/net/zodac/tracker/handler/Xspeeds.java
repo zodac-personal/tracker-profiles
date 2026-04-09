@@ -33,7 +33,7 @@ import org.openqa.selenium.By;
 public class Xspeeds extends TsSpecialEditionHandler {
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.any(), withId("collapseobj_userstats"))
             .descendant(a, atIndex(1))

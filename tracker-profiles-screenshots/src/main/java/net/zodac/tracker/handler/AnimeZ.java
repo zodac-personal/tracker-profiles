@@ -75,7 +75,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(div, withClass("navbar-nav"), withClass("order-md-last"))
@@ -86,7 +86,7 @@ public class AnimeZ extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.tagName("code");
     }
 

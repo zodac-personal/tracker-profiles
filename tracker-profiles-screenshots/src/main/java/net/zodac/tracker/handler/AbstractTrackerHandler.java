@@ -308,13 +308,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * Defines the {@link By} selector of the {@link WebElement} used to confirm that the user has successfully logged in.
      *
      * <p>
-     * By default, this will use {@link #profilePageSelector()}, but if that selector requires some additional work (reloading the page, or
+     * By default, this will use {@link #profileLinkSelector()}, but if that selector requires some additional work (reloading the page, or
      * hovering/clicking another element to open a drop-down menu), then a simpler one should be used for this check.
      *
      * @return the post-login {@link By} selector
      */
     protected By postLoginSelector() {
-        return profilePageSelector();
+        return profileLinkSelector();
     }
 
     /**
@@ -325,14 +325,14 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         LOGGER.trace("Opening profile page");
         browserInteractionHelper.waitForPageToLoad(pageTransitionsDuration());
 
-        final WebElement profilePageLink = browserInteractionHelper.waitForElementToBeInteractable(profilePageSelector(), pageTransitionsDuration());
-        browserInteractionHelper.removeAttribute(profilePageLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
-        clickButton(profilePageLink);
+        final WebElement profileLink = browserInteractionHelper.waitForElementToBeInteractable(profileLinkSelector(), pageTransitionsDuration());
+        browserInteractionHelper.removeAttribute(profileLink, "target"); // Removing 'target="_blank"', to ensure link opens in same tab
+        clickButton(profileLink);
 
         try {
             LOGGER.debug("\t\t- Waiting to confirm user profile page has loaded successfully");
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-            browserInteractionHelper.waitForElementToBeVisible(profilePageContentSelector(), pageLoadDuration());
+            browserInteractionHelper.waitForElementToBeVisible(profilePageElementSelector(), pageLoadDuration());
             browserInteractionHelper.moveToOrigin();
             additionalActionOnProfilePage();
         } catch (final TimeoutException e) {
@@ -345,7 +345,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @return the profile page link {@link By} selector
      */
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(a, withClass("username"))
             .build();
@@ -356,7 +356,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @return the profile page content {@link By} selector
      */
-    protected abstract By profilePageContentSelector();
+    protected abstract By profilePageElementSelector();
 
     /**
      * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and
@@ -381,7 +381,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         driver.navigate().refresh();
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
-        browserInteractionHelper.waitForElementToBeVisible(profilePageContentSelector(), pageLoadDuration());
+        browserInteractionHelper.waitForElementToBeVisible(profilePageElementSelector(), pageLoadDuration());
         additionalActionOnProfilePage();
     }
 

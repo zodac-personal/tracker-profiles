@@ -113,7 +113,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(div, withClass("top-nav__right"))
@@ -125,7 +125,7 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main)
             .child(NamedHtmlElement.of("article"), withClass("sidebar2"))

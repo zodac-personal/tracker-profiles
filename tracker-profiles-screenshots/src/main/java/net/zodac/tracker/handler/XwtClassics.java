@@ -51,7 +51,7 @@ public class XwtClassics extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(body, atIndex(1))
             .child(table, atIndex(2))
@@ -63,7 +63,7 @@ public class XwtClassics extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(table, withClass("details-table"))
             .build();

@@ -33,7 +33,7 @@ public class Redacted extends GazelleHandler {
      * For {@link Redacted}, we check for a linked {@code Last.fm} account.
      */
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return profilePageContentSelectorWithLastFm();
     }
 }

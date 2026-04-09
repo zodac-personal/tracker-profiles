@@ -61,7 +61,7 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(img, withClass("toolbar_avatar"))
             .navigateTo(parent(a))
@@ -69,7 +69,7 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("userdeatils_tpl");
     }
 
@@ -83,7 +83,7 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the nav bar to make the logout button interactable
-        final By logoutParentSelector = profilePageSelector();
+        final By logoutParentSelector = profileLinkSelector();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         browserInteractionHelper.moveTo(logoutParent);
 

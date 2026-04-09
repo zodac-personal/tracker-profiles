@@ -40,7 +40,7 @@ import org.openqa.selenium.By;
 public class FearNoPeer extends Unit3dHandler {
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main, withClass("page__user-profile--premium-2026"))
             .build();

@@ -100,7 +100,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.of("user"), atIndex(1))
             .descendant(a, atIndex(1))
@@ -108,7 +108,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withId("contentContainer"))
             .descendant(table, atIndex(1))

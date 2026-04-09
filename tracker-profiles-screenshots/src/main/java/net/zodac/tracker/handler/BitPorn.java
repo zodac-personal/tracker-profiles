@@ -40,7 +40,7 @@ public class BitPorn extends Unit3dHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main, withClass("page__user-profile--show"))
             .build();

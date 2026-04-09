@@ -77,7 +77,7 @@ public class F1Gp extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.of("h6"), atIndex(1))
             .descendant(a, containsHref("page=userdetails"))
@@ -85,7 +85,7 @@ public class F1Gp extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, containsSrc("images/flag/"))
             .build();

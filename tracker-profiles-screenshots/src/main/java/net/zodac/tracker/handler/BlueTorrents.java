@@ -65,7 +65,7 @@ public class BlueTorrents extends AbstractTrackerHandler implements HasFixedHead
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openUserDropdownMenu();
         return XpathBuilder
             .from(ul, withClass("dropdown-menu-end"))
@@ -75,7 +75,7 @@ public class BlueTorrents extends AbstractTrackerHandler implements HasFixedHead
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(span, withClass("username-user"))
             .build();

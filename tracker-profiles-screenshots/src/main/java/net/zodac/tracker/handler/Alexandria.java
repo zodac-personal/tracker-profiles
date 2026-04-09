@@ -57,7 +57,7 @@ public class Alexandria extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("desktopNavMenu"))
             .descendant(a, containsHref("/user/"))
@@ -65,7 +65,7 @@ public class Alexandria extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("user-view");
     }
 

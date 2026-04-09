@@ -80,7 +80,7 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
      * query should work for all trackers of this type.
      */
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.any(), withId("collapseobj_loginbox"))
             .descendant(a, atIndex(1))
@@ -88,7 +88,7 @@ public class TsSpecialEditionHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("collapseobj_content2a");
     }
 

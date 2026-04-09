@@ -46,7 +46,7 @@ public class AnimeBytes extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("user_leftcol");
     }
 

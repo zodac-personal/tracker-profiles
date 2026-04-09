@@ -48,7 +48,7 @@ public class SkyeySnow extends AbstractTrackerHandler implements NeedsExplicitTr
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("um"))
             .descendant(a, containsHref("uid="))
@@ -56,7 +56,7 @@ public class SkyeySnow extends AbstractTrackerHandler implements NeedsExplicitTr
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("u_profile"))
             .build();

@@ -59,7 +59,7 @@ public class Aura4k extends Unit3dHandler {
      * we only need it for the profile page, not logout.
      */
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         LOGGER.debug("\t\t- Waiting for welcome pop-up to disappear");
         final By loginPopupSelector = XpathBuilder
             .from(body, atIndex(1))
@@ -77,7 +77,7 @@ public class Aura4k extends Unit3dHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(main, withClass("profile-page-wow"))
             .build();

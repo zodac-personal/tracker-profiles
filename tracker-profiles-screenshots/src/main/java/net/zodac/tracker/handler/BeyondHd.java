@@ -71,7 +71,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader, 
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(img, withClass("beta-image-avatar"))
             .navigateTo(parent(a))
@@ -79,7 +79,7 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader, 
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, withClass("img-circle"))
             .build();

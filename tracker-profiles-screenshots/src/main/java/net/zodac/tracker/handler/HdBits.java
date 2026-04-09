@@ -100,7 +100,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("curuser-stats"), atIndex(1))
             .child(NamedHtmlElement.of("b"), atIndex(1))
@@ -109,7 +109,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("seclog");
     }
 

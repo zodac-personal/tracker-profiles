@@ -43,7 +43,7 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("base_usermenu"))
             .child(div, atIndex(1))
@@ -53,7 +53,7 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("general");
     }
 

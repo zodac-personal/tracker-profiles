@@ -50,7 +50,7 @@ public class BootyTape extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(table, withClass("insidecolor"))
             .descendant(table, atIndex(1))
@@ -64,7 +64,7 @@ public class BootyTape extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         // Cannot easily find a uniquely identifiable element that isn't on the home page, other than the IP element that links to a lookup site
         return XpathBuilder
             .from(a, containsHref("whatismyipaddress.com/ip/"))

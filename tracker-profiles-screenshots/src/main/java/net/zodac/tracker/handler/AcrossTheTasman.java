@@ -73,7 +73,7 @@ public class AcrossTheTasman extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(ul, withClass("isuser"))
             .child(li, atIndex(3))
@@ -82,7 +82,7 @@ public class AcrossTheTasman extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withId("userinfoblock"))
             .build();

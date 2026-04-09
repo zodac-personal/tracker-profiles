@@ -48,7 +48,7 @@ public class Jpopsuki extends GazelleHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(a, containsHref("mailto:"))
             .build();

@@ -54,7 +54,7 @@ public class TheMixingBowl extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(li, withClass("userdrop"))
             .child(a, atIndex(1))
@@ -62,7 +62,7 @@ public class TheMixingBowl extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("joined");
     }
 
@@ -86,7 +86,7 @@ public class TheMixingBowl extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the user profile link to make the logout button interactable
-        final By logoutParentSelector = profilePageSelector();
+        final By logoutParentSelector = profileLinkSelector();
         final WebElement logoutParent = driver.findElement(logoutParentSelector);
         browserInteractionHelper.moveTo(logoutParent);
 

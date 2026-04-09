@@ -44,7 +44,7 @@ import org.openqa.selenium.WebElement;
 public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("topmenu"))
             .child(table, atIndex(1))
@@ -56,7 +56,7 @@ public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("u_down_total");
     }
 

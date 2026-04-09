@@ -125,12 +125,12 @@ public class PixelHd extends AbstractTrackerHandler implements HasDismissibleEle
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return By.id("userNameMenu");
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("sidebar"))
             .child(div, atIndex(5))

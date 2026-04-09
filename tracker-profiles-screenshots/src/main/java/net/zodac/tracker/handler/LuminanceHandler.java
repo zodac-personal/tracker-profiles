@@ -43,7 +43,7 @@ public class LuminanceHandler extends GazelleHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("community");
     }
 

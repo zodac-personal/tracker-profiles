@@ -76,7 +76,7 @@ public class Docspedia extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("status_avatar"))
             .child(a, atIndex(1))
@@ -84,7 +84,7 @@ public class Docspedia extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("cblock-innercontent"), withNumberOfChildrenOfType(table, 2))
             .build();

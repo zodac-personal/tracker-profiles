@@ -78,7 +78,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("ds-user-stats"))
             .child(div, atIndex(1))
@@ -87,7 +87,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("deep-space-user-hub"))
             .build();

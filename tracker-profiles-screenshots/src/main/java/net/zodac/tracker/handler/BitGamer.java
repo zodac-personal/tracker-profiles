@@ -57,7 +57,7 @@ public class BitGamer extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         openControlPanel();
         return XpathBuilder
             .from(NamedHtmlElement.of("h1"))
@@ -66,7 +66,7 @@ public class BitGamer extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(td, withClass("embedded"))
             .child(NamedHtmlElement.of("h1"))

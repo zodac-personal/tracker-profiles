@@ -65,7 +65,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(div, withClass("box_userinfo_stats"))
             .build();
@@ -78,7 +78,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
      * the element here before returning. If it doesn't load, we will log a warning but continue execution.
      *
      * <p>
-     * If there is no {@code Last.fm} username, we use the default {@link #profilePageContentSelector()}.
+     * If there is no {@code Last.fm} username, we use the default {@link #profilePageElementSelector()}.
      */
     protected By profilePageContentSelectorWithLastFm() {
         try {
@@ -94,7 +94,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
             return lastFmLastPlayedSelector;
         } catch (final NoSuchElementException e) {
             LOGGER.debug("\t\t- Found no Last.fm section, assuming user has not linked account, will use fallback item to confirm profile page", e);
-            return profilePageContentSelector();
+            return profilePageElementSelector();
         } catch (final TimeoutException e) {
             LOGGER.warn("\t\t- Unable to find Last.fm 'last played' section");
             throw e;
@@ -136,7 +136,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
     @Override
     protected By logoutButtonSelector() {
         // Highlight the profile menu to make the logout button interactable
-        final WebElement logoutParent = driver.findElement(profilePageSelector());
+        final WebElement logoutParent = driver.findElement(profileLinkSelector());
         browserInteractionHelper.moveTo(logoutParent);
 
         return XpathBuilder

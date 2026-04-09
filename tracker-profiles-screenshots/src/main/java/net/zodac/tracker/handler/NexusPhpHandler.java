@@ -111,7 +111,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(table, withId("info_block"))
             .descendant(table, atIndex(1))
@@ -125,7 +125,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, containsSrc("pic/flag/"))
             .build();

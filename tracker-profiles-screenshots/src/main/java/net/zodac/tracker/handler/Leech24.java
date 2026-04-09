@@ -75,7 +75,7 @@ public class Leech24 extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("myBlock-content"))
             .descendant(a, containsHref("account.php"))
@@ -83,7 +83,7 @@ public class Leech24 extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(a, containsHref("account.php?action=changepw"))
             .build();

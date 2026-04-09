@@ -112,12 +112,12 @@ public class TorrentPier extends AbstractTrackerHandler implements HasDismissibl
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return By.id("logged-in-username");
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("traf-stats-tbl");
     }
 

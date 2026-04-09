@@ -41,7 +41,7 @@ public class MetalTracker extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(NamedHtmlElement.of("h4"), withClass("nickname"))
             .child(span, atIndex(1))
@@ -50,7 +50,7 @@ public class MetalTracker extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(td, withClass("profile_left"))
             .build();

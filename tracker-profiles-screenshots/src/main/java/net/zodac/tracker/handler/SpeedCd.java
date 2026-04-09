@@ -68,7 +68,7 @@ public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareChec
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withClass("tSta"))
             .child(a, atIndex(1))
@@ -76,7 +76,7 @@ public class SpeedCd extends AbstractTrackerHandler implements HasCloudflareChec
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("Details");
     }
 

@@ -43,7 +43,7 @@ public class DicMusic extends GazelleHandler implements HasJumpButtons {
      * For {@link DicMusic}, we check for a linked {@code Last.fm} account.
      */
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return profilePageContentSelectorWithLastFm();
     }
 

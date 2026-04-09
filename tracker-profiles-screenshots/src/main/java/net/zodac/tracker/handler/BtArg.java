@@ -62,7 +62,7 @@ public class BtArg extends AbstractTrackerHandler implements NeedsExplicitTransl
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(div, withId("__welcome"))
             .descendant(a, containsHref("userdetails.php"))
@@ -70,7 +70,7 @@ public class BtArg extends AbstractTrackerHandler implements NeedsExplicitTransl
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(table, withClass("main"))
             .build();

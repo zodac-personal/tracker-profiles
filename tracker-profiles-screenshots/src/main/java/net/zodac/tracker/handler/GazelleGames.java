@@ -81,7 +81,7 @@ public class GazelleGames extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return By.id("user_stats");
     }
 

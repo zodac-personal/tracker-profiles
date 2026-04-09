@@ -54,7 +54,7 @@ public class D3SiNet extends GazelleHandler {
      * additional elements after we begin redaction.
      */
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder.from(li, withId("sos"))
             .child(a, atIndex(1))
             .build();

@@ -50,7 +50,7 @@ public class DimeaDozen extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageSelector() {
+    protected By profileLinkSelector() {
         return XpathBuilder
             .from(table, withId("pageheader"))
             .descendant(table, atIndex(1))
@@ -62,7 +62,7 @@ public class DimeaDozen extends AbstractTrackerHandler {
     }
 
     @Override
-    protected By profilePageContentSelector() {
+    protected By profilePageElementSelector() {
         return XpathBuilder
             .from(img, containsSrc("images/flag/"))
             .build();
