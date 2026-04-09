@@ -23,9 +23,9 @@ RUN python3 -m pip install --upgrade pip && python3 -m pip install -r ./requirem
 COPY ./docker/scripts/patch_chromedriver.py /usr/local/bin/patch_chromedriver.py
 RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip && \
     mkdir -p /usr/local/chromium && \
-    chromium_major_version=$(chromium --version | awk '{print $2}' | cut -d. -f1) && \
-    chromedriver_version=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${chromium_major_version}") && \
-    curl -fL "https://storage.googleapis.com/chrome-for-testing-public/${chromedriver_version}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip && \
+    curl -fL \
+        "https://storage.googleapis.com/chrome-for-testing-public/$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$(chromium --version | awk '{print $2}' | cut -d. -f1)")/linux64/chromedriver-linux64.zip" \
+        -o /tmp/chromedriver.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/chromium && rm -f /tmp/chromedriver.zip && \
     apt-get purge -yqq curl unzip && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod -R 0755 /usr/local/chromium && \
@@ -67,6 +67,21 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
 FROM debian:13.3-slim AS runtime
 # Set the working directory
 WORKDIR /app
+
+# Metadata
+ARG BUILD_DATE="unknown"
+ARG GIT_REVISION="unknown"
+ARG VERSION="unknown"
+LABEL org.opencontainers.image.authors="zodac <arouge110@msn.com>" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.description="Docker-based tool used to log in to private trackers and take a screenshot of the user's profile page, including the option to hide sensitive information" \
+      org.opencontainers.image.documentation="https://github.com/zodac-personal/tracker-profiles/blob/master/README.md" \
+      org.opencontainers.image.licenses="0BSD" \
+      org.opencontainers.image.revision="${GIT_REVISION}" \
+      org.opencontainers.image.source="https://github.com/zodac-personal/tracker-profiles" \
+      org.opencontainers.image.title="tracker-profiles" \
+      org.opencontainers.image.url="https://hub.docker.com/repository/docker/zodac/tracker-profiles/general" \
+      org.opencontainers.image.version="${VERSION}"
 
 # Suppress 'dbind-WARNING' error logs
 ENV NO_AT_BRIDGE=1

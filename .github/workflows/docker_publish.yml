@@ -76,10 +76,18 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Get build date
+        id: build_date
+        run: echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${GITHUB_OUTPUT}"
+
       - name: Build and push Docker image
         id: docker_build
         uses: docker/build-push-action@v5
         with:
+          build-args: |
+            BUILD_DATE=${{ steps.build_date.outputs.date }}
+            GIT_REVISION=${{ github.sha }}
+            VERSION=${{ steps.version.outputs.version }}
           cache-from: type=registry,ref=zodac/tracker-profiles:cache
           cache-to: type=registry,ref=zodac/tracker-profiles:cache,mode=max
           context: .
