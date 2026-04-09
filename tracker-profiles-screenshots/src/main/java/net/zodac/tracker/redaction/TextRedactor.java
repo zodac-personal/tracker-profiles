@@ -92,7 +92,7 @@ class TextRedactor implements Redactor {
     }
 
     private void setInnerText(final WebElement element, final String text) {
-        driver.executeScript(String.format("arguments[0].innerText = '%s'", text), element);
+        driver.executeScript("arguments[0].innerText = arguments[1];", element, text);
     }
 
     private static String getPrefixFromMatcher(final WebElement element, final Matcher matcher) {
@@ -105,11 +105,11 @@ class TextRedactor implements Redactor {
             LOGGER.trace("Found no outerHTML in {}", element);
             return "";
         }
-        return escapeForJavaScriptString(htmlContent);
+        return htmlContent;
     }
 
     private void setOuterHtml(final WebElement element, final String htmlContent) {
-        driver.executeScript(String.format("arguments[0].outerHTML = '%s'", htmlContent), element);
+        driver.executeScript("arguments[0].outerHTML = arguments[1];", element, htmlContent);
     }
 
     private static String replaceEmail(final String input) {
@@ -123,14 +123,4 @@ class TextRedactor implements Redactor {
             .replaceAll(IPV6_PARTIAL.pattern(), DEFAULT_REDACTION_TEXT);
     }
 
-    private static String escapeForJavaScriptString(final String input) {
-        final String escapedString = input
-            .replace("\\", "\\\\")
-            .replace("'", "\\'")
-            .replace("\"", "\\\"")
-            .replace("\r", "")
-            .replace("\n", "\\n");
-        LOGGER.trace("Escaped input '{}' to '{}'", input, escapedString);
-        return escapedString;
-    }
 }

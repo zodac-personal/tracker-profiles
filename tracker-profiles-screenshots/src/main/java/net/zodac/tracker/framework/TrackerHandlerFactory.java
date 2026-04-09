@@ -135,6 +135,7 @@ public final class TrackerHandlerFactory {
 
     private static Set<Class<?>> getFromJar(final URL resource, final String packagePath) throws IOException {
         final JarURLConnection connection = (JarURLConnection) resource.openConnection();
+        connection.setUseCaches(false);
 
         try (final JarFile jarFile = connection.getJarFile()) {
             return jarFile.stream()

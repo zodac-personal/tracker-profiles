@@ -82,7 +82,7 @@ jobs:
           maven-version: '3.9.11'
 
       - name: Download updated workspace
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           name: updated_versions-workspace
           path: .

@@ -107,7 +107,7 @@ jobs:
 
       - name: Update tracker count in README
         run: |
-          tracker_count=$(grep -R --include='*.java' '^@TrackerHandler(' . | cut -d '"' -f2 | sort -u | wc -l)
+          tracker_count=$(grep -R --include='*.java' '^@TrackerHandler(' . | cut -d '"' -f2 | sort -u | wc -l | tr -d '[:space:]')
           sed -i -E "s/(There are currently \*\*)[0-9]+(\*\* supported trackers listed below\.)/\1${tracker_count}\2/" README.md
 
       - name: Bump patch version in VERSION file

@@ -77,7 +77,7 @@ final class ProfileScreenshotExecutor {
      * @return {@code true} if screenshot was successful
      * @throws RuntimeException thrown if all attempts are exhausted due to a retryable failure with a known cause
      */
-    static boolean canScreenshotTracker(final TrackerCredential trackerCredential) {
+    static boolean takeScreenshot(final TrackerCredential trackerCredential) {
         LOGGER.info("");
         LOGGER.info("[{}]", trackerCredential.name());
 
@@ -210,13 +210,13 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void ensureErrorDirectoryExists() {
+    private static void ensureErrorDirectoryExists() throws IOException {
         final File directoryHandle = ERRORS_DIRECTORY.toFile();
         if (!directoryHandle.exists()) {
             LOGGER.trace("Creating directory: '{}'", directoryHandle);
             final boolean created = directoryHandle.mkdirs();
-            if (!created) {
-                LOGGER.trace("Could not create directory (or already exists): '{}'", directoryHandle);
+            if (!created && !directoryHandle.exists()) {
+                throw new IOException("Unable to create errors directory: " + directoryHandle.getAbsolutePath());
             }
         }
     }

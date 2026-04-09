@@ -159,8 +159,7 @@ public class BrowserInteractionHelper {
 
     private void updateCss(final WebElement element, final String propertyName, final String propertyValue) {
         LOGGER.trace("Updating CSS of element '{}', property '{}' to value: '{}'", element, propertyName, propertyValue);
-        final String script = String.format("arguments[0].style.%s = '%s';", propertyName, propertyValue);
-        driver.executeScript(script, element);
+        driver.executeScript("arguments[0].style[arguments[1]] = arguments[2];", element, propertyName, propertyValue);
     }
 
     /**
@@ -203,8 +202,7 @@ public class BrowserInteractionHelper {
      */
     public void removeAttribute(final WebElement element, final String attributeName) {
         LOGGER.trace("Removing attribute '{}' from {}", attributeName, element);
-        final String script = String.format("arguments[0].removeAttribute('%s');", attributeName);
-        driver.executeScript(script, element);
+        driver.executeScript("arguments[0].removeAttribute(arguments[1]);", element, attributeName);
     }
 
     /**

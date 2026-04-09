@@ -1,5 +1,5 @@
 <FindBugsFilter>
+    <!-- Match all bug categories; false positives are suppressed in spotbugs-exclude-filter-file.xml -->
     <Match>
-        <Bug category="SECURITY"/>
     </Match>
 </FindBugsFilter>
