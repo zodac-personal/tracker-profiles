@@ -3,8 +3,8 @@
 cp ./ci/hooks/commit-msg.sh .git/hooks/commit-msg
 chmod +x .git/hooks/commit-msg
 
-# Pre-push build validation
-cp ./ci/hooks/pre-push.sh .git/hooks/pre-push
-chmod +x .git/hooks/pre-push
+# Pre-commit build validation
+cp ./ci/hooks/pre-commit.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
 
 echo "Git hooks installed!"
