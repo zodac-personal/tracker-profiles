@@ -17,14 +17,8 @@
 
 package net.zodac.tracker.handler;
 
-import static net.zodac.tracker.framework.xpath.HtmlElement.div;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
-
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
 
 /**
  * Extension of the {@link GazelleHandler} for the {@code Redacted} tracker.
@@ -36,34 +30,10 @@ public class Redacted extends GazelleHandler {
      * {@inheritDoc}
      *
      * <p>
-     * For {@link Redacted}, if the user has linked their {@code Last.fm} account, there is an element that loads the last played song, and this can
-     * be slower to load than the rest of the page. So we check for the existence of the {@code Last.fm} username (which is always loaded), and if it
-     * exists we wait for the 'Last played' value to load. This can sometimes not load at all, so we will wait for the element here before returning.
-     * If it doesn't load, we will log a warning but continue execution.
-     *
-     * <p>
-     * If there is no {@code Last.fm} username, we use the {@link #profilePageContentSelector()} from {@link GazelleHandler}.
+     * For {@link Redacted}, we check for a linked {@code Last.fm} account.
      */
     @Override
     protected By profilePageContentSelector() {
-        // TODO: Extract this to GazelleHandler
-        try {
-            LOGGER.debug("\t\t- Looking for Last.fm section for user");
-            final By lastFmSectionSelector = XpathBuilder
-                .from(div, withClass("box_lastfm"))
-                .build();
-            driver.findElement(lastFmSectionSelector);
-
-            LOGGER.debug("\t\t- Found Last.fm section, waiting for 'last played' entry to load");
-            final By lastFmLastPlayedSelector = By.id("lastfm_stats");
-            browserInteractionHelper.waitForElementToBeVisible(lastFmLastPlayedSelector, pageLoadDuration());
-            return lastFmLastPlayedSelector;
-        } catch (final NoSuchElementException e) {
-            LOGGER.debug("\t\t- Found no Last.fm section, assuming user has not linked account, will use fallback item to confirm profile page", e);
-            return super.profilePageContentSelector();
-        } catch (final TimeoutException e) {
-            LOGGER.warn("\t\t- Unable to find Last.fm 'last played' section");
-            throw e;
-        }
+        return profilePageContentSelectorWithLastFm();
     }
 }
