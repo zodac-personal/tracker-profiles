@@ -27,26 +27,33 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Implementation of {@link Redactor} that delegates calls to another concrete implementation, based on the provided {@link RedactionType}.
  */
-public class RedactorDelegator implements Redactor {
+public final class RedactorDelegator implements Redactor {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Redactor redactor;
 
+    private RedactorDelegator(final Redactor redactor) {
+        this.redactor = redactor;
+    }
+
     /**
-     * Default constructor.
+     * Creates a {@link RedactorDelegator} for the given {@link RedactionType}.
      *
      * @param driver        the {@link RemoteWebDriver}
      * @param redactionType the {@link RedactionType} to use for redaction
+     * @return the created {@link RedactorDelegator}
+     * @throws IllegalStateException thrown if {@link RedactionType#NONE} is provided
      */
-    public RedactorDelegator(final RemoteWebDriver driver, final RedactionType redactionType) {
-        redactor = switch (redactionType) {
+    public static RedactorDelegator create(final RemoteWebDriver driver, final RedactionType redactionType) {
+        final Redactor redactor = switch (redactionType) {
             case BLUR -> new BlurRedactor(driver);
             case BOX -> new BoxRedactor(driver);
             case TEXT -> new TextRedactor(driver);
-            case NONE -> throw new IllegalStateException("RedactorImpl should not be created for NONE redaction type");
+            case NONE -> throw new IllegalStateException("RedactorDelegator should not be created for NONE redaction type");
         };
+        return new RedactorDelegator(redactor);
     }
 
     @Override

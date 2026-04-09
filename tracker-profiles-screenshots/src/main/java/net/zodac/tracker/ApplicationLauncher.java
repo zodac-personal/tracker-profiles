@@ -22,7 +22,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.ExitState;
-import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +57,8 @@ public final class ApplicationLauncher {
         }
 
         try {
-            final GraphicsEnvironment _ = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            final GraphicsEnvironment localGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            LOGGER.trace("Using GraphicsEnvironment: {}", localGraphicsEnvironment);
         } catch (final AWTError e) {
             LOGGER.debug("Unable to connect to X11 display '{}'", display, e);
             LOGGER.error("Unable to connect to X11 display '{}'", display);
@@ -73,7 +73,7 @@ public final class ApplicationLauncher {
             seleniumLogger.setLevel(Level.SEVERE);
 
             // Validate that the application configuration is valid
-            final ApplicationConfiguration _ = Configuration.get();
+            Configuration.get();
         } catch (final ExceptionInInitializerError e) {
             LOGGER.debug("Invalid environment variable", e);
             LOGGER.error("Invalid environment variable: {}", e.getCause() == null ? e.getMessage() : e.getCause().getMessage());

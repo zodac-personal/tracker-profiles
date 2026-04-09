@@ -39,7 +39,7 @@
         <jspecify.version>1.0.0</jspecify.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <log4j.version>2.25.4</log4j.version>
-        <selenium.version>4.41.0</selenium.version>
+        <selenium.version>4.42.0</selenium.version>
 
         <!-- Test 3PP Versions -->
         <assertj-core.version>3.27.7</assertj-core.version>
@@ -64,7 +64,7 @@
         <checkstyle.version>13.4.0</checkstyle.version>
         <error_prone_core.version>2.48.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
-        <nullaway.version>0.11.0</nullaway.version>
+        <nullaway.version>0.13.1</nullaway.version>
         <pmd.version>7.23.0</pmd.version>
         <spotbugs.version>4.9.8</spotbugs.version>
 
@@ -164,6 +164,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <!-- Included so the dependency is picked up by 'mvn versions:update-properties', not actually used directly -->
+            <dependency>
+                <groupId>com.uber.nullaway</groupId>
+                <artifactId>nullaway</artifactId>
+                <version>${nullaway.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>

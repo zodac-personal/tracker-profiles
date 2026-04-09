@@ -334,7 +334,7 @@ final class ProfileScreenshotExecutor {
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {
-            final Redactor redactor = new RedactorDelegator(trackerHandler.driver(), redactionType);
+            final Redactor redactor = RedactorDelegator.create(trackerHandler.driver(), redactionType);
             LOGGER.info("\t\t- Redacting elements with sensitive information");
 
             final int numberOfRedactedElements = trackerHandler.redactElements(redactor);

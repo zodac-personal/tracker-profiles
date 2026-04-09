@@ -1,4 +1,10 @@
 <FindBugsFilter>
+    <!-- Hardcoded absolute path for chromedriver is an intentional deployment constant for the Docker environment -->
+    <Match>
+        <Class name="net.zodac.tracker.framework.driver.JavaWebDriverFactory"/>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
     <!-- Lombok-generated issues -->
     <Match>
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
