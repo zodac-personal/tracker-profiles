@@ -128,6 +128,27 @@ protected By profilePageContentSelector() {
 // Cookie banner: UNSURE (no static HTML found — may be JS-rendered)
 ```
 
+## Cloudflare Early Exit
+
+Before doing anything else, fetch the homepage and check for a Cloudflare challenge:
+
+```bash
+curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt "https://tracker.site/" \
+  -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+  -o /tmp/home.html
+grep -c "cf_chl_opt\|Just a moment" /tmp/home.html
+```
+
+If the response contains `cf_chl_opt` or `<title>Just a moment...</title>`, the site is behind an
+interactive Cloudflare challenge. **Stop immediately** and return:
+
+```
+BLOCKED: Cloudflare verification required. Automated access is not possible.
+The orchestrator must ask the user to inspect this tracker manually in a browser.
+```
+
+Do not attempt to bypass the challenge, search for cached versions, or guess selectors.
+
 ## Shell Conventions
 
 - Do not add inline comments in bash commands (no `# ...` at end of lines or as standalone explanation lines

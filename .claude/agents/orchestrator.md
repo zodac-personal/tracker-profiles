@@ -37,6 +37,17 @@ Before spawning agents, inspect existing handlers to determine whether this trac
 
 Read a similar existing handler (same base class) as a structural reference before writing anything.
 
+### Cloudflare sites
+
+If any specialist agent returns `BLOCKED: Cloudflare verification required`, **stop immediately** and
+report to the user:
+
+> This tracker is protected by an interactive Cloudflare challenge and cannot be implemented
+> automatically. Please inspect the site manually in a browser and provide the selectors, or
+> skip this tracker.
+
+Do not attempt to infer selectors, spawn additional agents, or write a partial handler.
+
 ### Step 2 — Spawn specialist agents sequentially
 
 Spawn each agent with its context file path and the tracker name/URL. Collect findings before proceeding.
@@ -76,7 +87,12 @@ Rules:
 After writing the handler:
 
 1. Add a CSV entry to `docker/trackers_example.csv` (alphabetical order)
-2. Add a row to the tracker table in `README.md` (alphabetical order)
+2. Add a row to the correct table in `README.md` (alphabetical order):
+   - `HEADLESS` type → **"### Headless"** multi-column table (find the right letter-range column)
+   - `MANUAL` type → **"### Manual Interaction"** table
+   - Do **not** insert by finding the nearest alphabetical neighbour in the file — that neighbour may be
+     in the wrong section. Always locate the correct section first, then find the alphabetical position
+     within it.
 3. Increment the tracker count on the "There are currently **N** supported trackers" line in `README.md`
 4. Run tests and lints
 
