@@ -327,7 +327,6 @@ public class BrowserInteractionHelper {
             new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start();
         } catch (final IOException e) {
             LOGGER.debug("Error setting browser as active window", e);
-            LOGGER.error("Error setting browser as active window: {}", e.getMessage());
         }
     }
 

@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **143** supported trackers listed below. The available trackers come in the following types:
+There are currently **144** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -217,6 +217,7 @@ background:
 | [SeedPool](https://seedpool.org/)                     |
 | [SexTorrent](https://sextorrent.myds.me/)             |
 | [SlobitMedia](https://media.slo-bitcloud.eu/)         |
+| [SpeedApp](https://speedapp.io/)                      |
 | [SportsCult](https://sportscult.org/)                 |
 | [T3nnis](https://t3nnis.tv/)                          |
 | [Tasmanit.es](https://tasmanit.es/)                   |
