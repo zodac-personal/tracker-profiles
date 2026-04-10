@@ -20,11 +20,11 @@ Determine the correct selectors and overrides for:
   this, **fetch the tracker's homepage** (not `/login`). If it renders the login form directly, return `null`.
   If it renders a landing page (e.g. "Please login to view torrents") with a link to the login page, return
   the selector for that login link. Prefer a nav-bar login anchor over inline paragraph links.
-- `usernameFieldSelector()` — default is `By.id("username")`; override if different
-- `passwordFieldSelector()` — default is `By.id("password")`; override if different
+- `usernameFieldSelector()` — default is `By.name("username")`; override if different
+- `passwordFieldSelector()` — default is `By.name("password")`; override if different
 - `loginButtonSelector()` — default is `By.id("login-button")`; override if different
 - `preLoginClickAction()` / `postLoginClickAction()` — only needed for captcha/2FA (MANUAL type) or extra steps
-- `postLoginSelector()` — **must override** if `profilePageSelector()` has side effects (e.g. opens a dropdown).
+- `postLoginSelector()` — **must override** if `profileLinkSelector()` has side effects (e.g. opens a dropdown).
   Prefer a user-stats element (e.g. `div.user-stats`, `ul.ratio-bar`) over a generic nav element — the
   post-login page often shows the user's stats and this is a more meaningful confirmation of a successful login.
 
@@ -82,7 +82,7 @@ If login/logout requires a dropdown, use this pattern:
 
 ```java
 @Override
-protected By profilePageSelector() {  // also applies to logoutButtonSelector()
+protected By profileLinkSelector() {  // also applies to logoutButtonSelector()
     openUserDropdownMenu();
     return XpathBuilder.from(div, withClass("dropdown-menu")).child(a, atIndex(1)).build();
 }
@@ -94,7 +94,7 @@ private void openUserDropdownMenu() {
 }
 ```
 
-The same `openUserDropdownMenu()` call must appear in both `profilePageSelector()` and `logoutButtonSelector()`.
+The same `openUserDropdownMenu()` call must appear in both `profileLinkSelector()` and `logoutButtonSelector()`.
 
 ## Cloudflare Early Exit
 
@@ -175,7 +175,7 @@ private void openControlPanel() {
 ```
 
 If the same intermediate page is also needed to reach the profile page link (e.g. the username link is
-inside the control panel's welcome heading), the same helper is called from `profilePageSelector()` too.
+inside the control panel's welcome heading), the same helper is called from `profileLinkSelector()` too.
 In that case `postLoginSelector()` **must** be overridden with a side-effect-free selector.
 
 ## Output Format

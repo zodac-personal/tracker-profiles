@@ -28,6 +28,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -74,10 +75,12 @@ public class ArabP2p extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
-            .from(div, withClass("toolbar_div"))
-            .build();
+    public List<By> headerSelectors() {
+        return List.of(
+            XpathBuilder
+                .from(div, withClass("toolbar_div"))
+                .build()
+        );
     }
 
     @Override

@@ -50,6 +50,6 @@ public class Orpheus extends GazelleHandler {
      */
     @Override
     protected By profilePageElementSelector() {
-        return profilePageContentSelectorWithLastFm();
+        return profilePageElementSelectorWithLastFm();
     }
 }

@@ -11,10 +11,10 @@ to avoid repeating them across sessions.
 - `usernameFieldSelector()` — defaults to `By.id("username")`; override only if different
 - `passwordFieldSelector()` — defaults to `By.id("password")`; override only if different
 - `loginButtonSelector()` — defaults to `By.id("login-button")`; override only if different
-- `postLoginSelector()` — defaults to `profilePageSelector()`; **must override** if `profilePageSelector()`
+- `postLoginSelector()` — defaults to `profileLinkSelector()`; **must override** if `profileLinkSelector()`
   performs any action (e.g. opening a dropdown) — provide a simple presence-only selector instead
-- `profilePageSelector()` — **required**, no default; element clicked to navigate to profile page
-- `profilePageContentSelector()` — **required**, no default; element that confirms profile page loaded
+- `profileLinkSelector()` — **required**, no default; element clicked to navigate to profile page
+- `profilePageElementSelector()` — **required**, no default; element that confirms profile page loaded
 - `logoutButtonSelector()` — **required**, no default; element clicked to log out
 
 ### Common optional overrides
@@ -94,7 +94,7 @@ the tracker's display name, not the Java class name casing.
 
 ## Mistakes / Learnings from Implementation Sessions
 
-### 1. `profilePageContentSelector()` must be unique to the profile page
+### 1. `profilePageElementSelector()` must be unique to the profile page
 
 **Mistake:** Returned `XpathBuilder.from(main).build()` (i.e. `<main>`) as a placeholder.
 
@@ -102,7 +102,7 @@ the tracker's display name, not the Java class name casing.
 has loaded. The selector must match an element that only exists on the profile page (e.g. a profile-specific
 section, heading, or container).
 
-**Rule:** Always ask "is this element unique to the profile page?" before using it as `profilePageContentSelector()`.
+**Rule:** Always ask "is this element unique to the profile page?" before using it as `profilePageElementSelector()`.
 Additionally, prefer **non-user-configurable** elements (username display, stats container, join date) over
 user-configurable ones (profile avatar, banner image). A user who has not set an avatar may have no avatar
 element, so that selector would fail for them. Platform-rendered elements are always present regardless of
@@ -110,23 +110,23 @@ user settings.
 
 ---
 
-### 2. Always override `profilePageSelector()` — the default is rarely correct
+### 2. Always override `profileLinkSelector()` — the default is rarely correct
 
-**Mistake:** Left `profilePageSelector()` as the inherited default (`<a class="username">`), which did not
+**Mistake:** Left `profileLinkSelector()` as the inherited default (`<a class="username">`), which did not
 match the site's actual nav structure.
 
 **Why it's wrong:** The default assumes a simple clickable anchor with class `username`. Many modern sites
 (especially React/Next.js SPAs) use a dropdown menu: a parent element (often `<div>`) is clicked to open
 the menu, and then the profile link is the first `<a>` inside it.
 
-**Rule:** Always inspect the nav HTML and override `profilePageSelector()` explicitly. If a dropdown must be
+**Rule:** Always inspect the nav HTML and override `profileLinkSelector()` explicitly. If a dropdown must be
 opened first, call a private `openUserDropdownMenu()` helper (see `MooKo`, `C411`, `Zappateers`) that clicks
 the parent element, then return the selector for the link inside the opened dropdown.
 
 **Dropdown pattern:**
 ```java
 @Override
-protected By profilePageSelector() {
+protected By profileLinkSelector() {
     openUserDropdownMenu();
     return XpathBuilder
         .from(div, withClass("dropdown-menu"))
@@ -245,23 +245,23 @@ XpathBuilder.from(td, withAttribute("align", "left")).build()
 
 ---
 
-### 5. Override `postLoginSelector()` whenever `profilePageSelector()` performs an action
+### 5. Override `postLoginSelector()` whenever `profileLinkSelector()` performs an action
 
-**Mistake:** Left `postLoginSelector()` delegating to `profilePageSelector()`, which calls
+**Mistake:** Left `postLoginSelector()` delegating to `profileLinkSelector()`, which calls
 `openUserDropdownMenu()` before returning the selector.
 
 **Why it's wrong:** `postLoginSelector()` is called immediately after the login click, purely to confirm
-the login succeeded. The default implementation calls `profilePageSelector()`, which is fine for simple
-link selectors — but if `profilePageSelector()` opens a dropdown (or does any other interaction), that
+the login succeeded. The default implementation calls `profileLinkSelector()`, which is fine for simple
+link selectors — but if `profileLinkSelector()` opens a dropdown (or does any other interaction), that
 action fires at the wrong time, against the wrong page state.
 
-**Rule:** Any time `profilePageSelector()` contains a side effect (clicking, hovering, scrolling), override
+**Rule:** Any time `profileLinkSelector()` contains a side effect (clicking, hovering, scrolling), override
 `postLoginSelector()` with a plain presence-only selector. Prefer a user-stats element (e.g. `div.user-stats`,
 `ul.top-nav__ratio-bar`) over a generic nav element — the post-login page often shows the user's stats and
 this provides a more meaningful confirmation of a successful login.
 
 ```java
-// profilePageSelector() clicks a dropdown — must not be reused for post-login check
+// profileLinkSelector() clicks a dropdown — must not be reused for post-login check
 @Override
 protected By postLoginSelector() {
     return XpathBuilder
@@ -299,9 +299,9 @@ public By loginPageSelector() {
 
 ---
 
-### 7. Prefer semantic, user-focused elements for `profilePageContentSelector()`
+### 7. Prefer semantic, user-focused elements for `profilePageElementSelector()`
 
-**Mistake:** Used `div.col-lg-4` (a Bootstrap grid class) as `profilePageContentSelector()`, relying on
+**Mistake:** Used `div.col-lg-4` (a Bootstrap grid class) as `profilePageElementSelector()`, relying on
 CSS layout structure to confirm the profile page.
 
 **Why it's wrong:** Bootstrap grid classes (`col-lg-4`, `card-body`, `container`) appear on many pages
@@ -348,14 +348,14 @@ XpathBuilder
 ### 9. Be consistent when selecting `<li>` children of the same parent element
 
 **Mistake:** Used `withClass("logoutlink")` to select the logout `<li>` inside `ul.isuser`, while
-`profilePageSelector()` used `atIndex(3)` for the profile `<li>` in the same list.
+`profileLinkSelector()` used `atIndex(3)` for the profile `<li>` in the same list.
 
-**Why it's wrong:** When two selectors (`profilePageSelector()` and `logoutButtonSelector()`) both navigate
+**Why it's wrong:** When two selectors (`profileLinkSelector()` and `logoutButtonSelector()`) both navigate
 into the same parent element, mixing `withClass` and `atIndex` for their respective `<li>` children is
 inconsistent. It makes it harder to reason about their positions relative to each other and to verify
 correctness at a glance.
 
-**Rule:** When `profilePageSelector()` and `logoutButtonSelector()` (or any two selectors) both descend
+**Rule:** When `profileLinkSelector()` and `logoutButtonSelector()` (or any two selectors) both descend
 into the same parent element to select sibling `<li>` items, use the same predicate type for both —
 either `atIndex` for both, or `withClass` for both. It is fine to use `withClass` on one and `atIndex`
 on another only when they target entirely different parent elements.
@@ -365,7 +365,7 @@ on another only when they target entirely different parent elements.
 
 // CORRECT — both use atIndex, consistent within the same parent:
 @Override
-protected By profilePageSelector() {
+protected By profileLinkSelector() {
     return XpathBuilder.from(ul, withClass("isuser")).child(li, atIndex(3)).child(a, atIndex(1)).build();
 }
 
@@ -375,11 +375,11 @@ protected By logoutButtonSelector() {
 }
 
 // ALSO CORRECT — both use withClass, consistent within the same parent:
-// profilePageSelector:  .child(li, withClass("profilelink")).child(a, atIndex(1))
+// profileLinkSelector:  .child(li, withClass("profilelink")).child(a, atIndex(1))
 // logoutButtonSelector: .child(li, withClass("logoutlink")).child(a, atIndex(1))
 
 // WRONG — inconsistent within the same parent:
-// profilePageSelector:  .child(li, atIndex(3)).child(a, atIndex(1))
+// profileLinkSelector:  .child(li, atIndex(3)).child(a, atIndex(1))
 // logoutButtonSelector: .child(li, withClass("logoutlink")).child(a, atIndex(1))
 ```
 

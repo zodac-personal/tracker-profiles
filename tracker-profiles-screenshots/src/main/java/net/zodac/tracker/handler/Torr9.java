@@ -68,10 +68,10 @@ public class Torr9 extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(header, atIndex(1))
-            .build();
+            .build());
     }
 
     @Override

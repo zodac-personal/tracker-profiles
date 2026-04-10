@@ -64,8 +64,8 @@ public class Libble extends LuminanceHandler implements HasFixedHeader {
     }
 
     @Override
-    public By headerSelector() {
-        return By.id("header");
+    public List<By> headerSelectors() {
+        return List.of(By.id("header"));
     }
 
     @Override

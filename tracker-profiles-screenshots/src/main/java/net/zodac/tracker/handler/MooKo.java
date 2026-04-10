@@ -75,19 +75,21 @@ public class MooKo extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
-        final WebElement headerElement = driver.findElement(headerSelector);
-        browserInteractionHelper.makeUnfixed(headerElement);
+    public void unfixHeaders(final RemoteWebDriver driver, final List<By> headerSelectors) {
+        for (final By headerSelector : headerSelectors) {
+            final WebElement headerElement = driver.findElement(headerSelector);
+            browserInteractionHelper.makeUnfixed(headerElement);
 
-        LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
-        browserInteractionHelper.addClass(headerElement, "is-scrolled");
+            LOGGER.debug("\t\t\t- Updating header with 'is-scrolled' class, to prevent page from jumping when scrolling");
+            browserInteractionHelper.addClass(headerElement, "is-scrolled");
+        }
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(header, withClass("HeaderNew"))
-            .build();
+            .build());
     }
 
     @Override

@@ -16,10 +16,10 @@ specified by the orchestrator.
 Determine the correct selectors and overrides for:
 
 ### Profile page navigation
-- `profilePageSelector()` — **required**; element clicked to navigate to the user's profile page
+- `profileLinkSelector()` — **required**; element clicked to navigate to the user's profile page
   - Default is `<a class="username">` — almost always needs overriding
   - If a dropdown must be opened first, flag this for the login agent (shared `openUserDropdownMenu()`)
-- `profilePageContentSelector()` — **required**; confirms the profile page has loaded
+- `profilePageElementSelector()` — **required**; confirms the profile page has loaded
   - **Must be unique to the profile page** — not a generic `<main>` or `<body>`
   - Ask: "is this element present on any other page?" If yes, find a more specific one
   - **Prefer user-focused semantic elements** over CSS layout/grid classes (e.g. `col-lg-4`, `card-body`).
@@ -101,7 +101,7 @@ Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingS
 
 ## `postLoginSelector()` Reminder
 
-If `profilePageSelector()` opens a dropdown or performs any side effect, flag this explicitly in your output.
+If `profileLinkSelector()` opens a dropdown or performs any side effect, flag this explicitly in your output.
 The orchestrator must override `postLoginSelector()` with a side-effect-free selector in that case.
 
 ## Output Format
@@ -111,16 +111,16 @@ Return findings as structured Java method stubs, e.g.:
 ```java
 // PROFILE NAVIGATION
 @Override
-protected By profilePageSelector() {
+protected By profileLinkSelector() {
     return XpathBuilder.from(a, withClass("username")).build();
 }
 
 @Override
-protected By profilePageContentSelector() {
+protected By profilePageElementSelector() {
     return XpathBuilder.from(section, withId("user-profile")).build();
 }
 
-// NOTE: profilePageSelector() has no side effects — postLoginSelector() override not needed
+// NOTE: profileLinkSelector() has no side effects — postLoginSelector() override not needed
 
 // PAGE STRUCTURE FLAGS
 // Fixed header:  YES

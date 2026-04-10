@@ -91,8 +91,10 @@ public class AnimeZ extends AbstractTrackerHandler implements HasCloudflareCheck
     }
 
     @Override
-    public By headerSelector() {
-        return By.tagName("header");
+    public List<By> headerSelectors() {
+        return List.of(
+            By.tagName("header")
+        );
     }
 
     @Override

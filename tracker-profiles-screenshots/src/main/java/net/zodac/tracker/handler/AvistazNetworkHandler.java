@@ -124,10 +124,12 @@ public class AvistazNetworkHandler extends AbstractTrackerHandler implements Has
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
-            .from(nav, withClass("navbar-fixed-top"))
-            .build();
+    public List<By> headerSelectors() {
+        return List.of(
+            XpathBuilder
+                .from(nav, withClass("navbar-fixed-top"))
+                .build()
+        );
     }
 
     @Override

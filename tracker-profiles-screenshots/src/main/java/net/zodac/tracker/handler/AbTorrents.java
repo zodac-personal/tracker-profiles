@@ -58,8 +58,10 @@ public class AbTorrents extends AbstractTrackerHandler implements HasFixedHeader
     }
 
     @Override
-    public By headerSelector() {
-        return By.id("navbar");
+    public List<By> headerSelectors() {
+        return List.of(
+            By.id("navbar")
+        );
     }
 
     @Override

@@ -32,6 +32,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.precedingSibling;
 
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -92,10 +93,10 @@ public class F1Gp extends AbstractTrackerHandler implements HasFixedHeader {
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(nav, atIndex(1))
-            .build();
+            .build());
     }
 
     @Override

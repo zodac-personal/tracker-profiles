@@ -32,6 +32,7 @@ import static net.zodac.tracker.framework.xpath.XpathAxis.parent;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -99,12 +100,12 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleElemen
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(div, withId("__nuxt"))
             .child(div, atIndex(2))
             .child(header, atIndex(1))
-            .build();
+            .build());
     }
 
     @Override

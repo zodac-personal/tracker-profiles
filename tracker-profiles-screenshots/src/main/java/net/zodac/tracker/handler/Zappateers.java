@@ -104,10 +104,10 @@ public class Zappateers extends AbstractTrackerHandler implements HasDismissible
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(div, withClass("hoe-right-header"))
-            .build();
+            .build());
     }
 
     @Override

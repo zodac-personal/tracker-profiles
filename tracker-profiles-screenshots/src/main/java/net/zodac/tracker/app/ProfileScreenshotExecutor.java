@@ -307,7 +307,7 @@ final class ProfileScreenshotExecutor {
 
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
             LOGGER.debug("\t\t\t- Unfixing header");
-            trackerWithFixedHeader.unfixHeader(trackerHandler.driver(), trackerWithFixedHeader.headerSelector());
+            trackerWithFixedHeader.unfixHeaders(trackerHandler.driver(), trackerWithFixedHeader.headerSelectors());
             LOGGER.info("\t\t\t- Header has been updated to not be fixed");
             numberOfUpdates++;
         }

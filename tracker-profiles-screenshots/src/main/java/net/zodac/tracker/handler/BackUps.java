@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.Collection;
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -95,8 +96,8 @@ public class BackUps extends TsSpecialEditionHandler implements HasFixedHeader {
     }
 
     @Override
-    public By headerSelector() {
-        return By.id("menu");
+    public List<By> headerSelectors() {
+        return List.of(By.id("menu"));
     }
 
     @Override

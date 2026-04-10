@@ -17,35 +17,38 @@
 
 package net.zodac.tracker.handler.definition;
 
+import java.util.List;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having a fixed header on the user profile page that must be unfixed before
- * taking the screenshot. This prevents the header from appearing multiple times as the page is scrolled during the screenshot.
+ * Marks an {@link net.zodac.tracker.handler.AbstractTrackerHandler} as having one or many fixed header elements on the user profile page that must be
+ * unfixed before taking the screenshot. This prevents the header from appearing multiple times as the page is scrolled during the screenshot.
  */
 @FunctionalInterface
 public interface HasFixedHeader {
 
     /**
-     * Finds the fixed header element on the tracker's user profile page and updates it to not be fixed.
+     * Finds the fixed header elements on the tracker's user profile page and updates them to not be fixed.
      *
      * @param driver         the {@link RemoteWebDriver}
-     * @param headerSelector the header {@link By} selector to unfix
+     * @param headerSelectors the header {@link By} selectors to unfix
      * @see BrowserInteractionHelper#makeUnfixed(WebElement)
      */
-    default void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
-        final WebElement headerElement = driver.findElement(headerSelector);
-        final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
-        browserInteractionHelper.makeUnfixed(headerElement);
+    default void unfixHeaders(final RemoteWebDriver driver, final List<By> headerSelectors) {
+        for (final By headerSelector : headerSelectors) {
+            final WebElement headerElement = driver.findElement(headerSelector);
+            final BrowserInteractionHelper browserInteractionHelper = new BrowserInteractionHelper(driver);
+            browserInteractionHelper.makeUnfixed(headerElement);
+        }
     }
 
     /**
      * The {@link By} selectors to find the header {@link WebElement}.
      *
-     * @return the header {@link By} selector
+     * @return the header {@link By} selectors
      */
-    By headerSelector();
+    List<By> headerSelectors();
 }

@@ -60,7 +60,7 @@ To add a new tracker:
 1. Create a class in `handler/` extending `AbstractTrackerHandler`
 2. Annotate with `@TrackerHandler(name = "...", type = TrackerType.HEADLESS, url = "https://...")`
 3. Override the required selectors — at minimum: `usernameFieldSelector()`, `passwordFieldSelector()`,
-   `logoutButtonSelector()`, `profilePageSelector()`
+   `logoutButtonSelector()`, `profileLinkSelector()`
 4. Override optional hooks for redaction (`ipAddressElements()`, `emailElements()`, `passkeyElements()`), fixed header
    removal (`hasFixedHeader()`), manual interaction (`manualCheckBeforeLoginClick()`), etc.
 5. Add the tracker's credentials to `docker/trackers_example.csv`

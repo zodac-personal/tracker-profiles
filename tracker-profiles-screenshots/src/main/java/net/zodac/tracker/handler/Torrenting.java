@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
@@ -66,7 +67,7 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     }
 
     @Override
-    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
+    public void unfixHeaders(final RemoteWebDriver driver, final List<By> headerSelectors) {
         // Special case where the header is made fixed due to JS injection, not HTML/CSS.
         // To make the header unfixed, we inject some CSS to override the existing logic.
         final String script = """
@@ -87,9 +88,9 @@ public class Torrenting extends AbstractTrackerHandler implements DoesNotScrollD
     }
 
     @Override
-    public By headerSelector() {
-        // Not needed, unfixHeader() has been overridden and doesn't need a selector
-        return By.name("dummy");
+    public List<By> headerSelectors() {
+        // Not needed, unfixHeaders() has been overridden and doesn't use the selectors
+        return List.of();
     }
 
     @Override

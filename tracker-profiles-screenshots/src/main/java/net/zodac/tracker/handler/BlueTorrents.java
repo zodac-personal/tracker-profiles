@@ -31,6 +31,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 import static net.zodac.tracker.framework.xpath.XpathAxis.precedingSibling;
 
+import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -82,10 +83,10 @@ public class BlueTorrents extends AbstractTrackerHandler implements HasFixedHead
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(nav, withClass("navbar"))
-            .build();
+            .build());
     }
 
     @Override

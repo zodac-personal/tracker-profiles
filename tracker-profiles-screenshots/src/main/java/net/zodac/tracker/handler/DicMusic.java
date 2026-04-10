@@ -44,7 +44,7 @@ public class DicMusic extends GazelleHandler implements HasJumpButtons {
      */
     @Override
     protected By profilePageElementSelector() {
-        return profilePageContentSelectorWithLastFm();
+        return profilePageElementSelectorWithLastFm();
     }
 
     /**

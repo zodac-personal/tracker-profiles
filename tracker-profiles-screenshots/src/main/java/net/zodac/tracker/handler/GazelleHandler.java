@@ -80,7 +80,7 @@ public class GazelleHandler extends AbstractTrackerHandler {
      * <p>
      * If there is no {@code Last.fm} username, we use the default {@link #profilePageElementSelector()}.
      */
-    protected By profilePageContentSelectorWithLastFm() {
+    protected By profilePageElementSelectorWithLastFm() {
         try {
             LOGGER.debug("\t\t- Looking for Last.fm section for user");
             final By lastFmSectionSelector = XpathBuilder

@@ -88,8 +88,8 @@ public class Milkie extends AbstractTrackerHandler implements DoesNotScrollDurin
         LOGGER.debug("\t\t- Clicking user dropdown menu to make logout button interactable");
         reloadProfilePage();
 
-        final By profilePageSelector = profileLinkSelector();
-        final WebElement logoutParent = browserInteractionHelper.waitForElementToBePresent(profilePageSelector, maximumLinkResolutionDuration());
+        final By profileLinkSelector = profileLinkSelector();
+        final WebElement logoutParent = browserInteractionHelper.waitForElementToBePresent(profileLinkSelector, maximumLinkResolutionDuration());
         clickButton(logoutParent);
     }
 

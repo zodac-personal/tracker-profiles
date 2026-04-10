@@ -87,10 +87,10 @@ public class ExoticaZ extends AvistazNetworkHandler {
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(nav, withClass("fixed-top"))
-            .build();
+            .build());
     }
 
     @Override

@@ -23,6 +23,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
+import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -73,20 +74,22 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
     }
 
     @Override
-    public void unfixHeader(final RemoteWebDriver driver, final By headerSelector) {
-        final WebElement headerElement = driver.findElement(headerSelector);
+    public void unfixHeaders(final RemoteWebDriver driver, final List<By> headerSelectors) {
+        for (final By headerSelector : headerSelectors) {
+            final WebElement headerElement = driver.findElement(headerSelector);
 
-        LOGGER.debug("\t\t\t- Updating header with 'fixedMenu' class, to set up static state");
-        browserInteractionHelper.addClass(headerElement, "fixedMenu");
+            LOGGER.debug("\t\t\t- Updating header with 'fixedMenu' class, to set up static state");
+            browserInteractionHelper.addClass(headerElement, "fixedMenu");
 
-        browserInteractionHelper.makeUnfixed(headerElement);
+            browserInteractionHelper.makeUnfixed(headerElement);
+        }
     }
 
     @Override
-    public By headerSelector() {
-        return XpathBuilder
+    public List<By> headerSelectors() {
+        return List.of(XpathBuilder
             .from(div, withId("menu"))
-            .build();
+            .build());
     }
 
     @Override

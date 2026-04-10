@@ -100,8 +100,8 @@ After writing the handler:
 
 | Method                    | Default                                                                                       |
 |---------------------------|-----------------------------------------------------------------------------------------------|
-| `usernameFieldSelector()` | `By.id("username")`                                                                           |
-| `passwordFieldSelector()` | `By.id("password")`                                                                           |
+| `usernameFieldSelector()` | `By.name("username")`                                                                         |
+| `passwordFieldSelector()` | `By.name("password")`                                                                         |
 | `loginButtonSelector()`   | `By.id("login-button")`                                                                       |
-| `postLoginSelector()`     | delegates to `profilePageSelector()` — **must override** if profile selector has side effects |
+| `postLoginSelector()`     | delegates to `profileLinkSelector()` — **must override** if profile selector has side effects |
 | `profilePageSelector()`   | `<a class="username">` — almost always needs overriding                                       |
