@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **142** supported trackers listed below. The available trackers come in the following types:
+There are currently **143** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -203,6 +203,7 @@ background:
 | [PixelHD](https://pixelhd.me/)                        |
 | [Podzemlje](https://podzemlje.net/)                   |
 | [PolishTorrent](https://polishtorrent.top/)           |
+| [Portugas](https://portugas.org/)                     |
 | [PussyTorrents](https://pussytorrents.org/)           |
 | [Rastastugan](https://rastastugan.org/)               |
 | [Redacted](https://redacted.sh/)                      |
