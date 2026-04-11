@@ -107,15 +107,6 @@ public class SpeedApp extends AbstractTrackerHandler implements HasFixedHeader, 
     }
 
     @Override
-    protected By logoutButtonSelector() {
-        openUserDropdownMenu();
-        return XpathBuilder
-            .from(div, withId("kt_quick_user"))
-            .descendant(a, containsHref("/logout"))
-            .build();
-    }
-
-    @Override
     protected Collection<By> emailElements() {
         return List.of(
             XpathBuilder
@@ -147,6 +138,15 @@ public class SpeedApp extends AbstractTrackerHandler implements HasFixedHeader, 
                 .child(code)
                 .build()
         );
+    }
+
+    @Override
+    protected By logoutButtonSelector() {
+        openUserDropdownMenu();
+        return XpathBuilder
+            .from(div, withId("kt_quick_user"))
+            .descendant(a, containsHref("/logout"))
+            .build();
     }
 
     private void openUserDropdownMenu() {

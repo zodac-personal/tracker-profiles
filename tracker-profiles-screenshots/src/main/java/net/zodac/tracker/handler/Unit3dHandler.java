@@ -190,11 +190,11 @@ public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissi
         browserInteractionHelper.waitForElementToDisappear(loginPopupSelector, pageLoadDuration());
 
         LOGGER.debug("\t\t- Highlighting user dropdown menu to make profile/logout button interactable");
-        final By logoutParentSelector = XpathBuilder
+        final By profileParentSelector = XpathBuilder
             .from(div, withClass("top-nav__right"))
             .descendant(li, withClass("top-nav__dropdown"))
             .build();
-        final WebElement logoutParent = driver.findElement(logoutParentSelector);
-        browserInteractionHelper.moveTo(logoutParent);
+        final WebElement profileParent = driver.findElement(profileParentSelector);
+        browserInteractionHelper.moveTo(profileParent);
     }
 }

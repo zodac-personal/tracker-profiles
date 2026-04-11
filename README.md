@@ -92,7 +92,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **145** supported trackers listed below. The available trackers come in the following types:
+There are currently **146** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -274,6 +274,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [HDFans](https://hdfans.org/)                       | Captcha                                         |
 | [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
 | [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
+| [LastFiles](https://last-torrents.org/)             | Cloudflare verification                         |
 | [Leech24](https://leech24.net/)                     | Captcha                                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
 | [LetSeed](https://letseed.org/)                     | Captcha                                         |

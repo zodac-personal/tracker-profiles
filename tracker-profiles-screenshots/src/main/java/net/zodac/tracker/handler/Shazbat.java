@@ -92,6 +92,7 @@ public class Shazbat extends AbstractTrackerHandler implements HasFixedHeader, H
         clickButton(toggle);
 
         // Move cursor to another element (the site logo) to remove the toggle pop-up
+        LOGGER.trace("Moving cursor to remove pop-up");
         final By indexSelector = XpathBuilder
             .from(a, withHref("/index"))
             .build();
