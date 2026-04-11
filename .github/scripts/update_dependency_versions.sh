@@ -100,7 +100,7 @@ update_debian_packages() {
         docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
     }
 
-    for ((section=1; section<=section_count; section++)); do
+    for ((section = 1; section <= section_count; section++)); do
         echo "[Section ${section}/${section_count}]"
 
         # Extract only the Nth section's package block
@@ -180,13 +180,13 @@ update_debian_packages() {
 update_pom_versions() {
     local JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
 
-    docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null && \
-    docker run --rm -t \
-        -v "${PWD}":/app \
-        -v "${HOME}/.m2":/root/.m2 \
-        -w /app \
-        "${JAVA_DOCKER_IMAGE}" \
-        mvn versions:update-properties
+    docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null &&
+        docker run --rm -t \
+            -v "${PWD}":/app \
+            -v "${HOME}/.m2":/root/.m2 \
+            -w /app \
+            "${JAVA_DOCKER_IMAGE}" \
+            mvn versions:update-properties
 
     echo "✅ pom.xml updated successfully with latest Maven packages"
 }

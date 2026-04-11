@@ -7,19 +7,19 @@ PREV_TAG="${2}"
 : "${CHANGELOG_CONTENT:?CHANGELOG_CONTENT is required}"
 
 {
-  echo "body<<EOF"
+    echo "body<<EOF"
 
-  # Prepend RELEASE_NOTES if present and non-empty
-  if [ -s RELEASE_NOTES ]; then
-    echo "Including RELEASE_NOTES content" >&2
-    cat RELEASE_NOTES
-    echo
-    echo
-    echo "---"
-    echo
-  fi
+    # Prepend RELEASE_NOTES.md if present and non-empty
+    if [ -s RELEASE_NOTES.md ]; then
+        echo "Including RELEASE_NOTES.md content" >&2
+        cat RELEASE_NOTES.md
+        echo
+        echo
+        echo "---"
+        echo
+    fi
 
-  cat <<EOF2
+    cat <<EOF2
 Docker image pushed to Docker Hub:
 [docker pull zodac/tracker-profiles:${VERSION}](https://hub.docker.com/r/zodac/tracker-profiles/tags)
 
@@ -28,5 +28,5 @@ Docker image pushed to Docker Hub:
 ${CHANGELOG_CONTENT}
 EOF2
 
-  echo "EOF"
-} >> "${GITHUB_OUTPUT}"
+    echo "EOF"
+} >>"${GITHUB_OUTPUT}"
