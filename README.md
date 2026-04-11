@@ -343,6 +343,7 @@ docker run \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env REDACTION_TEXT=---- \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
@@ -376,6 +377,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env REDACTION_TEXT=---- \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
@@ -444,6 +446,7 @@ The following are all possible configuration options, defined as environment var
 | *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) (max of 5)                                                                      | 1                             |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
+| *REDACTION_TEXT*                | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                          |
 | *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                           |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
 | *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
@@ -570,6 +573,7 @@ docker run \
     --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+    --env REDACTION_TEXT=---- \
     --env REDACTION_TYPE=NONE,BLUR,BOX,TEXT \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=true \

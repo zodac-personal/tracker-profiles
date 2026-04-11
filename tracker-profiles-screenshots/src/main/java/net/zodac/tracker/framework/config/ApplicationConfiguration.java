@@ -49,6 +49,7 @@ import org.apache.logging.log4j.Logger;
  * @param logLevel                   the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
  * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
  * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
+ * @param redactionText              the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
  * @param redactionTypes             the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
  * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
@@ -68,6 +69,7 @@ public record ApplicationConfiguration(
     String logLevel,
     int numberOfTrackerAttempts,
     Path outputDirectory,
+    String redactionText,
     Set<RedactionType> redactionTypes,
     boolean takeScreenshotOnError,
     Set<TrackerType> trackerExecutionOrder,
@@ -131,6 +133,7 @@ public record ApplicationConfiguration(
             getLogLevel(),
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
+            getRedactionText(),
             getRedactionTypes(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
@@ -192,6 +195,14 @@ public record ApplicationConfiguration(
         } catch (final DateTimeException e) {
             throw new IllegalArgumentException(String.format("[TIMEZONE] Invalid timezone: '%s'", timeZone), e);
         }
+    }
+
+    private static String getRedactionText() {
+        final String redactionText = getOrDefault("REDACTION_TEXT", "----");
+        if (redactionText.isBlank()) {
+            throw new IllegalArgumentException("[REDACTION_TEXT] Value must not be blank");
+        }
+        return redactionText;
     }
 
     private static Set<RedactionType> getRedactionTypes() {
@@ -275,6 +286,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
+        LOGGER.debug("\t- redactionText={}", redactionText);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);

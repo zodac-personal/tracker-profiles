@@ -25,6 +25,8 @@ import static net.zodac.tracker.util.TextSearcher.IPV6_PARTIAL;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
@@ -36,7 +38,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 class TextRedactor implements Redactor {
 
-    private static final String DEFAULT_REDACTION_TEXT = "----";  // TODO: Make user configurable, careful with padding if too long
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final String NON_BREAKING_SPACE = "\u2002";
     private static final String IMG_TAG_NAME = "img";
     private static final Pattern IRC_KEY_PREFIX = Pattern.compile("^\\s*(IRC Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
@@ -44,14 +46,16 @@ class TextRedactor implements Redactor {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemoteWebDriver driver;
+    private final String redactionText;
 
     /**
      * Default constructor.
      *
-     * @param driver the {@link RemoteWebDriver}
+     * @param driver        the {@link RemoteWebDriver}
      */
     TextRedactor(final RemoteWebDriver driver) {
         this.driver = driver;
+        this.redactionText = CONFIG.redactionText();
     }
 
     /**
@@ -68,29 +72,26 @@ class TextRedactor implements Redactor {
             final long width = getOffsetWidth(element);
             final long height = getOffsetHeight(element);
             final String span =
-                "<span style=\"display:inline-flex; align-items:center; justify-content:center; width:%dpx; height:%dpx \">%s</span>".formatted(width,
-                    height, DEFAULT_REDACTION_TEXT);
+                "<span style=\"display:inline-flex;align-items:center;justify-content:center;width:%dpx;height:%dpx\">%s</span>"
+                    .formatted(width, height, redactionText);
             setOuterHtml(element, span);
             return 1;
         }
-        final String redactionText = "%s: %s".formatted(description, DEFAULT_REDACTION_TEXT);
-        setInnerText(element, redactionText);
+        setInnerText(element, "%s: %s".formatted(description, redactionText));
         return 1;
     }
 
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
-        final String substitutionHtmlContent = replaceEmail(htmlContent);
-        setOuterHtml(element, substitutionHtmlContent);
+        setOuterHtml(element, replaceEmail(htmlContent));
         return 1;
     }
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
-        final String substitutionHtmlContent = replaceIpAddresses(htmlContent);
-        setOuterHtml(element, substitutionHtmlContent);
+        setOuterHtml(element, replaceIpAddresses(htmlContent));
         return 1;
     }
 
@@ -143,18 +144,22 @@ class TextRedactor implements Redactor {
         return height instanceof final Number n ? n.longValue() : 0L;
     }
 
-    private static String replaceEmail(final String input) {
+    private String replaceEmail(final String input) {
         return EMAIL.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
     }
 
-    private static String replaceIpAddresses(final String input) {
+    private String replaceIpAddresses(final String input) {
         final String afterIpv4 = IPV4.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
         final String afterIpv4Masked = IPV4_MASKED.matcher(afterIpv4).replaceAll(match -> paddedRedaction(match.group().length()));
         final String afterIpv6 = IPV6.matcher(afterIpv4Masked).replaceAll(match -> paddedRedaction(match.group().length()));
         return IPV6_PARTIAL.matcher(afterIpv6).replaceAll(match -> paddedRedaction(match.group().length()));
     }
 
-    private static String paddedRedaction(final int originalLength) {
-        return DEFAULT_REDACTION_TEXT + NON_BREAKING_SPACE.repeat(Math.max(0, originalLength - DEFAULT_REDACTION_TEXT.length()));
+    private String paddedRedaction(final int originalLength) {
+        // Truncate the redaction if it is longer than the text it's replacing
+        if (redactionText.length() >= originalLength) {
+            return redactionText.substring(0, originalLength);
+        }
+        return redactionText + NON_BREAKING_SPACE.repeat(originalLength - redactionText.length());
     }
 }

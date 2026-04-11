@@ -24,6 +24,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Enum defining the options for redacting sensitive information on a user profile page.
  */
+// TODO: Add a REMOVE type
 public enum RedactionType {
 
     /**
