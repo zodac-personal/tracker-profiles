@@ -29,10 +29,8 @@ public class RetroMoviesClub extends Unit3dHandler {
      * {@inheritDoc}
      *
      * <p>
-     * On this site the default transparent scrollbar still leaves a white bar on the right because the dark background is applied to an inner
-     * container rather than the {@code <html>} root, so {@code transparent} falls through to the browser's white canvas. Hiding the scrollbar
-     * entirely via {@code display: none} removes the bar. Any layout reflow occurs before redaction reads element positions, so coordinates remain
-     * accurate.
+     * For {@link RetroMoviesClub}, the default transparent scrollbar still leaves a white bar on the right. Hiding the scrollbar entirely via
+     * {@code display: none} removes the bar.
      */
     @Override
     public void actionBeforeScreenshot() {

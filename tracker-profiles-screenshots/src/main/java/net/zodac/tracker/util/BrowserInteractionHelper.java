@@ -100,17 +100,6 @@ public class BrowserInteractionHelper {
     }
 
     /**
-     * Retrieves the {@code value} attribute for the {@link WebElement}.
-     *
-     * @param element the {@link WebElement}
-     * @return the {@code value}, or an empty {@link String} if the value is {@code null}
-     */
-    public String getValue(final WebElement element) {
-        final String attributeValue = element.getAttribute("value");
-        return attributeValue == null ? "" : attributeValue;
-    }
-
-    /**
      * Hides the scrollbar on the current web page without changing page dimensions. Rather than setting {@code overflow: hidden} (which removes the
      * scrollbar gutter and causes layout shifts), this injects a stylesheet that makes the scrollbar transparent via both the standard
      * {@code scrollbar-color} property and the legacy {@code ::-webkit-scrollbar} pseudo-elements. The gutter space is preserved, preventing

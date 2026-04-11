@@ -36,7 +36,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 class TextRedactor implements Redactor {
 
-    private static final String DEFAULT_REDACTION_TEXT = "----";
+    private static final String DEFAULT_REDACTION_TEXT = "----";  // TODO: Make user configurable, careful with padding if too long
+    private static final String NON_BREAKING_SPACE = "\u2002";
+    private static final String IMG_TAG_NAME = "img";
     private static final Pattern IRC_KEY_PREFIX = Pattern.compile("^\\s*(IRC Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern TORRENT_PASSKEY_PREFIX = Pattern.compile("^\\s*(Passkey|Pass Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Logger LOGGER = LogManager.getLogger();
@@ -52,9 +54,26 @@ class TextRedactor implements Redactor {
         this.driver = driver;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * If the {@link WebElement} is an {@code <img>} element, it is replaced entirely with a {@code span} of the same dimensions as the original
+     * image, with the redaction text centred both horizontally and vertically. This is necessary because {@code innerText} assignment has no effect
+     * on image elements.
+     */
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        final String redactionText = String.format("%s: %s", description, DEFAULT_REDACTION_TEXT);
+        if (IMG_TAG_NAME.equalsIgnoreCase(element.getTagName())) {
+            final long width = getOffsetWidth(element);
+            final long height = getOffsetHeight(element);
+            final String span =
+                "<span style=\"display:inline-flex; align-items:center; justify-content:center; width:%dpx; height:%dpx \">%s</span>".formatted(width,
+                    height, DEFAULT_REDACTION_TEXT);
+            setOuterHtml(element, span);
+            return 1;
+        }
+        final String redactionText = "%s: %s".formatted(description, DEFAULT_REDACTION_TEXT);
         setInnerText(element, redactionText);
         return 1;
     }
@@ -77,17 +96,19 @@ class TextRedactor implements Redactor {
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final Matcher matcher = IRC_KEY_PREFIX.matcher(element.getText());
+        final String originalText = element.getText();
+        final Matcher matcher = IRC_KEY_PREFIX.matcher(originalText);
         final String prefix = getPrefixFromMatcher(element, matcher);
-        setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
+        setInnerText(element, prefix + paddedRedaction(originalText.length() - prefix.length()));
         return 1;
     }
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(element.getText());
+        final String originalText = element.getText();
+        final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(originalText);
         final String prefix = getPrefixFromMatcher(element, matcher);
-        setInnerText(element, prefix + DEFAULT_REDACTION_TEXT);
+        setInnerText(element, prefix + paddedRedaction(originalText.length() - prefix.length()));
         return 1;
     }
 
@@ -112,15 +133,28 @@ class TextRedactor implements Redactor {
         driver.executeScript("arguments[0].outerHTML = arguments[1];", element, htmlContent);
     }
 
+    private long getOffsetWidth(final WebElement element) {
+        final Object offset = driver.executeScript("return arguments[0].offsetWidth;", element);
+        return offset instanceof final Number n ? n.longValue() : 0L;
+    }
+
+    private long getOffsetHeight(final WebElement element) {
+        final Object height = driver.executeScript("return arguments[0].offsetHeight;", element);
+        return height instanceof final Number n ? n.longValue() : 0L;
+    }
+
     private static String replaceEmail(final String input) {
-        return EMAIL.matcher(input).replaceAll(DEFAULT_REDACTION_TEXT);
+        return EMAIL.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
     }
 
     private static String replaceIpAddresses(final String input) {
-        return IPV4.matcher(input).replaceAll(DEFAULT_REDACTION_TEXT)
-            .replaceAll(IPV4_MASKED.pattern(), DEFAULT_REDACTION_TEXT)
-            .replaceAll(IPV6.pattern(), DEFAULT_REDACTION_TEXT)
-            .replaceAll(IPV6_PARTIAL.pattern(), DEFAULT_REDACTION_TEXT);
+        final String afterIpv4 = IPV4.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
+        final String afterIpv4Masked = IPV4_MASKED.matcher(afterIpv4).replaceAll(match -> paddedRedaction(match.group().length()));
+        final String afterIpv6 = IPV6.matcher(afterIpv4Masked).replaceAll(match -> paddedRedaction(match.group().length()));
+        return IPV6_PARTIAL.matcher(afterIpv6).replaceAll(match -> paddedRedaction(match.group().length()));
     }
 
+    private static String paddedRedaction(final int originalLength) {
+        return DEFAULT_REDACTION_TEXT + NON_BREAKING_SPACE.repeat(Math.max(0, originalLength - DEFAULT_REDACTION_TEXT.length()));
+    }
 }

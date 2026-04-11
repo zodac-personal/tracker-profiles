@@ -19,6 +19,7 @@ package net.zodac.tracker.redaction;
 
 import java.util.regex.Pattern;
 import net.zodac.tracker.framework.config.RedactionType;
+import net.zodac.tracker.util.WebElementUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
@@ -97,7 +98,7 @@ public final class RedactorDelegator implements Redactor {
     }
 
     private static void logElementToBeRedacted(final WebElement element, final String elementType) {
-        final String elementText = element.getText();
+        final String elementText = WebElementUtils.getTextContent(element);
         final String type = elementType.isBlank() ? "" : (" " + elementType);  // Add leading space for the log output only if there is a type
 
         if (!elementText.isBlank()) {
@@ -105,9 +106,9 @@ public final class RedactorDelegator implements Redactor {
             return;
         }
 
-        final String elementValue = element.getAttribute("value");
-        if (elementValue != null && !elementValue.isBlank()) {
-            LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(elementValue).replaceAll(""), element.getTagName());
+        final String elementSrc = element.getAttribute("src");
+        if (elementSrc != null && !elementSrc.isBlank()) {
+            LOGGER.info("\t\t\t- Found: <{}>: {}", element.getTagName(), element);
             return;
         }
 

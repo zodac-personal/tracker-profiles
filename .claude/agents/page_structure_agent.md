@@ -185,10 +185,29 @@ grep -i "<aside\|class.*sidebar\|class.*side-panel\|id.*sidebar" /tmp/profile.ht
 
 **Implementation** — `HasFixedSidebar` has a default `unfixSidebar()` implementation, but it is
 hard-coded to specific class/id names from one tracker and will not work for other sites. Always
-override `unfixSidebar()` with selectors specific to this tracker:
+override `unfixSidebar()` with selectors specific to this tracker.
+
+Before reaching for `makeUnfixed()`, check whether the page provides a **toggle button** that collapses
+or hides the sidebar. Look for elements with `data-target="#sidebar"`, `data-toggle`, `aria-controls`,
+or class names like `sidebar-toggle`, `fa-bars`, `menu-toggle`. If found, prefer clicking the toggle
+over CSS manipulation — it uses the site's own mechanism and avoids side effects:
 
 ```java
-// Sidebar and any related fixed elements (logo, panel, etc.) must all be unfixed:
+// Sidebar has a toggle button — click it to collapse/hide the sidebar:
+@Override
+public void unfixSidebar(final RemoteWebDriver driver) {
+    final By toggleSelector = XpathBuilder
+        .from(div, withAttribute("data-target", "#sidebar"))
+        .build();
+    final WebElement toggle = driver.findElement(toggleSelector);
+    clickButton(toggle);
+}
+```
+
+If no toggle exists, unfix via CSS:
+
+```java
+// No toggle available — unfix the sidebar element directly:
 @Override
 public void unfixSidebar(final RemoteWebDriver driver) {
     final BrowserInteractionHelper helper = new BrowserInteractionHelper(driver);
