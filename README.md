@@ -81,6 +81,13 @@ Below are examples of the different types of redaction from the [MooKo](https://
 </td>
 <td valign="top">
 
+#### Remove
+
+![Remove Redaction](./doc/images/MooKo_Remove.png)
+
+</td>
+<td valign="top">
+
 #### Text
 
 ![Text Redaction](./doc/images/MooKo_Text.png)
@@ -196,38 +203,38 @@ background:
 </td>
 <td valign="top">
 
-| Tracker Name (P–T)                                    |
-|-------------------------------------------------------|
-| [P2PBG](https://www.p2pbg.com/)                       |
-| [PixelCove](https://www.pixelcove.me/)                |
-| [PixelHD](https://pixelhd.me/)                        |
-| [Podzemlje](https://podzemlje.net/)                   |
-| [PolishTorrent](https://polishtorrent.top/)           |
-| [Portugas](https://portugas.org/)                     |
-| [PussyTorrents](https://pussytorrents.org/)           |
-| [Rastastugan](https://rastastugan.org/)               |
-| [Redacted](https://redacted.sh/)                      |
-| [ReelFlix](https://reelflix.cc/)                      |
-| [RetroMoviesClub](https://retro-movies.club/)         |
-| [RocketHD](https://rocket-hd.cc/)                     |
-| [RUTracker](https://rutracker.org/forum/tracker.php)  |
-| [SceneHD](https://scenehd.org/)                       |
-| [SceneTime](https://www.scenetime.com/)               |
-| [SecretCinema](https://secret-cinema.pw/)             |
-| [SeedPool](https://seedpool.org/)                     |
-| [SexTorrent](https://sextorrent.myds.me/)             |
-| [Shazbat](https://www.shazbat.tube/)                  |
-| [SlobitMedia](https://media.slo-bitcloud.eu/)         |
-| [SpeedApp](https://speedapp.io/)                      |
-| [SportsCult](https://sportscult.org/)                 |
-| [T3nnis](https://t3nnis.tv/)                          |
-| [Tasmanit.es](https://tasmanit.es/)                   |
-| [TeamOS](https://teamos.xyz/)                         |
-| [TheMixingBowl](https://themixingbowl.org/)           |
-| [Torr9](https://torr9.net/)                           |
-| [TorrentLeech](https://www.torrentleech.org/)         |
-| [TranceTraffic](https://www.trancetraffic.com/)       |
-| [TVChaosUK](https://tvchaosuk.com/)                   |
+| Tracker Name (P–T)                                   |
+|------------------------------------------------------|
+| [P2PBG](https://www.p2pbg.com/)                      |
+| [PixelCove](https://www.pixelcove.me/)               |
+| [PixelHD](https://pixelhd.me/)                       |
+| [Podzemlje](https://podzemlje.net/)                  |
+| [PolishTorrent](https://polishtorrent.top/)          |
+| [Portugas](https://portugas.org/)                    |
+| [PussyTorrents](https://pussytorrents.org/)          |
+| [Rastastugan](https://rastastugan.org/)              |
+| [Redacted](https://redacted.sh/)                     |
+| [ReelFlix](https://reelflix.cc/)                     |
+| [RetroMoviesClub](https://retro-movies.club/)        |
+| [RocketHD](https://rocket-hd.cc/)                    |
+| [RUTracker](https://rutracker.org/forum/tracker.php) |
+| [SceneHD](https://scenehd.org/)                      |
+| [SceneTime](https://www.scenetime.com/)              |
+| [SecretCinema](https://secret-cinema.pw/)            |
+| [SeedPool](https://seedpool.org/)                    |
+| [SexTorrent](https://sextorrent.myds.me/)            |
+| [Shazbat](https://www.shazbat.tube/)                 |
+| [SlobitMedia](https://media.slo-bitcloud.eu/)        |
+| [SpeedApp](https://speedapp.io/)                     |
+| [SportsCult](https://sportscult.org/)                |
+| [T3nnis](https://t3nnis.tv/)                         |
+| [Tasmanit.es](https://tasmanit.es/)                  |
+| [TeamOS](https://teamos.xyz/)                        |
+| [TheMixingBowl](https://themixingbowl.org/)          |
+| [Torr9](https://torr9.net/)                          |
+| [TorrentLeech](https://www.torrentleech.org/)        |
+| [TranceTraffic](https://www.trancetraffic.com/)      |
+| [TVChaosUK](https://tvchaosuk.com/)                  |
 
 </td>
 <td valign="top">
@@ -447,7 +454,7 @@ The following are all possible configuration options, defined as environment var
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
 | *OUTPUT_DIRECTORY_PARENT_PATH*  | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
 | *REDACTION_TEXT*                | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                          |
-| *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, TEXT]                                                          | BOX                           |
+| *REDACTION_TYPE*                | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, REMOVE, TEXT]                                                  | BOX                           |
 | *SCREENSHOT_EXISTS_ACTION*      | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
 | *TAKE_SCREENSHOT_ON_ERROR*      | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
 | *TIMEZONE*                      | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
@@ -574,7 +581,7 @@ docker run \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env REDACTION_TEXT=---- \
-    --env REDACTION_TYPE=NONE,BLUR,BOX,TEXT \
+    --env REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=true \
     --env TIMEZONE=UTC \
@@ -602,5 +609,5 @@ set correctly for your tracker.
 Some of the `Manual` trackers listed in [Trackers> Manual Interaction](#manual-interaction) contain a Cloudflare
 verification check. This check cannot be passed simply by opening the browser UI like other `manual` trackers. Instead,
 [undetected-chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) is used to patch the Google
-Chrome binary, making it possibly to successfully check the
-Cloudflare box (by a user's manual input), bypassing Cloudflare detection.
+Chrome binary, making it possibly to successfully check the Cloudflare box (by a user's manual input), bypassing
+Cloudflare detection.

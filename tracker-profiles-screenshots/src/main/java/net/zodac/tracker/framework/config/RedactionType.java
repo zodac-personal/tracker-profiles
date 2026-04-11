@@ -24,7 +24,6 @@ import org.jspecify.annotations.Nullable;
 /**
  * Enum defining the options for redacting sensitive information on a user profile page.
  */
-// TODO: Add a REMOVE type
 public enum RedactionType {
 
     /**
@@ -41,6 +40,11 @@ public enum RedactionType {
      * Cover the sensitive text with a solid box with a title.
      */
     BOX,
+
+    /**
+     * Replace the sensitive text with non-breaking spaces of the same length, preserving the page layout.
+     */
+    REMOVE,
 
     /**
      * Replace the sensitive text with some placeholder text.

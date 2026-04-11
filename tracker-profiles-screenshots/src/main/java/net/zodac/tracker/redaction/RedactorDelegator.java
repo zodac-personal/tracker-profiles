@@ -51,6 +51,7 @@ public final class RedactorDelegator implements Redactor {
         final Redactor redactor = switch (redactionType) {
             case BLUR -> new BlurRedactor(driver);
             case BOX -> new BoxRedactor(driver);
+            case REMOVE -> new RemoveRedactor(driver);
             case TEXT -> new TextRedactor(driver);
             case NONE -> throw new IllegalStateException("RedactorDelegator should not be created for NONE redaction type");
         };

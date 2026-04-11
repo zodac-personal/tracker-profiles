@@ -38,20 +38,20 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 class TextRedactor implements Redactor {
 
+    protected static final String NON_BREAKING_SPACE = "\u2002";
+    protected static final String IMG_TAG_NAME = "img";
     private static final ApplicationConfiguration CONFIG = Configuration.get();
-    private static final String NON_BREAKING_SPACE = "\u2002";
-    private static final String IMG_TAG_NAME = "img";
     private static final Pattern IRC_KEY_PREFIX = Pattern.compile("^\\s*(IRC Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern TORRENT_PASSKEY_PREFIX = Pattern.compile("^\\s*(Passkey|Pass Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final RemoteWebDriver driver;
+    protected final RemoteWebDriver driver;
     private final String redactionText;
 
     /**
      * Default constructor.
      *
-     * @param driver        the {@link RemoteWebDriver}
+     * @param driver the {@link RemoteWebDriver}
      */
     TextRedactor(final RemoteWebDriver driver) {
         this.driver = driver;
@@ -84,41 +84,89 @@ class TextRedactor implements Redactor {
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
-        setOuterHtml(element, replaceEmail(htmlContent));
+        setOuterHtml(element, EMAIL.matcher(htmlContent).replaceAll(match -> replacement(match.group().length())));
         return 1;
     }
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
         final String htmlContent = retrieveOuterHtml(element);
-        setOuterHtml(element, replaceIpAddresses(htmlContent));
+        final String afterIpv4 = IPV4.matcher(htmlContent).replaceAll(match -> replacement(match.group().length()));
+        final String afterIpv4Masked = IPV4_MASKED.matcher(afterIpv4).replaceAll(match -> replacement(match.group().length()));
+        final String afterIpv6 = IPV6.matcher(afterIpv4Masked).replaceAll(match -> replacement(match.group().length()));
+        setOuterHtml(element, IPV6_PARTIAL.matcher(afterIpv6).replaceAll(match -> replacement(match.group().length())));
         return 1;
     }
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String originalText = element.getText();
-        final Matcher matcher = IRC_KEY_PREFIX.matcher(originalText);
-        final String prefix = getPrefixFromMatcher(element, matcher);
-        setInnerText(element, prefix + paddedRedaction(originalText.length() - prefix.length()));
+        final String prefix = getPrefixFromMatcher(element, IRC_KEY_PREFIX.matcher(originalText));
+        setInnerText(element, prefix + replacement(originalText.length() - prefix.length()));
         return 1;
     }
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
         final String originalText = element.getText();
-        final Matcher matcher = TORRENT_PASSKEY_PREFIX.matcher(originalText);
-        final String prefix = getPrefixFromMatcher(element, matcher);
-        setInnerText(element, prefix + paddedRedaction(originalText.length() - prefix.length()));
+        final String prefix = getPrefixFromMatcher(element, TORRENT_PASSKEY_PREFIX.matcher(originalText));
+        setInnerText(element, prefix + replacement(originalText.length() - prefix.length()));
         return 1;
     }
 
-    private void setInnerText(final WebElement element, final String text) {
+    /**
+     * Returns the replacement string for the given number of characters. Subclasses may override to change what is substituted for matched text.
+     *
+     * @param length the number of characters in the original text
+     * @return the replacement string
+     */
+    protected String replacement(final int length) {
+        if (redactionText.length() >= length) {
+            return redactionText.substring(0, length);
+        }
+        return redactionText + NON_BREAKING_SPACE.repeat(length - redactionText.length());
+    }
+
+    /**
+     * Sets the {@code innerText} of the given {@link WebElement}.
+     *
+     * @param element the target element
+     * @param text    the text to set
+     */
+    protected void setInnerText(final WebElement element, final String text) {
         driver.executeScript("arguments[0].innerText = arguments[1];", element, text);
     }
 
-    private static String getPrefixFromMatcher(final WebElement element, final Matcher matcher) {
-        return matcher.find() ? element.getText().substring(0, matcher.end()) : "";
+    /**
+     * Replaces the {@code outerHTML} of the given {@link WebElement}.
+     *
+     * @param element     the target element
+     * @param htmlContent the HTML to set
+     */
+    protected void setOuterHtml(final WebElement element, final String htmlContent) {
+        driver.executeScript("arguments[0].outerHTML = arguments[1];", element, htmlContent);
+    }
+
+    /**
+     * Returns the {@code offsetWidth} of the given {@link WebElement} in pixels.
+     *
+     * @param element the target element
+     * @return the width in pixels, or {@code 0} if unavailable
+     */
+    protected long getOffsetWidth(final WebElement element) {
+        final Object offset = driver.executeScript("return arguments[0].offsetWidth;", element);
+        return offset instanceof final Number n ? n.longValue() : 0L;
+    }
+
+    /**
+     * Returns the {@code offsetHeight} of the given {@link WebElement} in pixels.
+     *
+     * @param element the target element
+     * @return the height in pixels, or {@code 0} if unavailable
+     */
+    protected long getOffsetHeight(final WebElement element) {
+        final Object height = driver.executeScript("return arguments[0].offsetHeight;", element);
+        return height instanceof final Number n ? n.longValue() : 0L;
     }
 
     private String retrieveOuterHtml(final WebElement element) {
@@ -130,36 +178,7 @@ class TextRedactor implements Redactor {
         return htmlContent;
     }
 
-    private void setOuterHtml(final WebElement element, final String htmlContent) {
-        driver.executeScript("arguments[0].outerHTML = arguments[1];", element, htmlContent);
-    }
-
-    private long getOffsetWidth(final WebElement element) {
-        final Object offset = driver.executeScript("return arguments[0].offsetWidth;", element);
-        return offset instanceof final Number n ? n.longValue() : 0L;
-    }
-
-    private long getOffsetHeight(final WebElement element) {
-        final Object height = driver.executeScript("return arguments[0].offsetHeight;", element);
-        return height instanceof final Number n ? n.longValue() : 0L;
-    }
-
-    private String replaceEmail(final String input) {
-        return EMAIL.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
-    }
-
-    private String replaceIpAddresses(final String input) {
-        final String afterIpv4 = IPV4.matcher(input).replaceAll(match -> paddedRedaction(match.group().length()));
-        final String afterIpv4Masked = IPV4_MASKED.matcher(afterIpv4).replaceAll(match -> paddedRedaction(match.group().length()));
-        final String afterIpv6 = IPV6.matcher(afterIpv4Masked).replaceAll(match -> paddedRedaction(match.group().length()));
-        return IPV6_PARTIAL.matcher(afterIpv6).replaceAll(match -> paddedRedaction(match.group().length()));
-    }
-
-    private String paddedRedaction(final int originalLength) {
-        // Truncate the redaction if it is longer than the text it's replacing
-        if (redactionText.length() >= originalLength) {
-            return redactionText.substring(0, originalLength);
-        }
-        return redactionText + NON_BREAKING_SPACE.repeat(originalLength - redactionText.length());
+    private static String getPrefixFromMatcher(final WebElement element, final Matcher matcher) {
+        return matcher.find() ? element.getText().substring(0, matcher.end()) : "";
     }
 }
