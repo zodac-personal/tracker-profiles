@@ -35,8 +35,10 @@ jobs:
           output-file: hadolint-report.json
 
       - name: Upload Hadolint report
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: hadolint-report
           path: hadolint-report.json
+          overwrite: true
+          retention-days: 1
