@@ -1,12 +1,11 @@
 # IntelliJ
 *.iml
-.idea/
-
-# VS Code
 .vscode/
+.idea/
 
 # Build
 *.bak
+*.jfr
 *.log
 dependency-reduced-pom.xml
 pom.xml.versionsBackup

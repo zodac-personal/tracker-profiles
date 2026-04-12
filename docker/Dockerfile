@@ -4,11 +4,15 @@ FROM python:3.14.3-slim-trixie AS chromedriver_builder
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
 # - chromium (web browser)
+# - curl (download chromedriver)
+# - unzip (unzip chromedriver)
 # BEGIN DEBIAN PACKAGES
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="146.0.7680.177-1~deb13u1" \
+        chromium="147.0.7727.55-1~deb13u1" \
+        curl="8.14.1-2+deb13u2" \
+        unzip="6.0-29" \
     && \
     apt-get autoremove && \
     apt-get clean && \
@@ -16,18 +20,18 @@ RUN apt-get update && \
 # END DEBIAN PACKAGES
 
 # Copy Python requirements
+WORKDIR /app
 COPY ./docker/config/requirements.txt .
-RUN python3 -m pip install --upgrade pip && python3 -m pip install -r ./requirements.txt
+RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip install --no-cache-dir -r ./requirements.txt
 
 # Download latest chromedriver for chromium verison then patch with undetected-chromedriver
 COPY ./docker/scripts/patch_chromedriver.py /usr/local/bin/patch_chromedriver.py
-RUN apt-get update && apt-get install -yqq --no-install-recommends curl unzip && \
-    mkdir -p /usr/local/chromium && \
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN mkdir -p /usr/local/chromium && \
     curl -fL \
         "https://storage.googleapis.com/chrome-for-testing-public/$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$(chromium --version | awk '{print $2}' | cut -d. -f1)")/linux64/chromedriver-linux64.zip" \
         -o /tmp/chromedriver.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/chromium && rm -f /tmp/chromedriver.zip && \
-    apt-get purge -yqq curl unzip && apt-get autoremove -yqq --purge && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod -R 0755 /usr/local/chromium && \
     chmod +x /usr/local/bin/patch_chromedriver.py && \
     python3 /usr/local/bin/patch_chromedriver.py
@@ -53,15 +57,23 @@ FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
 # Hardcoding the required modules instead of using $(jdeps --multi-release BASE --print-module-deps --ignore-missing-deps /tmp/tracker-profiles.jar)
 # Dependencies are unlikely to change, so this extra step is unnecessary for every build
 #COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar /tmp/tracker-profiles.jar
-RUN apt-get update && apt-get install -yqq --no-install-recommends binutils && \
-        jlink --compress=zip-9 \
+# BEGIN UBUNTU PACKAGES
+RUN apt-get update && \
+    apt-get install -yqq --no-install-recommends \
+        binutils="2.42-4ubuntu2.10" \
+    && \
+    apt-get autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    jlink --compress=zip-9 \
         --no-header-files \
         --no-man-pages \
         --strip-debug \
         --add-modules java.base,java.compiler,java.desktop,java.instrument,java.management,java.naming,java.net.http,java.rmi,java.scripting,java.sql,jdk.unsupported \
         --output "/opt/jdk" && \
     strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
-    find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true
+    { find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true; }
+# END UBUNTU PACKAGES
 
 # Runtime
 FROM debian:13.3-slim AS runtime
@@ -96,7 +108,7 @@ ENV NO_AT_BRIDGE=1
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="146.0.7680.177-1~deb13u1" \
+        chromium="147.0.7727.55-1~deb13u1" \
         fonts-arphic-ukai="0.2.20080216.2-5" \
         fonts-ipafont="00303-23" \
         wmctrl="1.07+git20240228.1105759-1" \
@@ -120,7 +132,7 @@ ARG PUID=1000
 ARG PGID=1000
 # Create user and group
 RUN groupadd -g ${PGID} nonroot && \
-    useradd -u ${PUID} -g nonroot -d /tmp/chrome-home -m nonroot && \
+    useradd -l -u ${PUID} -g nonroot -d /tmp/chrome-home -m nonroot && \
     chown -R nonroot:nonroot /tmp/chrome-home
 # Set environment and user
 ENV HOME=/tmp/chrome-home

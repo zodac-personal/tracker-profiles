@@ -4,23 +4,23 @@
 #
 # Description:     Updates version-pinned package declarations in both a Dockerfile
 #                  and a Python requirements.txt file. Fetches the latest versions
-#                  of Python, Debian, and Python pip packages, then rewrites the
+#                  of Python, Debian, Ubuntu, and Python pip packages, then rewrites the
 #                  Dockerfile and requirements files with those values.
 #
 # Usage:           ./update_dependency_versions.sh <path_to_Dockerfile> <path_to_requirements.txt>
 #
 # Requirements:
 #   - bash, awk, grep, jq, curl
-#   - Dockerfile must contain specific marker comments for python and debian package installs:
-#       # BEGIN PYTHON PACKAGES / # END PYTHON PACKAGES
+#   - Dockerfile must contain specific marker comments for package installs:
 #       # BEGIN DEBIAN PACKAGES / # END DEBIAN PACKAGES
+#       # BEGIN UBUNTU PACKAGES / # END UBUNTU PACKAGES
 #   - requirements.txt should contain lines in the format: `package>=version` or `package==version`
 #   - Internet access to fetch latest versions from PyPI and apt
 #
 # Behavior:
 #   - For the Dockerfile:
 #       - Updates Debian packages (defined in the Dockerfile) with the latest candidate versions from apt
-#       - Updates Python tools (defined in the Dockerfile) with the latest versions from PyPI
+#       - Updates Ubuntu packages (defined in the Dockerfile) with the latest candidate versions from apt
 #       - Rewrites the install blocks in the Dockerfile between respective markers
 #   - For requirements.txt:
 #       - Updates packages defined with `>=` to their latest PyPI versions
@@ -37,6 +37,7 @@
 set -euo pipefail
 
 DEBIAN_DOCKER_IMAGE_VERSION="13.3"
+UBUNTU_DOCKER_IMAGE_VERSION="24.04"
 
 get_pypi_version() {
     version=$(curl -fsSL "https://pypi.org/pypi/${1}/json" | jq -r '.info.version // empty')
@@ -177,6 +178,105 @@ update_debian_packages() {
     echo "✅ ${dockerfile#./} updated successfully with latest Debian packages"
 }
 
+update_ubuntu_packages() {
+    dockerfile="${1}"
+
+    UBUNTU_START_MARKER="# BEGIN UBUNTU PACKAGES"
+    UBUNTU_END_MARKER="# END UBUNTU PACKAGES"
+
+    if ! grep -q "${UBUNTU_START_MARKER}" "${dockerfile}" || ! grep -q "${UBUNTU_END_MARKER}" "${dockerfile}"; then
+        echo "⚠️ No Ubuntu marker lines found in ${dockerfile}, skipping"
+        return 0
+    fi
+
+    section_count=$(grep -c "${UBUNTU_START_MARKER}" "${dockerfile}")
+
+    echo
+    echo "🔍 Fetching latest dockerfile Ubuntu package versions..."
+    # Pull latest ubuntu image
+    docker pull "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" >/dev/null
+
+    get_ubuntu_version() {
+        docker run --rm "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
+    }
+
+    for ((section = 1; section <= section_count; section++)); do
+        echo "[Section ${section}/${section_count}]"
+
+        # Extract only the Nth section's package block
+        package_block=$(awk -v start="${UBUNTU_START_MARKER}" -v end="${UBUNTU_END_MARKER}" -v n="${section}" '
+            $0 ~ start { count++; if (count == n) in_block = 1 }
+            in_block
+            $0 ~ end && in_block { in_block = 0 }
+        ' "${dockerfile}")
+
+        # Extract the package names before '=' using regex
+        mapfile -t package_names < <(echo "${package_block}" | grep -oP '^\s*[a-z0-9.+-]+(?==)' | sed 's/^[[:space:]]*//')
+
+        if [[ "${#package_names[@]}" -eq 0 ]]; then
+            echo "❌ No package names found in section ${section}"
+            exit 1
+        fi
+
+        unset ubuntu_versions
+        declare -A ubuntu_versions
+
+        for package in "${package_names[@]}"; do
+            version=$(get_ubuntu_version "${package}")
+            if [[ -z "${version}" ]]; then
+                echo "❌ Failed to get version for: ${package}"
+                exit 1
+            fi
+            ubuntu_versions["${package}"]="${version}"
+            echo "  ${package}=${version}"
+        done
+
+        # Build the updated install block for this section
+        {
+            echo "${UBUNTU_START_MARKER}"
+            echo "RUN apt-get update && \\"
+            echo "    apt-get install -yqq --no-install-recommends \\"
+            for package in "${package_names[@]}"; do
+                echo "        ${package}=\"${ubuntu_versions[${package}]}\" \\"
+            done
+            echo "    && \\"
+            echo "    apt-get autoremove && \\"
+            echo "    apt-get clean && \\"
+            echo "    rm -rf /var/lib/apt/lists/*"
+            echo "${UBUNTU_END_MARKER}"
+        } >ubuntu_block.txt
+
+        # Replace the Nth occurrence of the block with the new one
+        awk -v start_marker="${UBUNTU_START_MARKER}" \
+            -v end_marker="${UBUNTU_END_MARKER}" \
+            -v target_section="${section}" '
+        BEGIN {
+            while ((getline line < "ubuntu_block.txt") > 0) {
+                block = block line ORS
+            }
+            close("ubuntu_block.txt")
+            sub(/\n$/, "", block)
+        }
+        $0 ~ start_marker {
+            section_count++
+            if (section_count == target_section) {
+                print block
+                in_target = 1
+                next
+            }
+        }
+        $0 ~ end_marker && in_target { in_target = 0; next }
+        !in_target { print }
+        ' "${dockerfile}" >"${dockerfile}.tmp"
+
+        mv "${dockerfile}.tmp" "${dockerfile}"
+    done
+
+    rm -f ubuntu_block.txt
+
+    echo "✅ ${dockerfile#./} updated successfully with latest Ubuntu packages"
+}
+
 update_pom_versions() {
     local JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
 
@@ -205,5 +305,6 @@ if [[ ! -f "${requirements}" ]]; then
 fi
 
 update_debian_packages "${dockerfile}"
+update_ubuntu_packages "${dockerfile}"
 update_requirements "${requirements}"
 update_pom_versions
