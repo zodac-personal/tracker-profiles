@@ -35,7 +35,10 @@ main() {
     chromium --display=:0 >/dev/null 2>&1 &
     BROWSER_PID=$!
 
-    java -jar /app/tracker-profiles.jar &
+    java \
+      -Xms"${JAVA_XMS:-128m}" -Xmx"${JAVA_XMX:-512m}" \
+      -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
+      -jar /app/tracker-profiles.jar &
     JAVA_PID=$!
 
     if wait "${JAVA_PID}"; then

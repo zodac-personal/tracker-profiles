@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 public final class TimingUtils {
 
     private TimingUtils() {
+
     }
 
     /**
@@ -45,6 +46,7 @@ public final class TimingUtils {
      * @param elapsedTimeNanoseconds the elapsed time in nanoseconds
      * @return formatted duration {@link String}
      */
+    // TODO: Add this to full execution, if colour can be set
     public static String toNaturalTime(final long elapsedTimeNanoseconds) {
         final long totalMillis = TimeUnit.NANOSECONDS.toMillis(elapsedTimeNanoseconds);
 

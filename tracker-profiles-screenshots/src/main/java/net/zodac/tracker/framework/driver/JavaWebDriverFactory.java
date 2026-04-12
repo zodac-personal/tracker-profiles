@@ -126,9 +126,9 @@ public final class JavaWebDriverFactory {
         }
 
         final ChromeDriverService service = new ChromeDriverService  // NOPMD: CloseResource - Not closing since it takes 5 seconds to close
-                .Builder()
-                .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
-                .build();
+            .Builder()
+            .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
+            .build();
         LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
         final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
         applyConfiguredSize(driver);
@@ -141,14 +141,13 @@ public final class JavaWebDriverFactory {
         final Dimension size = parseDimensions();
         driver.manage().window().setSize(size);
 
-        driver.executeCdpCommand("Emulation.setDeviceMetricsOverride",
-            Map.of(
-                "width", size.getWidth(),
-                "height", size.getHeight(),
-                "deviceScaleFactor", 1,
-                "mobile", false
-            )
-        );
+        final Map<String, Object> cdpOverrides = HashMap.newHashMap(4);
+        cdpOverrides.put("width", size.getWidth());
+        cdpOverrides.put("height", size.getHeight());
+        cdpOverrides.put("deviceScaleFactor", 1);
+        cdpOverrides.put("mobile", false);
+
+        driver.executeCdpCommand("Emulation.setDeviceMetricsOverride", cdpOverrides);
     }
 
     // No need to perform any validation, browserDimensions has been parsed already

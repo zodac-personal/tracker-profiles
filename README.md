@@ -346,6 +346,8 @@ docker run \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
+    --env JAVA_XMS=128m \
+    --env JAVA_XMX=512m \
     --env LOG_LEVEL=INFO \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
@@ -380,6 +382,8 @@ MSYS_NO_PATHCONV=1 docker run \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
+    --env JAVA_XMS=128m \
+    --env JAVA_XMX=512m \
     --env LOG_LEVEL=INFO \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
@@ -449,6 +453,8 @@ The following are all possible configuration options, defined as environment var
 | *FORCE_UI_BROWSER*              | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                         |
 | *INPUT_TIMEOUT_ENABLED*         | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
 | *INPUT_TIMEOUT_SECONDS*         | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input (in seconds)                                                                                                                    | 300                           |
+| *JAVA_XMS*                      | The initial heap size for the Java process                                                                                                                                                               | 128m                          |
+| *JAVA_XMX*                      | The maximum heap size for the Java process                                                                                                                                                               | 512m                          |
 | *LOG_LEVEL*                     | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
 | *NUMBER_OF_TRACKER_ATTEMPTS*    | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) (max of 5)                                                                      | 1                             |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*  | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
@@ -576,6 +582,8 @@ docker run \
     --env FORCE_UI_BROWSER=true \
     --env INPUT_TIMEOUT_ENABLED=true \
     --env INPUT_TIMEOUT_SECONDS=300 \
+    --env JAVA_XMS=128m \
+    --env JAVA_XMX=512m \
     --env LOG_LEVEL=TRACE \
     --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \

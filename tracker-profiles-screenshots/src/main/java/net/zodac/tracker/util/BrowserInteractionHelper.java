@@ -124,6 +124,7 @@ public class BrowserInteractionHelper {
      *
      * @param element the {@link WebElement} to highlight
      */
+    // TODO: Also select/click the element?
     public void highlightElement(final WebElement element) {
         updateCss(element, "border", "3px solid red");
     }
