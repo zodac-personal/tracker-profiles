@@ -49,7 +49,7 @@ Entry point: `ApplicationLauncher` → `ScreenshotOrchestrator` → `ProfileScre
 
 ### Tracker Handler Pattern
 
-All 75+ tracker implementations live in `handler/` and extend `AbstractTrackerHandler`. The base class implements the
+All tracker implementations live in `handler/` and extend `AbstractTrackerHandler`. The base class implements the
 full screenshot workflow as a template method; subclasses override selectors and optional hooks.
 
 Handlers are discovered at startup via reflection: `TrackerHandlerFactory` scans the `net.zodac.tracker.handler` package

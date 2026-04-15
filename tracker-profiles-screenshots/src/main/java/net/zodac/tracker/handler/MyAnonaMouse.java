@@ -110,7 +110,7 @@ public class MyAnonaMouse extends AbstractTrackerHandler {
             .from(ul, withId("menu"))
             .child(li, atIndex(2))
             .child(ul, atIndex(1))
-            .child(li, atIndex(15))
+            .child(li, atIndex(16))
             .child(a, atIndex(1))
             .build();
     }
