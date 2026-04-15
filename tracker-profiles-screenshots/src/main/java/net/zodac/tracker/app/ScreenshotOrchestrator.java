@@ -93,7 +93,7 @@ public final class ScreenshotOrchestrator {
                     final long startNanos = System.nanoTime();
                     final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(trackerCredential);
                     resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
-                    printExecutionTime(trackerCredential.name(), startNanos);
+                    printTrackerExecutionTime(trackerCredential.name(), startNanos);
                     progressBarManager.tick();
                 }
             }
@@ -102,7 +102,7 @@ public final class ScreenshotOrchestrator {
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
     }
 
-    private static void printExecutionTime(final String trackerName, final long startNanos) {
+    private static void printTrackerExecutionTime(final String trackerName, final long startNanos) {
         final long elapsedNanos = System.nanoTime() - startNanos;
         LOGGER.debug("\t- Execution time for {}: {}", trackerName, TimingUtils.toNaturalTime(elapsedNanos));
     }

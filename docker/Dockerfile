@@ -64,8 +64,9 @@ RUN apt-get update && \
     && \
     apt-get autoremove && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    jlink --compress=zip-9 \
+    rm -rf /var/lib/apt/lists/*
+# END UBUNTU PACKAGES
+RUN jlink --compress=zip-9 \
         --no-header-files \
         --no-man-pages \
         --strip-debug \
@@ -73,7 +74,6 @@ RUN apt-get update && \
         --output "/opt/jdk" && \
     strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
     { find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true; }
-# END UBUNTU PACKAGES
 
 # Runtime
 FROM debian:13.3-slim AS runtime
@@ -144,6 +144,9 @@ COPY --from=java_builder /opt/jdk /opt/jdk
 ENV JAVA_HOME="/opt/jdk"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
+# Copy JUL config so start.sh can pass it via -Djava.util.logging.config.file; JUL re-reads this
+# file after every LogManager.reset(), which Selenium triggers on each RemoteWebDriver creation
+COPY --from=maven_builder /app/tracker-profiles-screenshots/src/main/resources/logging.properties logging.properties
 
 # Start application
 CMD ["/app/start.sh"]

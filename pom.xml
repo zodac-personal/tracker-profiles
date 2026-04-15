@@ -65,7 +65,7 @@
         <checkstyle.version>13.4.0</checkstyle.version>
         <error_prone_core.version>2.49.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
-        <nullaway.version>0.13.2</nullaway.version>
+        <nullaway.version>0.13.3</nullaway.version>
         <pmd.version>7.23.0</pmd.version>
         <spotbugs.version>4.9.8</spotbugs.version>
 

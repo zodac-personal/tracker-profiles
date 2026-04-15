@@ -21,7 +21,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Utility class for formatting elapsed durations measured in nanoseconds.
+ * Utility class for time-related functions.
  */
 public final class TimingUtils {
 
@@ -30,7 +30,7 @@ public final class TimingUtils {
     }
 
     /**
-     * Converts an elapsed duration in nanoseconds to a human-readable natural time.
+     * Converts the provided {@code elapsedTimeNanoseconds} into human-readable natural time.
      *
      * <p>
      * Durations are converted into a human-readable "natural time" format with millisecond precision. The output format adapts based on the magnitude
@@ -49,7 +49,6 @@ public final class TimingUtils {
      * @param elapsedTimeNanoseconds the elapsed time in nanoseconds
      * @return formatted duration {@link String}
      */
-    // TODO: Add this to full execution, if colour can be set
     public static String toNaturalTime(final long elapsedTimeNanoseconds) {
         final long totalMillis = TimeUnit.NANOSECONDS.toMillis(elapsedTimeNanoseconds);
 
