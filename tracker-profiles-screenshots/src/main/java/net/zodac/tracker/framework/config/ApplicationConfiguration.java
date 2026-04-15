@@ -17,6 +17,9 @@
 
 package net.zodac.tracker.framework.config;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DateTimeException;
@@ -27,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import net.zodac.tracker.framework.TrackerType;
@@ -36,24 +40,29 @@ import org.apache.logging.log4j.Logger;
 /**
  * Utility file that loads the application configuration from environment variables.
  *
- * @param browserDataStoragePath     the file path in which to store browser data (profiles, caches, etc.)
- * @param browserDimensions          the dimensions in the format {@code width,height} for the {@code Selenium} web browser
- * @param csvCommentSymbol           the {@code char} defining a comment row in the CSV file
- * @param enableAdultContent         whether to enable screenshots for trackers primarily hosting adult content
- * @param enableTranslationToEnglish whether to translate non-English {@link TrackerType}s to English
- * @param existingScreenshotAction   the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
- * @param failOnUnsupportedTracker   whether to fail if an unsupported tracker is found in the CSV file
- * @param forceUiBrowser             whether to use a UI-based browser or not
- * @param inputTimeoutDuration       how long to wait for a user-input (if enabled)
- * @param inputTimeoutEnabled        whether a timeout for a user-input is enabled or not
- * @param logLevel                   the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
- * @param numberOfTrackerAttempts    the number of times to attempt to screenshot a tracker
- * @param outputDirectory            the output {@link Path} to the directory within which the screenshots will be saved
- * @param redactionText              the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
- * @param redactionTypes             the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
- * @param takeScreenshotOnError      whether to take a screenshot of the current page if an error occurs during screenshotting
- * @param trackerExecutionOrder      the execution order of the different {@link TrackerType}s
- * @param trackerInputFilePath       the {@link Path} to the input tracker CSV file
+ * @param browserDataStoragePath         the file path in which to store browser data (profiles, caches, etc.)
+ * @param browserDimensions              the dimensions in the format {@code width,height} for the {@code Selenium} web browser
+ * @param csvCommentSymbol               the {@code char} defining a comment row in the CSV file
+ * @param enableAdultContent             whether to enable screenshots for trackers primarily hosting adult content
+ * @param enableTranslationToEnglish     whether to translate non-English {@link TrackerType}s to English
+ * @param existingScreenshotAction       the {@link ExistingScreenshotAction} to perform when a screenshot exists for a tracker
+ * @param failOnUnsupportedTracker       whether to fail if an unsupported tracker is found in the CSV file
+ * @param forceUiBrowser                 whether to use a UI-based browser or not
+ * @param inputTimeoutDuration           how long to wait for a user-input (if enabled)
+ * @param inputTimeoutEnabled            whether a timeout for a user-input is enabled or not
+ * @param logLevel                       the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
+ * @param numberOfTrackerAttempts        the number of times to attempt to screenshot a tracker
+ * @param outputDirectory                the output {@link Path} to the directory within which the screenshots will be saved
+ * @param progressBarCompleteCharacter   the character used to represent a completed portion of the progress bar
+ * @param progressBarEnabled             whether to display a progress bar at the bottom of the console output
+ * @param progressBarFormat              the format string for the progress bar
+ * @param progressBarIncompleteCharacter the character used to represent an incomplete portion of the progress bar
+ * @param progressBarLength              the length (in characters) of the progress bar
+ * @param redactionText                  the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
+ * @param redactionTypes                 the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
+ * @param takeScreenshotOnError          whether to take a screenshot of the current page if an error occurs during screenshotting
+ * @param trackerExecutionOrder          the execution order of the different {@link TrackerType}s
+ * @param trackerInputFilePath           the {@link Path} to the input tracker CSV file
  */
 public record ApplicationConfiguration(
     String browserDataStoragePath,
@@ -69,6 +78,11 @@ public record ApplicationConfiguration(
     String logLevel,
     int numberOfTrackerAttempts,
     Path outputDirectory,
+    char progressBarCompleteCharacter,
+    boolean progressBarEnabled,
+    String progressBarFormat,
+    char progressBarIncompleteCharacter,
+    int progressBarLength,
     String redactionText,
     Set<RedactionType> redactionTypes,
     boolean takeScreenshotOnError,
@@ -85,6 +99,9 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_CSV_COMMENT_SYMBOL = "#";
     private static final String DEFAULT_OUTPUT_DIRECTORY_NAME_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH = "/app/screenshots";
+    private static final String DEFAULT_PROGRESS_BAR_COMPLETE_CHARACTER = "█";
+    private static final String DEFAULT_PROGRESS_BAR_FORMAT = ":bar :percent% | :progress/:total | [:elapsed]";
+    private static final String DEFAULT_PROGRESS_BAR_INCOMPLETE_CHARACTER = "░";
     private static final String DEFAULT_REDACTION_TYPE = "BOX";
     private static final ExistingScreenshotAction DEFAULT_SCREENSHOT_EXISTS_ACTION = ExistingScreenshotAction.CREATE_ANOTHER;
     private static final String DEFAULT_TIMEZONE = "UTC";
@@ -133,12 +150,22 @@ public record ApplicationConfiguration(
             getLogLevel(),
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
+            getProgressBarCompleteCharacter(),
+            getBooleanEnvironmentVariable("PROGRESS_BAR_ENABLED", true),
+            getProgressBarFormat(),
+            getProgressBarIncompleteCharacter(),
+            getProgressBarLength(),
             getRedactionText(),
             getRedactionTypes(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
         );
+
+        if (applicationConfiguration.progressBarCompleteCharacter() == applicationConfiguration.progressBarIncompleteCharacter()) {
+            throw new IllegalArgumentException(
+                "[PROGRESS_BAR_COMPLETE_CHARACTER][PROGRESS_BAR_INCOMPLETE_CHARACTER] Values must not be the same character");
+        }
 
         applicationConfiguration.print();
         return applicationConfiguration;
@@ -194,6 +221,92 @@ public record ApplicationConfiguration(
             throw new IllegalArgumentException(String.format("[OUTPUT_DIRECTORY_NAME_FORMAT] Invalid time format: '%s'", timeZone), e);
         } catch (final DateTimeException e) {
             throw new IllegalArgumentException(String.format("[TIMEZONE] Invalid timezone: '%s'", timeZone), e);
+        }
+    }
+
+    private static char getProgressBarCompleteCharacter() {
+        return parseSingleCharacter("PROGRESS_BAR_COMPLETE_CHARACTER", DEFAULT_PROGRESS_BAR_COMPLETE_CHARACTER);
+    }
+
+    private static String getProgressBarFormat() {
+        final String format = getOrDefault("PROGRESS_BAR_FORMAT", DEFAULT_PROGRESS_BAR_FORMAT);
+        if (format.isBlank()) {
+            throw new IllegalArgumentException("[PROGRESS_BAR_FORMAT] Value must not be blank");
+        }
+        return format;
+    }
+
+    private static char getProgressBarIncompleteCharacter() {
+        return parseSingleCharacter("PROGRESS_BAR_INCOMPLETE_CHARACTER", DEFAULT_PROGRESS_BAR_INCOMPLETE_CHARACTER);
+    }
+
+    private static char parseSingleCharacter(final String envVarName, final String defaultValue) {
+        final String raw = getOrDefault(envVarName, defaultValue);
+        // Fast path: JVM decoded the env var correctly as a single Unicode code point
+        if (raw.codePointCount(0, raw.length()) == 1) {
+            return (char) raw.codePointAt(0);
+        }
+
+        // Slow path A: JVM decoded UTF-8 bytes using ISO-8859-1 (one char per byte)
+        // ISO-8859-1 is byte-transparent (every byte value 0x00–0xFF maps to the same code point),
+        // so getBytes(ISO_8859_1) recovers the original bytes, and we can re-decode as UTF-8
+        final String fromLatin1 = new String(raw.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        if (fromLatin1.codePointCount(0, fromLatin1.length()) == 1) {
+            return (char) fromLatin1.codePointAt(0);
+        }
+
+        // Slow path B: JVM decoded using ASCII (or similar), replacing bytes > 0x7F with U+FFFD.
+        // The original bytes are irretrievable from the Java string; read /proc/self/environ directly.
+        final Optional<String> fromProcEnv = readRawEnvVarAsUtf8(envVarName);
+        if (fromProcEnv.isPresent() && fromProcEnv.get().codePointCount(0, fromProcEnv.get().length()) == 1) {
+            return (char) fromProcEnv.get().codePointAt(0);
+        }
+
+        throw new IllegalArgumentException("[%s] Must be a single character, got: '%s'".formatted(envVarName, raw));
+    }
+
+    private static Optional<String> readRawEnvVarAsUtf8(final String envVarName) {
+        try {
+            final byte[] environ = Files.readAllBytes(Paths.get("/proc/self/environ"));
+            final byte[] searchPrefix = (envVarName + "=").getBytes(StandardCharsets.US_ASCII);
+            int start = 0;
+            for (int i = 0; i <= environ.length; i++) {
+                if (i == environ.length || environ[i] == 0) {
+                    if (entryStartsWith(environ, start, searchPrefix)) {
+                        final int valueStart = start + searchPrefix.length;
+                        return Optional.of(new String(environ, valueStart, i - valueStart, StandardCharsets.UTF_8));
+                    }
+                    start = i + 1;
+                }
+            }
+        } catch (final IOException e) {
+            LOGGER.trace("Could not read /proc/self/environ to recover raw bytes for '{}': {}", envVarName, e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    private static boolean entryStartsWith(final byte[] bytes, final int offset, final byte[] prefix) {
+        if (offset + prefix.length > bytes.length) {
+            return false;
+        }
+        for (int i = 0; i < prefix.length; i++) {
+            if (bytes[offset + i] != prefix[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int getProgressBarLength() {
+        final String raw = getOrDefault("PROGRESS_BAR_LENGTH", "35");
+        try {
+            final int value = Integer.parseInt(raw);
+            if (value < 10 || value > 80) {
+                throw new IllegalArgumentException("[PROGRESS_BAR_LENGTH] Invalid input '%s', must be between 10 and 80".formatted(raw));
+            }
+            return value;
+        } catch (final NumberFormatException e) {
+            throw new IllegalArgumentException("[PROGRESS_BAR_LENGTH] Invalid input '%s', must be a valid number".formatted(raw), e);
         }
     }
 
@@ -286,6 +399,11 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
+        LOGGER.debug("\t- progressBarCompleteCharacter={}", progressBarCompleteCharacter);
+        LOGGER.debug("\t- progressBarEnabled={}", progressBarEnabled);
+        LOGGER.debug("\t- progressBarFormat={}", progressBarFormat);
+        LOGGER.debug("\t- progressBarIncompleteCharacter={}", progressBarIncompleteCharacter);
+        LOGGER.debug("\t- progressBarLength={}", progressBarLength);
         LOGGER.debug("\t- redactionText={}", redactionText);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);

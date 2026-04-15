@@ -20,6 +20,10 @@ package net.zodac.tracker.framework.progress;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.ProgressBar;
 import io.github.kusoroadeolu.clique.configuration.ProgressBarConfiguration;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,23 +34,30 @@ import org.jspecify.annotations.Nullable;
  */
 public final class ProgressBarManager {
 
-    private static final int PROGRESS_BAR_LENGTH = 35;
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private @Nullable ProgressBar progressBar;
 
     /**
-     * Creates the progress bar for the given total tracker count and renders the initial (0%) state.
+     * Creates the progress bar for the given total tracker count and renders the initial (0%) state. Uses {@link ApplicationConfiguration} to
+     * configure the progress bar.
      *
      * @param total the total number of trackers to screenshot
      */
     public void start(final int total) {
-        final ProgressBarConfiguration progressBarConfiguration = ProgressBarConfiguration.builder()
-            .length(PROGRESS_BAR_LENGTH)
-            .complete('█')
-            .incomplete('░')
-            .format(":bar :percent% | :progress/:total | [:elapsed]")
-            .build();
-        progressBar = Clique.progressBar(total, progressBarConfiguration);
+        if (CONFIG.progressBarEnabled()) {
+            final ProgressBarConfiguration progressBarConfiguration = ProgressBarConfiguration.builder()
+                .length(CONFIG.progressBarLength())
+                .complete(CONFIG.progressBarCompleteCharacter())
+                .incomplete(CONFIG.progressBarIncompleteCharacter())
+                .format(CONFIG.progressBarFormat())
+                .build();
+            LOGGER.trace("Starting progress bar with configuration: {}", progressBarConfiguration);
+            progressBar = Clique.progressBar(total, progressBarConfiguration);
+        } else {
+            LOGGER.debug("Not starting progress bar");
+        }
     }
 
     /**
