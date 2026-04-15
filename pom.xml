@@ -33,6 +33,7 @@
 
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
+        <clique.version>4.0.1</clique.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-io.version>2.21.0</commons-io.version>
         <flatlaf.version>3.7.1</flatlaf.version>
@@ -128,6 +129,11 @@
                         <artifactId>selenium-remote-driver</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.github.kusoroadeolu</groupId>
+                <artifactId>clique-core</artifactId>
+                <version>${clique.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

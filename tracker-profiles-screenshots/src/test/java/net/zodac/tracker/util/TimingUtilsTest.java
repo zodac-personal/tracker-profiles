@@ -41,15 +41,15 @@ class TimingUtilsTest {
         "59000, 59s:000ms",
         "59999, 59s:999ms",
 
-        // Minutes + seconds + ms
-        "60000, 1m:00s:000ms",
-        "61015, 1m:01s:015ms",
-        "3599999, 59m:59s:999ms",
+        // Minutes + seconds (milliseconds dropped in output)
+        "60000, 1m:00s",
+        "61015, 1m:01s",
+        "3599999, 59m:59s",
 
-        // Hours (milliseconds dropped in output)
-        "3600000, 1h:00m:00s",
-        "3661000, 1h:01m:01s",
-        "7322000, 2h:02m:02s"
+        // Hours + minutes (seconds dropped in output)
+        "3600000, 1h:00m",
+        "3661000, 1h:01m",
+        "7322000, 2h:02m"
     })
     void testToNaturalTimeShouldFormatTimeCorrectly(final long inputMillis, final String expected) {
         final long input = TimeUnit.MILLISECONDS.toNanos(inputMillis);

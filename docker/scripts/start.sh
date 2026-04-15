@@ -9,7 +9,7 @@
 # Usage:           ./start.sh
 #
 # Requirements:
-#   - Browser (Chromium or Firefox) installed
+#   - Chromium Browser installed
 #   - Java installed and available on the system PATH
 #   - `tracker-profiles.jar` available at /app/tracker-profiles.jar
 #   - X display server running and accessible at DISPLAY=:0
@@ -17,8 +17,6 @@
 # Behavior:
 #   - Starts the web browser
 #   - Executes the Java JAR file
-#   - Outputs a colored success or error message based on Java's exit code
-#   - Tracks and prints total execution time in a natural format
 #   - On SIGINT (Ctrl+C), gracefully terminates the browser and Java PID (if started)
 #
 # Exit Codes:
@@ -30,8 +28,6 @@
 set -eu
 
 main() {
-    start_time=$(date +%s)
-
     chromium --display=:0 >/dev/null 2>&1 &
     BROWSER_PID=$!
 
@@ -41,35 +37,7 @@ main() {
       -jar /app/tracker-profiles.jar &
     JAVA_PID=$!
 
-    if wait "${JAVA_PID}"; then
-        printf '\033[32mScreenshots complete in %s\033[0m\n' "$(get_execution_time "${start_time}")"
-    else
-        printf '\033[31mTook screenshots with errors in %s, review logs\033[0m\n' "$(get_execution_time "${start_time}")"
-        exit 1
-    fi
-}
-
-get_execution_time() {
-    start_time="${1}"
-    end_time=$(date +%s)
-    elapsed_time=$((end_time - start_time))
-    _convert_to_natural_time "${elapsed_time}"
-}
-
-_convert_to_natural_time() {
-    elapsed_time="${1}"
-    if [ "${elapsed_time}" -lt 60 ]; then
-        echo "${elapsed_time}s"
-    elif [ "${elapsed_time}" -lt 3600 ]; then
-        elapsed_m=$((elapsed_time / 60))
-        elapsed_s=$((elapsed_time % 60))
-        printf "%dm:%02ds\n" "${elapsed_m}" "${elapsed_s}"
-    else
-        elapsed_h=$((elapsed_time / 3600))
-        elapsed_m=$(((elapsed_time % 3600) / 60))
-        elapsed_s=$((elapsed_time % 60))
-        printf "%dh:%02dm:%02ds\n" "${elapsed_h}" "${elapsed_m}" "${elapsed_s}"
-    fi
+    wait "${JAVA_PID}"
 }
 
 cleanup() {

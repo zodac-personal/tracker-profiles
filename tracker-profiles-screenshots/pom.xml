@@ -20,6 +20,10 @@
             <artifactId>ashot</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.kusoroadeolu</groupId>
+            <artifactId>clique-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
         </dependency>

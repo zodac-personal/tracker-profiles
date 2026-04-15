@@ -25,6 +25,8 @@ import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.progress.ProgressBarManager;
+import net.zodac.tracker.framework.progress.ProgressBarPrintStream;
 import net.zodac.tracker.util.StringUtils;
 import net.zodac.tracker.util.TimingUtils;
 import org.apache.logging.log4j.LogManager;
@@ -55,37 +57,45 @@ public final class ScreenshotOrchestrator {
      * @return the {@link ExitState} of the execution
      */
     public static ExitState start() {
-        final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();
-        LOGGER.trace("Printing trackersByType: {}", trackersByType);
-        final int numberOfTrackers = trackersByType.values()
-            .stream()
-            .mapToInt(Set::size)
-            .sum();
-        if (numberOfTrackers == 0) {
-            LOGGER.error("No trackers selected!");
-            return ExitState.FAILURE;
-        }
+        final ResultCollector resultCollector = ResultCollector.start();
+        final ProgressBarManager progressBarManager = new ProgressBarManager();
 
-        LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, StringUtils.pluralise(numberOfTrackers));
-        ensureOutputDirectoryExists();
+        try (final ProgressBarPrintStream progressBarPrintStream = new ProgressBarPrintStream(progressBarManager)) {
+            System.setOut(progressBarPrintStream);
 
-        TrackerRetriever.printTrackersInfo(trackersByType, CONFIG.trackerExecutionOrder());
-        final ResultCollector resultCollector = new ResultCollector();
-
-        // Execute in the order specified
-        for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
-            if (!trackersByType.containsKey(trackerType)) {
-                LOGGER.trace("No trackers of type {}", trackerType);
-                continue;
+            final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();
+            LOGGER.trace("Printing trackersByType: {}", trackersByType);
+            final int numberOfTrackers = trackersByType.values()
+                .stream()
+                .mapToInt(Set::size)
+                .sum();
+            if (numberOfTrackers == 0) {
+                LOGGER.error("No trackers selected!");
+                return ExitState.FAILURE;
             }
 
-            LOGGER.info("");
-            LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
-            for (final TrackerCredential trackerCredential : trackersByType.get(trackerType)) {
-                final long startNanos = System.nanoTime();
-                final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(trackerCredential);
-                resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
-                printExecutionTime(trackerCredential.name(), startNanos);
+            LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, StringUtils.pluralise(numberOfTrackers));
+            ensureOutputDirectoryExists();
+
+            TrackerRetriever.printTrackersInfo(trackersByType, CONFIG.trackerExecutionOrder());
+            progressBarManager.start(numberOfTrackers);
+
+            // Execute in the order specified
+            for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
+                if (!trackersByType.containsKey(trackerType)) {
+                    LOGGER.trace("No trackers of type {}", trackerType);
+                    continue;
+                }
+
+                LOGGER.info("");
+                LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
+                for (final TrackerCredential trackerCredential : trackersByType.get(trackerType)) {
+                    final long startNanos = System.nanoTime();
+                    final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(trackerCredential);
+                    resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
+                    printExecutionTime(trackerCredential.name(), startNanos);
+                    progressBarManager.tick();
+                }
             }
         }
 

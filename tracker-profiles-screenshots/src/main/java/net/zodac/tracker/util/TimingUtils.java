@@ -39,9 +39,12 @@ public final class TimingUtils {
      * <ul>
      *     <li>{@code 123ms}</li>
      *     <li>{@code 4s:037ms}</li>
-     *     <li>{@code 2m:04s:015ms}</li>
-     *     <li>{@code 1h:02m:09s}</li>
+     *     <li>{@code 2m:04s}</li>
+     *     <li>{@code 1h:02m}</li>
      * </ul>
+     *
+     * <p>
+     * Note that milliseconds are dropped if the time is greater than 1 minute. And seconds are dropped if the time is greater than 1 hour.
      *
      * @param elapsedTimeNanoseconds the elapsed time in nanoseconds
      * @return formatted duration {@link String}
@@ -51,24 +54,23 @@ public final class TimingUtils {
         final long totalMillis = TimeUnit.NANOSECONDS.toMillis(elapsedTimeNanoseconds);
 
         if (totalMillis < Duration.ofSeconds(1L).toMillis()) {
-            return String.format("%dms", totalMillis);
+            return "%dms".formatted(totalMillis);
         }
 
         final long totalSeconds = totalMillis / 1000;
         final long millisPart = totalMillis % 1000;
         if (totalSeconds < Duration.ofMinutes(1L).toSeconds()) {
-            return String.format("%ds:%03dms", totalSeconds, millisPart);
+            return "%ds:%03dms".formatted(totalSeconds, millisPart);
         }
 
         final long minutes = totalSeconds / 60;
         final long secondsPart = totalSeconds % 60;
         if (totalSeconds < Duration.ofHours(1L).toSeconds()) {
-            return String.format("%dm:%02ds:%03dms", minutes, secondsPart, millisPart);
+            return "%dm:%02ds".formatted(minutes, secondsPart);
         }
 
         final long hours = totalSeconds / 3600;
         final long minutesPart = (totalSeconds % 3600) / 60;
-        final long finalSecondsPart = totalSeconds % 60;
-        return String.format("%dh:%02dm:%02ds", hours, minutesPart, finalSecondsPart);
+        return "%dh:%02dm".formatted(hours, minutesPart);
     }
 }
