@@ -551,8 +551,6 @@ Every implementation relies on:
   linting rules, and the mandatory post-implementation checklist
 - **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the
   tracker to build the handler, which is refined over time
-- **[new_tracker_learnings.md](.claude/agents/new_tracker_learnings.md)**: A history of mistakes and guidance from prior
-  implementation sessions, reviewed by the agents before writing any new handler
 
 ### Human Review
 

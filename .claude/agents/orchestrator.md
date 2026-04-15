@@ -19,7 +19,7 @@ Use the following prompt:
 ```
 Implement a new TrackerHandler for `TrackerName` (https://tracker.site/, credentials: username/password).
 
-Start by reading .claude/agents/orchestrator.md and .claude/agents/new_tracker_learnings.md then coordinate the specialist agents.
+Start by reading .claude/agents/orchestrator.md then coordinate the specialist agents.
 
 Notes: Add any additional notes specific to this tracker here.
 ```
@@ -88,11 +88,11 @@ After writing the handler:
 
 1. Add a CSV entry to `docker/trackers_example.csv` (alphabetical order)
 2. Add a row to the correct table in `README.md` (alphabetical order):
-   - `HEADLESS` type → **"### Headless"** multi-column table (find the right letter-range column)
-   - `MANUAL` type → **"### Manual Interaction"** table
-   - Do **not** insert by finding the nearest alphabetical neighbour in the file — that neighbour may be
-     in the wrong section. Always locate the correct section first, then find the alphabetical position
-     within it.
+    - `HEADLESS` type → **"### Headless"** multi-column table (find the right letter-range column)
+    - `MANUAL` type → **"### Manual Interaction"** table
+    - Do **not** insert by finding the nearest alphabetical neighbour in the file — that neighbour may be
+      in the wrong section. Always locate the correct section first, then find the alphabetical position
+      within it.
 3. Increment the tracker count on the "There are currently **N** supported trackers" line in `README.md`
 4. Run tests and lints
 

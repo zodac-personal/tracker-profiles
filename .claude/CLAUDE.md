@@ -10,13 +10,7 @@ Maven profiles are activated by passing a property flag, not `-P`:
 # Build JAR only (no tests, no lints)
 mvn clean install
 
-# Run unit tests only
-mvn clean install -Dtests
-
-# Run all linters only (Checkstyle, PMD, SpotBugs, Javadoc, Enforcer, License, SortPom)
-mvn clean install -Dlint
-
-# Run everything (tests + lints), skipping the shade JAR
+# Run everything (tests + lints)
 mvn clean install -Dall
 ```
 
@@ -105,7 +99,90 @@ from `ipAddressElements()`, `emailElements()`, `passkeyElements()`, and `sensiti
 configured `RedactionType` (`TEXT` replacement, `BOX` overlay, or Gaussian `BLUR`). Redaction happens after profile page
 load, before the screenshot.
 
-### Linting Rules
+## Logging
+
+### Log Levels
+
+Log4j2 is used throughout. Apply levels as follows:
+
+- **`ERROR`** — any error that ends execution entirely
+- **`WARN`** — unexpected error that allows the next tracker to proceed
+- **`INFO`** — user-facing status updates on overall execution progress
+- **`DEBUG`** — detail on each discrete step (clicking buttons, filling fields, navigating pages)
+- **`TRACE`** — fine-grained detail on waits, timeouts, and low-level state changes
+
+### Exclusions
+
+`logging.properties` is used to suppress irrelevant Selenium log entries.
+
+### Progress Bar
+
+The progress bar (documented fully in README) is managed by `ProgressBarManager` and kept pinned to the
+bottom of the console by `ProgressBarPrintStream`, which replaces `System.out` at startup and intercepts
+every write. Any new code that produces console output must go through the standard logger — writing
+directly to `System.out` or `System.err` will corrupt the bar rendering.
+
+## Coding Standards
+
+### String Formatting
+
+Always use `"".formatted()` — never `String.format()`:
+
+```
+// Correct
+"Hello, %s!".formatted(name)
+
+// Wrong
+String.format("Hello, %s!", name)
+```
+
+For multi-line strings, use a text block with `.formatted()`. Do **not** use a text block for a single-line
+string — SpotBugs flags the trailing `\n` as `VA_FORMAT_STRING_USES_NEWLINE` when `.formatted()` is used:
+
+```
+// Multi-line — text block is correct
+"""
+<div class="%s">
+  <span>%s</span>
+</div>
+""".formatted(cssClass, content)
+
+// Single-line — plain string, not a text block
+"<div class=\"%s\">%s</div>".formatted(cssClass, content)
+```
+
+### Instantiation: Private Constructor + Static Factory
+
+Classes that are explicitly instantiated must use a **private constructor** and a **`static` factory method**
+instead of a public constructor. This applies to all non-abstract, non-utility, non-record classes.
+
+```
+// Correct
+public final class TrackerCredential {
+
+    private final String username;
+    private final String password;
+
+    private TrackerCredential(final String username, final String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public static TrackerCredential of(final String username, final String password) {
+        return new TrackerCredential(username, password);
+    }
+}
+
+// Wrong — public constructor
+public final class TrackerCredential {
+    public TrackerCredential(final String username, final String password) { ... }
+}
+```
+
+Name the factory method `of(...)` for value-type objects. Use a more descriptive verb (`create`, `from`,
+`forTracker`, etc.) when the method does non-trivial work beyond field assignment.
+
+### Linting
 
 Linter configs live in `ci/`:
 

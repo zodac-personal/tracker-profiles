@@ -16,6 +16,7 @@ specified by the orchestrator.
 Determine the correct selectors and overrides for:
 
 ### Login flow
+
 - `loginPageSelector()` — return non-null if the homepage does **not** auto-redirect to login. To determine
   this, **fetch the tracker's homepage** (not `/login`). If it renders the login form directly, return `null`.
   If it renders a landing page (e.g. "Please login to view torrents") with a link to the login page, return
@@ -29,6 +30,7 @@ Determine the correct selectors and overrides for:
   post-login page often shows the user's stats and this is a more meaningful confirmation of a successful login.
 
 ### Logout flow
+
 - `logoutButtonSelector()` — **required**, no default; must be interactable from the profile page
 - `additionalActionAfterLogoutClick()` — override if a confirmation dialog (e.g. a JavaScript `confirm()`
   alert) appears after clicking logout. To detect this: look for `confirm(` calls in the page's JavaScript
@@ -42,8 +44,26 @@ Determine the correct selectors and overrides for:
   redirect chain. Check by navigating manually: if clicking logout shows a "you have been logged out"
   landing page before the login form, this override is needed. Prefer this over overriding
   `postLogoutElementSelector()` when the intermediate page has few elements (false-positive risk).
+  **Any override must include a Javadoc block starting with `{@inheritDoc}` followed by a site-specific
+  explanation** of what causes the delay (e.g. a JS `setTimeout` redirect, a multi-step logout chain):
+
+  ```
+  /**
+   * {@inheritDoc}
+   *
+   * <p>
+   * For {@link MyTracker}, after clicking logout the server issues a JavaScript {@code setTimeout}
+   * redirect with a 2-second delay before reaching the login page. The default 500ms is
+   * insufficient for this redirect chain.
+   */
+  @Override
+  public Duration pageTransitionsDuration() {
+      return Duration.ofSeconds(3L);
+  }
+  ```
 
 ### Tracker type
+
 - `HEADLESS` — default (no annotation needed), no UI required
 - `MANUAL` — requires browser UI; use if captcha or 2FA is present
 
@@ -56,15 +76,23 @@ non-English users. Always use structural HTML attributes (`id`, `name`, `class`,
 or DOM position to identify elements. If an element has no distinguishing attribute, navigate to it from
 a nearby element that does (e.g. via `precedingSibling`, `followingSibling`, or `parent`).
 
-```java
+**Always use `atIndex(1)` (or the specific index) when targeting an `<a>` child — never use bare
+`.child(a)` without an index.** A `<li>` may gain a second anchor (e.g. an icon link alongside a text
+link); being explicit prevents silent breakage.
+
+**Be consistent when two selectors (`profileLinkSelector()` and `logoutButtonSelector()`) both descend
+into the same parent element.** Use the same predicate type (`atIndex` or `withClass`) for both sibling
+`<li>` children — mixing them makes it hard to verify correctness at a glance.
+
+```
 // Element with class
 XpathBuilder.from(div, withClass("some-class")).build()
 
 // Nested element
 XpathBuilder.from(form, withId("login-form")).child(input, withName("user")).build()
 
-// Index-based (1-indexed)
-XpathBuilder.from(ul, withClass("nav")).child(li, atIndex(2)).child(a).build()
+// Index-based (1-indexed) — always include atIndex on terminal <a>
+XpathBuilder.from(ul, withClass("nav")).child(li, atIndex(2)).child(a, atIndex(1)).build()
 
 // Last element
 XpathBuilder.from(ul, withClass("nav")).child(li, atLastIndex()).build()
@@ -80,7 +108,7 @@ Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingS
 
 If login/logout requires a dropdown, use this pattern:
 
-```java
+```
 @Override
 protected By profileLinkSelector() {  // also applies to logoutButtonSelector()
     openUserDropdownMenu();
@@ -133,11 +161,12 @@ grep -n "editout\|logout_menu\|logout" /tmp/home.html
 ```
 
 **`onmouseover` vs `onclick` dropdowns:** Always check the dropdown trigger's attributes:
+
 - `onmouseover="showMenu(...)"` with a navigable `href` → use `browserInteractionHelper.moveTo(element)`
   (hover only — `clickButton()` would follow the `href` and navigate away before the menu is usable)
 - `onclick` or `href="#"` → use `clickButton()` as normal
 
-```java
+```
 // onmouseover trigger — hover only:
 private void openUserDropdownMenu() {
     LOGGER.debug("\t\t- Hovering over dropdown trigger to make logout button interactable");
@@ -158,7 +187,7 @@ private void openUserDropdownMenu() {
 Some trackers only show the logout link on a specific page (e.g. a settings/control panel), not on the
 public profile page. In that case, `logoutButtonSelector()` must navigate there first:
 
-```java
+```
 @Override
 protected By logoutButtonSelector() {
     openControlPanel();
@@ -182,7 +211,7 @@ In that case `postLoginSelector()` **must** be overridden with a side-effect-fre
 
 Return findings as structured Java method stubs, e.g.:
 
-```java
+```
 // LOGIN FLOW
 @Override
 protected By usernameFieldSelector() {
