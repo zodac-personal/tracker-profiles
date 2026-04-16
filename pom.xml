@@ -16,7 +16,7 @@
     <properties>
         <!-- Project Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java-release>25</java-release>
+        <java-release>26</java-release>
         <maven-release>3.9.14</maven-release>
 
         <!-- Lint Properties -->

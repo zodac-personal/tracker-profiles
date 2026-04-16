@@ -37,7 +37,7 @@ RUN mkdir -p /usr/local/chromium && \
     python3 /usr/local/bin/patch_chromedriver.py
 
 # Stage 2: Create minimal JDK
-FROM eclipse-temurin:25.0.2_10-jdk AS jdk_builder
+FROM eclipse-temurin:26_35-jdk AS jdk_builder
 
 # Hardcoding the required modules instead of using $(jdeps --multi-release BASE --print-module-deps --ignore-missing-deps /tmp/tracker-profiles.jar)
 # Dependencies are unlikely to change, so this extra step is unnecessary for every build
@@ -62,7 +62,7 @@ RUN jlink --compress=zip-9 \
 
 # Stage 3: Build the Java artefact
 FROM maven:3.9.14 AS maven_base
-FROM eclipse-temurin:25.0.2_10-jdk AS java_app_builder
+FROM eclipse-temurin:26_35-jdk AS java_app_builder
 
 # Extract Maven binary and libraries from official Maven image
 COPY --from=maven_base /usr/share/maven /usr/share/maven

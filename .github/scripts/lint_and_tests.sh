@@ -22,7 +22,7 @@
 set -uo pipefail
 
 HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
-JDK_DOCKER_IMAGE="eclipse-temurin:25.0.2_10-jdk"
+JDK_DOCKER_IMAGE="eclipse-temurin:26_35-jdk"
 JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
 MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.0"
 MAVEN_DOCKER_IMAGE="maven:3.9.14"

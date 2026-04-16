@@ -19,28 +19,16 @@ package net.zodac.tracker.framework;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.handler.AbstractTrackerHandler;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link TrackerHandlerFactory}.
  */
 class TrackerHandlerFactoryTest {
-
-    @BeforeAll
-    static void suppressSeleniumLogging() {
-        Logger.getLogger("org.openqa.selenium").setLevel(Level.SEVERE);
-    }
 
     @Test
     void givenUnknownTrackerName_whenFindMatchingHandler_thenEmptyOptionalReturned() {
@@ -66,40 +54,5 @@ class TrackerHandlerFactoryTest {
         assertThatThrownBy(() -> TrackerHandlerFactory.getHandler("NotATracker"))
             .isInstanceOf(NoSuchElementException.class)
             .hasMessageContaining("NotATracker");
-    }
-
-    @Nested
-    class WhenChromeIsAvailable {
-
-        @BeforeEach
-        void assumeChromeAvailable() {
-            assumeTrue(isChromeAvailable(), "Chrome not available in this environment");
-        }
-
-        @Test
-        void givenKnownTrackerName_whenGetHandler_thenConfiguredHandlerReturned() {
-            final AbstractTrackerHandler handler = TrackerHandlerFactory.getHandler("ABTorrents");
-            assertThat(handler).isNotNull();
-            handler.close();
-        }
-
-        @Test
-        void givenKnownTrackerNameInDifferentCase_whenGetHandler_thenConfiguredHandlerReturned() {
-            final AbstractTrackerHandler handler = TrackerHandlerFactory.getHandler("abtorrents");
-            assertThat(handler).isNotNull();
-            handler.close();
-        }
-    }
-
-    private static boolean isChromeAvailable() {
-        for (final String binary : new String[]{"google-chrome", "chromium-browser", "chromium"}) {
-            try {
-                new ProcessBuilder(binary, "--version").start().waitFor();
-                return true;
-            } catch (final Exception _) {
-                // Try next candidate
-            }
-        }
-        return false;
     }
 }

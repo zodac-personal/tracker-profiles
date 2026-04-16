@@ -312,10 +312,14 @@ public class BrowserInteractionHelper {
     }
 
     private static void setBrowserAsActiveWindow() {
-        try {
-            LOGGER.trace("Setting Chromium browser as active window");
-            new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start();
+        LOGGER.trace("Setting Chromium browser as active window");
+        try (final Process process = new ProcessBuilder("wmctrl", "-x", "-a", "Chromium").start()) {
+            final int exitValue = process.waitFor();
+            LOGGER.trace("Process result: {}", exitValue);
         } catch (final IOException e) {
+            LOGGER.debug("Error setting browser as active window", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOGGER.debug("Error setting browser as active window", e);
         }
     }

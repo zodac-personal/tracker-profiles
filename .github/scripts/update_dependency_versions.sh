@@ -297,6 +297,74 @@ update_ubuntu_packages() {
     echo "✅ ${dockerfile#./} updated successfully with latest Ubuntu packages"
 }
 
+update_java_version() {
+    local dockerfile="${1}"
+    local workflows_dir=".github/workflows"
+    local lint_script=".github/scripts/lint_and_tests.sh"
+    local pom_xml="./pom.xml"
+
+    echo
+    echo "🔍 Fetching latest Java version..."
+
+    local available_releases
+    available_releases=$(curl -fsSL "https://api.adoptium.net/v3/info/available_releases")
+    local latest_major
+    latest_major=$(echo "${available_releases}" | jq -r '.most_recent_feature_release // empty')
+    if [[ -z "${latest_major}" ]]; then
+        echo "⚠️ Could not fetch latest Java version from Adoptium" >&2
+        return 1
+    fi
+
+    echo "  Latest Java major version: ${latest_major}"
+    echo "  Fetching full release details for Java ${latest_major}..."
+
+    local release_info
+    release_info=$(curl -fsSL \
+        "https://api.adoptium.net/v3/assets/latest/${latest_major}/hotspot?architecture=x64&image_type=jdk&os=linux")
+    local release_name
+    release_name=$(echo "${release_info}" | jq -r '.[0].release_name // empty')
+    if [[ -z "${release_name}" ]]; then
+        echo "⚠️ Could not fetch release details for Java ${latest_major} from Adoptium" >&2
+        return 1
+    fi
+
+    # Convert "jdk-26.0.0+7" → "26.0.0_7-jdk"
+    local docker_tag
+    docker_tag="$(echo "${release_name#jdk-}" | sed 's/+/_/')-jdk"
+
+    echo "  Docker tag: eclipse-temurin:${docker_tag}"
+    echo "  Verifying Docker image eclipse-temurin:${docker_tag} exists on Docker Hub..."
+
+    local http_status
+    http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+        "https://hub.docker.com/v2/repositories/library/eclipse-temurin/tags/${docker_tag}")
+    if [[ "${http_status}" != "200" ]]; then
+        echo "⚠️ Docker image eclipse-temurin:${docker_tag} not found on Docker Hub (HTTP ${http_status}), skipping update"
+        return 0
+    fi
+    echo "  ✅ Docker image eclipse-temurin:${docker_tag} confirmed on Docker Hub"
+
+    # Dockerfile (both FROM lines — jdk_builder and java_app_builder)
+    sed -i "s|FROM eclipse-temurin:[^ ]*-jdk|FROM eclipse-temurin:${docker_tag}|g" "${dockerfile}"
+
+    # lint_and_tests.sh
+    sed -i "s|JDK_DOCKER_IMAGE=\"eclipse-temurin:[^\"]*-jdk\"|JDK_DOCKER_IMAGE=\"eclipse-temurin:${docker_tag}\"|" "${lint_script}"
+
+    # pom.xml (major version only)
+    sed -i "s|<java-release>[0-9]*</java-release>|<java-release>${latest_major}</java-release>|" "${pom_xml}"
+
+    # All workflow files (major version only)
+    if [[ -d "${workflows_dir}" ]]; then
+        for workflow in "${workflows_dir}"/*.yml; do
+            if grep -q "java-version:" "${workflow}"; then
+                sed -i "s|java-version: '[0-9]*'|java-version: '${latest_major}'|g" "${workflow}"
+            fi
+        done
+    fi
+
+    echo "✅ Java updated to ${latest_major} (${docker_tag}) in pom.xml, Dockerfile, lint_and_tests.sh, and workflows"
+}
+
 update_pom_versions() {
     mvn versions:update-properties
     echo "✅ pom.xml updated successfully with latest Maven packages"
@@ -436,4 +504,5 @@ update_ubuntu_packages "${dockerfile}"      || echo "⚠️ Ubuntu packages upda
 update_requirements "${requirements}"       || echo "⚠️ Python requirements update failed, continuing..."
 update_pom_versions                         || echo "⚠️ Maven versions update failed, continuing..."
 update_maven_version "${dockerfile}"        || echo "⚠️ Maven version update failed, continuing..."
+update_java_version "${dockerfile}"         || echo "⚠️ Java version update failed, continuing..."
 update_github_actions                       || echo "⚠️ GitHub Actions update failed, continuing..."

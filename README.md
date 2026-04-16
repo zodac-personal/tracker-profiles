@@ -590,8 +590,7 @@ then verify manually afterwards.
 
 - [Apache Maven](https://maven.apache.org/download.cgi)
 - [Docker](https://docs.docker.com/engine/install/)
-- [Google Chrome](https://www.google.com/chrome/)
-- [Java](https://jdk.java.net/25/)
+- [Java](https://jdk.java.net/)
 
 ### Install Git Hooks
 
