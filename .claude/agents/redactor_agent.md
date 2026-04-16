@@ -34,7 +34,7 @@ multiple languages — the word "Address", "Email", or "Passkey" will differ per
 
 Only use structural HTML attributes that are language-neutral: `id`, `name`, `class`, `type`, `align`, etc.
 
-```
+```java
 // CORRECT — uses attribute, not text
 XpathBuilder.from(input, withType("email")).build()
 XpathBuilder.from(input, withName("seedboxip")).build()
@@ -47,7 +47,7 @@ XpathBuilder.from(label, withText("Email")).build()
 If the sensitive field's element has **no distinguishing attributes**, navigate to it via DOM structure
 (table/row/cell position). Prefer this over broad selectors that rely on CSS styling, which may change:
 
-```
+```java
 // Locate the IP cell by its position in the table structure
 XpathBuilder
     .from(td, withClass("embedded"))
@@ -72,7 +72,7 @@ grep -c "cf_chl_opt\|Just a moment" /tmp/home.html
 If the response contains `cf_chl_opt` or `<title>Just a moment...</title>`, the site is behind an
 interactive Cloudflare challenge. **Stop immediately** and return:
 
-```
+```text
 BLOCKED: Cloudflare verification required. Automated access is not possible.
 The orchestrator must ask the user to inspect this tracker manually in a browser.
 ```
@@ -113,7 +113,7 @@ stop and escalate to the user.
 
 Prefer semantic HTML attributes over CSS class names or text content:
 
-```
+```java
 // Best — semantic type attribute
 XpathBuilder.from(input, withType("email")).build()
 XpathBuilder.from(input, withType("password")).build()
@@ -131,7 +131,7 @@ XpathBuilder.from(td, withText("@")).build()
 
 For `sensitiveElements()`, the return type is `Map<String, By>` — include a description key:
 
-```
+```java
 @Override
 protected Map<String, By> sensitiveElements() {
     return Map.of(
@@ -153,7 +153,7 @@ Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingS
 Return findings as structured Java method stubs. If a category has no sensitive fields, state that
 explicitly so the orchestrator knows it was checked (not skipped).
 
-```
+```java
 // EMAIL
 @Override
 protected Collection<By> emailElements() {

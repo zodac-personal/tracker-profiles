@@ -43,7 +43,7 @@ username rendered as a link (e.g. `<h1>Welcome, <a href="userdetails.php?id=..."
 When the public profile URL contains a user-specific ID (e.g. `userdetails.php?id=250578`), do **not**
 use the full href — it won't match other users. Instead, use a structural selector:
 
-```
+```java
 // The username link is the only <a> inside the welcome <h1>
 XpathBuilder.from(NamedHtmlElement.of("h1")).child(a).build()
 ```

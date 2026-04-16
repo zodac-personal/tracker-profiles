@@ -26,7 +26,7 @@ Java implementation for each:
 You are invoked only when the profile agent has flagged at least one of these as likely present. Investigate
 all three regardless — the profile agent may have missed one.
 
----
+----
 
 ## Cloudflare Early Exit
 
@@ -98,8 +98,7 @@ orchestrator will flag this for manual verification.
 banner's accept/close button. Use `driver.findElement()` (not `waitForElementToBeInteractable`) since
 the banner is already present when `dismiss()` is called:
 
-```
-
+```java
 @Override
 public void dismiss() {
     final By bannerSelector = XpathBuilder
@@ -112,8 +111,7 @@ public void dismiss() {
 
 If the banner may or may not be present (e.g. only on first login), use `findElements` and iterate:
 
-```
-
+```java
 @Override
 public void dismiss() {
     final By bannerSelector = XpathBuilder
@@ -149,7 +147,7 @@ curl -s "https://tracker.site/styles/main.css" | grep -i "position.*fixed\|posit
 `unfixHeader()` has a working default. Use `By.tagName("header")` when the element is a plain `<header>`;
 fall back to `XpathBuilder` or `By.cssSelector()` for non-standard elements:
 
-```
+```java
 // Plain <header> element (most common):
 @Override
 public By headerSelector() {
@@ -192,7 +190,7 @@ or hides the sidebar. Look for elements with `data-target="#sidebar"`, `data-tog
 or class names like `sidebar-toggle`, `fa-bars`, `menu-toggle`. If found, prefer clicking the toggle
 over CSS manipulation — it uses the site's own mechanism and avoids side effects:
 
-```
+```java
 // Sidebar has a toggle button — click it to collapse/hide the sidebar:
 @Override
 public void unfixSidebar(final RemoteWebDriver driver) {
@@ -206,7 +204,7 @@ public void unfixSidebar(final RemoteWebDriver driver) {
 
 If no toggle exists, unfix via CSS:
 
-```
+```java
 // No toggle available — unfix the sidebar element directly:
 @Override
 public void unfixSidebar(final RemoteWebDriver driver) {
@@ -240,7 +238,7 @@ Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingS
 State a result for each of the three elements — either a Java stub or an explicit "not present" / "could
 not determine" note. This confirms each was checked, not skipped.
 
-```
+```java
 // COOKIE BANNER: present — dismiss() required
 @Override
 public void dismiss() {

@@ -16,7 +16,7 @@ post-implementation checklist.
 
 Use the following prompt:
 
-```
+```text
 Implement a new TrackerHandler for `TrackerName` (https://tracker.site/, credentials: username/password).
 
 Start by reading .claude/agents/orchestrator.md then coordinate the specialist agents.

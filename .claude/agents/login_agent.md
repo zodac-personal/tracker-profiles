@@ -19,7 +19,7 @@ Determine the correct selectors and overrides for:
 
 - `loginPageSelector()` — return non-null if the homepage does **not** auto-redirect to login. To determine
   this, **fetch the tracker's homepage** (not `/login`). If it renders the login form directly, return `null`.
-  If it renders a landing page (e.g. "Please login to view torrents") with a link to the login page, return
+  If it renders a landing page (e.g. "Please log in to view torrents") with a link to the login page, return
   the selector for that login link. Prefer a nav-bar login anchor over inline paragraph links.
 - `usernameFieldSelector()` — default is `By.name("username")`; override if different
 - `passwordFieldSelector()` — default is `By.name("password")`; override if different
@@ -45,22 +45,22 @@ Determine the correct selectors and overrides for:
   landing page before the login form, this override is needed. Prefer this over overriding
   `postLogoutElementSelector()` when the intermediate page has few elements (false-positive risk).
   **Any override must include a Javadoc block starting with `{@inheritDoc}` followed by a site-specific
-  explanation** of what causes the delay (e.g. a JS `setTimeout` redirect, a multi-step logout chain):
+  explanation** of what causes the delay (e.g. a JS `setTimeout` redirect, a multistep logout chain):
 
-  ```
-  /**
-   * {@inheritDoc}
-   *
-   * <p>
-   * For {@link MyTracker}, after clicking logout the server issues a JavaScript {@code setTimeout}
-   * redirect with a 2-second delay before reaching the login page. The default 500ms is
-   * insufficient for this redirect chain.
-   */
-  @Override
-  public Duration pageTransitionsDuration() {
-      return Duration.ofSeconds(3L);
-  }
-  ```
+```java
+/**
+ * {@inheritDoc}
+ *
+ * <p>
+ * For {@link MyTracker}, after clicking logout the server issues a JavaScript {@code setTimeout}
+ * redirect with a 2-second delay before reaching the login page. The default 500ms is
+ * insufficient for this redirect chain.
+ */
+@Override
+public Duration pageTransitionsDuration() {
+    return Duration.ofSeconds(3L);
+}
+```
 
 ### Tracker type
 
@@ -84,7 +84,7 @@ link); being explicit prevents silent breakage.
 into the same parent element.** Use the same predicate type (`atIndex` or `withClass`) for both sibling
 `<li>` children — mixing them makes it hard to verify correctness at a glance.
 
-```
+```java
 // Element with class
 XpathBuilder.from(div, withClass("some-class")).build()
 
@@ -108,7 +108,7 @@ Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingS
 
 If login/logout requires a dropdown, use this pattern:
 
-```
+```java
 @Override
 protected By profileLinkSelector() {  // also applies to logoutButtonSelector()
     openUserDropdownMenu();
@@ -138,7 +138,7 @@ grep -c "cf_chl_opt\|Just a moment" /tmp/home.html
 If the response contains `cf_chl_opt` or `<title>Just a moment...</title>`, the site is behind an
 interactive Cloudflare challenge. **Stop immediately** and return:
 
-```
+```text
 BLOCKED: Cloudflare verification required. Automated access is not possible.
 The orchestrator must ask the user to inspect this tracker manually in a browser.
 ```
@@ -166,7 +166,7 @@ grep -n "editout\|logout_menu\|logout" /tmp/home.html
   (hover only — `clickButton()` would follow the `href` and navigate away before the menu is usable)
 - `onclick` or `href="#"` → use `clickButton()` as normal
 
-```
+```java
 // onmouseover trigger — hover only:
 private void openUserDropdownMenu() {
     LOGGER.debug("\t\t- Hovering over dropdown trigger to make logout button interactable");
@@ -187,7 +187,7 @@ private void openUserDropdownMenu() {
 Some trackers only show the logout link on a specific page (e.g. a settings/control panel), not on the
 public profile page. In that case, `logoutButtonSelector()` must navigate there first:
 
-```
+```java
 @Override
 protected By logoutButtonSelector() {
     openControlPanel();
@@ -211,7 +211,7 @@ In that case `postLoginSelector()` **must** be overridden with a side-effect-fre
 
 Return findings as structured Java method stubs, e.g.:
 
-```
+```java
 // LOGIN FLOW
 @Override
 protected By usernameFieldSelector() {
