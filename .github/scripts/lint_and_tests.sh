@@ -1,0 +1,68 @@
+#!/bin/bash
+# ------------------------------------------------------------------------------
+# Script Name:     lint_and_tests.sh
+#
+# Description:     Lints and tests the project using Docker.
+#
+# Usage:           ./lint_and_tests.sh
+#
+# Requirements:
+#   - Docker must be installed and available on the system PATH
+#
+# Behavior:
+#   - Runs hadolint to lint the Dockerfile (config: ci/docker/.hadolint.yaml)
+#   - Runs markdownlint-cli2 to lint all Markdown files (config: ci/doc/.markdownlint.json)
+#   - Runs mvn to execute Java lints and tests
+#
+# Exit Codes:
+#   - 0: All linting and tests passed successfully
+#   - Non-zero: One or more linting errors or test failures occurred
+# ------------------------------------------------------------------------------
+
+set -uo pipefail
+
+HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
+JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
+MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.0"
+
+overall_exit_code=0
+
+echo
+echo "🐳 Running Dockerfile lint using [${HADOLINT_DOCKER_IMAGE}]"
+docker pull "${HADOLINT_DOCKER_IMAGE}" >/dev/null
+docker run --rm \
+    -v "${PWD}":/app \
+    -w /app \
+    "${HADOLINT_DOCKER_IMAGE}" \
+    hadolint --config ci/docker/.hadolint.yaml docker/Dockerfile \
+    || { echo "❌ Dockerfile lint failed"; overall_exit_code=1; }
+
+echo
+echo "🐳 Running Markdown lint using [${MARKDOWNLINT_DOCKER_IMAGE}]"
+docker pull "${MARKDOWNLINT_DOCKER_IMAGE}" >/dev/null
+docker run --rm \
+    -v "${PWD}":/app \
+    -w /app \
+    "${MARKDOWNLINT_DOCKER_IMAGE}" \
+    --config ci/doc/.markdownlint.json \
+    "**/*.md" "!RELEASE_NOTES.md" "!tracker-profiles-screenshots/target/**" \
+    || { echo "❌ Markdown lint failed"; overall_exit_code=1; }
+
+echo
+echo "🐳 Running Java lints and tests using [${JAVA_DOCKER_IMAGE}]"
+docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null
+docker run --rm -t \
+    -u "$(id -u):$(id -g)" \
+    -v "${PWD}":/app \
+    -v "${HOME}/.m2":/var/maven/.m2 \
+    -w /app \
+    --entrypoint mvn \
+    "${JAVA_DOCKER_IMAGE}" \
+    -Duser.home=/var/maven clean verify -Dall \
+    || { echo "❌ Java lints and tests failed"; overall_exit_code=1; }
+
+if [[ "${overall_exit_code}" -ne 0 ]]; then
+    echo
+    echo "❌ One or more steps failed"
+    exit 1
+fi
