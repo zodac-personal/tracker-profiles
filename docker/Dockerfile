@@ -36,23 +36,8 @@ RUN mkdir -p /usr/local/chromium && \
     chmod +x /usr/local/bin/patch_chromedriver.py && \
     python3 /usr/local/bin/patch_chromedriver.py
 
-# Stage 2: Build the Java artefact
-FROM maven:3.9.12-eclipse-temurin-25-alpine AS maven_builder
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the pom.xml files and build dependencies (to cache them)
-COPY pom.xml .
-COPY tracker-profiles-screenshots/pom.xml ./tracker-profiles-screenshots/pom.xml
-RUN mvn dependency:go-offline
-
-# Copy source code and build the project, with dependencies cached
-COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
-RUN mvn clean install
-
-# Stage 3: Create minimal JDK
-FROM eclipse-temurin:25.0.2_10-jdk AS java_builder
+# Stage 2: Create minimal JDK
+FROM eclipse-temurin:25.0.2_10-jdk AS jdk_builder
 
 # Hardcoding the required modules instead of using $(jdeps --multi-release BASE --print-module-deps --ignore-missing-deps /tmp/tracker-profiles.jar)
 # Dependencies are unlikely to change, so this extra step is unnecessary for every build
@@ -74,6 +59,28 @@ RUN jlink --compress=zip-9 \
         --output "/opt/jdk" && \
     strip -p --strip-unneeded "/opt/jdk/lib/server/libjvm.so" && \
     { find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true; }
+
+# Stage 3: Build the Java artefact
+FROM maven:3.9.12 AS maven_base
+FROM eclipse-temurin:25.0.2_10-jdk AS java_app_builder
+
+# Extract Maven binary and libraries from official Maven image
+COPY --from=maven_base /usr/share/maven /usr/share/maven
+ENV M2_HOME="/usr/share/maven"
+ENV MAVEN_HOME="/usr/share/maven"
+ENV PATH="${M2_HOME}/bin:${PATH}"
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the pom.xml files and build dependencies (to cache them)
+COPY pom.xml .
+COPY tracker-profiles-screenshots/pom.xml ./tracker-profiles-screenshots/pom.xml
+RUN mvn dependency:go-offline
+
+# Copy source code and build the project, with dependencies cached
+COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
+RUN mvn clean install
 
 # Runtime
 FROM debian:13.3-slim AS runtime
@@ -140,13 +147,13 @@ USER nonroot
 VOLUME /tmp/chrome-home
 
 # Copy JDK & JAR
-COPY --from=java_builder /opt/jdk /opt/jdk
+COPY --from=jdk_builder /opt/jdk /opt/jdk
 ENV JAVA_HOME="/opt/jdk"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
-COPY --from=maven_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
+COPY --from=java_app_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
 # Copy JUL config so start.sh can pass it via -Djava.util.logging.config.file; JUL re-reads this
 # file after every LogManager.reset(), which Selenium triggers on each RemoteWebDriver creation
-COPY --from=maven_builder /app/tracker-profiles-screenshots/src/main/resources/logging.properties logging.properties
+COPY --from=java_app_builder /app/tracker-profiles-screenshots/src/main/resources/logging.properties logging.properties
 
 # Start application
 CMD ["/app/start.sh"]
