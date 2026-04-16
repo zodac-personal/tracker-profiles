@@ -22,11 +22,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
-      - uses: DavidAnson/markdownlint-cli2-action@v19.1.0
+      - uses: DavidAnson/markdownlint-cli2-action@v23.0.0
         with:
           config: 'ci/doc/.markdownlint.json'
           globs: '**/*.md,!RELEASE_NOTES.md'

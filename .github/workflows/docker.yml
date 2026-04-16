@@ -22,13 +22,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
       # Docker linting
       - name: Run Hadolint and generate report
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.3.0
         with:
           config: ./ci/docker/.hadolint.yaml
           dockerfile: docker/Dockerfile
@@ -36,7 +36,7 @@ jobs:
 
       - name: Upload Hadolint report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: hadolint-report
           path: hadolint-report.json

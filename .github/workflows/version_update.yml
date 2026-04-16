@@ -21,12 +21,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
       - name: Cache local .m2
-        uses: actions/cache@v4
+        uses: actions/cache@v5.0.5
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set up maven
-        uses: s4u/setup-maven-action@v1.18.0
+        uses: s4u/setup-maven-action@v1.20.0
         with:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
@@ -45,7 +45,7 @@ jobs:
         run: .github/scripts/update_dependency_versions.sh
 
       - name: Save workspace for next job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: updated_versions-workspace
           path: .
@@ -61,12 +61,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
       - name: Cache local .m2
-        uses: actions/cache@v4
+        uses: actions/cache@v5.0.5
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -74,7 +74,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Set up maven
-        uses: s4u/setup-maven-action@v1.18.0
+        uses: s4u/setup-maven-action@v1.20.0
         with:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
@@ -82,7 +82,7 @@ jobs:
           maven-version: '3.9.11'
 
       - name: Download updated workspace
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: updated_versions-workspace
           path: .
@@ -113,7 +113,7 @@ jobs:
 
       - name: Push changes
         if: env.has_changes == 'true'
-        uses: ad-m/github-push-action@v0.8.0
+        uses: ad-m/github-push-action@v1.1.0
         with:
           github_token: ${{ secrets.PUSH_PAT }}
           branch: master

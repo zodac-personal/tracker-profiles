@@ -1,9 +1,9 @@
-# IntelliJ
+# IDE
 *.iml
 .vscode/
 .idea/
 
-# Build
+# Java Build
 *.bak
 *.jfr
 *.log
@@ -11,7 +11,7 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 target/
 
-# Python
+# Python Build
 __pycache__/
 *.pyc
 .ruff_cache
@@ -19,7 +19,6 @@ venv/
 downloaded_files/
 
 # Tracker details
-config.properties
 screenshots/
 trackers.csv
 
