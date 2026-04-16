@@ -36,6 +36,8 @@ import net.zodac.tracker.framework.config.RedactionType;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
 import net.zodac.tracker.framework.exception.TranslationException;
+import net.zodac.tracker.framework.progress.ProgressBarManager;
+import net.zodac.tracker.framework.progress.TrackerStep;
 import net.zodac.tracker.handler.AbstractTrackerHandler;
 import net.zodac.tracker.handler.definition.DoesNotScrollDuringScreenshot;
 import net.zodac.tracker.handler.definition.HasDismissibleElement;
@@ -73,11 +75,12 @@ final class ProfileScreenshotExecutor {
     /**
      * Attempts to take a screenshot for the given {@link TrackerCredential}.
      *
-     * @param trackerCredential details of the tracker to screenshot
+     * @param trackerCredential  details of the tracker to screenshot
+     * @param progressBarManager the progress bar manager to tick at each workflow step
      * @return {@code true} if screenshot was successful
      * @throws RuntimeException thrown if all attempts are exhausted due to a retryable failure with a known cause
      */
-    static boolean takeScreenshot(final TrackerCredential trackerCredential) {
+    static boolean takeScreenshot(final TrackerCredential trackerCredential, final ProgressBarManager progressBarManager) {
         LOGGER.info("");
         LOGGER.info("[{}]", trackerCredential.name());
 
@@ -89,7 +92,7 @@ final class ProfileScreenshotExecutor {
             }
 
             try {
-                final boolean screenshotResult = isSuccessfullyScreenshot(trackerCredential);
+                final boolean screenshotResult = isSuccessfullyScreenshot(trackerCredential, progressBarManager);
 
                 if (screenshotResult) {
                     LOGGER.trace("Successfully screenshot '{}' on attempt #{}", trackerCredential.name(), attempt);
@@ -106,11 +109,11 @@ final class ProfileScreenshotExecutor {
         return false;
     }
 
-    private static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential) {
+    private static boolean isSuccessfullyScreenshot(final TrackerCredential trackerCredential, final ProgressBarManager progressBarManager) {
         AbstractTrackerHandler trackerHandler = null;
         try { // NOPMD: UseTryWithResources - need access to the trackerHandler to take a screenshot on error
             trackerHandler = TrackerHandlerFactory.getHandler(trackerCredential.name());
-            screenshotProfile(trackerHandler, trackerCredential);
+            screenshotProfile(trackerHandler, trackerCredential, progressBarManager);
             return true;
         } catch (final CancelledInputException e) {
             LOGGER.debug("\t- User cancelled manual input for tracker '{}'", trackerCredential.name(), e);
@@ -221,7 +224,8 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential) throws IOException {
+    private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential,
+                                          final ProgressBarManager progressBarManager) throws IOException {
         LOGGER.trace("\t- Starting to take screenshot of profile");
         final List<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
         if (redactionsToExecute.isEmpty()) {
@@ -236,6 +240,7 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Opening tracker");
         trackerHandler.openTracker();
         trackerHandler.navigateToLoginPage(trackerCredential.name());
+        progressBarManager.tick(TrackerStep.OPEN_TRACKER);
 
         LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
         trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
@@ -244,9 +249,11 @@ final class ProfileScreenshotExecutor {
             trackerWithBanner.dismiss();
             LOGGER.info("\t- Banner has been cleared");
         }
+        progressBarManager.tick(TrackerStep.LOGIN);
 
         LOGGER.info("\t- Opening user profile page");
         trackerHandler.openProfilePage();
+        progressBarManager.tick(TrackerStep.OPEN_PROFILE_PAGE);
 
         final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
 
@@ -265,9 +272,11 @@ final class ProfileScreenshotExecutor {
         for (final RedactionType redactionType : effectiveRedactions) {
             takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
         }
+        progressBarManager.tick(TrackerStep.TAKE_SCREENSHOTS);
 
         trackerHandler.logout();
         LOGGER.info("\t- Logged out");
+        progressBarManager.tick(TrackerStep.LOGOUT);
     }
 
     private static void takeScreenshotForRedactionType(final AbstractTrackerHandler trackerHandler,

@@ -21,6 +21,8 @@
     - [Established Patterns](#established-patterns)
     - [Human Review](#human-review)
     - [Exceptions](#exceptions)
+        - [JavaScript Redaction](#javascript-redaction)
+        - [Progress Bar PrintStream](#progress-bar-printstream)
 - [Contributing](#contributing)
     - [Requirements](#requirements)
     - [Install Git Hooks](#install-git-hooks)
@@ -452,52 +454,59 @@ To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BR
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable                | Description                                                                                                                                                                                              | Default Value                                    |
-|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
-| *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                                             |
-| *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                                             |
-| *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                                                |
-| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)                                  |
-| *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                                             |
-| *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                     | true                                             |
-| *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                                             |
-| *FORCE_UI_BROWSER*                  | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                                            |
-| *INPUT_TIMEOUT_ENABLED*             | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                                            |
-| *INPUT_TIMEOUT_SECONDS*             | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input in [seconds]                                                                                                                    | 300                                              |
-| *JAVA_XMS*                          | The initial heap size for the Java process                                                                                                                                                               | 128m                                             |
-| *JAVA_XMX*                          | The maximum heap size for the Java process                                                                                                                                                               | 512m                                             |
-| *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                                             |
-| *NUMBER_OF_TRACKER_ATTEMPTS*        | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) [max of 5]                                                                      | 1                                                |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                                       |
-| *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots                                 |
-| *PROGRESS_BAR_COMPLETE_CHARACTER*   | The character used to render the completed portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_INCOMPLETE_CHARACTER*                                                            | █                                                |
-| *PROGRESS_BAR_ENABLED*              | Whether to render a progress bar at the bottom of the console output                                                                                                                                     | true                                             |
-| *PROGRESS_BAR_FORMAT*               | The format string for the [progress bar](#progress-bar) (must not be blank)                                                                                                                              | :bar :percent% \| :progress/:total \| [:elapsed] |
-| *PROGRESS_BAR_INCOMPLETE_CHARACTER* | The character used to render the incomplete portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_COMPLETE_CHARACTER*                                                             | ░                                                |
-| *PROGRESS_BAR_LENGTH*               | The length (in characters) of the [progress bar](#progress-bar) [min: 10, max: 80]                                                                                                                       | 35                                               |
-| *REDACTION_TEXT*                    | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                                             |
-| *REDACTION_TYPE*                    | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, REMOVE, TEXT]                                                  | BOX                                              |
-| *SCREENSHOT_EXISTS_ACTION*          | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                                   |
-| *TAKE_SCREENSHOT_ON_ERROR*          | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                                            |
-| *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                                              |
-| *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL                                  |
-| *TRACKER_INPUT_FILE_PATH*           | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv                    |
+| Environment Variable                | Description                                                                                                                                                                                              | Default Value                 |
+|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                          |
+| *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                          |
+| *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
+| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)               |
+| *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
+| *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
+| *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                          |
+| *FORCE_UI_BROWSER*                  | Forces a browser with UI for each tracker (even for headless trackers)                                                                                                                                   | false                         |
+| *INPUT_TIMEOUT_ENABLED*             | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
+| *INPUT_TIMEOUT_SECONDS*             | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input in [seconds]                                                                                                                    | 300                           |
+| *JAVA_XMS*                          | The initial heap size for the Java process                                                                                                                                                               | 128m                          |
+| *JAVA_XMX*                          | The maximum heap size for the Java process                                                                                                                                                               | 512m                          |
+| *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
+| *NUMBER_OF_TRACKER_ATTEMPTS*        | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) [max of 5]                                                                      | 1                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
+| *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
+| *PROGRESS_BAR_COMPLETE_CHARACTER*   | The character used to render the completed portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_INCOMPLETE_CHARACTER*                                                            | █                             |
+| *PROGRESS_BAR_ENABLED*              | Whether to render a progress bar at the bottom of the console output                                                                                                                                     | true                          |
+| *PROGRESS_BAR_FORMAT*               | The format string for the [progress bar](#progress-bar) (must not be blank)                                                                                                                              | :bar :percent% \| [:elapsed]  |
+| *PROGRESS_BAR_INCOMPLETE_CHARACTER* | The character used to render the incomplete portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_COMPLETE_CHARACTER*                                                             | ░                             |
+| *PROGRESS_BAR_LENGTH*               | The length (in characters) of the [progress bar](#progress-bar) [min: 10, max: 80]                                                                                                                       | 35                            |
+| *REDACTION_TEXT*                    | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                          |
+| *REDACTION_TYPE*                    | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, REMOVE, TEXT]                                                  | BOX                           |
+| *SCREENSHOT_EXISTS_ACTION*          | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
+| *TAKE_SCREENSHOT_ON_ERROR*          | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
+| *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
+| *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
+| *TRACKER_INPUT_FILE_PATH*           | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv |
 
 #### Progress Bar
 
 The progress bar is rendered at the bottom of the console output during execution, showing overall screenshot progress.
 It is powered by the [Clique](https://github.com/kusoroadeolu/Clique) library.
 
+The bar advances in fine-grained steps (login, profile page, each screenshot, logout) so the fill and percentage move
+smoothly. A tracker counter (`X/Y`) is always appended to the right of the rendered format string, showing how many
+trackers have fully completed regardless of how the format string is configured.
+
 The format string supports the following tokens, as defined in the
 [Clique source](https://github.com/kusoroadeolu/Clique/blob/main/docs/progress-bars.md):
 
-| Token       | Description                            |
-|-------------|----------------------------------------|
-| `:bar`      | The rendered progress bar itself       |
-| `:elapsed`  | Time elapsed since the bar was started |
-| `:percent`  | Completion percentage (0–100)          |
-| `:progress` | Number of completed ticks              |
-| `:total`    | Total number of ticks                  |
+| Token       | Description                                                                        |
+|-------------|------------------------------------------------------------------------------------|
+| `:bar`      | The rendered progress bar itself                                                   |
+| `:elapsed`  | Time elapsed since the bar was started                                             |
+| `:percent`  | Completion percentage (0–100), based on workflow steps not tracker count           |
+| `:progress` | Number of completed internal ticks (workflow steps, not trackers) — see note below |
+| `:total`    | Total number of internal ticks (workflow steps, not trackers) — see note below     |
+
+> **Note:** `:progress` and `:total` reflect the internal tick count used to drive the bar fill (workflow steps), not
+> the number of trackers. For a tracker counter, use the `X/Y` suffix that is always appended to the bar.
 
 > **Note:** When the JVM's native encoding is not UTF-8, multibyte characters passed via environment variable (such as
 > `█` and `░`) may arrive as individual bytes rather than a single character. I try to convert these appropriately, but
@@ -560,13 +569,20 @@ will be verified manually.
 
 ### Exceptions
 
-The one exception for the above is the
-[JavaScript code](./tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction) used in
-[BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java) and
-[BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java).
+#### JavaScript Redaction
 
-I don't know JavaScript well enough to perform this overlay-based redaction, but I verify against all tracker handlers
-when updates are made, to cover as many cases as possible.
+The [JavaScript redaction logic](./tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction) used in
+[BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java) and
+[BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java) is mostly AI
+created with little input from me. I don't know JavaScript well enough to perform this overlay-based redaction, but I
+verify against all tracker handlers when updates are made, to cover as many cases as possible.
+
+#### Progress Bar PrintStream
+
+The [ProgressBarPrintStream](tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/progress/ProgressBarPrintStream.java)
+contains some code for handling print streams to override the default console printing of
+the [Clique progress bar](#progress-bar). I'm not super well-versed in handling streams, so I use AI to make updates and
+then verify manually afterwards.
 
 ## Contributing
 

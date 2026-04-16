@@ -122,6 +122,16 @@ bottom of the console by `ProgressBarPrintStream`, which replaces `System.out` a
 every write. Any new code that produces console output must go through the standard logger — writing
 directly to `System.out` or `System.err` will corrupt the bar rendering.
 
+The Clique bar is driven by exactly multiple ticks per tracker (see `TrackerStep` for values). A separate
+tracker counter (`X/Y`) is appended by `ProgressBarManager.getProgressBarContent()`. Call `tick()` at each of the
+tracker steps inside `ProfileScreenshotExecutor`, and `tickTracker()` in `ScreenshotOrchestrator` after each tracker
+completes. The `:progress`/`:total` Clique tokens reflect raw tick counts, not tracker counts — users should
+rely on the appended `X/Y` suffix for tracker-level progress.
+
+The screenshot phase is always one tick regardless of how many redaction types are configured — this is
+intentional, because `hasSensitiveInformation()` is determined at runtime per handler, making the actual
+screenshot count unknowable upfront.
+
 ## Coding Standards
 
 ### String Formatting
