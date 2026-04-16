@@ -4,6 +4,8 @@ on:
   push:
     branches: [ master ]
     paths:
+      - '.claude/CLAUDE.md'
+      - '.claude/agents/*.md'
       - '.github/workflows/doc.yml'
       - 'ci/doc/.markdownlint.json'
       - 'README.md'
@@ -27,5 +29,5 @@ jobs:
       - uses: DavidAnson/markdownlint-cli2-action@v19.1.0
         with:
           config: 'ci/doc/.markdownlint.json'
-          globs: 'README.md'
+          globs: '**/*.md,!RELEASE_NOTES.md'
           separator: ','

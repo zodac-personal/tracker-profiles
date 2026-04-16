@@ -203,5 +203,6 @@ Linter configs live in `ci/`:
 
 Suppress only when genuinely necessary. The codebase has very few suppressions — keep it that way.
 
-Markdown files have a maximum line length of 120 characters. Always run the IDE formatter (Ctrl+Shift+F) on any `.md`
+Markdown files follow `ci/doc/.markdownlint.json`: body lines max 150 characters, heading lines max 120 characters,
+code block lines max 200 characters (tables are exempt). Always run the IDE formatter (Ctrl+Shift+F) on any `.md`
 file after editing.
