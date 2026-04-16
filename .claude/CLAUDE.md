@@ -138,7 +138,7 @@ screenshot count unknowable upfront.
 
 Always use `"".formatted()` — never `String.format()`:
 
-```
+```java
 // Correct
 "Hello, %s!".formatted(name)
 
@@ -149,7 +149,7 @@ String.format("Hello, %s!", name)
 For multi-line strings, use a text block with `.formatted()`. Do **not** use a text block for a single-line
 string — SpotBugs flags the trailing `\n` as `VA_FORMAT_STRING_USES_NEWLINE` when `.formatted()` is used:
 
-```
+```java
 // Multi-line — text block is correct
 """
 <div class="%s">
@@ -166,7 +166,7 @@ string — SpotBugs flags the trailing `\n` as `VA_FORMAT_STRING_USES_NEWLINE` w
 Classes that are explicitly instantiated must use a **private constructor** and a **`static` factory method**
 instead of a public constructor. This applies to all non-abstract, non-utility, non-record classes.
 
-```
+```java
 // Correct
 public final class TrackerCredential {
 

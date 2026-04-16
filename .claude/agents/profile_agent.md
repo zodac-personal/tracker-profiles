@@ -64,7 +64,7 @@ agent. Report `YES`, `NO`, or `UNSURE` for each:
 - **Cookie/consent banner** — look for elements with classes or ids containing `cookie`, `consent`, `gdpr`,
   `banner`, or `notice`; note that banners are often JS-rendered and may not appear in static HTML
 
-```
+```text
 // PAGE STRUCTURE FLAGS
 // Fixed header:  YES / NO / UNSURE
 // Fixed sidebar: YES / NO / UNSURE
@@ -84,7 +84,7 @@ a nearby element that does (e.g. via `precedingSibling`, `followingSibling`, or 
 `.child(a)` without an index.** A container may gain extra anchors over time; being explicit prevents
 silent breakage.
 
-```
+```java
 // Element with class
 XpathBuilder.from(div, withClass("profile-header")).build()
 
@@ -113,7 +113,7 @@ The orchestrator must override `postLoginSelector()` with a side-effect-free sel
 
 Return findings as structured Java method stubs, e.g.:
 
-```
+```java
 // PROFILE NAVIGATION
 @Override
 protected By profileLinkSelector() {
@@ -147,7 +147,7 @@ grep -c "cf_chl_opt\|Just a moment" /tmp/home.html
 If the response contains `cf_chl_opt` or `<title>Just a moment...</title>`, the site is behind an
 interactive Cloudflare challenge. **Stop immediately** and return:
 
-```
+```text
 BLOCKED: Cloudflare verification required. Automated access is not possible.
 The orchestrator must ask the user to inspect this tracker manually in a browser.
 ```

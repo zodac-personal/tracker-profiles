@@ -42,7 +42,7 @@ grep -c "cf_chl_opt\|Just a moment" /tmp/home.html
 If the response contains `cf_chl_opt` or `<title>Just a moment...</title>`, the site is behind an
 interactive Cloudflare challenge. **Stop immediately** and return:
 
-```
+```text
 BLOCKED: Cloudflare verification required. Automated access is not possible.
 The orchestrator must ask the user to inspect this tracker manually in a browser.
 ```
@@ -69,7 +69,7 @@ curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt \
   "https://tracker.site/profile" -o /tmp/profile.html
 ```
 
----
+----
 
 ## Cookie / Consent Banner (`HasDismissibleElement`)
 
@@ -77,15 +77,20 @@ Cookie banners are often only rendered after the first login, or conditionally b
 value. They may not be present in static HTML — look for them in:
 
 1. **Inline `<script>` blocks** — search for banner/modal logic:
+
    ```bash
    grep -i "cookie\|consent\|gdpr\|banner\|notice\|modal\|dismiss" /tmp/profile.html | grep -v "\.css\|<style"
    ```
+
 2. **Hidden elements** — some banners are in the DOM but hidden until triggered:
+
    ```bash
    grep -i "cookie\|consent\|gdpr" /tmp/profile.html | grep -i "hidden\|display.*none\|visibility"
    ```
+
 3. **CSS class names** in `<style>` blocks — a cookie banner often has a stylesheet entry even when
    the element itself is JS-rendered:
+
    ```bash
    grep -i "cookie\|consent\|gdpr\|banner" /tmp/profile.html | grep "class\|id\|{" | head -20
    ```
@@ -124,7 +129,7 @@ public void dismiss() {
 }
 ```
 
----
+----
 
 ## Fixed / Sticky Header (`HasFixedHeader`)
 
@@ -170,7 +175,7 @@ public By headerSelector() {
 Only override `unfixHeader()` if the default CSS removal is insufficient (rare — see `Torrenting.java`
 for a JS-injection example).
 
----
+----
 
 ## Fixed / Sticky Sidebar (`HasFixedSidebar`)
 
@@ -218,7 +223,7 @@ If unfixing the sidebar causes a layout shift (e.g. the main content div expands
 `browserInteractionHelper.unwrapElement(element)` to restore normal sizing — see the default
 `unfixSidebar()` implementation in `HasFixedSidebar.java` for reference.
 
----
+----
 
 ## XpathBuilder Rules
 
@@ -231,7 +236,7 @@ single stable attribute uniquely identifies the element (`By.id`, `By.tagName`, 
 Available predicates: `withClass`, `withId`, `withName`, `withType`, `withAttribute`, `atIndex`, `atLastIndex`
 Available axes: `child`, `parent`, `descendant`, `followingSibling`, `precedingSibling`, `navigateTo(...)`
 
----
+----
 
 ## Output Format
 
