@@ -58,7 +58,11 @@ update_requirements() {
             # Match 'package>=version'
             if [[ $line =~ ^([a-zA-Z0-9._-]+)'>='([0-9a-zA-Z._-]+)$ ]]; then
                 package="${BASH_REMATCH[1]}"
-                latest_version=$(get_pypi_version "${package}")
+                if ! latest_version=$(get_pypi_version "${package}"); then
+                    echo "  ⚠️ Skipping ${package} (keeping existing version)"
+                    echo "${line}" >>"${requirements}.tmp"
+                    continue
+                fi
                 echo "  ${package}=${latest_version}"
                 echo "${package}>=${latest_version}" >>"${requirements}.tmp"
 
@@ -87,7 +91,7 @@ update_debian_packages() {
 
     if ! grep -q "${DEBIAN_START_MARKER}" "${dockerfile}" || ! grep -q "${DEBIAN_END_MARKER}" "${dockerfile}"; then
         echo "❌ Could not find Debian marker lines in ${dockerfile}"
-        exit 1
+        return 1
     fi
 
     section_count=$(grep -c "${DEBIAN_START_MARKER}" "${dockerfile}")
@@ -96,10 +100,6 @@ update_debian_packages() {
     echo "🔍 Fetching latest dockerfile Debian package versions..."
     # Pull latest debian image
     docker pull "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" >/dev/null
-
-    get_debian_version() {
-        docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
-    }
 
     for ((section = 1; section <= section_count; section++)); do
         echo "[Section ${section}/${section_count}]"
@@ -116,19 +116,31 @@ update_debian_packages() {
 
         if [[ "${#package_names[@]}" -eq 0 ]]; then
             echo "❌ No package names found in section ${section}"
-            exit 1
+            rm -f debian_block.txt "${dockerfile}.tmp"
+            return 1
         fi
 
         unset debian_versions
         declare -A debian_versions
 
+        # Single container: update apt once, then query all packages together
+        versions_raw=$(docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c \
+            "apt-get update -qq 2>/dev/null && apt-cache policy ${package_names[*]}")
+
+        while IFS='=' read -r pkg ver; do
+            [[ -n "${pkg}" && -n "${ver}" ]] && debian_versions["${pkg}"]="${ver}"
+        done < <(echo "${versions_raw}" | awk '
+            /^[a-z0-9]/ { pkg=$1; sub(/:$/, "", pkg) }
+            /Candidate:/  { print pkg "=" $2 }
+        ')
+
         for package in "${package_names[@]}"; do
-            version=$(get_debian_version "${package}")
+            version="${debian_versions["${package}"]:-}"
             if [[ -z "${version}" ]]; then
                 echo "❌ Failed to get version for: ${package}"
-                exit 1
+                rm -f debian_block.txt "${dockerfile}.tmp"
+                return 1
             fi
-            debian_versions["${package}"]="${version}"
             echo "  ${package}=${version}"
         done
 
@@ -196,10 +208,6 @@ update_ubuntu_packages() {
     # Pull latest ubuntu image
     docker pull "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" >/dev/null
 
-    get_ubuntu_version() {
-        docker run --rm "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" sh -c "apt-get update -qq 2>/dev/null && apt-cache policy ${1}" | awk '/Candidate:/ { print $2 }'
-    }
-
     for ((section = 1; section <= section_count; section++)); do
         echo "[Section ${section}/${section_count}]"
 
@@ -215,19 +223,31 @@ update_ubuntu_packages() {
 
         if [[ "${#package_names[@]}" -eq 0 ]]; then
             echo "❌ No package names found in section ${section}"
-            exit 1
+            rm -f ubuntu_block.txt "${dockerfile}.tmp"
+            return 1
         fi
 
         unset ubuntu_versions
         declare -A ubuntu_versions
 
+        # Single container: update apt once, then query all packages together
+        versions_raw=$(docker run --rm "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" sh -c \
+            "apt-get update -qq 2>/dev/null && apt-cache policy ${package_names[*]}")
+
+        while IFS='=' read -r pkg ver; do
+            [[ -n "${pkg}" && -n "${ver}" ]] && ubuntu_versions["${pkg}"]="${ver}"
+        done < <(echo "${versions_raw}" | awk '
+            /^[a-z0-9]/ { pkg=$1; sub(/:$/, "", pkg) }
+            /Candidate:/  { print pkg "=" $2 }
+        ')
+
         for package in "${package_names[@]}"; do
-            version=$(get_ubuntu_version "${package}")
+            version="${ubuntu_versions["${package}"]:-}"
             if [[ -z "${version}" ]]; then
                 echo "❌ Failed to get version for: ${package}"
-                exit 1
+                rm -f ubuntu_block.txt "${dockerfile}.tmp"
+                return 1
             fi
-            ubuntu_versions["${package}"]="${version}"
             echo "  ${package}=${version}"
         done
 
@@ -291,6 +311,67 @@ update_pom_versions() {
     echo "✅ pom.xml updated successfully with latest Maven packages"
 }
 
+get_github_action_version() {
+    local action="${1}"
+    local curl_args=(-fsSL)
+
+    if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+    fi
+
+    local version
+    version=$(curl "${curl_args[@]}" "https://api.github.com/repos/${action}/releases/latest" | jq -r '.tag_name // empty')
+    if [[ -z "${version}" ]]; then
+        echo "⚠️ Could not fetch GitHub release version for ${action}" >&2
+        return 1
+    fi
+    echo "${version}"
+}
+
+update_github_actions() {
+    local workflows_dir=".github/workflows"
+
+    if [[ ! -d "${workflows_dir}" ]]; then
+        echo "⚠️ No workflows directory found at ${workflows_dir}, skipping"
+        return 0
+    fi
+
+    echo
+    echo "🔍 Fetching latest GitHub Action versions..."
+
+    # Collect unique 'owner/repo@version' references from all workflow files
+    mapfile -t action_refs < <(
+        grep -rh 'uses:' "${workflows_dir}"/*.yml \
+            | grep -oP 'uses:\s+\K[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+@\S+' \
+            | sort -u
+    )
+
+    if [[ "${#action_refs[@]}" -eq 0 ]]; then
+        echo "  No action references found in ${workflows_dir}"
+        return 0
+    fi
+
+    for ref in "${action_refs[@]}"; do
+        action="${ref%@*}"
+        current_version="${ref#*@}"
+
+        if ! latest_version=$(get_github_action_version "${action}"); then
+            continue
+        fi
+
+        if [[ "${current_version}" == "${latest_version}" ]]; then
+            echo "  ${action}=${latest_version} (already up-to-date)"
+        else
+            echo "  ${action}: ${current_version} → ${latest_version}"
+            for workflow in "${workflows_dir}"/*.yml; do
+                sed -i "s|${action}@${current_version}|${action}@${latest_version}|g" "${workflow}"
+            done
+        fi
+    done
+
+    echo "✅ ${workflows_dir} updated successfully with latest GitHub Actions"
+}
+
 # Default paths assume the script is being run from the root of the project
 dockerfile="${1:-./docker/Dockerfile}"
 requirements="${2:-./docker/config/requirements.txt}"
@@ -304,7 +385,8 @@ if [[ ! -f "${requirements}" ]]; then
     exit 1
 fi
 
-update_debian_packages "${dockerfile}"
-update_ubuntu_packages "${dockerfile}"
-update_requirements "${requirements}"
-update_pom_versions
+update_debian_packages "${dockerfile}"  || echo "⚠️ Debian packages update failed, continuing..."
+update_ubuntu_packages "${dockerfile}"  || echo "⚠️ Ubuntu packages update failed, continuing..."
+update_requirements "${requirements}"   || echo "⚠️ Python requirements update failed, continuing..."
+update_pom_versions                     || echo "⚠️ Maven versions update failed, continuing..."
+update_github_actions                   || echo "⚠️ GitHub Actions update failed, continuing..."
