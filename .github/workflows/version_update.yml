@@ -39,7 +39,7 @@ jobs:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
           java-version: '25'
-          maven-version: '3.9.11'
+          maven-version: '3.9.14'
 
       - name: Update project versions
         run: .github/scripts/update_dependency_versions.sh
@@ -79,7 +79,7 @@ jobs:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
           java-version: '25'
-          maven-version: '3.9.11'
+          maven-version: '3.9.14'
 
       - name: Download updated workspace
         uses: actions/download-artifact@v8.0.1

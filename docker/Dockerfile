@@ -61,7 +61,7 @@ RUN jlink --compress=zip-9 \
     { find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true; }
 
 # Stage 3: Build the Java artefact
-FROM maven:3.9.12 AS maven_base
+FROM maven:3.9.14 AS maven_base
 FROM eclipse-temurin:25.0.2_10-jdk AS java_app_builder
 
 # Extract Maven binary and libraries from official Maven image

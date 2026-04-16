@@ -39,7 +39,7 @@ jobs:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
           java-version: '25'
-          maven-version: '3.9.11'
+          maven-version: '3.9.14'
 
       - name: Update license year
         run: |

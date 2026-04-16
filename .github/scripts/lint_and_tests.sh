@@ -22,8 +22,10 @@
 set -uo pipefail
 
 HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
-JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
+JDK_DOCKER_IMAGE="eclipse-temurin:25.0.2_10-jdk"
+JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
 MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.0"
+MAVEN_DOCKER_IMAGE="maven:3.9.14"
 
 overall_exit_code=0
 
@@ -49,15 +51,24 @@ docker run --rm \
     || { echo "❌ Markdown lint failed"; overall_exit_code=1; }
 
 echo
-echo "🐳 Running Java lints and tests using [${JAVA_DOCKER_IMAGE}]"
-docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null
+echo "🐳 Running Java lints and tests using [${MAVEN_DOCKER_IMAGE}] + [${JDK_DOCKER_IMAGE}]"
+docker pull "${MAVEN_DOCKER_IMAGE}" >/dev/null
+docker pull "${JDK_DOCKER_IMAGE}" >/dev/null
+docker build -t "${JAVA_BUILD_IMAGE}" - <<EOF
+FROM ${MAVEN_DOCKER_IMAGE} AS maven_base
+FROM ${JDK_DOCKER_IMAGE}
+COPY --from=maven_base /usr/share/maven /usr/share/maven
+ENV M2_HOME="/usr/share/maven"
+ENV MAVEN_HOME="/usr/share/maven"
+ENV PATH="\${M2_HOME}/bin:\${PATH}"
+EOF
 docker run --rm -t \
     -u "$(id -u):$(id -g)" \
     -v "${PWD}":/app \
     -v "${HOME}/.m2":/var/maven/.m2 \
     -w /app \
     --entrypoint mvn \
-    "${JAVA_DOCKER_IMAGE}" \
+    "${JAVA_BUILD_IMAGE}" \
     -Duser.home=/var/maven clean verify -Dall \
     || { echo "❌ Java lints and tests failed"; overall_exit_code=1; }
 

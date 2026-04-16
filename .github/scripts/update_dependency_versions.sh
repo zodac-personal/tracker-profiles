@@ -298,17 +298,63 @@ update_ubuntu_packages() {
 }
 
 update_pom_versions() {
-    local JAVA_DOCKER_IMAGE="maven:3.9.12-eclipse-temurin-25-alpine"
-
-    docker pull "${JAVA_DOCKER_IMAGE}" >/dev/null &&
-        docker run --rm -t \
-            -v "${PWD}":/app \
-            -v "${HOME}/.m2":/root/.m2 \
-            -w /app \
-            "${JAVA_DOCKER_IMAGE}" \
-            mvn versions:update-properties
-
+    mvn versions:update-properties
     echo "✅ pom.xml updated successfully with latest Maven packages"
+}
+
+update_maven_version() {
+    local dockerfile="${1}"
+    local workflows_dir=".github/workflows"
+    local lint_script=".github/scripts/lint_and_tests.sh"
+    local pom_xml="./pom.xml"
+
+    echo
+    echo "🔍 Fetching latest Maven version..."
+
+    local curl_args=(-fsSL)
+    if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+    fi
+
+    local latest_version
+    latest_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/apache/maven/releases/latest" | jq -r '.tag_name // empty')
+    if [[ -z "${latest_version}" ]]; then
+        echo "⚠️ Could not fetch latest Maven version from GitHub" >&2
+        return 1
+    fi
+    latest_version="${latest_version#maven-}"
+
+    echo "  Latest Maven version: ${latest_version}"
+    echo "  Verifying Docker image maven:${latest_version} exists on Docker Hub..."
+
+    local http_status
+    http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+        "https://hub.docker.com/v2/repositories/library/maven/tags/${latest_version}")
+    if [[ "${http_status}" != "200" ]]; then
+        echo "⚠️ Docker image maven:${latest_version} not found on Docker Hub (HTTP ${http_status}), skipping update"
+        return 0
+    fi
+    echo "  ✅ Docker image maven:${latest_version} confirmed on Docker Hub"
+
+    # pom.xml
+    sed -i "s|<maven-release>[^<]*</maven-release>|<maven-release>${latest_version}</maven-release>|" "${pom_xml}"
+
+    # Dockerfile
+    sed -i "s|FROM maven:[^ ]* AS maven_base|FROM maven:${latest_version} AS maven_base|" "${dockerfile}"
+
+    # lint_and_tests.sh
+    sed -i "s|MAVEN_DOCKER_IMAGE=\"maven:[^\"]*\"|MAVEN_DOCKER_IMAGE=\"maven:${latest_version}\"|" "${lint_script}"
+
+    # All workflow files
+    if [[ -d "${workflows_dir}" ]]; then
+        for workflow in "${workflows_dir}"/*.yml; do
+            if grep -q "maven-version:" "${workflow}"; then
+                sed -i "s|maven-version: '[0-9.]*'|maven-version: '${latest_version}'|g" "${workflow}"
+            fi
+        done
+    fi
+
+    echo "✅ Maven updated to ${latest_version} in pom.xml, Dockerfile, lint_and_tests.sh, and workflows"
 }
 
 get_github_action_version() {
@@ -385,8 +431,9 @@ if [[ ! -f "${requirements}" ]]; then
     exit 1
 fi
 
-update_debian_packages "${dockerfile}"  || echo "⚠️ Debian packages update failed, continuing..."
-update_ubuntu_packages "${dockerfile}"  || echo "⚠️ Ubuntu packages update failed, continuing..."
-update_requirements "${requirements}"   || echo "⚠️ Python requirements update failed, continuing..."
-update_pom_versions                     || echo "⚠️ Maven versions update failed, continuing..."
-update_github_actions                   || echo "⚠️ GitHub Actions update failed, continuing..."
+update_debian_packages "${dockerfile}"      || echo "⚠️ Debian packages update failed, continuing..."
+update_ubuntu_packages "${dockerfile}"      || echo "⚠️ Ubuntu packages update failed, continuing..."
+update_requirements "${requirements}"       || echo "⚠️ Python requirements update failed, continuing..."
+update_pom_versions                         || echo "⚠️ Maven versions update failed, continuing..."
+update_maven_version "${dockerfile}"        || echo "⚠️ Maven version update failed, continuing..."
+update_github_actions                       || echo "⚠️ GitHub Actions update failed, continuing..."
