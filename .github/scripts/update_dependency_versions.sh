@@ -36,7 +36,7 @@
 
 set -euo pipefail
 
-DEBIAN_DOCKER_IMAGE_VERSION="13.3"
+DEBIAN_DOCKER_IMAGE_VERSION="13.4"
 UBUNTU_DOCKER_IMAGE_VERSION="24.04"
 
 get_pypi_version() {
@@ -297,6 +297,124 @@ update_ubuntu_packages() {
     echo "✅ ${dockerfile#./} updated successfully with latest Ubuntu packages"
 }
 
+update_debian_image_version() {
+    local dockerfile="${1}"
+
+    echo
+    echo "🔍 Fetching latest Debian 13 image version..."
+
+    local tags_json
+    tags_json=$(curl -fsSL "https://hub.docker.com/v2/repositories/library/debian/tags?name=13.&page_size=25&ordering=last_updated")
+    local latest_version
+    latest_version=$(echo "${tags_json}" | jq -r '.results[].name' \
+        | grep -P '^13\.[0-9]+-slim$' | sed 's/-slim//' | sort -t. -k2 -n | tail -1)
+
+    if [[ -z "${latest_version}" ]]; then
+        echo "⚠️ Could not determine latest Debian 13 point release from Docker Hub" >&2
+        return 1
+    fi
+
+    echo "  Latest Debian version: ${latest_version}"
+
+    # Dockerfile FROM line
+    sed -i "s|FROM debian:[0-9.]*-slim|FROM debian:${latest_version}-slim|g" "${dockerfile}"
+
+    # DEBIAN_DOCKER_IMAGE_VERSION in this script (used to spin up containers for apt checks)
+    sed -i "s|DEBIAN_DOCKER_IMAGE_VERSION=\"[0-9.]*\"|DEBIAN_DOCKER_IMAGE_VERSION=\"${latest_version}\"|" "${BASH_SOURCE[0]}"
+
+    echo "✅ Debian image updated to ${latest_version} in Dockerfile and script"
+}
+
+update_python_image_version() {
+    local dockerfile="${1}"
+
+    echo
+    echo "🔍 Fetching latest Python image version..."
+
+    local curl_args=(-fsSL)
+    if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+    fi
+
+    local latest_tag
+    latest_tag=$(curl "${curl_args[@]}" "https://api.github.com/repos/python/cpython/releases/latest" \
+        | jq -r '.tag_name // empty')
+    if [[ -z "${latest_tag}" ]]; then
+        echo "⚠️ Could not fetch latest Python version from GitHub" >&2
+        return 1
+    fi
+
+    # "v3.14.3" → "3.14.3-slim-trixie"
+    local docker_tag="${latest_tag#v}-slim-trixie"
+
+    echo "  Docker tag: python:${docker_tag}"
+    echo "  Verifying Docker image python:${docker_tag} exists on Docker Hub..."
+
+    local http_status
+    http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+        "https://hub.docker.com/v2/repositories/library/python/tags/${docker_tag}")
+    if [[ "${http_status}" != "200" ]]; then
+        echo "⚠️ Docker image python:${docker_tag} not found on Docker Hub (HTTP ${http_status}), skipping update"
+        return 0
+    fi
+    echo "  ✅ Docker image python:${docker_tag} confirmed on Docker Hub"
+
+    sed -i "s|FROM python:[^ ]*-slim-trixie|FROM python:${docker_tag}|g" "${dockerfile}"
+
+    echo "✅ Python image updated to ${docker_tag} in Dockerfile"
+}
+
+update_lint_tool_versions() {
+    local lint_script=".github/scripts/lint_and_tests.sh"
+
+    echo
+    echo "🔍 Fetching latest lint tool versions..."
+
+    local curl_args=(-fsSL)
+    if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+    fi
+
+    # hadolint — Docker tag is "{version}-alpine"
+    local hadolint_version
+    hadolint_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/hadolint/hadolint/releases/latest" \
+        | jq -r '.tag_name // empty')
+    if [[ -z "${hadolint_version}" ]]; then
+        echo "  ⚠️ Could not fetch latest hadolint version, skipping"
+    else
+        local hadolint_docker_tag="${hadolint_version}-alpine"
+        local http_status
+        http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+            "https://hub.docker.com/v2/repositories/hadolint/hadolint/tags/${hadolint_docker_tag}")
+        if [[ "${http_status}" != "200" ]]; then
+            echo "  ⚠️ Docker image hadolint/hadolint:${hadolint_docker_tag} not found (HTTP ${http_status}), skipping"
+        else
+            echo "  hadolint: ${hadolint_docker_tag}"
+            sed -i "s|HADOLINT_DOCKER_IMAGE=\"hadolint/hadolint:[^\"]*\"|HADOLINT_DOCKER_IMAGE=\"hadolint/hadolint:${hadolint_docker_tag}\"|" "${lint_script}"
+        fi
+    fi
+
+    # markdownlint-cli2 — Docker tag is the version tag directly
+    local markdownlint_version
+    markdownlint_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/DavidAnson/markdownlint-cli2/releases/latest" \
+        | jq -r '.tag_name // empty')
+    if [[ -z "${markdownlint_version}" ]]; then
+        echo "  ⚠️ Could not fetch latest markdownlint-cli2 version, skipping"
+    else
+        local http_status
+        http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+            "https://hub.docker.com/v2/repositories/davidanson/markdownlint-cli2/tags/${markdownlint_version}")
+        if [[ "${http_status}" != "200" ]]; then
+            echo "  ⚠️ Docker image davidanson/markdownlint-cli2:${markdownlint_version} not found (HTTP ${http_status}), skipping"
+        else
+            echo "  markdownlint-cli2: ${markdownlint_version}"
+            sed -i "s|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:[^\"]*\"|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:${markdownlint_version}\"|" "${lint_script}"
+        fi
+    fi
+
+    echo "✅ Lint tool images updated in ${lint_script}"
+}
+
 update_java_version() {
     local dockerfile="${1}"
     local workflows_dir=".github/workflows"
@@ -330,7 +448,8 @@ update_java_version() {
 
     # Convert "jdk-26.0.0+7" → "26.0.0_7-jdk"
     local docker_tag
-    docker_tag="$(echo "${release_name#jdk-}" | sed 's/+/_/')-jdk"
+    docker_tag="${release_name#jdk-}"
+    docker_tag="${docker_tag//+/_}-jdk"
 
     echo "  Docker tag: eclipse-temurin:${docker_tag}"
     echo "  Verifying Docker image eclipse-temurin:${docker_tag} exists on Docker Hub..."
@@ -499,10 +618,13 @@ if [[ ! -f "${requirements}" ]]; then
     exit 1
 fi
 
+update_debian_image_version "${dockerfile}" || echo "⚠️ Debian image version update failed, continuing..."
+update_python_image_version "${dockerfile}" || echo "⚠️ Python image version update failed, continuing..."
 update_debian_packages "${dockerfile}"      || echo "⚠️ Debian packages update failed, continuing..."
 update_ubuntu_packages "${dockerfile}"      || echo "⚠️ Ubuntu packages update failed, continuing..."
 update_requirements "${requirements}"       || echo "⚠️ Python requirements update failed, continuing..."
 update_pom_versions                         || echo "⚠️ Maven versions update failed, continuing..."
 update_maven_version "${dockerfile}"        || echo "⚠️ Maven version update failed, continuing..."
 update_java_version "${dockerfile}"         || echo "⚠️ Java version update failed, continuing..."
+update_lint_tool_versions                   || echo "⚠️ Lint tool versions update failed, continuing..."
 update_github_actions                       || echo "⚠️ GitHub Actions update failed, continuing..."

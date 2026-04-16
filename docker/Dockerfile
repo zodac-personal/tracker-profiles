@@ -1,5 +1,5 @@
 # Stage 1: Patch chromedriver
-FROM python:3.14.3-slim-trixie AS chromedriver_builder
+FROM python:3.14.4-slim-trixie AS chromedriver_builder
 
 # Install required applications using 'tracker-profiles/.github/scripts/update_dependency_versions.sh'
 # - ca-certificates (SSL)
@@ -83,7 +83,7 @@ COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
 RUN mvn clean install
 
 # Runtime
-FROM debian:13.3-slim AS runtime
+FROM debian:13.4-slim AS runtime
 # Set the working directory
 WORKDIR /app
 
