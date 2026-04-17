@@ -4,16 +4,24 @@
 #
 # Description:     Lints and tests the project using Docker.
 #
-# Usage:           ./lint_and_tests.sh
+# Usage:           ./lint_and_tests.sh [steps]
+#
+#                  [steps] is an optional comma-separated list of steps to run.
+#                  If omitted, all steps are run.
+#
+#                  Valid steps:
+#                    docker      - Lint the Dockerfile with hadolint
+#                    javascript  - Lint JavaScript files with eslint
+#                    markdown    - Lint Markdown files with markdownlint-cli2
+#                    java        - Run Java lints and tests with Maven
+#
+#                  Examples:
+#                    ./lint_and_tests.sh
+#                    ./lint_and_tests.sh docker
+#                    ./lint_and_tests.sh docker,javascript
 #
 # Requirements:
 #   - Docker must be installed and available on the system PATH
-#
-# Behavior:
-#   - Runs hadolint to lint the Dockerfile (config: ci/docker/.hadolint.yaml)
-#   - Runs eslint to lint all JavaScript files (config: ci/js/eslint.config.cjs)
-#   - Runs markdownlint-cli2 to lint all Markdown files (config: ci/doc/.markdownlint.json)
-#   - Runs mvn to execute Java lints and tests
 #
 # Exit Codes:
 #   - 0: All linting and tests passed successfully
@@ -30,50 +38,62 @@ JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
 MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.0"
 MAVEN_DOCKER_IMAGE="maven:3.9.14"
 
+VALID_STEPS=("docker" "javascript" "markdown" "java")
+
 overall_exit_code=0
 
-echo
-echo "🐳 Running Dockerfile lint using [${HADOLINT_DOCKER_IMAGE}]"
-docker pull "${HADOLINT_DOCKER_IMAGE}" >/dev/null
-docker run --rm \
-    -v "${PWD}":/app \
-    -w /app \
-    "${HADOLINT_DOCKER_IMAGE}" \
-    hadolint --config ci/docker/.hadolint.yaml docker/Dockerfile \
-    || { echo "❌ Dockerfile lint failed"; overall_exit_code=1; }
+run_docker() {
+    echo
+    echo "🐳 Running Dockerfile lint using [${HADOLINT_DOCKER_IMAGE}]"
+    docker pull "${HADOLINT_DOCKER_IMAGE}" >/dev/null
+    docker run --rm \
+        -v "${PWD}":/app \
+        -w /app \
+        "${HADOLINT_DOCKER_IMAGE}" \
+        hadolint --config ci/docker/.hadolint.yaml docker/Dockerfile \
+        || { echo "❌ Dockerfile lint failed"; overall_exit_code=1; }
+}
 
-echo
-echo "🐳 Running Markdown lint using [${MARKDOWNLINT_DOCKER_IMAGE}]"
-docker pull "${MARKDOWNLINT_DOCKER_IMAGE}" >/dev/null
-docker run --rm \
-    -v "${PWD}":/app \
-    -w /app \
-    "${MARKDOWNLINT_DOCKER_IMAGE}" \
-    --config ci/doc/.markdownlint.json \
-    "**/*.md" "!RELEASE_NOTES.md" "!tracker-profiles-screenshots/target/**" \
-    || { echo "❌ Markdown lint failed"; overall_exit_code=1; }
-
-echo
-echo "🐳 Running JavaScript lint using [${ESLINT_NODE_IMAGE}]"
-docker pull "${ESLINT_NODE_IMAGE}" >/dev/null
-docker build -t "${ESLINT_BUILD_IMAGE}" - <<EOF
+run_javascript() {
+    echo
+    echo "🐳 Running JavaScript lint using [${ESLINT_NODE_IMAGE}]"
+    docker pull "${ESLINT_NODE_IMAGE}" >/dev/null
+    docker build -t "${ESLINT_BUILD_IMAGE}" - <<EOF
 FROM ${ESLINT_NODE_IMAGE}
 RUN npm install -g eslint@9
 EOF
-docker run --rm \
-    -v "${PWD}":/app \
-    -w /app \
-    "${ESLINT_BUILD_IMAGE}" \
-    eslint --config ci/javascript/eslint.config.cjs \
-    "tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/*.js" \
-    && echo "✅ JavaScript lint passed" \
-    || { echo "❌ JavaScript lint failed"; overall_exit_code=1; }
+    if docker run --rm \
+        -v "${PWD}":/app \
+        -w /app \
+        "${ESLINT_BUILD_IMAGE}" \
+        eslint --config ci/javascript/eslint.config.cjs \
+        "tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/*.js"; then
+        echo "✅ JavaScript lint passed"
+    else
+        echo "❌ JavaScript lint failed"
+        overall_exit_code=1
+    fi
+}
 
-echo
-echo "🐳 Running Java lints and tests using [${MAVEN_DOCKER_IMAGE}] + [${JDK_DOCKER_IMAGE}]"
-docker pull "${MAVEN_DOCKER_IMAGE}" >/dev/null
-docker pull "${JDK_DOCKER_IMAGE}" >/dev/null
-docker build -t "${JAVA_BUILD_IMAGE}" - <<EOF
+run_markdown() {
+    echo
+    echo "🐳 Running Markdown lint using [${MARKDOWNLINT_DOCKER_IMAGE}]"
+    docker pull "${MARKDOWNLINT_DOCKER_IMAGE}" >/dev/null
+    docker run --rm \
+        -v "${PWD}":/app \
+        -w /app \
+        "${MARKDOWNLINT_DOCKER_IMAGE}" \
+        --config ci/doc/.markdownlint.json \
+        "**/*.md" "!RELEASE_NOTES.md" "!tracker-profiles-screenshots/target/**" \
+        || { echo "❌ Markdown lint failed"; overall_exit_code=1; }
+}
+
+run_java() {
+    echo
+    echo "🐳 Running Java lints and tests using [${MAVEN_DOCKER_IMAGE}] + [${JDK_DOCKER_IMAGE}]"
+    docker pull "${MAVEN_DOCKER_IMAGE}" >/dev/null
+    docker pull "${JDK_DOCKER_IMAGE}" >/dev/null
+    docker build -t "${JAVA_BUILD_IMAGE}" - <<EOF
 FROM ${MAVEN_DOCKER_IMAGE} AS maven_base
 FROM ${JDK_DOCKER_IMAGE}
 COPY --from=maven_base /usr/share/maven /usr/share/maven
@@ -81,15 +101,40 @@ ENV M2_HOME="/usr/share/maven"
 ENV MAVEN_HOME="/usr/share/maven"
 ENV PATH="\${M2_HOME}/bin:\${PATH}"
 EOF
-docker run --rm -t \
-    -u "$(id -u):$(id -g)" \
-    -v "${PWD}":/app \
-    -v "${HOME}/.m2":/var/maven/.m2 \
-    -w /app \
-    --entrypoint mvn \
-    "${JAVA_BUILD_IMAGE}" \
-    -Duser.home=/var/maven clean verify -Dall \
-    || { echo "❌ Java lints and tests failed"; overall_exit_code=1; }
+    docker run --rm -t \
+        -u "$(id -u):$(id -g)" \
+        -v "${PWD}":/app \
+        -v "${HOME}/.m2":/var/maven/.m2 \
+        -w /app \
+        --entrypoint mvn \
+        "${JAVA_BUILD_IMAGE}" \
+        -Duser.home=/var/maven clean verify -Dall \
+        || { echo "❌ Java lints and tests failed"; overall_exit_code=1; }
+}
+
+# Parse and validate steps
+if [[ $# -eq 0 ]]; then
+    steps=("${VALID_STEPS[@]}")
+else
+    IFS=',' read -ra steps <<< "${1}"
+    for step in "${steps[@]}"; do
+        pattern=" ${step} "
+        if [[ ! " ${VALID_STEPS[*]} " =~ $pattern ]]; then
+            echo "❌ Unknown step: '${step}'. Valid steps: $(IFS=', '; echo "${VALID_STEPS[*]}")"
+            exit 1
+        fi
+    done
+fi
+
+# Execute steps
+for step in "${steps[@]}"; do
+    case "${step}" in
+        docker)     run_docker ;;
+        javascript) run_javascript ;;
+        markdown)   run_markdown ;;
+        java)       run_java ;;
+    esac
+done
 
 if [[ "${overall_exit_code}" -ne 0 ]]; then
     echo
