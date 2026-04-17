@@ -11,6 +11,7 @@
 #
 # Behavior:
 #   - Runs hadolint to lint the Dockerfile (config: ci/docker/.hadolint.yaml)
+#   - Runs eslint to lint all JavaScript files (config: ci/js/eslint.config.cjs)
 #   - Runs markdownlint-cli2 to lint all Markdown files (config: ci/doc/.markdownlint.json)
 #   - Runs mvn to execute Java lints and tests
 #
@@ -21,6 +22,8 @@
 
 set -uo pipefail
 
+ESLINT_BUILD_IMAGE="local/tracker-profiles-eslint:latest"
+ESLINT_NODE_IMAGE="node:25.9.0-alpine"
 HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
 JDK_DOCKER_IMAGE="eclipse-temurin:26_35-jdk"
 JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
@@ -49,6 +52,22 @@ docker run --rm \
     --config ci/doc/.markdownlint.json \
     "**/*.md" "!RELEASE_NOTES.md" "!tracker-profiles-screenshots/target/**" \
     || { echo "❌ Markdown lint failed"; overall_exit_code=1; }
+
+echo
+echo "🐳 Running JavaScript lint using [${ESLINT_NODE_IMAGE}]"
+docker pull "${ESLINT_NODE_IMAGE}" >/dev/null
+docker build -t "${ESLINT_BUILD_IMAGE}" - <<EOF
+FROM ${ESLINT_NODE_IMAGE}
+RUN npm install -g eslint@9
+EOF
+docker run --rm \
+    -v "${PWD}":/app \
+    -w /app \
+    "${ESLINT_BUILD_IMAGE}" \
+    eslint --config ci/javascript/eslint.config.cjs \
+    "tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/*.js" \
+    && echo "✅ JavaScript lint passed" \
+    || { echo "❌ JavaScript lint failed"; overall_exit_code=1; }
 
 echo
 echo "🐳 Running Java lints and tests using [${MAVEN_DOCKER_IMAGE}] + [${JDK_DOCKER_IMAGE}]"
