@@ -1,20 +1,24 @@
-var element = arguments[0]
-var redaction_type = '%9$s'
+const element = arguments[0]
+const redaction_type = '%9$s'
+const buffer_left = Number('%1$d')
+const buffer_up = Number('%2$d')
+const buffer_right = Number('%3$d')
+const buffer_down = Number('%4$d')
 
 if (redaction_type === 'blur') {
   element.style.filter = '%8$s'
 } else {
-  var bounding_rectangle = element.getBoundingClientRect()
-  var scroll_top = window.pageYOffset || document.documentElement.scrollTop
-  var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
-  var computed_style = window.getComputedStyle(element)
+  const bounding_rectangle = element.getBoundingClientRect()
+  const scroll_top = window.pageYOffset || document.documentElement.scrollTop
+  const scroll_left = window.pageXOffset || document.documentElement.scrollLeft
+  const computed_style = window.getComputedStyle(element)
 
-  var overlay = document.createElement('div')
+  const overlay = document.createElement('div')
   overlay.style.position = 'absolute'
-  overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
-  overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
-  overlay.style.width = (bounding_rectangle.width + %1$d + %3$d) + 'px'
-  overlay.style.height = (bounding_rectangle.height + %2$d + %4$d) + 'px'
+  overlay.style.left = (bounding_rectangle.left + scroll_left - buffer_left) + 'px'
+  overlay.style.top = (bounding_rectangle.top + scroll_top - buffer_up) + 'px'
+  overlay.style.width = (bounding_rectangle.width + buffer_left + buffer_right) + 'px'
+  overlay.style.height = (bounding_rectangle.height + buffer_up + buffer_down) + 'px'
   overlay.style.backgroundColor = '%5$s'
   overlay.style.zIndex = '9999'
   overlay.style.pointerEvents = 'none'
@@ -29,5 +33,4 @@ if (redaction_type === 'blur') {
   overlay.textContent = '%7$s'
   overlay.id = 'redact-' + Date.now()
   document.body.appendChild(overlay)
-  return overlay.id
 }

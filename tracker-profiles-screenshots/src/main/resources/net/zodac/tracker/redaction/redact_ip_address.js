@@ -1,18 +1,22 @@
-var element = arguments[0]
-var redaction_type = '%9$s'
+const element = arguments[0]
+const redaction_type = '%9$s'
+const buffer_left = Number('%1$d')
+const buffer_up = Number('%2$d')
+const buffer_right = Number('%3$d')
+const buffer_down = Number('%4$d')
 
-var scroll_top = window.pageYOffset || document.documentElement.scrollTop
-var scroll_left = window.pageXOffset || document.documentElement.scrollLeft
-var computed_style = window.getComputedStyle(element)
-var overlay_ids = []
+const scroll_top = window.pageYOffset || document.documentElement.scrollTop
+const scroll_left = window.pageXOffset || document.documentElement.scrollLeft
+const computed_style = window.getComputedStyle(element)
+const overlay_ids = []
 
 function apply_box(bounding_rectangle) {
-  var overlay = document.createElement('div')
+  const overlay = document.createElement('div')
   overlay.style.position = 'absolute'
-  overlay.style.left = (bounding_rectangle.left + scroll_left - %1$d) + 'px'
-  overlay.style.top = (bounding_rectangle.top + scroll_top - %2$d) + 'px'
-  overlay.style.width = (bounding_rectangle.width + %1$d + %3$d) + 'px'
-  overlay.style.height = (bounding_rectangle.height + %2$d + %4$d) + 'px'
+  overlay.style.left = (bounding_rectangle.left + scroll_left - buffer_left) + 'px'
+  overlay.style.top = (bounding_rectangle.top + scroll_top - buffer_up) + 'px'
+  overlay.style.width = (bounding_rectangle.width + buffer_left + buffer_right) + 'px'
+  overlay.style.height = (bounding_rectangle.height + buffer_up + buffer_down) + 'px'
   overlay.style.backgroundColor = '%5$s'
   overlay.style.zIndex = '9999'
   overlay.style.pointerEvents = 'none'
@@ -43,20 +47,17 @@ apply_regex(element, ipv6_full_regex, 'redact-ip')
 apply_regex(element, ipv6_partial_regex, 'redact-ip')
 apply_regex(element, ipv4_regex, 'redact-ip')
 
-var target_spans = element.querySelectorAll('.redact-ip')
-for (var i = 0; i < target_spans.length; i++) {
+const target_spans = element.querySelectorAll('.redact-ip')
+for (let i = 0; i < target_spans.length; i++) {
   apply_redaction(target_spans[i])
 }
 
 // Also check 'value' attributes on the element and its descendants
-var value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
-for (var e = 0; e < value_elements.length; e++) {
-  var val = value_elements[e].getAttribute('value')
+const value_elements = [element].concat(Array.from(element.querySelectorAll('[value]')))
+for (let e = 0; e < value_elements.length; e++) {
+  const val = value_elements[e].getAttribute('value')
   if (val && matches_any_ip_regex(val)) {
     apply_redaction(value_elements[e])
   }
 }
 
-if (redaction_type === 'box') {
-  return overlay_ids.join(',')
-}
