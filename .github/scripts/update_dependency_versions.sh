@@ -102,7 +102,7 @@ update_debian_packages() {
     docker pull "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" >/dev/null
 
     for ((section = 1; section <= section_count; section++)); do
-        echo "[Section ${section}/${section_count}]"
+        echo "--- Section ${section}/${section_count}"
 
         # Extract only the Nth section's package block
         package_block=$(awk -v start="${DEBIAN_START_MARKER}" -v end="${DEBIAN_END_MARKER}" -v n="${section}" '
@@ -125,7 +125,7 @@ update_debian_packages() {
 
         # Single container: update apt once, then query all packages together
         versions_raw=$(docker run --rm "debian:${DEBIAN_DOCKER_IMAGE_VERSION}-slim" sh -c \
-            "apt-get update -qq 2>/dev/null && apt-cache policy ${package_names[*]}")
+            "apt-get update -qq -o Acquire::Languages=none 2>/dev/null && apt-cache policy ${package_names[*]}")
 
         while IFS='=' read -r pkg ver; do
             [[ -n "${pkg}" && -n "${ver}" ]] && debian_versions["${pkg}"]="${ver}"
@@ -209,7 +209,7 @@ update_ubuntu_packages() {
     docker pull "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" >/dev/null
 
     for ((section = 1; section <= section_count; section++)); do
-        echo "[Section ${section}/${section_count}]"
+        echo "--- Section ${section}/${section_count}"
 
         # Extract only the Nth section's package block
         package_block=$(awk -v start="${UBUNTU_START_MARKER}" -v end="${UBUNTU_END_MARKER}" -v n="${section}" '
@@ -232,7 +232,7 @@ update_ubuntu_packages() {
 
         # Single container: update apt once, then query all packages together
         versions_raw=$(docker run --rm "ubuntu:${UBUNTU_DOCKER_IMAGE_VERSION}" sh -c \
-            "apt-get update -qq 2>/dev/null && apt-cache policy ${package_names[*]}")
+            "apt-get update -qq -o Acquire::Languages=none 2>/dev/null && apt-cache policy ${package_names[*]}")
 
         while IFS='=' read -r pkg ver; do
             [[ -n "${pkg}" && -n "${ver}" ]] && ubuntu_versions["${pkg}"]="${ver}"
@@ -337,10 +337,10 @@ update_python_image_version() {
     fi
 
     local latest_tag
-    latest_tag=$(curl "${curl_args[@]}" "https://api.github.com/repos/python/cpython/releases/latest" \
-        | jq -r '.tag_name // empty')
+    latest_tag=$(curl -fsSL "https://endoflife.date/api/python.json" \
+        | jq -r 'sort_by(.latest | split(".") | map(tonumber)) | last | "v" + .latest // empty')
     if [[ -z "${latest_tag}" ]]; then
-        echo "⚠️ Could not fetch latest Python version from GitHub" >&2
+        echo "⚠️ Could not fetch latest Python version from endoflife.date" >&2
         return 1
     fi
 
@@ -394,21 +394,37 @@ update_lint_tool_versions() {
         fi
     fi
 
-    # markdownlint-cli2 — Docker tag is the version tag directly
+    # markdownlint-cli2 — query Docker Hub directly for the latest stable semver tag
     local markdownlint_version
-    markdownlint_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/DavidAnson/markdownlint-cli2/releases/latest" \
-        | jq -r '.tag_name // empty')
+    markdownlint_version=$(curl -fsSL \
+        "https://hub.docker.com/v2/repositories/davidanson/markdownlint-cli2/tags?page_size=50&ordering=last_updated" \
+        | jq -r '.results[].name' \
+        | grep -P '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+        | sort -V | tail -1)
     if [[ -z "${markdownlint_version}" ]]; then
         echo "  ⚠️ Could not fetch latest markdownlint-cli2 version, skipping"
     else
+        echo "  markdownlint-cli2: ${markdownlint_version}"
+        sed -i "s|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:[^\"]*\"|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:${markdownlint_version}\"|" "${lint_script}"
+    fi
+
+    # node — Docker tag is "{version}-alpine"
+    local node_version
+    node_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/nodejs/node/releases/latest" \
+        | jq -r '.tag_name // empty')
+    if [[ -z "${node_version}" ]]; then
+        echo "  ⚠️ Could not fetch latest Node.js version, skipping"
+    else
+        node_version="${node_version#v}"
+        local node_docker_tag="${node_version}-alpine"
         local http_status
         http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
-            "https://hub.docker.com/v2/repositories/davidanson/markdownlint-cli2/tags/${markdownlint_version}")
+            "https://hub.docker.com/v2/repositories/library/node/tags/${node_docker_tag}")
         if [[ "${http_status}" != "200" ]]; then
-            echo "  ⚠️ Docker image davidanson/markdownlint-cli2:${markdownlint_version} not found (HTTP ${http_status}), skipping"
+            echo "  ⚠️ Docker image node:${node_docker_tag} not found (HTTP ${http_status}), skipping"
         else
-            echo "  markdownlint-cli2: ${markdownlint_version}"
-            sed -i "s|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:[^\"]*\"|MARKDOWNLINT_DOCKER_IMAGE=\"davidanson/markdownlint-cli2:${markdownlint_version}\"|" "${lint_script}"
+            echo "  node: ${node_docker_tag}"
+            sed -i "s|ESLINT_NODE_IMAGE=\"node:[^\"]*\"|ESLINT_NODE_IMAGE=\"node:${node_docker_tag}\"|" "${lint_script}"
         fi
     fi
 
@@ -485,8 +501,28 @@ update_java_version() {
 }
 
 update_pom_versions() {
-    mvn versions:update-properties
-    echo "✅ pom.xml updated successfully with latest Maven packages"
+    local pom_xml="./pom.xml"
+    local tmp_log
+    tmp_log=$(mktemp)
+
+    local checksum_before
+    checksum_before=$(sha256sum "${pom_xml}" | cut -d' ' -f1)
+
+    if ! mvn versions:update-properties -q --no-transfer-progress >"${tmp_log}" 2>&1; then
+        cat "${tmp_log}" >&2
+        rm -f "${tmp_log}"
+        return 1
+    fi
+    rm -f "${tmp_log}"
+
+    local checksum_after
+    checksum_after=$(sha256sum "${pom_xml}" | cut -d' ' -f1)
+
+    if [[ "${checksum_before}" != "${checksum_after}" ]]; then
+        echo "✅ pom.xml updated with latest Maven packages"
+    else
+        echo "  pom.xml already up-to-date (no changes)"
+    fi
 }
 
 update_maven_version() {
