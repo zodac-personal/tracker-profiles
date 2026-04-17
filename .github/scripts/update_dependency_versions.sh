@@ -417,14 +417,21 @@ update_lint_tool_versions() {
     else
         node_version="${node_version#v}"
         local node_docker_tag="${node_version}-alpine"
-        local http_status
-        http_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+        local docker_status nodejs_status
+        docker_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
             "https://hub.docker.com/v2/repositories/library/node/tags/${node_docker_tag}")
-        if [[ "${http_status}" != "200" ]]; then
-            echo "  ⚠️ Docker image node:${node_docker_tag} not found (HTTP ${http_status}), skipping"
+        nodejs_status=$(curl -fsSL -o /dev/null -w "%{http_code}" \
+            "https://nodejs.org/dist/v${node_version}/")
+        if [[ "${docker_status}" != "200" && "${nodejs_status}" != "200" ]]; then
+            echo "  ⚠️ node:${node_docker_tag} not found on Docker Hub (HTTP ${docker_status}) or nodejs.org/dist (HTTP ${nodejs_status}), skipping"
+        elif [[ "${docker_status}" != "200" ]]; then
+            echo "  ⚠️ node:${node_docker_tag} not found on Docker Hub (HTTP ${docker_status}), skipping to keep lint_and_tests.sh and javascript.yml in sync"
+        elif [[ "${nodejs_status}" != "200" ]]; then
+            echo "  ⚠️ node v${node_version} not found on nodejs.org/dist (HTTP ${nodejs_status}), skipping to keep lint_and_tests.sh and javascript.yml in sync"
         else
             echo "  node: ${node_docker_tag}"
             sed -i "s|ESLINT_NODE_IMAGE=\"node:[^\"]*\"|ESLINT_NODE_IMAGE=\"node:${node_docker_tag}\"|" "${lint_script}"
+            sed -i "s|node-version: '[0-9.]*'|node-version: '${node_version}'|g" ".github/workflows/javascript.yml"
         fi
     fi
 

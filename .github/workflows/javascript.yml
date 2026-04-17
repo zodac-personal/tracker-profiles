@@ -1,0 +1,36 @@
+name: JavaScript CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/javascript.yml'
+      - 'ci/javascript/eslint.config.cjs'
+      - 'tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/**/*.js'
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  analyze:
+    name: JavaScript Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '25.9.0'
+
+      - name: Install ESLint
+        run: npm install --save-dev eslint
+
+      - name: Run ESLint
+        run: npx eslint --config ci/javascript/eslint.config.cjs "tracker-profiles-screenshots/src/main/resources/**/*.js"
