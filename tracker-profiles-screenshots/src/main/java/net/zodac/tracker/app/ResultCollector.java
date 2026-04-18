@@ -121,7 +121,7 @@ final class ResultCollector {
             .formatted(totalUnsuccessful, StringUtils.pluralise(totalUnsuccessful), executionTime())));
         unsuccessfulTrackers.forEach((type, trackers) -> {
             LOGGER.error(Clique.ink().red().on("- %s:".formatted(type.formattedName())));
-            trackers.forEach(name -> LOGGER.warn(Clique.ink().red().on("\t- %s".formatted(name))));
+            trackers.forEach(name -> LOGGER.error(Clique.ink().red().on("\t- %s".formatted(name))));
         });
         return ExitState.FAILURE;
     }

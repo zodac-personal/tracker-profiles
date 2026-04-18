@@ -102,7 +102,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **146** supported trackers listed below. The available trackers come in the following types:
+There are currently **147** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -196,6 +196,7 @@ background:
 | [MoreThanTV](https://www.morethantv.me/)       |
 | [MyAnonaMouse](https://www.myanonamouse.net/)  |
 | [Nebulance](https://nebulance.io/)             |
+| [Nexum-Core](https://nexum-core.com/)          |
 | [NordicBytes](https://nordicbytes.org/)        |
 | [NordicHD](http://nordichd.org/)               |
 | [NordicQuality](https://nordicq.org/)          |
