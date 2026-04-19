@@ -80,20 +80,36 @@ public final class DisplayUtils {
     /**
      * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker.
      *
+     * <p>
+     * Uses {@link DialogPosition#ofDefault()} for positioning.
+     *
      * @param titlePrefix the title for the pop-up
      * @param labelPrefix the text for the pop-up
+     * @see #userInputConfirmation(String, String, DialogPosition)
      */
     public static void userInputConfirmation(final String titlePrefix, final String labelPrefix) {
+        userInputConfirmation(titlePrefix, labelPrefix, DialogPosition.ofDefault());
+    }
+
+    /**
+     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker.
+     *
+     * @param titlePrefix    the title for the pop-up
+     * @param labelPrefix    the text for the pop-up
+     * @param dialogPosition the screen position of the dialog, as percentages of the available screen space
+     */
+    public static void userInputConfirmation(final String titlePrefix, final String labelPrefix, final DialogPosition dialogPosition) {
         setStyleToSystemTheme();
 
         final AtomicBoolean userProvidedInput = new AtomicBoolean(false);
         final AtomicBoolean timedOut = new AtomicBoolean(false);
 
-        final JDialog dialog = createDialog(titlePrefix, labelPrefix, userProvidedInput);
+        final JDialog dialog = createDialog(titlePrefix, labelPrefix, userProvidedInput, dialogPosition);
         showDialog(dialog, userProvidedInput, timedOut);
     }
 
-    private static JDialog createDialog(final String titlePrefix, final String labelPrefix, final AtomicBoolean userProvidedInput) {
+    private static JDialog createDialog(final String titlePrefix, final String labelPrefix, final AtomicBoolean userProvidedInput,
+                                        final DialogPosition dialogPosition) {
         final JDialog dialog = new JDialog((Frame) null, titlePrefix + TITLE_SUFFIX, true);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);  // Ensure the dialog remains on top of all windows when interacting with browser
@@ -109,7 +125,7 @@ public final class DisplayUtils {
         dialog.pack();  // Respects preferredSize but allows it to be larger if needed based on the text
         dialog.setLocationRelativeTo(null);
 
-        setDialogPosition(dialog);
+        setDialogPosition(dialog, dialogPosition);
         return dialog;
     }
 
@@ -220,14 +236,18 @@ public final class DisplayUtils {
         return timeoutTask;
     }
 
-    private static void setDialogPosition(final JDialog dialog) {
-        // Get the screen the dialog will appear on
+    private static void setDialogPosition(final JDialog dialog, final DialogPosition position) {
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
 
-        // X is left + margin, Y is vertically 60% down the page to get out of the way of Cloudflare elements
-        final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN;
-        final int y = bounds.y + (((bounds.height - dialog.getHeight()) / 10) * 6);
+        // Horizontal: DIALOG_POSITION_LEFT_MARGIN is the baseline; horizontalPercent distributes remaining space right of that margin
+        final int availableWidth = bounds.width - dialog.getWidth() - DIALOG_POSITION_LEFT_MARGIN;
+        final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN + (int) (availableWidth * position.horizontalPercent() / 100.0);
+
+        // Vertical: verticalPercent distributes the full available vertical space (default 60% keeps clear of top-of-page elements)
+        final int availableHeight = bounds.height - dialog.getHeight();
+        final int y = bounds.y + (int) (availableHeight * position.verticalPercent() / 100.0);
+
         dialog.setLocation(x, y);
     }
 

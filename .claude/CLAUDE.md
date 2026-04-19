@@ -164,7 +164,12 @@ string — SpotBugs flags the trailing `\n` as `VA_FORMAT_STRING_USES_NEWLINE` w
 ### Instantiation: Private Constructor + Static Factory
 
 Classes that are explicitly instantiated must use a **private constructor** and a **`static` factory method**
-instead of a public constructor. This applies to all non-abstract, non-utility, non-record classes.
+instead of a public constructor. This applies to all non-abstract, non-utility classes, unless a private
+constructor is impossible (e.g., the canonical constructor of a public `record` cannot be private).
+
+The private constructor must only assign fields — no validation, no logic. All input validation and
+exceptions belong in the static factory method. Other static factories (e.g. `ofDefault()`) must call
+the validating factory, not the private constructor directly.
 
 ```java
 // Correct
@@ -174,18 +179,28 @@ public final class TrackerCredential {
     private final String password;
 
     private TrackerCredential(final String username, final String password) {
-        this.username = username;
+        this.username = username;  // assignments only
         this.password = password;
     }
 
     public static TrackerCredential of(final String username, final String password) {
-        return new TrackerCredential(username, password);
+        if (username.isBlank()) {
+            throw new IllegalArgumentException("username must not be blank");
+        }
+        return new TrackerCredential(username, password);  // new only called here
+    }
+
+    public static TrackerCredential ofDefault() {
+        return of("default", "");  // delegates to of(), not new TrackerCredential()
     }
 }
 
-// Wrong — public constructor
+// Wrong — public constructor, and validation in constructor
 public final class TrackerCredential {
-    public TrackerCredential(final String username, final String password) { ... }
+    public TrackerCredential(final String username, final String password) {
+        if (username.isBlank()) { throw new IllegalArgumentException(...); }
+        ...
+    }
 }
 ```
 
