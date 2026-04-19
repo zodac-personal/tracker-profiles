@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
+import net.zodac.tracker.framework.gui.DialogPosition;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -64,8 +65,8 @@ public class SocietyGlitch extends AbstractTrackerHandler {
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
 
-        // TODO: This blocks the input, add an override option for positioning
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
+        // Default position blocks the user input, so we override it
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", DialogPosition.of(0, 80));
     }
 
     @Override
