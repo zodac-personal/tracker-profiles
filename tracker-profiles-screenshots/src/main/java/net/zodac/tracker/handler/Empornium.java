@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,7 @@ import org.openqa.selenium.WebElement;
     "https://emparadise.rs/",
     "https://www.empornium.sx/"
 })
-public class Empornium extends LuminanceHandler {
+public class Empornium extends LuminanceHandler implements HasProfilePageActions {
 
     @Override
     public By loginPageSelector() {
@@ -66,7 +67,7 @@ public class Empornium extends LuminanceHandler {
      * </ul>
      */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         // Maps each toggle button ID to its content div ID
         final Map<String, String> buttonToDivIds = Map.of(
             "recentsnatchesbutton", "recentsnatchesdiv",

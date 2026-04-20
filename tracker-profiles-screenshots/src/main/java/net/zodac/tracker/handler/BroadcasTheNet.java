@@ -31,6 +31,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -38,7 +39,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link GazelleHandler} for the {@code BroadcasThe.Net} tracker.
  */
 @TrackerHandler(name = "BroadcasThe.Net", type = TrackerType.MANUAL, url = "https://broadcasthe.net/")
-public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck {
+public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck, HasProfilePageActions {
 
     @Override
     public By loginPageSelector() {
@@ -56,7 +57,7 @@ public class BroadcasTheNet extends GazelleHandler implements HasCloudflareCheck
      * screenshot.
      */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         final By infoTabSelector = XpathBuilder
             .from(div, withId("slider"))
             .child(div, atIndex(1))

@@ -27,13 +27,14 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import org.openqa.selenium.By;
 
 /**
  * Extension of the {@link LuminanceHandler} for the {@code Nebulance} tracker.
  */
 @TrackerHandler(name = "Nebulance", url = "https://nebulance.io/")
-public class Nebulance extends LuminanceHandler {
+public class Nebulance extends LuminanceHandler implements HasProfilePageActions {
 
     @Override
     protected By loginButtonSelector() {
@@ -48,7 +49,7 @@ public class Nebulance extends LuminanceHandler {
      * when taking the screenshot.
      */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         driver.executeScript("document.body.style.height = 'auto';");
         driver.executeScript("document.body.style.overflowY = 'visible';");
     }

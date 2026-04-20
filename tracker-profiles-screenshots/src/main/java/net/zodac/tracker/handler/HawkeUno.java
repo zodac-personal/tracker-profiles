@@ -31,6 +31,7 @@ import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -38,7 +39,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Hawke-Uno} tracker.
  */
 @TrackerHandler(name = "Hawke-Uno", type = TrackerType.MANUAL, url = "https://hawke.uno/")
-public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareCheck {
+public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareCheck, HasProfilePageActions {
 
     @Override
     protected By loginButtonSelector() {
@@ -100,7 +101,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
      * For {@link HawkeUno}, there is no user details page in the 'hub', but there is a dropdown menu which exposes the stats.
      */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         openUserDropdownMenu();
     }
 

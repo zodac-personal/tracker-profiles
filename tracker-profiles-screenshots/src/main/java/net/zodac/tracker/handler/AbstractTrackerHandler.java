@@ -20,7 +20,6 @@ package net.zodac.tracker.handler;
 import static net.zodac.tracker.framework.xpath.HtmlElement.a;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
@@ -335,7 +335,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
             browserInteractionHelper.waitForElementToBeVisible(profilePageElementSelector(), pageLoadDuration());
             browserInteractionHelper.moveToOrigin();
-            additionalActionOnProfilePage();
+            if (this instanceof HasProfilePageActions trackerWithProfilePageActions) {
+                trackerWithProfilePageActions.performActionOnProfilePage();
+            }
         } catch (final TimeoutException e) {
             throw new TimeoutException("Unable to find user profile content, profile page may not have loaded", e);
         }
@@ -360,22 +362,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     protected abstract By profilePageElementSelector();
 
     /**
-     * For certain trackers, additional actions may need to be performed after opening the profile page, but prior to the page being redacted and
-     * screenshot. This might be that the page is considered 'loaded' by
-     * {@link BrowserInteractionHelper#waitForPageToLoad(Duration)}, but the required {@link WebElement}s are not all
-     * on the screen, or that some {@link WebElement}s may need to be interacted with prior to the screenshot.
-     *
-     * <p>
-     * This method should be overridden as required.
-     */
-    // TODO: Move to interface
-    protected void additionalActionOnProfilePage() {
-        // Do nothing by default
-    }
-
-    /**
      * Reloads the current profile page in the browser, restoring the page to its original state (clearing any DOM mutations from redaction). Waits
-     * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link #additionalActionOnProfilePage()}.
+     * {@link #pageLoadDuration()} for the page to finish loading, then re-runs any {@link HasProfilePageActions#performActionOnProfilePage()}.
      */
     public void reloadProfilePage() {
         LOGGER.trace("Reloading profile page to restore original state");
@@ -383,7 +371,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
 
         browserInteractionHelper.waitForElementToBeVisible(profilePageElementSelector(), pageLoadDuration());
-        additionalActionOnProfilePage();
+        if (this instanceof HasProfilePageActions trackerWithProfilePageActions) {
+            trackerWithProfilePageActions.performActionOnProfilePage();
+        }
     }
 
     /**

@@ -33,6 +33,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -40,7 +41,7 @@ import org.openqa.selenium.WebElement;
  * Implementation of {@link AbstractTrackerHandler} for the {@code Leech24} tracker.
  */
 @TrackerHandler(name = "Leech24", type = TrackerType.MANUAL, url = "https://leech24.net/")
-public class Leech24 extends AbstractTrackerHandler {
+public class Leech24 extends AbstractTrackerHandler implements HasProfilePageActions {
 
     /**
      * {@inheritDoc}
@@ -89,8 +90,15 @@ public class Leech24 extends AbstractTrackerHandler {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link Leech24}, the profile page has one large text box with all content, making it difficult to partially redact the passkey. We use some
+     * JavaScript to find the 'passkey' value then wrap it in a {@code span} HTML element.
+     */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         LOGGER.debug("\t\t- Adding <span id='passkey-value'> around the passkey value on the page");
         final String script = """
             var td = document.querySelector('.myFrame-content table.comment td');
@@ -129,10 +137,15 @@ public class Leech24 extends AbstractTrackerHandler {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Uses the custom HTML element we added in {@link #performActionOnProfilePage()}.
+     */
     @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of(
-            // Custom HTML element we added in `additionalActionOnProfilePage()`
             By.id("passkey-value")
         );
     }

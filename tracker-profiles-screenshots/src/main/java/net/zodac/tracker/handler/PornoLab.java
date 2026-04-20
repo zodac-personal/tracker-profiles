@@ -32,6 +32,7 @@ import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasProfilePageActions;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
@@ -41,7 +42,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link TorrentPier} for the {@code PornoLab} tracker.
  */
 @TrackerHandler(name = "PornoLab", adult = true, type = TrackerType.MANUAL, url = "https://pornolab.net/forum/tracker.php")
-public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
+public class PornoLab extends TorrentPier implements HasProfilePageActions, NeedsExplicitTranslation {
 
     @Override
     protected By profileLinkSelector() {
@@ -76,7 +77,7 @@ public class PornoLab extends TorrentPier implements NeedsExplicitTranslation {
      * For {@link PornoLab}, we close the section of the page showing torrents currently being seeded.
      */
     @Override
-    protected void additionalActionOnProfilePage() {
+    public void performActionOnProfilePage() {
         final By activeTorrentsSelector = XpathBuilder
             .from(div, withClass("active-torrents-list"))
             .child(div, atIndex(4))
