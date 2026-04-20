@@ -87,7 +87,9 @@ public class BeyondHd extends AbstractTrackerHandler implements HasFixedHeader, 
 
     @Override
     public List<By> headerSelectors() {
-        return List.of(By.id("stickyBar"));
+        return List.of(
+            By.id("stickyBar")
+        );
     }
 
     @Override

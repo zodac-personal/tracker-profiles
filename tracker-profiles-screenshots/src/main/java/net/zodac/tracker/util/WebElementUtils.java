@@ -22,7 +22,6 @@ import org.openqa.selenium.WebElement;
 /**
  * Utility class for working with {@link WebElement}s.
  */
-// TODO: Move anything from BrowserInteractionHelper that doesn't rely on a driver into this class
 public final class WebElementUtils {
 
     private WebElementUtils() {
@@ -30,10 +29,15 @@ public final class WebElementUtils {
     }
 
     /**
-     * todo.
+     * Retrieves the visible text content of the given {@link WebElement}. Attempts three sources in order:
+     * <ol>
+     *     <li>{@link WebElement#getText()}, the standard Selenium approach for rendered text</li>
+     *     <li>The {@code value} HTML attribute, for {@code <input>} and similar form elements</li>
+     *     <li>The {@code textContent} DOM property, for elements where rendered text is not exposed via the above</li>
+     * </ol>
      *
      * @param element the {@link WebElement}
-     * @return the {@code textContent}, or an empty {@link String} if the value is {@code null}
+     * @return the first non-empty text value found, or an empty {@link String} if none are available
      */
     public static String getTextContent(final WebElement element) {
         final String text = element.getText();

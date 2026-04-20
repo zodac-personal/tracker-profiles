@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.BrowserInteractionHelper;
@@ -66,19 +67,20 @@ public class Empornium extends LuminanceHandler {
      */
     @Override
     protected void additionalActionOnProfilePage() {
-        final List<By> toggleSelectors = List.of(
-            By.id("recentsnatchesbutton"),  // Recent snatches
-            By.id("collagesbutton"),        // Collages
-            By.id("submitbutton")           // Uploaded torrents
+        // Maps each toggle button ID to its content div ID
+        final Map<String, String> buttonToDivIds = Map.of(
+            "recentsnatchesbutton", "recentsnatchesdiv",
+            "collagesbutton", "collagesdiv",
+            "submitbutton", "torrentsdiv"
         );
 
-        for (final By toggleSelector : toggleSelectors) {
-            final Collection<WebElement> sectionToggles = driver.findElements(toggleSelector);
-            for (final WebElement sectionToggle : sectionToggles) {
-                // Only click the toggle if it is already open
-                if (sectionToggle.getText().contains("Hide")) {  // TODO: Can't avoid this English text, no other identifier that I can see?
-                    LOGGER.debug("\t\t- Closing section {}", toggleSelector);
-                    clickButton(sectionToggle);
+        for (final Map.Entry<String, String> entry : buttonToDivIds.entrySet()) {
+            // jQuery's toggle() sets display:none on the div; isDisplayed() detects this without relying on button text
+            final Collection<WebElement> sectionDivs = driver.findElements(By.id(entry.getValue()));
+            for (final WebElement sectionDiv : sectionDivs) {
+                if (sectionDiv.isDisplayed()) {
+                    LOGGER.debug("\t\t- Closing section #{}", entry.getValue());
+                    clickButton(driver.findElement(By.id(entry.getKey())));
                     BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "section to close");
                 }
             }
