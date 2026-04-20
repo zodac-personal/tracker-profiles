@@ -370,6 +370,7 @@ docker run \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \
+    -v tracker-chrome-cache:/tmp/chrome-home \
     --name tracker-profiles \
     --rm zodac/tracker-profiles:latest
 ```
@@ -410,6 +411,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /c/tmp/screenshots:/app/screenshots \
+    -v tracker-chrome-cache:/tmp/chrome-home \
     --name tracker-profiles \
     --rm zodac/tracker-profiles:latest
 ```
@@ -653,6 +655,7 @@ docker run \
     --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/screenshots:/app/screenshots \
+    -v tracker-chrome-cache:/tmp/chrome-home \
     --name tracker-profiles-dev \
     --rm tracker-profiles-dev
 ```
