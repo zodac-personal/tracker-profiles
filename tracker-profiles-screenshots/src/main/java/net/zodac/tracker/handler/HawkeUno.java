@@ -26,6 +26,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttr
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.gui.DisplayUtils;
@@ -107,13 +108,24 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
 
     @Override
     protected By logoutButtonSelector() {
-        // The state of the drop-down menu is retained between page loads once opened, so we assume there is no need to open it again
+        openUserDropdownMenu();
         return XpathBuilder
             .from(button, withAttribute("title", "Sign Out"), withType("button"))
             .build();
     }
 
     private void openUserDropdownMenu() {
+        final By signOutButtonSelector = XpathBuilder
+            .from(button, withAttribute("title", "Sign Out"), withType("button"))
+            .build();
+        final Collection<WebElement> signOutButtons = driver.findElements(signOutButtonSelector);
+        final boolean dropdownAlreadyOpen = signOutButtons.stream().anyMatch(WebElement::isDisplayed);
+
+        if (dropdownAlreadyOpen) {
+            LOGGER.debug("\t\t- User dropdown already open, skipping toggle");
+            return;
+        }
+
         LOGGER.debug("\t\t- Clicking user details toggle");
         final By userDetailsToggleSelector = XpathBuilder
             .from(button, withAttribute("title", "Toggle details"), withType("button"))
