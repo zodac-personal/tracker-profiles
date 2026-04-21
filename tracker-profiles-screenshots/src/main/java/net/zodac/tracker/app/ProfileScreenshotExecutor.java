@@ -55,6 +55,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 
@@ -140,17 +141,18 @@ final class ProfileScreenshotExecutor {
         } catch (final TranslationException e) {
             LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
             LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
-        } catch (final NoSuchSessionException | NoSuchWindowException | UnreachableBrowserException e) {
+        } catch (final NoSuchSessionException | NoSuchWindowException | StaleElementReferenceException | UnreachableBrowserException e) {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
+            LOGGER.warn("Browser unavailable, most likely user-cancelled");
         } catch (final Exception e) {
             screenshotOnError(trackerHandler, trackerCredential.name());
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
             final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
             if (cleanedErrorMessage.isEmpty()) {
-                LOGGER.warn("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name());
+                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}'", e.getClass(), trackerCredential.name());
             } else {
-                LOGGER.warn("\t- Unexpected error taking screenshot of '{}': {}", trackerCredential.name(), cleanedErrorMessage);
+                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}': {}", e.getClass(), trackerCredential.name(), cleanedErrorMessage);
             }
         } finally {
             if (trackerHandler != null) {
