@@ -82,6 +82,53 @@ RUN mvn dependency:go-offline
 COPY tracker-profiles-screenshots/src ./tracker-profiles-screenshots/src
 RUN mvn clean install
 
+# Stage 4: Generate static AppCDS archive to reduce startup time and memory footprint
+FROM eclipse-temurin:26_35-jdk AS appcds_builder
+WORKDIR /app
+
+COPY --from=jdk_builder /opt/jdk /opt/jdk
+ENV JAVA_HOME="/opt/jdk"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+COPY --from=java_app_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar /app/tracker-profiles.jar
+
+# One unrecognised tracker name triggers TrackerHandlerFactory's reflection scan, which loads all
+# handler classes via Class.forName(), then the app exits cleanly with "no trackers selected"
+RUN printf 'trackerName,username,password\nAppCdsTraining,user,pass\n' > /tmp/trackers.csv
+
+# Step 1: Collect the list of all classes loaded during a representative run.
+# -Xshare:off disables any existing archive so the class list reflects actual class-loading order.
+# java.awt.headless=true returns a HeadlessGraphicsEnvironment without connecting to an X11 display.
+# DISPLAY=:0 satisfies ApplicationLauncher's non-null DISPLAY env var check.
+# FAIL_ON_UNSUPPORTED_TRACKER=false allows the training-only CSV row to be skipped without error.
+# The command exits with code 1 ("no trackers selected"); the class list is still written on exit.
+RUN DISPLAY=":0" \
+    TRACKER_INPUT_FILE_PATH=/tmp/trackers.csv \
+    FAIL_ON_UNSUPPORTED_TRACKER=false \
+    java \
+        -Djava.awt.headless=true \
+        -Xshare:off \
+        -XX:DumpLoadedClassList=/app/classes.lst \
+        -jar /app/tracker-profiles.jar; \
+    [ -f /app/classes.lst ] || touch /app/classes.lst
+
+# Step 2: Dump the static AppCDS archive from the collected class list.
+# Classes that cannot be resolved or fail to initialise are silently excluded from the archive.
+# The same env vars as step 1 ensure static initialisers that call Configuration.get() succeed.
+# The command exits with code 1 (Xshare:dump exits after creating the archive, before main runs);
+# the fallback touch ensures a file always exists so the COPY in the runtime stage never fails.
+# At runtime, -Xshare:auto silently ignores an empty or incompatible archive.
+RUN DISPLAY=":0" \
+    TRACKER_INPUT_FILE_PATH=/tmp/trackers.csv \
+    FAIL_ON_UNSUPPORTED_TRACKER=false \
+    java \
+        -Djava.awt.headless=true \
+        -Xshare:dump \
+        -XX:SharedClassListFile=/app/classes.lst \
+        -XX:SharedArchiveFile=/app/app.jsa \
+        -jar /app/tracker-profiles.jar 2>/dev/null; \
+    [ -f /app/app.jsa ] || touch /app/app.jsa
+
 # Runtime
 FROM debian:13.4-slim AS runtime
 # Set the working directory
@@ -131,7 +178,7 @@ COPY ./docker/browser_extensions/ublock_origin_lite_ddkjiahejlhfcafbddmgiahcphec
 # Copy patched chromedriver
 COPY --from=chromedriver_builder /usr/local/chromium/chromedriver-linux64/chromedriver /usr/local/chromium/chromedriver-linux64/chromedriver
 
-# Copy application script
+# Copy scripts
 COPY --chmod=755 ./docker/scripts/start.sh /app/start.sh
 
 # Configure nonroot user
@@ -151,8 +198,9 @@ COPY --from=jdk_builder /opt/jdk /opt/jdk
 ENV JAVA_HOME="/opt/jdk"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY --from=java_app_builder /app/tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar tracker-profiles.jar
-# Copy JUL config so start.sh can pass it via -Djava.util.logging.config.file; JUL re-reads this
-# file after every LogManager.reset(), which Selenium triggers on each RemoteWebDriver creation
+COPY --from=appcds_builder /app/app.jsa app.jsa
+# Copy JUL config so start.sh can pass it via -Djava.util.logging.config.file
+# JUL re-reads this file after every LogManager.reset(), which Selenium triggers on each RemoteWebDriver creation
 COPY --from=java_app_builder /app/tracker-profiles-screenshots/src/main/resources/logging.properties logging.properties
 
 # Start application

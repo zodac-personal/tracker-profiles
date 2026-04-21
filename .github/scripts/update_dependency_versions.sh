@@ -486,7 +486,7 @@ update_java_version() {
     fi
     echo "  ✅ Docker image eclipse-temurin:${docker_tag} confirmed on Docker Hub"
 
-    # Dockerfile (both FROM lines — jdk_builder and java_app_builder)
+    # Dockerfile (all FROM lines)
     sed -i "s|FROM eclipse-temurin:[^ ]*-jdk|FROM eclipse-temurin:${docker_tag}|g" "${dockerfile}"
 
     # lint_and_tests.sh
