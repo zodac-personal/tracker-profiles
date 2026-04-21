@@ -55,25 +55,14 @@ public class Lst extends Unit3dHandler {
      */
     @Override
     protected void postLoginClickAction() {
-        final String initialUrl = driver.getCurrentUrl();
-        LOGGER.info("\t\t >>> Waiting for user to select correct movie poster and click the login button");
+        LOGGER.info("\t\t >>> Waiting for user to select correct movie poster");
 
         final By selectionSelector = XpathBuilder
             .from(div, withClass("auth-form__text-input-group"))
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie and click the login button");
-
-        // If the user didn't click 'login', do it for them
-        final String nextUrl = driver.getCurrentUrl();
-        if (nextUrl == null || nextUrl.equalsIgnoreCase(initialUrl)) {
-            final By loginButtonSelector = loginButtonSelector();
-            if (loginButtonSelector != null) {
-                final WebElement loginButton = driver.findElement(loginButtonSelector);
-                clickButton(loginButton);
-            }
-        }
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie", driver);
     }
 
     /**

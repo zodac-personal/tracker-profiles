@@ -65,7 +65,7 @@ public class Docspedia extends AbstractTrackerHandler {
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
     }
 
     @Override

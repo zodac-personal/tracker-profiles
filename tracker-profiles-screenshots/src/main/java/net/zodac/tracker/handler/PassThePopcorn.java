@@ -66,13 +66,14 @@ public class PassThePopcorn extends AbstractTrackerHandler {
     @Override
     protected void postLoginClickAction() {
         final String initialUrl = driver.getCurrentUrl();
-        LOGGER.info("\t\t >>> Waiting for user to select correct movie title and click the login button");
+        LOGGER.info("\t\t >>> Waiting for user to select correct movie title");
 
         final WebElement selectionElement = driver.findElement(By.id("captcha_container"));
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie and click the login button");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie", driver);
 
         // If the user didn't click 'login', do it for them
+        // Special case for PTP since the login button needs to be clicked twice
         final String nextUrl = driver.getCurrentUrl();
         if (nextUrl == null || nextUrl.equalsIgnoreCase(initialUrl)) {
             final By loginButtonSelector = loginButtonSelector();

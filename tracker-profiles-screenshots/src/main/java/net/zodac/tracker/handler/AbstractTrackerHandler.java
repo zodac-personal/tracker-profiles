@@ -23,6 +23,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClas
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
@@ -186,6 +187,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      *
      * @param trackerName the name of the tracker
      */
+    // TODO: Can this method move to the interface?
     // TODO: Can this button be automatically clicked? If the box is always in the same place, move the mouse and click?
     private void cloudflareCheck(final String trackerName) {
         if (!(this instanceof HasCloudflareCheck trackerHasCloudflareCheck)) {
@@ -199,7 +201,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final By cloudflareSelector = trackerHasCloudflareCheck.cloudflareSelector();
         final WebElement cloudflareElement = browserInteractionHelper.waitForElementToBePresent(cloudflareSelector, pageLoadDuration());
         browserInteractionHelper.highlightElement(cloudflareElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification");
+        DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification", driver);
     }
 
     /**
@@ -228,12 +230,18 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         passwordField.clear();
         passwordField.sendKeys(password);
 
+        final String loginPageUrl = driver.getCurrentUrl();
         preLoginClickAction();
         final By loginButtonSelector = loginButtonSelector();
         if (loginButtonSelector != null) {
-            final WebElement loginButton = browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector, pageLoadDuration());
-            LOGGER.trace("Clicking login button: {}", loginButton);
-            clickButton(loginButton);
+            final String currentUrl = driver.getCurrentUrl();
+            if (Objects.equals(loginPageUrl, currentUrl)) {
+                final WebElement loginButton = browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector, pageLoadDuration());
+                LOGGER.trace("Clicking login button: {}", loginButton);
+                clickButton(loginButton);
+            } else {
+                LOGGER.trace("Page has redirected from '{}' to '{}', assuming no need to click login button", loginPageUrl, currentUrl);
+            }
         }
         postLoginClickAction();
 

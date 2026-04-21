@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -48,11 +49,12 @@ import net.zodac.tracker.framework.exception.NoUserInputException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Utility class used to display pop-up windows and confirmation boxes to the user.
  */
-// TODO: Add a listener to the timer code and wait for a page update, then autoclose it
+// TODO: Change this from final/static to with constructor for driver and position.
 public final class DisplayUtils {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
@@ -61,11 +63,11 @@ public final class DisplayUtils {
     // UI element constants
     private static final String BUTTON_CONTINUE_TEXT = "Continue";
     private static final String BUTTON_EXIT_TEXT = "Exit";
-    private static final String LABEL_SUFFIX = String.format(", then click '%s' below", BUTTON_CONTINUE_TEXT);
     private static final String TITLE_SUFFIX = " Manual Input";
     private static final int DIALOG_HEIGHT = 125;
     private static final int DIALOG_WIDTH = 500;
     private static final int DIALOG_POSITION_LEFT_MARGIN = 40;
+    private static final long PAGE_POLL_INTERVAL_MS = 500L;
 
     private static final ScheduledExecutorService TIMEOUT_SCHEDULER = Executors.newSingleThreadScheduledExecutor(runnable -> {
         final Thread t = new Thread(runnable, "dialog-timeout");
@@ -78,44 +80,52 @@ public final class DisplayUtils {
     }
 
     /**
-     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker.
+     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker. The dialog closes
+     * automatically if a page redirect or reload is detected via {@code driver}.
      *
      * <p>
      * Uses {@link DialogPosition#ofDefault()} for positioning.
      *
      * @param titlePrefix the title for the pop-up
-     * @param labelPrefix the text for the pop-up
-     * @see #userInputConfirmation(String, String, DialogPosition)
+     * @param label       the text for the pop-up
+     * @param driver      the {@link RemoteWebDriver} used to poll for page changes
+     * @see #userInputConfirmation(String, String, RemoteWebDriver, DialogPosition)
      */
-    public static void userInputConfirmation(final String titlePrefix, final String labelPrefix) {
-        userInputConfirmation(titlePrefix, labelPrefix, DialogPosition.ofDefault());
+    public static void userInputConfirmation(final String titlePrefix, final String label, final RemoteWebDriver driver) {
+        userInputConfirmation(titlePrefix, label, driver, DialogPosition.ofDefault());
     }
 
     /**
-     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker.
+     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker. The dialog closes
+     * automatically if a page redirect or reload is detected via {@code driver}.
      *
      * @param titlePrefix    the title for the pop-up
-     * @param labelPrefix    the text for the pop-up
+     * @param label          the text for the pop-up
+     * @param driver         the {@link RemoteWebDriver} used to poll for page changes
      * @param dialogPosition the screen position of the dialog, as percentages of the available screen space
      */
-    public static void userInputConfirmation(final String titlePrefix, final String labelPrefix, final DialogPosition dialogPosition) {
+    public static void userInputConfirmation(final String titlePrefix, final String label, final RemoteWebDriver driver,
+                                             final DialogPosition dialogPosition) {
         setStyleToSystemTheme();
 
         final AtomicBoolean userProvidedInput = new AtomicBoolean(false);
         final AtomicBoolean timedOut = new AtomicBoolean(false);
 
-        final JDialog dialog = createDialog(titlePrefix, labelPrefix, userProvidedInput, dialogPosition);
-        showDialog(dialog, userProvidedInput, timedOut);
+        final String initialUrl = driver.getCurrentUrl();
+        final String initialTitle = driver.getTitle();
+
+        final JDialog dialog = createDialog(titlePrefix, label, userProvidedInput, dialogPosition);
+        showDialog(dialog, userProvidedInput, timedOut, driver, initialUrl, initialTitle);
     }
 
-    private static JDialog createDialog(final String titlePrefix, final String labelPrefix, final AtomicBoolean userProvidedInput,
+    private static JDialog createDialog(final String titlePrefix, final String label, final AtomicBoolean userProvidedInput,
                                         final DialogPosition dialogPosition) {
         final JDialog dialog = new JDialog((Frame) null, titlePrefix + TITLE_SUFFIX, true);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);  // Ensure the dialog remains on top of all windows when interacting with browser
 
         final JPanel panel = new JPanel(new GridLayout(2, 1));
-        final String labelText = "<html>" + labelPrefix + LABEL_SUFFIX + "</html>"; // Wrap text as HTML so .pack() can resize dynamically
+        final String labelText = "<html>" + label + "</html>"; // Wrap text as HTML so .pack() can resize
         panel.add(new JLabel(labelText, SwingConstants.CENTER));
 
         dialog.add(panel, BorderLayout.CENTER);
@@ -185,8 +195,11 @@ public final class DisplayUtils {
         return countdownTimer;
     }
 
-    private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut) {
+    private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut,
+                                   final @Nullable RemoteWebDriver driver, final @Nullable String initialUrl,
+                                   final @Nullable String initialTitle) {
         final ScheduledFuture<?> timeoutTask = getTimeoutTask(dialog, timedOut);
+        final ScheduledFuture<?> pageChangeTask = getPageChangeTask(dialog, userProvidedInput, driver, initialUrl, initialTitle);
 
         try {
             SwingUtilities.invokeAndWait(() -> dialog.setVisible(true));
@@ -212,8 +225,36 @@ public final class DisplayUtils {
             if (timeoutTask != null) {
                 timeoutTask.cancel(true);
             }
+            if (pageChangeTask != null) {
+                pageChangeTask.cancel(true);
+            }
             dialog.dispose();
         }
+    }
+
+    private static @Nullable ScheduledFuture<?> getPageChangeTask(final JDialog dialog, final AtomicBoolean userProvidedInput,
+                                                                  final @Nullable RemoteWebDriver driver,
+                                                                  final @Nullable String initialUrl,
+                                                                  final @Nullable String initialTitle) {
+        if (driver == null) {
+            return null;
+        }
+
+        LOGGER.trace("Starting page change listener (initial url: '{}', initial title: '{}')", initialUrl, initialTitle);
+        return TIMEOUT_SCHEDULER.scheduleAtFixedRate(() -> {
+            try {
+                final String currentUrl = driver.getCurrentUrl();
+                final String currentTitle = driver.getTitle();
+                if (!Objects.equals(currentUrl, initialUrl) || !Objects.equals(currentTitle, initialTitle)) {
+                    LOGGER.trace("Page change detected (url: '{}' -> '{}', title: '{}' -> '{}'), auto-closing dialog",
+                        initialUrl, currentUrl, initialTitle, currentTitle);
+                    userProvidedInput.set(true);
+                    SwingUtilities.invokeLater(dialog::dispose);
+                }
+            } catch (final Exception e) {
+                LOGGER.trace("Error polling for page change", e);
+            }
+        }, PAGE_POLL_INTERVAL_MS, PAGE_POLL_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
 
     private static @Nullable ScheduledFuture<?> getTimeoutTask(final JDialog dialog, final AtomicBoolean timedOut) {
@@ -232,7 +273,6 @@ public final class DisplayUtils {
         );
 
         LOGGER.trace("Waiting {} for user input", CONFIG.inputTimeoutDuration());
-
         return timeoutTask;
     }
 

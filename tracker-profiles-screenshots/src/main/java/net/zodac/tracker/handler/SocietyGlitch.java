@@ -66,7 +66,7 @@ public class SocietyGlitch extends AbstractTrackerHandler {
         browserInteractionHelper.highlightElement(captchaElement);
 
         // Default position blocks the user input, so we override it
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", DialogPosition.of(0, 80));
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver, DialogPosition.of(0, 80));
     }
 
     @Override

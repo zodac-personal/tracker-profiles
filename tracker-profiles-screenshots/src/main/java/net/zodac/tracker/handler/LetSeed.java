@@ -60,7 +60,7 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
         final By captchaSelector = By.id("regimage");
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
     }
 
     @Override

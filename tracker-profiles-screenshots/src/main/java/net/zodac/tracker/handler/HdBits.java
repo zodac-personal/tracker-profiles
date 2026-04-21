@@ -88,8 +88,8 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
 
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), String.format("Select the '%s' image (and enter 2FA passcode if enabled)",
-            captchaTextElement.getText()));
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(),
+            "Select the '%s' image and enter 2FA passcode (if enabled)".formatted(captchaTextElement.getText()), driver);
     }
 
     @Override

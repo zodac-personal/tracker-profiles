@@ -69,7 +69,7 @@ public class GazelleGames extends AbstractTrackerHandler {
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct game");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct game", driver);
     }
 
     @Override

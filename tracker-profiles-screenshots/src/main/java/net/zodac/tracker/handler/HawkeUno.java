@@ -66,7 +66,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
             .build();
         final WebElement twoFactorElement = driver.findElement(twoFactorSelector);
         browserInteractionHelper.highlightElement(twoFactorElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code", driver);
 
         // If the user didn't click 'verify', do it for them
         final String nextUrl = driver.getCurrentUrl();

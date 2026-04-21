@@ -89,7 +89,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha");
+        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
     }
 
     @Override
