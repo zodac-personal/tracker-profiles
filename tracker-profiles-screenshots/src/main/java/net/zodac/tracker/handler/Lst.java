@@ -85,6 +85,7 @@ public class Lst extends Unit3dHandler {
      */
     @Override
     protected By profileLinkSelector() {
+        openUserDropdownMenu();
         return XpathBuilder
             .from(img, withClass("top-nav__profile-image"))
             .build();
