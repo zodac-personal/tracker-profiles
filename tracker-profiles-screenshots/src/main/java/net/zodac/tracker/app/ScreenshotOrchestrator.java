@@ -59,7 +59,7 @@ public final class ScreenshotOrchestrator {
      */
     public static ExitState start() {
         final ResultCollector resultCollector = ResultCollector.start();
-        final ProgressBarManager progressBarManager = new ProgressBarManager();
+        final ProgressBarManager progressBarManager = ProgressBarManager.create();
 
         try (final ProgressBarPrintStream progressBarPrintStream = new ProgressBarPrintStream(progressBarManager)) {
             System.setOut(progressBarPrintStream);

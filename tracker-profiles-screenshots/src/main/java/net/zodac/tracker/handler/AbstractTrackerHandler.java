@@ -175,40 +175,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         if (loginLinkSelector != null) {
             final WebElement loginLink = browserInteractionHelper.waitForElementToBeInteractable(loginLinkSelector, pageLoadDuration());
             clickButton(loginLink);
-            cloudflareCheck(trackerName);
+            if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
+                hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
+            }
             browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
-        } else {
-            cloudflareCheck(trackerName);
+        } else if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
+            hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
         }
-    }
-
-    /**
-     * For this {@link AbstractTrackerHandler} implementation, there is a Cloudflare check protecting the login page. This verification check must be
-     * passed to proceed.
-     *
-     * <p>
-     * Manual user interactions:
-     * <ol>
-     *     <li>Pass the Cloudflare verification check</li>
-     * </ol>
-     *
-     * @param trackerName the name of the tracker
-     */
-    // TODO: Can this method move to the interface?
-    // TODO: Can this button be automatically clicked? If the box is always in the same place, move the mouse and click?
-    private void cloudflareCheck(final String trackerName) {
-        if (!(this instanceof HasCloudflareCheck trackerHasCloudflareCheck)) {
-            return;
-        }
-
-        LOGGER.debug("\t- Performing Cloudflare verification check");
-        browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-        LOGGER.info("\t\t >>> Waiting for user to pass the Cloudflare verification");
-
-        final By cloudflareSelector = trackerHasCloudflareCheck.cloudflareSelector();
-        final WebElement cloudflareElement = browserInteractionHelper.waitForElementToBePresent(cloudflareSelector, pageLoadDuration());
-        browserInteractionHelper.highlightElement(cloudflareElement);
-        displayUtils.confirm(trackerName, "Pass the Cloudflare verification");
     }
 
     /**

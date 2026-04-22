@@ -116,6 +116,7 @@ public record ApplicationConfiguration(
         "ERROR"
     ));
 
+    // TODO: Test these
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
         "800x600",
         "1024x768",
@@ -271,13 +272,14 @@ public record ApplicationConfiguration(
             final byte[] searchPrefix = (envVarName + "=").getBytes(StandardCharsets.US_ASCII);
             int start = 0;
             for (int i = 0; i <= environ.length; i++) {
-                if (i == environ.length || environ[i] == 0) {
-                    if (entryStartsWith(environ, start, searchPrefix)) {
-                        final int valueStart = start + searchPrefix.length;
-                        return Optional.of(new String(environ, valueStart, i - valueStart, StandardCharsets.UTF_8));
-                    }
-                    start = i + 1;
+                if (i != environ.length && environ[i] != 0) {
+                    continue;
                 }
+                if (entryStartsWith(environ, start, searchPrefix)) {
+                    final int valueStart = start + searchPrefix.length;
+                    return Optional.of(new String(environ, valueStart, i - valueStart, StandardCharsets.UTF_8));
+                }
+                start = i + 1;
             }
         } catch (final IOException e) {
             LOGGER.trace("Could not read /proc/self/environ to recover raw bytes for '{}': {}", envVarName, e.getMessage());

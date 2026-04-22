@@ -47,6 +47,19 @@ public final class ProgressBarManager {
     private int completedTrackers;
     private boolean stopped;
 
+    private ProgressBarManager() {
+
+    }
+
+    /**
+     * Creates an instance of {@link ProgressBarManager}.
+     *
+     * @return the {@link ProgressBarManager}
+     */
+    public static ProgressBarManager create() {
+        return new ProgressBarManager();
+    }
+
     /**
      * Creates the progress bar and renders the initial (0%) state. Uses {@link ApplicationConfiguration} to configure the bar.
      *

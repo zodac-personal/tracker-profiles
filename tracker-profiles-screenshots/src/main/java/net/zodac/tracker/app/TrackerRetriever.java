@@ -62,25 +62,8 @@ final class TrackerRetriever {
 
             final Map<TrackerType, Set<TrackerCredential>> trackersByType = new EnumMap<>(TrackerType.class);
             for (final TrackerCredential trackerCredential : trackerCredentials) {
-                final Optional<TrackerHandler> trackerHandlerOptional = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
-                if (trackerHandlerOptional.isEmpty()) {
-                    LOGGER.warn("No implementation found for tracker '{}'", trackerCredential.name());
-                    continue;
-                }
-
-                final TrackerHandler trackerHandler = trackerHandlerOptional.get();
-                final TrackerType trackerType = trackerHandler.type();
-                if (!trackerExecutionOrder.contains(trackerType)) {
-                    LOGGER.trace("Skipping {} ({})", trackerHandler.name(), trackerType);
-                    continue;
-                }
-
-                if (!CONFIG.enableAdultContent() && trackerHandler.adult()) {
-                    LOGGER.debug("Skipping adult tracker {}", trackerHandler.name());
-                    continue;
-                }
-
-                trackersByType.computeIfAbsent(trackerType, _ -> new TreeSet<>()).add(trackerCredential);
+                findHandler(trackerCredential, trackerExecutionOrder)
+                    .ifPresent(handler -> trackersByType.computeIfAbsent(handler.type(), _ -> new TreeSet<>()).add(trackerCredential));
             }
 
             return trackersByType;
@@ -91,6 +74,27 @@ final class TrackerRetriever {
             LOGGER.warn("Unable to read CSV input file", e);
             return Map.of();
         }
+    }
+
+    private static Optional<TrackerHandler> findHandler(final TrackerCredential trackerCredential, final Set<TrackerType> trackerExecutionOrder) {
+        final Optional<TrackerHandler> trackerHandlerOptional = TrackerHandlerFactory.findMatchingHandler(trackerCredential.name());
+        if (trackerHandlerOptional.isEmpty()) {
+            LOGGER.warn("No implementation found for tracker '{}'", trackerCredential.name());
+            return Optional.empty();
+        }
+
+        final TrackerHandler trackerHandler = trackerHandlerOptional.get();
+        if (!trackerExecutionOrder.contains(trackerHandler.type())) {
+            LOGGER.trace("Skipping {} ({})", trackerHandler.name(), trackerHandler.type());
+            return Optional.empty();
+        }
+
+        if (!CONFIG.enableAdultContent() && trackerHandler.adult()) {
+            LOGGER.debug("Skipping adult tracker {}", trackerHandler.name());
+            return Optional.empty();
+        }
+
+        return trackerHandlerOptional;
     }
 
     /**
