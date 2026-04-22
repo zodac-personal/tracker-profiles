@@ -44,7 +44,9 @@ public class PassThePopcorn extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "hidden captcha to load");
+        final By captchaSelector = By.id("captcha_container");
+        browserInteractionHelper.waitForElementToBePresent(captchaSelector, pageLoadDuration());
+        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "hidden captcha to finish loading");
         return By.id("login-button");
     }
 
