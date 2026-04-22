@@ -79,6 +79,12 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     protected BrowserInteractionHelper browserInteractionHelper;
 
     /**
+     * The {@link DisplayUtils} instance bound to this handler's {@link RemoteWebDriver}.
+     */
+    @SuppressWarnings("NullAway") // Will be set in the configure() method
+    protected DisplayUtils displayUtils;
+
+    /**
      * The {@link TrackerDefinition}.
      */
     @SuppressWarnings("NullAway") // Will be set in the configure() method
@@ -97,6 +103,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final List<Extension> extensions = this instanceof UsesExtensions trackerExtensions ? trackerExtensions.requiredExtensions() : List.of();
         driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
+        displayUtils = DisplayUtils.withDriver(driver);
     }
 
     /**
@@ -201,7 +208,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         final By cloudflareSelector = trackerHasCloudflareCheck.cloudflareSelector();
         final WebElement cloudflareElement = browserInteractionHelper.waitForElementToBePresent(cloudflareSelector, pageLoadDuration());
         browserInteractionHelper.highlightElement(cloudflareElement);
-        DisplayUtils.userInputConfirmation(trackerName, "Pass the Cloudflare verification", driver);
+        displayUtils.confirm(trackerName, "Pass the Cloudflare verification");
     }
 
     /**

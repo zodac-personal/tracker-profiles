@@ -29,7 +29,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasProfilePageActions;
@@ -66,7 +65,7 @@ public class HawkeUno extends AbstractTrackerHandler implements HasCloudflareChe
             .build();
         final WebElement twoFactorElement = driver.findElement(twoFactorSelector);
         browserInteractionHelper.highlightElement(twoFactorElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Enter the 2FA code");
 
         // If the user didn't click 'verify', do it for them
         final String nextUrl = driver.getCurrentUrl();

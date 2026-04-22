@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -69,7 +68,7 @@ public class GazelleGames extends AbstractTrackerHandler {
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct game", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Select the correct game");
     }
 
     @Override

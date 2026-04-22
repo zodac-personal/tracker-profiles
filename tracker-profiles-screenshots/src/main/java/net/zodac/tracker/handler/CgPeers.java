@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasDismissibleElement;
@@ -88,7 +87,7 @@ public class CgPeers extends LuminanceHandler implements HasCloudflareCheck, Has
         final By selectionSelector = By.name("code");
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Enter the 2FA code", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Enter the 2FA code");
     }
 
     @Override

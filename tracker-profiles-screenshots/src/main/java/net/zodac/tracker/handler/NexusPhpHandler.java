@@ -41,7 +41,6 @@ import net.zodac.tracker.framework.annotation.CommonTrackerHandler;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -100,7 +99,7 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
             .build();
         final WebElement captchaElement = driver.findElement(captchaElementSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

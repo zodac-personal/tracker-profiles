@@ -54,7 +54,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Utility class used to display pop-up windows and confirmation boxes to the user.
  */
-// TODO: Change this from final/static to with constructor for driver and position.
 public final class DisplayUtils {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
@@ -75,37 +74,41 @@ public final class DisplayUtils {
         return t;
     });
 
-    private DisplayUtils() {
+    private final RemoteWebDriver driver;
 
+    private DisplayUtils(final RemoteWebDriver driver) {
+        this.driver = driver;
+    }
+
+    /**
+     * Creates a {@link DisplayUtils} bound to the given {@link RemoteWebDriver}, using the default {@link DialogPosition}.
+     *
+     * @param driver the {@link RemoteWebDriver} used to poll for page changes
+     * @return the {@link DisplayUtils}
+     * @see DialogPosition#ofDefault()
+     */
+    public static DisplayUtils withDriver(final RemoteWebDriver driver) {
+        return new DisplayUtils(driver);
+    }
+
+    /**
+     * Similar to the {@link #confirm(String, String, DialogPosition)}, but using {@link DialogPosition#ofDefault()}.
+     *
+     * @param title the title for the pop-up
+     * @param label the text for the pop-up
+     */
+    public void confirm(final String title, final String label) {
+        confirm(title, label, DialogPosition.ofDefault());
     }
 
     /**
      * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker. The dialog closes
-     * automatically if a page redirect or reload is detected via {@code driver}.
+     * automatically if a page redirect or reload is detected via the bound {@link RemoteWebDriver}.
      *
-     * <p>
-     * Uses {@link DialogPosition#ofDefault()} for positioning.
-     *
-     * @param titlePrefix the title for the pop-up
-     * @param label       the text for the pop-up
-     * @param driver      the {@link RemoteWebDriver} used to poll for page changes
-     * @see #userInputConfirmation(String, String, RemoteWebDriver, DialogPosition)
+     * @param title the title for the pop-up
+     * @param label the text for the pop-up
      */
-    public static void userInputConfirmation(final String titlePrefix, final String label, final RemoteWebDriver driver) {
-        userInputConfirmation(titlePrefix, label, driver, DialogPosition.ofDefault());
-    }
-
-    /**
-     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker. The dialog closes
-     * automatically if a page redirect or reload is detected via {@code driver}.
-     *
-     * @param titlePrefix    the title for the pop-up
-     * @param label          the text for the pop-up
-     * @param driver         the {@link RemoteWebDriver} used to poll for page changes
-     * @param dialogPosition the screen position of the dialog, as percentages of the available screen space
-     */
-    public static void userInputConfirmation(final String titlePrefix, final String label, final RemoteWebDriver driver,
-                                             final DialogPosition dialogPosition) {
+    public void confirm(final String title, final String label, final DialogPosition dialogPosition) {
         setStyleToSystemTheme();
 
         final AtomicBoolean userProvidedInput = new AtomicBoolean(false);
@@ -114,13 +117,12 @@ public final class DisplayUtils {
         final String initialUrl = driver.getCurrentUrl();
         final String initialTitle = driver.getTitle();
 
-        final JDialog dialog = createDialog(titlePrefix, label, userProvidedInput, dialogPosition);
-        showDialog(dialog, userProvidedInput, timedOut, driver, initialUrl, initialTitle);
+        final JDialog dialog = createDialog(title, label, userProvidedInput, dialogPosition);
+        showDialog(dialog, userProvidedInput, timedOut, initialUrl, initialTitle);
     }
 
-    private static JDialog createDialog(final String titlePrefix, final String label, final AtomicBoolean userProvidedInput,
-                                        final DialogPosition dialogPosition) {
-        final JDialog dialog = new JDialog((Frame) null, titlePrefix + TITLE_SUFFIX, true);
+    private JDialog createDialog(final String title, final String label, final AtomicBoolean userProvidedInput, final DialogPosition dialogPosition) {
+        final JDialog dialog = new JDialog((Frame) null, title + TITLE_SUFFIX, true);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);  // Ensure the dialog remains on top of all windows when interacting with browser
 
@@ -195,11 +197,10 @@ public final class DisplayUtils {
         return countdownTimer;
     }
 
-    private static void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut,
-                                   final @Nullable RemoteWebDriver driver, final @Nullable String initialUrl,
-                                   final @Nullable String initialTitle) {
+    private void showDialog(final JDialog dialog, final AtomicBoolean userProvidedInput, final AtomicBoolean timedOut,
+                            final @Nullable String initialUrl, final @Nullable String initialTitle) {
         final ScheduledFuture<?> timeoutTask = getTimeoutTask(dialog, timedOut);
-        final ScheduledFuture<?> pageChangeTask = getPageChangeTask(dialog, userProvidedInput, driver, initialUrl, initialTitle);
+        final ScheduledFuture<?> pageChangeTask = getPageChangeTask(dialog, userProvidedInput, initialUrl, initialTitle);
 
         try {
             SwingUtilities.invokeAndWait(() -> dialog.setVisible(true));
@@ -225,21 +226,13 @@ public final class DisplayUtils {
             if (timeoutTask != null) {
                 timeoutTask.cancel(true);
             }
-            if (pageChangeTask != null) {
-                pageChangeTask.cancel(true);
-            }
+            pageChangeTask.cancel(true);
             dialog.dispose();
         }
     }
 
-    private static @Nullable ScheduledFuture<?> getPageChangeTask(final JDialog dialog, final AtomicBoolean userProvidedInput,
-                                                                  final @Nullable RemoteWebDriver driver,
-                                                                  final @Nullable String initialUrl,
-                                                                  final @Nullable String initialTitle) {
-        if (driver == null) {
-            return null;
-        }
-
+    private ScheduledFuture<?> getPageChangeTask(final JDialog dialog, final AtomicBoolean userProvidedInput,
+                                                 final @Nullable String initialUrl, final @Nullable String initialTitle) {
         LOGGER.trace("Starting page change listener (initial url: '{}', initial title: '{}')", initialUrl, initialTitle);
         return TIMEOUT_SCHEDULER.scheduleAtFixedRate(() -> {
             try {
@@ -276,17 +269,17 @@ public final class DisplayUtils {
         return timeoutTask;
     }
 
-    private static void setDialogPosition(final JDialog dialog, final DialogPosition position) {
+    private void setDialogPosition(final JDialog dialog, final DialogPosition dialogPosition) {
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
 
         // Horizontal: DIALOG_POSITION_LEFT_MARGIN is the baseline; horizontalPercent distributes remaining space right of that margin
         final int availableWidth = bounds.width - dialog.getWidth() - DIALOG_POSITION_LEFT_MARGIN;
-        final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN + (int) (availableWidth * position.horizontalPercent() / 100.0);
+        final int x = bounds.x + DIALOG_POSITION_LEFT_MARGIN + (int) (availableWidth * dialogPosition.horizontalPercent() / 100.0);
 
         // Vertical: verticalPercent distributes the full available vertical space (default 60% keeps clear of top-of-page elements)
         final int availableHeight = bounds.height - dialog.getHeight();
-        final int y = bounds.y + (int) (availableHeight * position.verticalPercent() / 100.0);
+        final int y = bounds.y + (int) (availableHeight * dialogPosition.verticalPercent() / 100.0);
 
         dialog.setLocation(x, y);
     }

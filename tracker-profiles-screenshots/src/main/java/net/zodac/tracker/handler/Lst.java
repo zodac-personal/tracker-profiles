@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import org.openqa.selenium.By;
@@ -62,7 +61,7 @@ public class Lst extends Unit3dHandler {
             .build();
         final WebElement selectionElement = driver.findElement(selectionSelector);
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Select the correct movie");
     }
 
     /**

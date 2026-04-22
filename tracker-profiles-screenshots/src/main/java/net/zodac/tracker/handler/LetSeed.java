@@ -26,7 +26,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
@@ -60,7 +59,7 @@ public class LetSeed extends TsSpecialEditionHandler implements HasFixedHeader, 
         final By captchaSelector = By.id("regimage");
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

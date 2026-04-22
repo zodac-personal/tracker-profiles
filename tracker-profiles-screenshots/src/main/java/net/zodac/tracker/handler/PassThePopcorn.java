@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
@@ -70,7 +69,7 @@ public class PassThePopcorn extends AbstractTrackerHandler {
 
         final WebElement selectionElement = driver.findElement(By.id("captcha_container"));
         browserInteractionHelper.highlightElement(selectionElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Select the correct movie", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Select the correct movie");
 
         // If the user didn't click 'login', do it for them
         // Special case for PTP since the login button needs to be clicked twice

@@ -32,7 +32,6 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
@@ -89,7 +88,7 @@ public class DigitalCoreClub extends AbstractTrackerHandler {
             .build();
         final WebElement captchaElement = driver.findElement(captchaSelector);
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override

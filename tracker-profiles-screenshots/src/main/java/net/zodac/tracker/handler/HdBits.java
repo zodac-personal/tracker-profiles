@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.NamedHtmlElement;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
@@ -88,8 +87,7 @@ public class HdBits extends AbstractTrackerHandler implements HasCloudflareCheck
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
 
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(),
-            "Select the '%s' image and enter 2FA passcode (if enabled)".formatted(captchaTextElement.getText()), driver);
+        displayUtils.confirm(trackerDefinition.name(), "Select the '%s' image and 2FA (if enabled)".formatted(captchaTextElement.getText()));
     }
 
     @Override

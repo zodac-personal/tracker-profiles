@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
-import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -65,7 +64,7 @@ public class Docspedia extends AbstractTrackerHandler {
 
         final WebElement captchaElement = driver.findElement(By.id("captcha"));
         browserInteractionHelper.highlightElement(captchaElement);
-        DisplayUtils.userInputConfirmation(trackerDefinition.name(), "Solve the captcha", driver);
+        displayUtils.confirm(trackerDefinition.name(), "Solve the captcha");
     }
 
     @Override
