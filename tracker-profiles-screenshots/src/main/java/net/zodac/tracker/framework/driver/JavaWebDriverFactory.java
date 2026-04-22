@@ -66,6 +66,7 @@ public final class JavaWebDriverFactory {
      * @param extensions               any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
+    // TODO: Reuse driver for each tracker?
     public static RemoteWebDriver createDriver(final TrackerType trackerType,
                                                final boolean needsExplicitTranslation,
                                                final List<Extension> extensions

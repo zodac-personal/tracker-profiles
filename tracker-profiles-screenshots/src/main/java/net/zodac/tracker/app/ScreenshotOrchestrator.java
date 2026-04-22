@@ -90,6 +90,7 @@ public final class ScreenshotOrchestrator {
 
                 LOGGER.info("");
                 LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
+                // TODO: Execute these in parallel?
                 for (final TrackerCredential trackerCredential : trackersByType.get(trackerType)) {
                     final long startNanos = System.nanoTime();
                     final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(trackerCredential, progressBarManager);

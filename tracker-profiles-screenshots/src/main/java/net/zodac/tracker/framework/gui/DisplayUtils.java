@@ -81,7 +81,7 @@ public final class DisplayUtils {
     }
 
     /**
-     * Creates a {@link DisplayUtils} bound to the given {@link RemoteWebDriver}, using the default {@link DialogPosition}.
+     * Creates a {@link DisplayUtils} bound to the given {@link RemoteWebDriver}.
      *
      * @param driver the {@link RemoteWebDriver} used to poll for page changes
      * @return the {@link DisplayUtils}
@@ -96,14 +96,14 @@ public final class DisplayUtils {
      *
      * @param title the title for the pop-up
      * @param label the text for the pop-up
+     * @see #confirm(String, String, DialogPosition)
      */
     public void confirm(final String title, final String label) {
         confirm(title, label, DialogPosition.ofDefault());
     }
 
     /**
-     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker. The dialog closes
-     * automatically if a page redirect or reload is detected via the bound {@link RemoteWebDriver}.
+     * Creates a pop-up on the screen for the user to click to confirm a user input has been provided to the loaded tracker.
      *
      * @param title the title for the pop-up
      * @param label the text for the pop-up
@@ -269,7 +269,7 @@ public final class DisplayUtils {
         return timeoutTask;
     }
 
-    private void setDialogPosition(final JDialog dialog, final DialogPosition dialogPosition) {
+    private static void setDialogPosition(final JDialog dialog, final DialogPosition dialogPosition) {
         final GraphicsConfiguration gc = dialog.getGraphicsConfiguration();
         final Rectangle bounds = gc.getBounds();
 

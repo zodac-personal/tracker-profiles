@@ -96,12 +96,12 @@ COPY --from=java_app_builder /app/tracker-profiles-screenshots/target/tracker-pr
 # handler classes via Class.forName(), then the app exits cleanly with "no trackers selected"
 RUN printf 'trackerName,username,password\nAppCdsTraining,user,pass\n' > /tmp/trackers.csv
 
-# Step 1: Collect the list of all classes loaded during a representative run.
-# -Xshare:off disables any existing archive so the class list reflects actual class-loading order.
-# java.awt.headless=true returns a HeadlessGraphicsEnvironment without connecting to an X11 display.
-# DISPLAY=:0 satisfies ApplicationLauncher's non-null DISPLAY env var check.
-# FAIL_ON_UNSUPPORTED_TRACKER=false allows the training-only CSV row to be skipped without error.
-# The command exits with code 1 ("no trackers selected"); the class list is still written on exit.
+# Step 1: Collect the list of all classes loaded during a representative run
+# -Xshare:off disables any existing archive so the class list reflects actual class-loading order
+# java.awt.headless=true returns a HeadlessGraphicsEnvironment without connecting to an X11 display
+# DISPLAY=:0 satisfies ApplicationLauncher's non-null DISPLAY env var check
+# FAIL_ON_UNSUPPORTED_TRACKER=false allows the training-only CSV row to be skipped without error
+# The command exits with code 1 ("no trackers selected"); the class list is still written on exit
 RUN DISPLAY=":0" \
     TRACKER_INPUT_FILE_PATH=/tmp/trackers.csv \
     FAIL_ON_UNSUPPORTED_TRACKER=false \
@@ -112,12 +112,19 @@ RUN DISPLAY=":0" \
         -jar /app/tracker-profiles.jar; \
     [ -f /app/classes.lst ] || touch /app/classes.lst
 
-# Step 2: Dump the static AppCDS archive from the collected class list.
-# Classes that cannot be resolved or fail to initialise are silently excluded from the archive.
-# The same env vars as step 1 ensure static initialisers that call Configuration.get() succeed.
-# The command exits with code 1 (Xshare:dump exits after creating the archive, before main runs);
-# the fallback touch ensures a file always exists so the COPY in the runtime stage never fails.
-# At runtime, -Xshare:auto silently ignores an empty or incompatible archive.
+# Step 1b: Remove Log4j2 async classes from the class list
+# AsyncLoggerContext and its siblings in the log4j/core/async package reference com.lmax.disruptor, which is an optional
+# Log4j2 dependency only needed for async logging.
+# Since async logging is not configured here, Disruptor is not on the classpath. Leaving these classes in causes CDS to
+# fail its bytecode verification and.
+RUN sed -i '/log4j.*[Aa]sync/d' /app/classes.lst
+
+# Step 2: Dump the static AppCDS archive from the collected class list
+# Classes that cannot be resolved or fail to initialise are silently excluded from the archive
+# The same env vars as step 1 ensure static initialisers that call Configuration.get() succeed
+# The command exits with code 1 (Xshare:dump exits after creating the archive, before main runs); the fallback touch
+# ensures a file always exists so the COPY in the runtime stage never fails \
+# At runtime, -Xshare:auto silently ignores an empty or incompatible archive
 RUN DISPLAY=":0" \
     TRACKER_INPUT_FILE_PATH=/tmp/trackers.csv \
     FAIL_ON_UNSUPPORTED_TRACKER=false \
