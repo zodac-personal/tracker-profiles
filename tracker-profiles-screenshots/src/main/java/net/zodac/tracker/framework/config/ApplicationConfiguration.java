@@ -130,7 +130,8 @@ public record ApplicationConfiguration(
         "1680x1050",
         "1920x1080",
         "1920x1200",
-        "2560x1440"
+        "2560x1440",
+        "7680x4320"
     ));
 
     /**

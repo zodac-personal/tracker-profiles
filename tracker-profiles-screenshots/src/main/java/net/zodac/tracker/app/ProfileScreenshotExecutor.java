@@ -69,6 +69,7 @@ final class ProfileScreenshotExecutor {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Path ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("errors");
+    private static final Path REDACTION_ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("redaction-errors");
     private static final int MAXIMUM_SCREENSHOT_ATTEMPTS = CONFIG.numberOfTrackerAttempts();
 
     private ProfileScreenshotExecutor() {
@@ -115,7 +116,7 @@ final class ProfileScreenshotExecutor {
 
                 if (screenshotResult) {
                     LOGGER.trace("Successfully screenshot '{}' on attempt #{}", trackerCredential.name(), attempt);
-                    clearErrorScreenshots(trackerCredential.name());
+                    clearErrorScreenshots(trackerCredential.name(), ERRORS_DIRECTORY);
                     return true;
                 }
             } catch (final Exception e) {
@@ -147,7 +148,7 @@ final class ProfileScreenshotExecutor {
             LOGGER.debug("\t- User provided no manual input for tracker '{}'", trackerCredential.name(), e);
             LOGGER.warn("\t- User provided no manual input for tracker '{}'", trackerCredential.name());
         } catch (final TimeoutException e) {
-            screenshotOnError(trackerHandler, trackerCredential.name());
+            screenshotOnError(trackerHandler, trackerCredential.name(), ERRORS_DIRECTORY);
             LOGGER.debug("\t- Timed out waiting to find required element for tracker '{}'", trackerCredential.name(), e);
 
             final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
@@ -163,7 +164,7 @@ final class ProfileScreenshotExecutor {
             LOGGER.debug("Browser unavailable, most likely user-cancelled", e);
             LOGGER.warn("Browser unavailable, most likely user-cancelled");
         } catch (final Exception e) {
-            screenshotOnError(trackerHandler, trackerCredential.name());
+            screenshotOnError(trackerHandler, trackerCredential.name(), ERRORS_DIRECTORY);
             LOGGER.debug("\t- Unexpected error taking screenshot of '{}'", trackerCredential.name(), e);
 
             final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
@@ -181,8 +182,8 @@ final class ProfileScreenshotExecutor {
         return false;
     }
 
-    private static void clearErrorScreenshots(final String trackerName) {
-        final File errorsDirectory = ERRORS_DIRECTORY.toFile();
+    private static void clearErrorScreenshots(final String trackerName, final Path directory) {
+        final File errorsDirectory = directory.toFile();
         if (!errorsDirectory.exists()) {
             return;
         }
@@ -211,7 +212,7 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName) {
+    private static void screenshotOnError(final @Nullable AbstractTrackerHandler trackerHandler, final String trackerName, final Path directory) {
         if (!CONFIG.takeScreenshotOnError()) {
             LOGGER.trace("Error occurred, but screenshots for errors are not enabled");
             return;
@@ -224,8 +225,8 @@ final class ProfileScreenshotExecutor {
 
         try {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
-            ensureErrorDirectoryExists();
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), ERRORS_DIRECTORY, trackerName, false, 0);
+            ensureDirectoryExists(directory);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), directory, trackerName, false, 0);
             LOGGER.warn("\t\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
         } catch (final IOException e) {
             LOGGER.debug("\t\t- Unable to take failure screenshot of '{}'", trackerName, e);
@@ -233,13 +234,13 @@ final class ProfileScreenshotExecutor {
         }
     }
 
-    private static void ensureErrorDirectoryExists() throws IOException {
-        final File directoryHandle = ERRORS_DIRECTORY.toFile();
+    private static void ensureDirectoryExists(final Path directory) throws IOException {
+        final File directoryHandle = directory.toFile();
         if (!directoryHandle.exists()) {
             LOGGER.trace("Creating directory: '{}'", directoryHandle);
             final boolean created = directoryHandle.mkdirs();
             if (!created && !directoryHandle.exists()) {
-                throw new IOException("Unable to create errors directory: " + directoryHandle.getAbsolutePath());
+                throw new IOException("Unable to create directory: " + directoryHandle.getAbsolutePath());
             }
         }
     }
@@ -308,7 +309,7 @@ final class ProfileScreenshotExecutor {
         final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
 
         final int numberOfUpdates = updateProfilePage(trackerHandler);
-        final int numberOfRedactions = performRedaction(trackerHandler, redactionType);
+        final int numberOfRedactions = performRedaction(trackerHandler, redactionType, trackerCredential.name());
 
         trackerHandler.actionBeforeScreenshot();
         final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName, scrollDuringScreenshot,
@@ -359,7 +360,7 @@ final class ProfileScreenshotExecutor {
         return numberOfUpdates;
     }
 
-    private static int performRedaction(final AbstractTrackerHandler trackerHandler, final RedactionType redactionType) {
+    private static int performRedaction(final AbstractTrackerHandler trackerHandler, final RedactionType redactionType, final String trackerName) {
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
         } else if (trackerHandler.hasSensitiveInformation()) {
@@ -368,8 +369,10 @@ final class ProfileScreenshotExecutor {
 
             final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
             if (numberOfRedactedElements == 0) {
+                screenshotOnError(trackerHandler, trackerName, REDACTION_ERRORS_DIRECTORY);
                 LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
             } else {
+                clearErrorScreenshots(trackerName, REDACTION_ERRORS_DIRECTORY);
                 LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
             }
             return numberOfRedactedElements;
