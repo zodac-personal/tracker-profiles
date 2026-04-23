@@ -51,6 +51,7 @@ import org.apache.logging.log4j.Logger;
  * @param inputTimeoutDuration           how long to wait for a user-input (if enabled)
  * @param inputTimeoutEnabled            whether a timeout for a user-input is enabled or not
  * @param logLevel                       the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
+ * @param logTrackerName                 whether to prefix each log message with the name of the tracker being screenshotted
  * @param numberOfTrackerAttempts        the number of times to attempt to screenshot a tracker
  * @param outputDirectory                the output {@link Path} to the directory within which the screenshots will be saved
  * @param progressBarCompleteCharacter   the character used to represent a completed portion of the progress bar
@@ -76,6 +77,7 @@ public record ApplicationConfiguration(
     Duration inputTimeoutDuration,
     boolean inputTimeoutEnabled,
     String logLevel,
+    boolean logTrackerName,
     int numberOfTrackerAttempts,
     Path outputDirectory,
     char progressBarCompleteCharacter,
@@ -149,6 +151,7 @@ public record ApplicationConfiguration(
             getInputTimeoutDuration(),
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
             getLogLevel(),
+            getBooleanEnvironmentVariable("LOG_TRACKER_NAME", true),
             getNumberOfTrackerAttempts(),
             getOutputDirectory(),
             getProgressBarCompleteCharacter(),
@@ -399,6 +402,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- inputTimeoutDuration={}", inputTimeoutDuration);
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
         LOGGER.debug("\t- logLevel={}", logLevel);
+        LOGGER.debug("\t- logTrackerName={}", logTrackerName);
         LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- progressBarCompleteCharacter={}", progressBarCompleteCharacter);

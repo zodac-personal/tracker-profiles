@@ -52,6 +52,7 @@ import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.NoSuchWindowException;
@@ -68,6 +69,7 @@ final class ProfileScreenshotExecutor {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Path ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("errors");
+    private static final int MAXIMUM_SCREENSHOT_ATTEMPTS = CONFIG.numberOfTrackerAttempts();
 
     private ProfileScreenshotExecutor() {
 
@@ -78,18 +80,34 @@ final class ProfileScreenshotExecutor {
      *
      * @param trackerCredential  details of the tracker to screenshot
      * @param progressBarManager the progress bar manager to tick at each workflow step
+     * @param maxLogLength       the maximum length needed for the log entry to log the tracker name
      * @return {@code true} if screenshot was successful
      * @throws RuntimeException thrown if all attempts are exhausted due to a retryable failure with a known cause
      */
-    static boolean takeScreenshot(final TrackerCredential trackerCredential, final ProgressBarManager progressBarManager) {
-        LOGGER.info("");
-        LOGGER.info("[{}]", trackerCredential.name());
+    static boolean takeScreenshot(final TrackerCredential trackerCredential, final ProgressBarManager progressBarManager, final int maxLogLength) {
+        setUpPerTrackerLogging(trackerCredential, maxLogLength);
 
-        final int maxAttempts = CONFIG.numberOfTrackerAttempts();
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            return takeScreenshotWithAttempts(trackerCredential, progressBarManager);
+        } finally {
+            ThreadContext.clearAll();
+        }
+    }
+
+    private static void setUpPerTrackerLogging(final TrackerCredential trackerCredential, final int maxLogLength) {
+        if (CONFIG.logTrackerName()) {
+            LOGGER.trace("Enabling tracker name logging");
+            ThreadContext.put("tracker", ("[%-" + maxLogLength + "s] ").formatted(trackerCredential.name()));
+        } else {
+            LOGGER.info("[{}]", trackerCredential.name());
+        }
+    }
+
+    private static boolean takeScreenshotWithAttempts(final TrackerCredential trackerCredential, final ProgressBarManager progressBarManager) {
+        for (int attempt = 1; attempt <= MAXIMUM_SCREENSHOT_ATTEMPTS; attempt++) {
             if (attempt != FIRST_ATTEMPT) {
                 LOGGER.warn("");
-                LOGGER.info("[{}] (attempt {}/{})", trackerCredential.name(), attempt, maxAttempts);
+                LOGGER.info("[{}] (attempt {}/{})", trackerCredential.name(), attempt, MAXIMUM_SCREENSHOT_ATTEMPTS);
             }
 
             try {
@@ -106,7 +124,7 @@ final class ProfileScreenshotExecutor {
             }
         }
 
-        LOGGER.debug("\t- All {} attempts exhausted for tracker '{}'", maxAttempts, trackerCredential.name());
+        LOGGER.debug("\t- All {} attempts exhausted for tracker '{}'", MAXIMUM_SCREENSHOT_ATTEMPTS, trackerCredential.name());
         return false;
     }
 

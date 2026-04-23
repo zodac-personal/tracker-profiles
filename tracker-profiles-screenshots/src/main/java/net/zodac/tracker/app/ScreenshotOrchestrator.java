@@ -81,6 +81,9 @@ public final class ScreenshotOrchestrator {
             TrackerRetriever.printTrackersInfo(trackersByType, CONFIG.trackerExecutionOrder());
             progressBarManager.start(numberOfTrackers, numberOfTrackers * TrackerStep.NUMBER_OF_STEPS);
 
+            // Get the max length so we don't resize the log entry during execution
+            final int maxTrackerNameLength = maxTrackerNameLength(trackersByType);
+
             // Execute in the order specified
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
                 if (!trackersByType.containsKey(trackerType)) {
@@ -90,10 +93,13 @@ public final class ScreenshotOrchestrator {
 
                 LOGGER.info("");
                 LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
+                LOGGER.info("");
+
                 // TODO: Execute these in parallel?
                 for (final TrackerCredential trackerCredential : trackersByType.get(trackerType)) {
                     final long startNanos = System.nanoTime();
-                    final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(trackerCredential, progressBarManager);
+                    final boolean successfullyTakenScreenshot =
+                        ProfileScreenshotExecutor.takeScreenshot(trackerCredential, progressBarManager, maxTrackerNameLength);
                     resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
                     printTrackerExecutionTime(trackerCredential.name(), startNanos);
                     progressBarManager.tickTracker(trackerCredential.name());
@@ -102,6 +108,14 @@ public final class ScreenshotOrchestrator {
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
+    }
+
+    private static int maxTrackerNameLength(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        return trackersByType.values().stream()
+            .flatMap(Set::stream)
+            .mapToInt(credential -> credential.name().length())
+            .max()
+            .orElse(0);
     }
 
     private static void printTrackerExecutionTime(final String trackerName, final long startNanos) {
