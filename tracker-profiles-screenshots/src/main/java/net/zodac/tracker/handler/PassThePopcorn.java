@@ -26,13 +26,11 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.contains
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -46,7 +44,6 @@ public class PassThePopcorn extends AbstractTrackerHandler {
     protected By loginButtonSelector() {
         final By captchaSelector = By.id("captcha_container");
         browserInteractionHelper.waitForElementToBePresent(captchaSelector, pageLoadDuration());
-        BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "hidden captcha to finish loading");
         return By.id("login-button");
     }
 

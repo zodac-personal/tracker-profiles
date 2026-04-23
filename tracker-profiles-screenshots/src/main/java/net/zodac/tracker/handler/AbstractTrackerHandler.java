@@ -110,10 +110,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * Navigates to the home page of the tracker. Waits {@link #pageLoadDuration()} for the page to finish loading.
      */
     public void openTracker() {
-        boolean successfulConnection = false;
+        String successfulUrl = null;
 
         for (final String trackerUrl : trackerDefinition.urls()) {
-            if (successfulConnection) {
+            if (successfulUrl != null) {
                 // A previous URL successfully connected, no need to try another
                 break;
             }
@@ -129,7 +129,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
                 if (bodyText.contains("HTTP ERROR 523") || bodyText.contains("Error code 523")) {
                     LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
                 } else {
-                    successfulConnection = true;
+                    LOGGER.trace("Successfully opened tracker at {}", trackerUrl);
+                    successfulUrl = trackerUrl;
                     browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
                 }
             } catch (final WebDriverException e) {
@@ -144,7 +145,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         }
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
-        if (!successfulConnection) {
+        if (successfulUrl == null) {
             throw new IllegalStateException(
                 String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", trackerDefinition.name(), trackerDefinition.urls()));
         }
