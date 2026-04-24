@@ -118,12 +118,7 @@ public record ApplicationConfiguration(
         "ERROR"
     ));
 
-    // TODO: Test these
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
-        "800x600",
-        "1024x768",
-        "1280x720",
-        "1280x800",
         "1280x1024",
         "1600x1000",
         "1600x1200",
