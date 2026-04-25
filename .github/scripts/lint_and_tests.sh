@@ -37,8 +37,8 @@ ESLINT_NODE_IMAGE="node:25.9.0-alpine"
 HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
 JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
 JDK_DOCKER_IMAGE="eclipse-temurin:26_35-jdk"
-MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.0"
-MAVEN_DOCKER_IMAGE="maven:3.9.14"
+MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.1"
+MAVEN_DOCKER_IMAGE="maven:3.9.15"
 
 VALID_STEPS=("docker" "javascript" "markdown" "java")
 

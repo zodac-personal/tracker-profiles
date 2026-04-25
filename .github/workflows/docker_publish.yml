@@ -52,7 +52,7 @@ jobs:
           checkout-fetch-depth: 0
           java-distribution: 'temurin'
           java-version: '26'
-          maven-version: '3.9.14'
+          maven-version: '3.9.15'
 
       - name: Run Java lints and tests with Maven (including SonarQube)
         env:

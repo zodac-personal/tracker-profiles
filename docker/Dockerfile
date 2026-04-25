@@ -10,7 +10,7 @@ FROM python:3.14.4-slim-trixie AS chromedriver_builder
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="147.0.7727.101-1~deb13u1" \
+        chromium="147.0.7727.116-1~deb13u1" \
         curl="8.14.1-2+deb13u2" \
         unzip="6.0-29" \
     && \
@@ -61,7 +61,7 @@ RUN jlink --compress=zip-9 \
     { find /opt/jdk/bin -type f -exec strip -p --strip-unneeded {} \; || true; }
 
 # Stage 3: Build the Java artefact
-FROM maven:3.9.14 AS maven_base
+FROM maven:3.9.15 AS maven_base
 FROM eclipse-temurin:26_35-jdk AS java_app_builder
 
 # Extract Maven binary and libraries from official Maven image
@@ -169,7 +169,7 @@ ENV NO_AT_BRIDGE=1
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates="20250419" \
-        chromium="147.0.7727.101-1~deb13u1" \
+        chromium="147.0.7727.116-1~deb13u1" \
         fonts-arphic-ukai="0.2.20080216.2-5" \
         fonts-ipafont="00303-23" \
         wmctrl="1.07+git20240228.1105759-1" \
