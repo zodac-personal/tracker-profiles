@@ -17,11 +17,15 @@
 
 package net.zodac.tracker;
 
-import java.awt.AWTError;
-import java.awt.GraphicsEnvironment;
+import java.util.Map;
+import java.util.Set;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
+import net.zodac.tracker.app.TrackerRetriever;
 import net.zodac.tracker.framework.ExitState;
+import net.zodac.tracker.framework.TrackerCredential;
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.gui.DisplayValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,29 +47,14 @@ public final class ApplicationLauncher {
      */
     // TODO: Investigate whether it's worth not logging out
     static void main() {
-        checkDisplay();
-        setupApplication();
-        startApplication();
+        validateApplicationConfiguration();
+
+        final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();
+        validateDisplay(trackersByType);
+        startApplication(trackersByType);
     }
 
-    private static void checkDisplay() {
-        final String display = System.getenv("DISPLAY");
-        if (display == null || display.isBlank()) {
-            LOGGER.error("Environment variable 'DISPLAY' is not configured");
-            exit(ExitState.FAILURE);
-        }
-
-        try {
-            final GraphicsEnvironment localGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            LOGGER.trace("Using GraphicsEnvironment: {}", localGraphicsEnvironment);
-        } catch (final AWTError e) {
-            LOGGER.debug("Unable to connect to X11 display '{}'", display, e);
-            LOGGER.error("Unable to connect to X11 display '{}'", display);
-            exit(ExitState.FAILURE);
-        }
-    }
-
-    private static void setupApplication() {
+    private static void validateApplicationConfiguration() {
         try {
             // Validate that the application configuration is valid
             Configuration.get();
@@ -80,9 +69,15 @@ public final class ApplicationLauncher {
         }
     }
 
-    private static void startApplication() {
+    private static void validateDisplay(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        if (!DisplayValidator.isValid(trackersByType)) {
+            exit(ExitState.FAILURE);
+        }
+    }
+
+    private static void startApplication(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
         try {
-            final ExitState exitState = ScreenshotOrchestrator.start();
+            final ExitState exitState = ScreenshotOrchestrator.start(trackersByType);
             exit(exitState);
         } catch (final Exception e) {
             LOGGER.debug("Error abruptly ended execution", e);
@@ -92,6 +87,6 @@ public final class ApplicationLauncher {
     }
 
     private static void exit(final ExitState exitState) {
-        System.exit(exitState.exitCode()); // NOPMD: DoNotTerminateVM - happy to terminate here
+        System.exit(exitState.exitCode());  // NOPMD: DoNotTerminateVM - happy to terminate here
     }
 }

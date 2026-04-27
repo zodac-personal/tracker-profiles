@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Handles retrieving and organising trackers from the CSV input file.
  */
-final class TrackerRetriever {
+public final class TrackerRetriever {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
@@ -52,7 +52,7 @@ final class TrackerRetriever {
      * @return {@link Map} of {@link TrackerType} to their credentials
      * @throws InvalidCsvInputException thrown if there is an error with the CSV input
      */
-    static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
+    public static Map<TrackerType, Set<TrackerCredential>> getTrackers() {
         LOGGER.trace("Retrieving trackers to execute");
         final Set<TrackerType> trackerExecutionOrder = CONFIG.trackerExecutionOrder();
         LOGGER.debug("Tracker execution order: {}", trackerExecutionOrder);
@@ -66,6 +66,7 @@ final class TrackerRetriever {
                     .ifPresent(handler -> trackersByType.computeIfAbsent(handler.type(), _ -> new TreeSet<>()).add(trackerCredential));
             }
 
+            LOGGER.trace("Trackers by type to be screenshot: {}", trackersByType);
             return trackersByType;
         } catch (final InvalidCsvInputException e) {
             LOGGER.warn("Error with CSV input file content", e);

@@ -57,26 +57,19 @@ public final class ScreenshotOrchestrator {
      *
      * @return the {@link ExitState} of the execution
      */
-    public static ExitState start() {
+    public static ExitState start(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        final int numberOfTrackers = countNumberOfTrackers(trackersByType);
+        if (numberOfTrackers == 0) {
+            LOGGER.error("No trackers selected!");
+            return ExitState.FAILURE;
+        }
+
+        ensureOutputDirectoryExists();
         final ResultCollector resultCollector = ResultCollector.start();
         final ProgressBarManager progressBarManager = ProgressBarManager.create();
-
         try (final ProgressBarPrintStream progressBarPrintStream = new ProgressBarPrintStream(progressBarManager)) {
-            System.setOut(progressBarPrintStream);
-
-            final Map<TrackerType, Set<TrackerCredential>> trackersByType = TrackerRetriever.getTrackers();
-            LOGGER.trace("Printing trackersByType: {}", trackersByType);
-            final int numberOfTrackers = trackersByType.values()
-                .stream()
-                .mapToInt(Set::size)
-                .sum();
-            if (numberOfTrackers == 0) {
-                LOGGER.error("No trackers selected!");
-                return ExitState.FAILURE;
-            }
-
+            System.setOut(progressBarPrintStream);  // Override stdout with the progress bar output
             LOGGER.info("Screenshotting {} tracker{}", numberOfTrackers, StringUtils.pluralise(numberOfTrackers));
-            ensureOutputDirectoryExists();
 
             TrackerRetriever.printTrackersInfo(trackersByType, CONFIG.trackerExecutionOrder());
             progressBarManager.start(numberOfTrackers, numberOfTrackers * TrackerStep.NUMBER_OF_STEPS);
@@ -86,28 +79,40 @@ public final class ScreenshotOrchestrator {
 
             // Execute in the order specified
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
-                if (!trackersByType.containsKey(trackerType)) {
-                    LOGGER.trace("No trackers of type {}", trackerType);
-                    continue;
-                }
-
-                LOGGER.info("");
-                LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
-                LOGGER.info("");
-
-                // TODO: Execute these in parallel?
-                for (final TrackerCredential trackerCredential : trackersByType.get(trackerType)) {
-                    final long startNanos = System.nanoTime();
-                    final boolean successfullyTakenScreenshot =
-                        ProfileScreenshotExecutor.takeScreenshot(trackerCredential, progressBarManager, maxTrackerNameLength);
-                    resultCollector.addResult(trackerType, trackerCredential.name(), successfullyTakenScreenshot);
-                    printTrackerExecutionTime(trackerCredential.name(), startNanos);
-                    progressBarManager.tickTracker(trackerCredential.name());
-                }
+                screenshotTrackerByType(trackerType, trackersByType, progressBarManager, maxTrackerNameLength, resultCollector);
             }
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
+    }
+
+    private static int countNumberOfTrackers(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        return trackersByType.values()
+            .stream()
+            .mapToInt(Set::size)
+            .sum();
+    }
+
+    private static void screenshotTrackerByType(final TrackerType trackerType, final Map<TrackerType, Set<TrackerCredential>> trackersByType,
+                                                final ProgressBarManager progressBarManager, final int maxTrackerNameLength,
+                                                final ResultCollector resultCollector) {
+        if (!trackersByType.containsKey(trackerType)) {
+            LOGGER.trace("No trackers of type {}", trackerType);
+            return;
+        }
+
+        LOGGER.info("");
+        LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
+        LOGGER.info("");
+
+        // TODO: Execute these in parallel?
+        for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
+            final long startNanos = System.nanoTime();
+            final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
+            resultCollector.addResult(trackerType, tracker.name(), successfullyTakenScreenshot);
+            printTrackerExecutionTime(tracker.name(), startNanos);
+            progressBarManager.tickTracker(tracker.name());
+        }
     }
 
     private static int maxTrackerNameLength(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
