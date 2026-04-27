@@ -107,6 +107,7 @@ RUN DISPLAY=":0" \
     FAIL_ON_UNSUPPORTED_TRACKER=false \
     java \
         -Djava.awt.headless=true \
+        -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
         -Xshare:off \
         -XX:DumpLoadedClassList=/app/classes.lst \
         -jar /app/tracker-profiles.jar; \
@@ -130,6 +131,7 @@ RUN DISPLAY=":0" \
     FAIL_ON_UNSUPPORTED_TRACKER=false \
     java \
         -Djava.awt.headless=true \
+        -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
         -Xshare:dump \
         -XX:SharedClassListFile=/app/classes.lst \
         -XX:SharedArchiveFile=/app/app.jsa \
