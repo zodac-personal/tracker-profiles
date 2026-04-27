@@ -33,6 +33,7 @@ main() {
 
     java \
       -Xms"${JAVA_XMS:-128m}" -Xmx"${JAVA_XMX:-512m}" \
+      -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
       -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
       -XX:SharedArchiveFile=/app/app.jsa -Xshare:auto \
       -Djava.util.logging.config.file=/app/logging.properties \
