@@ -27,7 +27,8 @@ Determine the correct selectors and overrides for:
       A username display element, profile avatar container, or user-stats heading is far more stable than a
       Bootstrap grid class that may appear on any page. Look for elements with `class` attributes that name
       the concept (e.g. `username-user`, `profile-header`, `user-avatar`) rather than structural positioning.
-- `additionalActionOnProfilePage()` — only if extra interaction is needed after navigation (e.g. expanding a tab)
+- `performActionOnProfilePage()` from `HasProfilePageActions` — only if extra interaction is needed after navigation
+  (e.g. expanding a tab). Implement the interface and override this method.
 
 ### Verify you have the PUBLIC profile, not a settings page
 
