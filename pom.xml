@@ -33,7 +33,7 @@
 
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
-        <clique.version>4.0.1</clique.version>
+        <clique.version>4.0.2</clique.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-io.version>2.22.0</commons-io.version>
         <flatlaf.version>3.7.1</flatlaf.version>
@@ -44,7 +44,7 @@
 
         <!-- Test 3PP Versions -->
         <assertj-core.version>3.27.7</assertj-core.version>
-        <junit-bom.version>6.0.3</junit-bom.version>
+        <junit-bom.version>6.1.0-RC1</junit-bom.version>
 
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
@@ -62,7 +62,7 @@
 
         <!-- Linter 3PP Versions -->
         <asm-version>9.9.1</asm-version>
-        <checkstyle.version>13.4.0</checkstyle.version>
+        <checkstyle.version>13.4.2</checkstyle.version>
         <error_prone_core.version>2.49.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
         <nullaway.version>0.13.4</nullaway.version>
