@@ -115,5 +115,5 @@ jobs:
         if: env.has_changes == 'true'
         uses: ad-m/github-push-action@v1.1.0
         with:
-          github_token: ${{ secrets.PUSH_PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: master
