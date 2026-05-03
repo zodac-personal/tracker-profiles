@@ -111,17 +111,17 @@ public final class DisplayUtils {
     public void confirm(final String title, final String label, final DialogPosition dialogPosition) {
         setStyleToSystemTheme();
 
-        final AtomicBoolean userProvidedInput = new AtomicBoolean(false);
+        final AtomicBoolean userInput = new AtomicBoolean(false);
         final AtomicBoolean timedOut = new AtomicBoolean(false);
 
         final String initialUrl = driver.getCurrentUrl();
         final String initialTitle = driver.getTitle();
 
-        final JDialog dialog = createDialog(title, label, userProvidedInput, dialogPosition);
-        showDialog(dialog, userProvidedInput, timedOut, initialUrl, initialTitle);
+        final JDialog dialog = createDialog(title, label, userInput, dialogPosition);
+        showDialog(dialog, userInput, timedOut, initialUrl, initialTitle);
     }
 
-    private JDialog createDialog(final String title, final String label, final AtomicBoolean userProvidedInput, final DialogPosition dialogPosition) {
+    private static JDialog createDialog(final String title, final String label, final AtomicBoolean userInput, final DialogPosition dialogPosition) {
         final JDialog dialog = new JDialog((Frame) null, title + TITLE_SUFFIX, true);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);  // Ensure the dialog remains on top of all windows when interacting with browser
@@ -131,7 +131,7 @@ public final class DisplayUtils {
         panel.add(new JLabel(labelText, SwingConstants.CENTER));
 
         dialog.add(panel, BorderLayout.CENTER);
-        dialog.add(createButtons(dialog, userProvidedInput), BorderLayout.PAGE_END);
+        dialog.add(createButtons(dialog, userInput), BorderLayout.PAGE_END);
 
         dialog.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
         dialog.pack();  // Respects preferredSize but allows it to be larger if needed based on the text
@@ -141,7 +141,7 @@ public final class DisplayUtils {
         return dialog;
     }
 
-    private static JPanel createButtons(final JDialog dialog, final AtomicBoolean userProvidedInput) {
+    private static JPanel createButtons(final JDialog dialog, final AtomicBoolean userInput) {
         final JButton continueButton = new JButton();
         final AtomicLong remainingSeconds = new AtomicLong(CONFIG.inputTimeoutEnabled() ? CONFIG.inputTimeoutDuration().getSeconds() : 0);
 
@@ -159,7 +159,7 @@ public final class DisplayUtils {
             if (countdownTimer != null) {
                 countdownTimer.stop();
             }
-            userProvidedInput.set(true);
+            userInput.set(true);
             dialog.dispose();
         });
 
