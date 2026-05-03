@@ -63,21 +63,16 @@ public final class JavaWebDriverFactory {
      * Otherwise it will run in full UI mode.
      *
      * @param trackerType              whether {@link TrackerType} defining the execution method for this tracker
-     * @param needsExplicitTranslation whether this {@link TrackerType} needs explicit translation, requiring a UI
      * @param extensions               any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    // TODO: Reuse driver for each tracker?
-    public static RemoteWebDriver createDriver(final TrackerType trackerType,
-                                               final boolean needsExplicitTranslation,
-                                               final List<Extension> extensions
-    ) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType, final List<Extension> extensions) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
 
         // User-defined options
         chromeOptions.addArguments("--window-size=" + CONFIG.browserDimensions());
-        if (canTrackerUseHeadlessBrowser(trackerType, needsExplicitTranslation)) {
+        if (canTrackerUseHeadlessBrowser(trackerType)) {
             LOGGER.trace("Using headless browser");
             chromeOptions.addArguments("--headless=new");
         }
@@ -181,15 +176,10 @@ public final class JavaWebDriverFactory {
         return translateWhitelists;
     }
 
-    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType, final boolean needsExplicitTranslation) {
+    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType) {
         if (CONFIG.forceUiBrowser()) {
             LOGGER.trace("UI browser is forced");
             return false;
-        }
-
-        if (needsExplicitTranslation && !CONFIG.enableTranslationToEnglish()) {
-            LOGGER.trace("'{}' requires explicit translation, but translation is disabled, allowing headless", trackerType.formattedName());
-            return true;
         }
 
         return trackerType != TrackerType.MANUAL;

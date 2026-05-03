@@ -27,13 +27,12 @@ import java.util.Objects;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.driver.JavaWebDriverFactory;
+import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.driver.extension.Extension;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasProfilePageActions;
-import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import net.zodac.tracker.redaction.RedactionBuffer;
@@ -92,16 +91,19 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     /**
      * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
-     * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker for execution, so we overwrite the default
-     * values that were already set.
+     * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker, so the required fields are set here.
+     *
+     * <p>
+     * A {@link org.openqa.selenium.remote.RemoteWebDriver} is acquired from the {@link DriverPool}.
      *
      * @param trackerDefinition the {@link TrackerDefinition} for this {@link AbstractTrackerHandler}
+     * @see DriverPool#acquire(TrackerType, List)
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         LOGGER.trace("Configuring {}: {}", this.getClass().getSimpleName(), trackerDefinition);
         this.trackerDefinition = trackerDefinition;
         final List<Extension> extensions = this instanceof UsesExtensions trackerExtensions ? trackerExtensions.requiredExtensions() : List.of();
-        driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
+        driver = DriverPool.acquire(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
         displayUtils = DisplayUtils.withDriver(driver);
     }
@@ -614,8 +616,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     @Override
     public void close() {
-        LOGGER.trace("Closing driver");
-        driver.quit();
+        LOGGER.trace("Releasing driver");
+        DriverPool.release(driver);
     }
 
     /**
@@ -652,19 +654,5 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
         BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "button click");
-    }
-
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<Extension> requiredExtensions) {
-        final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation;
-        LOGGER.trace("Creating driver of type: {}", trackerType);
-        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
-
-        LOGGER.trace("Configuring extensions: {}", requiredExtensions);
-        for (final Extension extension : requiredExtensions) {
-            extension.configure(configurationDriver);
-        }
-
-        LOGGER.trace("Returning created driver");
-        return configurationDriver;
     }
 }

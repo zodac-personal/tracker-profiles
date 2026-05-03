@@ -25,6 +25,7 @@ import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.progress.ProgressBarManager;
 import net.zodac.tracker.framework.progress.ProgressBarPrintStream;
 import net.zodac.tracker.framework.progress.TrackerStep;
@@ -81,6 +82,8 @@ public final class ScreenshotOrchestrator {
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
                 screenshotTrackerByType(trackerType, trackersByType, progressBarManager, maxTrackerNameLength, resultCollector);
             }
+        } finally {
+            DriverPool.shutdown();
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
