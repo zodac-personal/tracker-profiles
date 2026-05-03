@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tracker Profiles</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #0d1117; color: #c9d1d9; min-height: 100vh; }
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; color: #e6edf3; }
+    button {
+      font-size: 1rem; padding: 0.6rem 1.5rem; border: 1px solid #30363d;
+      background: #21262d; color: #c9d1d9; border-radius: 6px; cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    button:hover:not(:disabled) { background: #30363d; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #log {
+      background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+      padding: 1rem; height: 70vh; overflow-y: auto;
+      font-family: 'Courier New', monospace; font-size: 0.8rem;
+      white-space: pre-wrap; word-break: break-all; color: #8b949e;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tracker Profiles</h1>
+  <button id="startBtn">Start</button>
+  <div id="log"></div>
+  <script>
+    const btn = document.getElementById('startBtn');
+    const log = document.getElementById('log');
+
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      log.textContent = '';
+
+      const es = new EventSource('/api/log');
+      es.onmessage = e => {
+        log.textContent += e.data + '\n';
+        log.scrollTop = log.scrollHeight;
+      };
+      es.addEventListener('done', () => {
+        es.close();
+        btn.disabled = false;
+      });
+      es.onerror = () => {
+        es.close();
+        btn.disabled = false;
+      };
+
+      fetch('/api/start', { method: 'POST' })
+        .then(r => {
+          if (!r.ok) {
+            return r.json().then(d => { throw new Error(d.error || r.statusText); });
+          }
+        })
+        .catch(err => {
+          log.textContent = 'Error: ' + err.message + '\n';
+          es.close();
+          btn.disabled = false;
+        });
+    });
+  </script>
+</body>
+</html>

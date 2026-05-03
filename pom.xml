@@ -384,8 +384,6 @@
                         <!-- We're only interested in 'compile' scope dependencies when performing analysis -->
                         <ignoreNonCompile>true</ignoreNonCompile>
                         <ignoredUnusedDeclaredDependencies>
-                            <!-- Included so the logging files are on the classpath at runtime - not directly used -->
-                            <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-core::</ignoredUnusedDeclaredDependency>
                             <!-- Used at runtime to override the logging output from Selenium classes -->
                             <ignoredUnusedDeclaredDependency>org.slf4j:jul-to-slf4j::</ignoredUnusedDeclaredDependency>
                         </ignoredUnusedDeclaredDependencies>

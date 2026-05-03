@@ -9,10 +9,7 @@
 - [How To Use](#how-to-use)
     - [Tracker Definitions](#tracker-definitions)
     - [Running In Docker](#running-in-docker)
-    - [Browser UI](#browser-ui)
-        - [UI In Debian](#ui-in-debian)
-        - [UI In Windows](#ui-in-windows)
-        - [Disable UI](#disable-ui)
+    - [Web UI](#web-ui)
     - [Configuration Options](#configuration-options)
         - [Progress Bar](#progress-bar)
 - [Versioning](#versioning)
@@ -259,7 +256,8 @@ background:
 ### Manual Interaction
 
 If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or **MANUAL** is included in
-`TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
+`TRACKER_EXECUTION_ORDER`), then user input is required during login. These trackers are not supported in the default
+Docker Compose setup — see [Web UI](#web-ui) for details.
 
 <table>
 <tr>
@@ -327,133 +325,34 @@ is named.
 
 ### Running In Docker
 
-The application is run using Docker, and below are the commands to run the `latest` docker image.
+The application is run using Docker Compose, which starts the app and a headless Selenium Chrome node together.
 
-<details>
-<summary>Docker Commands</summary>
-<table>
+1. Download or copy the [docker-compose.yml](./docker/docker-compose.yml) file into a working directory.
+2. In the same directory, create a `screenshots/` folder and place your `trackers.csv` file inside it.
+3. Start the stack:
 
-<tr>
-<td valign="top">
+   ```bash
+   docker compose up
+   ```
 
-#### Debian
+4. Open a browser and navigate to [http://localhost:8080](http://localhost:8080).
+5. Click **Start** to begin execution. Logs stream to the page in real-time.
+6. Screenshots are saved to the `screenshots/` directory on the host.
 
-```bash
-docker run \
-    --env DISPLAY="${DISPLAY}" \
-    --env BROWSER_HEIGHT=1050 \
-    --env BROWSER_WIDTH=1680 \
-    --env CSV_COMMENT_SYMBOL='#' \
-    --env ENABLE_ADULT_TRACKERS=true \
-    --env ENABLE_TRANSLATION_TO_ENGLISH=true \
-    --env FAIL_ON_UNSUPPORTED_TRACKER=true \
-    --env FORCE_UI_BROWSER=false \
-    --env INPUT_TIMEOUT_ENABLED=false \
-    --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
-    --env LOG_LEVEL=INFO \
-    --env LOG_TRACKER_NAME=true \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
-    --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
-    --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
-    --env PROGRESS_BAR_ENABLED=true \
-    --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
-    --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
-    --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
-    --env REDACTION_TYPE=BOX \
-    --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
-    --env TAKE_SCREENSHOT_ON_ERROR=false \
-    --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
-    --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /tmp/screenshots:/app/screenshots \
-    -v tracker-chrome-cache:/tmp/chrome-home \
-    --name tracker-profiles \
-    --rm zodac/tracker-profiles:latest
-```
+To customise the application, add `environment` entries under the `app` service in `docker-compose.yml`. See
+[Configuration Options](#configuration-options) for the full list.
 
-</td>
-<td valign="top">
+### Web UI
 
-#### Windows
+The application exposes a web UI on port 8080. After starting the stack with `docker compose up`, open
+[http://localhost:8080](http://localhost:8080) in any browser.
 
-```bash
-MSYS_NO_PATHCONV=1 docker run \
-    --env DISPLAY=host.docker.internal:0 \
-    --env BROWSER_HEIGHT=1050 \
-    --env BROWSER_WIDTH=1680 \
-    --env CSV_COMMENT_SYMBOL='#' \
-    --env ENABLE_ADULT_TRACKERS=true \
-    --env ENABLE_TRANSLATION_TO_ENGLISH=true \
-    --env FAIL_ON_UNSUPPORTED_TRACKER=true \
-    --env FORCE_UI_BROWSER=false \
-    --env INPUT_TIMEOUT_ENABLED=false \
-    --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
-    --env LOG_LEVEL=INFO \
-    --env LOG_TRACKER_NAME=true \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
-    --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
-    --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
-    --env PROGRESS_BAR_ENABLED=true \
-    --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
-    --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
-    --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
-    --env REDACTION_TYPE=BOX \
-    --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
-    --env TAKE_SCREENSHOT_ON_ERROR=false \
-    --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
-    --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
-    -v /c/tmp/screenshots:/app/screenshots \
-    -v tracker-chrome-cache:/tmp/chrome-home \
-    --name tracker-profiles \
-    --rm zodac/tracker-profiles:latest
-```
+Click **Start** to launch the screenshot run. All log output streams to the page in real-time. The button is
+re-enabled once execution completes, allowing another run to be started.
 
-</td>
-</tr>
-</table>
-</details>
-
-### Browser UI
-
-There are two ways to execute the application - with a UI browser and without. The default commands will
-execute [trackers that require a UI](#manual-interaction), so the UI will need to be configured to run through Docker.
-A UI browser is needed for trackers that require some user input during login, like a Captcha, Cloudflare verification
-check, 2FA, etc.
-
-Below will define how to do this for your host system.
-
-#### UI in Debian
-
-To run through Docker with a UI, local connections to the host display might need to be enabled:
-
-```bash
-# This seems to be reset upon reboot and may need to be reapplied
-xhost +local:
-```
-
-#### UI in Windows
-
-I use [VcXsrv](https://vcxsrv.com/) as the X server for UI. When configuring VcXsrv, make sure to set the following in
-the configuration:
-
-- **Multiple windows**
-- Display number **-1** or **0**
-- **Disable access control**
-
-#### Disable UI
-
-To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
-`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
+> **Note:** Trackers that require manual user interaction (Captcha, 2FA, Cloudflare verification, etc.) are not
+> supported in the Docker Compose setup — the Selenium container runs fully headless with no interactive access.
+> Set `TRACKER_EXECUTION_ORDER=HEADLESS` to skip those trackers.
 
 ### Configuration Options
 
@@ -464,7 +363,6 @@ The following are all possible configuration options, defined as environment var
 | *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                          |
 | *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                          |
 | *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
-| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)               |
 | *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
 | *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
 | *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                          |
@@ -486,6 +384,7 @@ The following are all possible configuration options, defined as environment var
 | *REDACTION_TEXT*                    | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                          |
 | *REDACTION_TYPE*                    | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, REMOVE, TEXT]                                                  | BOX                           |
 | *SCREENSHOT_EXISTS_ACTION*          | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
+| *SELENIUM_REMOTE_URL*               | The URL of the Selenium Grid or standalone node to use for browser automation; if blank, a local ChromeDriver is used                                                                                    | (empty)                       |
 | *TAKE_SCREENSHOT_ON_ERROR*          | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
 | *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
 | *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
@@ -615,53 +514,44 @@ and run the `main` method from the IDE.
 The [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java)
 implementation for each tracker is retrieved by the *trackerName* field within the CSV file.
 
-[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to leverage the Chromium web browser to
-take screenshots. While the application usually runs in headless mode, this can be changed by updating the
-`FORCE_UI_BROWSER` value in the [configuration](#configuration-options). This will cause a new browser instance to
-launch when taking a screenshot, and can be used for debugging a new implementation.
+[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to control the Chromium browser running
+in the `selenium/standalone-chrome` container. The `SELENIUM_REMOTE_URL` environment variable tells the app where to
+connect.
 
 ### Building And Developing In Docker
 
-Below is the command to build and run the development docker image with everything enabled (requires [the UI to be
-defined](#browser-ui)):
+Build a local image and start the full stack against it:
 
 ```bash
-docker build -f ./docker/Dockerfile -t tracker-profiles-dev . &&
-docker run \
-    --env DISPLAY="${DISPLAY}" \
-    --env BROWSER_HEIGHT=1050 \
-    --env BROWSER_WIDTH=1680 \
-    --env CSV_COMMENT_SYMBOL='#' \
-    --env ENABLE_ADULT_TRACKERS=true \
-    --env ENABLE_TRANSLATION_TO_ENGLISH=true \
-    --env FAIL_ON_UNSUPPORTED_TRACKER=false \
-    --env FORCE_UI_BROWSER=true \
-    --env INPUT_TIMEOUT_ENABLED=true \
-    --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
-    --env LOG_LEVEL=TRACE \
-    --env LOG_TRACKER_NAME=true \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
-    --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
-    --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
-    --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
-    --env PROGRESS_BAR_ENABLED=true \
-    --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
-    --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
-    --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
-    --env REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
-    --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
-    --env TAKE_SCREENSHOT_ON_ERROR=true \
-    --env TIMEZONE=UTC \
-    --env TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
-    --env TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /tmp/screenshots:/app/screenshots \
-    -v tracker-chrome-cache:/tmp/chrome-home \
-    --name tracker-profiles-dev \
-    --rm tracker-profiles-dev
+docker build -f ./docker/Dockerfile -t zodac/tracker-profiles:latest . &&
+BROWSER_HEIGHT=1050 \
+BROWSER_WIDTH=1680 \
+CSV_COMMENT_SYMBOL='#' \
+ENABLE_ADULT_TRACKERS=true \
+ENABLE_TRANSLATION_TO_ENGLISH=true \
+FAIL_ON_UNSUPPORTED_TRACKER=false \
+INPUT_TIMEOUT_ENABLED=true \
+INPUT_TIMEOUT_SECONDS=300 \
+JAVA_XMS=128m \
+JAVA_XMX=512m \
+LOG_LEVEL=TRACE \
+LOG_TRACKER_NAME=true \
+NUMBER_OF_TRACKER_ATTEMPTS=5 \
+OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
+OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
+PROGRESS_BAR_COMPLETE_CHARACTER='█' \
+PROGRESS_BAR_ENABLED=true \
+PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
+PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
+PROGRESS_BAR_LENGTH=35 \
+REDACTION_TEXT=---- \
+REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
+SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
+TAKE_SCREENSHOT_ON_ERROR=true \
+TIMEZONE=UTC \
+TRACKER_EXECUTION_ORDER=HEADLESS \
+TRACKER_INPUT_FILE_PATH=/app/screenshots/trackers.csv \
+docker compose -f ./docker/docker-compose.yml up
 ```
 
 ### Implementing Support For New Trackers

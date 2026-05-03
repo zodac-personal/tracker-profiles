@@ -1,0 +1,22 @@
+services:
+  app:
+    image: zodac/tracker-profiles:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./screenshots:/app/screenshots
+    environment:
+      - SELENIUM_REMOTE_URL=http://selenium:4444
+    depends_on:
+      selenium:
+        condition: service_healthy
+
+  selenium:
+    image: selenium/standalone-chrome:latest
+    shm_size: 2gb
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4444/status || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

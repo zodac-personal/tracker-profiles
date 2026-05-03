@@ -24,7 +24,9 @@
       "Skill(update-config)",
       "WebFetch",
       "WebSearch",
-      "Write"
+      "Write",
+      "Bash(Get-ChildItem -Path C:\\\\Users\\\\Arouge\\\\git\\\\tracker-profiles -Force)",
+      "Bash(Select-Object Name, FullName)"
     ]
   },
   "hooks": {

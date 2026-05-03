@@ -66,6 +66,9 @@ public final class DisplayValidator {
     }
 
     private static boolean needsDisplay(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        if (!CONFIG.seleniumRemoteUrl().isBlank()) {
+            return false;
+        }
         return CONFIG.forceUiBrowser()
             || (CONFIG.trackerExecutionOrder().contains(TrackerType.MANUAL) && trackersByType.containsKey(TrackerType.MANUAL));
     }

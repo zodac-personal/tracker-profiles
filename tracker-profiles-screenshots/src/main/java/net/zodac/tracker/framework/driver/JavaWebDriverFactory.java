@@ -18,6 +18,8 @@
 package net.zodac.tracker.framework.driver;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +124,10 @@ public final class JavaWebDriverFactory {
         }
         LOGGER.trace("Creating driver with following options: {}", chromeOptions);
 
+        if (!CONFIG.seleniumRemoteUrl().isBlank()) {
+            return createRemoteDriver(chromeOptions);
+        }
+
         if (!CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
             LOGGER.trace("Creating driver without chromedriver executable filepath");
             return new ChromeDriver(chromeOptions);
@@ -150,6 +156,17 @@ public final class JavaWebDriverFactory {
         cdpOverrides.put("mobile", false);
 
         driver.executeCdpCommand("Emulation.setDeviceMetricsOverride", cdpOverrides);
+    }
+
+    private static RemoteWebDriver createRemoteDriver(final ChromeOptions chromeOptions) {
+        LOGGER.trace("Creating remote driver at '{}'", CONFIG.seleniumRemoteUrl());
+        try {
+            final RemoteWebDriver driver = new RemoteWebDriver(new URL(CONFIG.seleniumRemoteUrl()), chromeOptions);
+            driver.manage().window().setSize(parseDimensions());
+            return driver;
+        } catch (final MalformedURLException e) {
+            throw new IllegalStateException("Invalid SELENIUM_REMOTE_URL: '%s'".formatted(CONFIG.seleniumRemoteUrl()), e);
+        }
     }
 
     // No need to perform any validation, browserDimensions has been parsed already

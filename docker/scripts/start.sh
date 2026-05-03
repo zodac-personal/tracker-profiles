@@ -2,64 +2,27 @@
 # ------------------------------------------------------------------------------
 # Script Name:     start.sh
 #
-# Description:     Launches a headless instance of a web browser and runs a Java
-#                  application (`tracker-profiles.jar`) that performs screenshot
-#                  capture.
+# Description:     Runs the tracker-profiles web server. The server exposes a UI
+#                  on port 8080 and delegates screenshot execution to a remote
+#                  Selenium browser configured via SELENIUM_REMOTE_URL.
 #
 # Usage:           ./start.sh
 #
 # Requirements:
-#   - Chromium Browser installed
 #   - Java installed and available on the system PATH
-#   - `tracker-profiles.jar` available at /app/tracker-profiles.jar
-#   - X display server running and accessible at DISPLAY=:0
-#
-# Behavior:
-#   - Starts the web browser
-#   - Executes the Java JAR file
-#   - On SIGINT (Ctrl+C), gracefully terminates the browser and Java PID (if started)
+#   - tracker-profiles.jar available at /app/tracker-profiles.jar
+#   - SELENIUM_REMOTE_URL pointing to a running Selenium Grid or standalone node
 #
 # Exit Codes:
-#   - 0: Success
-#   - 1: Java application signaled failure (e.g., screenshots not captured)
-#   - 130: Script terminated via SIGINT (manual interruption)
+#   - 0: Success (server stopped cleanly)
+#   - 1: Java application signalled failure
 # ------------------------------------------------------------------------------
 
 set -eu
 
-main() {
-    chromium --display=:0 >/dev/null 2>&1 &
-    BROWSER_PID=$!
-
-    java \
-      -Xms"${JAVA_XMS:-128m}" -Xmx"${JAVA_XMX:-512m}" \
-      -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
-      -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
-      -XX:SharedArchiveFile=/app/app.jsa -Xshare:auto \
-      -Djava.util.logging.config.file=/app/logging.properties \
-      -jar /app/tracker-profiles.jar &
-    JAVA_PID=$!
-
-    wait "${JAVA_PID}"
-}
-
-cleanup() {
-    printf '\n\033[33mCleaning up...\033[0m\n'
-
-    # Stop Java process
-    if [ -n "${JAVA_PID:-}" ]; then
-        kill -TERM "${JAVA_PID}" 2>/dev/null || true
-        wait "${JAVA_PID}" 2>/dev/null || true
-    fi
-
-    # Stop browser
-    if [ -n "${BROWSER_PID:-}" ]; then
-        kill -TERM "${BROWSER_PID:-}" 2>/dev/null || true
-        wait "${BROWSER_PID:-}" 2>/dev/null || true
-    fi
-
-    exit 130
-}
-
-trap cleanup INT
-main
+exec java \
+  -Xms"${JAVA_XMS:-128m}" -Xmx"${JAVA_XMX:-512m}" \
+  -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
+  -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
+  -Djava.util.logging.config.file=/app/logging.properties \
+  -jar /app/tracker-profiles.jar

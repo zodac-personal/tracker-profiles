@@ -61,6 +61,7 @@ import org.apache.logging.log4j.Logger;
  * @param progressBarLength              the length (in characters) of the progress bar
  * @param redactionText                  the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
  * @param redactionTypes                 the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
+ * @param seleniumRemoteUrl              the URL of the Selenium Grid or standalone endpoint; if blank, a local {@code ChromeDriver} is used
  * @param takeScreenshotOnError          whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder          the execution order of the different {@link TrackerType}s
  * @param trackerInputFilePath           the {@link Path} to the input tracker CSV file
@@ -87,6 +88,7 @@ public record ApplicationConfiguration(
     int progressBarLength,
     String redactionText,
     Set<RedactionType> redactionTypes,
+    String seleniumRemoteUrl,
     boolean takeScreenshotOnError,
     Set<TrackerType> trackerExecutionOrder,
     Path trackerInputFilePath
@@ -157,6 +159,7 @@ public record ApplicationConfiguration(
             getProgressBarLength(),
             getRedactionText(),
             getRedactionTypes(),
+            getSeleniumRemoteUrl(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
             getTrackerInputFilePath()
@@ -323,6 +326,10 @@ public record ApplicationConfiguration(
         return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPE, RedactionType::find);
     }
 
+    private static String getSeleniumRemoteUrl() {
+        return getOrDefault("SELENIUM_REMOTE_URL", "");
+    }
+
     private static ExistingScreenshotAction getScreenshotExistsAction() {
         final String existingScreenshotActionRaw = getOrDefault("SCREENSHOT_EXISTS_ACTION", DEFAULT_SCREENSHOT_EXISTS_ACTION.toString());
         final ExistingScreenshotAction existingScreenshotActionInput = ExistingScreenshotAction.get(existingScreenshotActionRaw);
@@ -408,6 +415,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- progressBarLength={}", progressBarLength);
         LOGGER.debug("\t- redactionText={}", redactionText);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
+        LOGGER.debug("\t- seleniumRemoteUrl={}", seleniumRemoteUrl);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);
         LOGGER.debug("\t- trackerInputFilePath={}", trackerInputFilePath);
