@@ -94,7 +94,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker, so the required fields are set here.
      *
      * <p>
-     * A {@link org.openqa.selenium.remote.RemoteWebDriver} is acquired from the {@link DriverPool}.
+     * A {@link RemoteWebDriver} is acquired from the {@link DriverPool}.
      *
      * @param trackerDefinition the {@link TrackerDefinition} for this {@link AbstractTrackerHandler}
      * @see DriverPool#acquire(TrackerType, List)
