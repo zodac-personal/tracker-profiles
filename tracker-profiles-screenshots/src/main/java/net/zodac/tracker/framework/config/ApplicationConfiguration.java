@@ -53,7 +53,7 @@ import org.apache.logging.log4j.Logger;
  * @param logLevel                       the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
  * @param logTrackerName                 whether to prefix each log message with the name of the tracker being screenshotted
  * @param numberOfParallelThreads        the number of parallel browser threads to use for {@link TrackerType#HEADLESS} trackers
- * @param numberOfTrackerAttempts        the number of times to attempt to screenshot a tracker
+ * @param numberOfScreenshotAttempts     the number of times to attempt to screenshot a tracker
  * @param outputDirectory                the output {@link Path} to the directory within which the screenshots will be saved
  * @param progressBarCompleteCharacter   the character used to represent a completed portion of the progress bar
  * @param progressBarEnabled             whether to display a progress bar at the bottom of the console output
@@ -80,7 +80,7 @@ public record ApplicationConfiguration(
     String logLevel,
     boolean logTrackerName,
     int numberOfParallelThreads,
-    int numberOfTrackerAttempts,
+    int numberOfScreenshotAttempts,
     Path outputDirectory,
     char progressBarCompleteCharacter,
     boolean progressBarEnabled,
@@ -151,7 +151,7 @@ public record ApplicationConfiguration(
             getLogLevel(),
             getBooleanEnvironmentVariable("LOG_TRACKER_NAME", true),
             getNumberOfParallelThreads(),
-            getNumberOfTrackerAttempts(),
+            getNumberOfScreenshotAttempts(),
             getOutputDirectory(),
             getProgressBarCompleteCharacter(),
             getBooleanEnvironmentVariable("PROGRESS_BAR_ENABLED", true),
@@ -211,9 +211,9 @@ public record ApplicationConfiguration(
         return parseIntegerInRange(raw, "NUMBER_OF_PARALLEL_THREADS", 32);
     }
 
-    private static int getNumberOfTrackerAttempts() {
-        final String numberOfRetriesRaw = getOrDefault("NUMBER_OF_TRACKER_ATTEMPTS", "1");
-        return parseIntegerInRange(numberOfRetriesRaw, "NUMBER_OF_TRACKER_ATTEMPTS", 5);
+    private static int getNumberOfScreenshotAttempts() {
+        final String numberOfRetriesRaw = getOrDefault("NUMBER_OF_SCREENSHOT_ATTEMPTS", "1");
+        return parseIntegerInRange(numberOfRetriesRaw, "NUMBER_OF_SCREENSHOT_ATTEMPTS", 5);
     }
 
     private static Path getOutputDirectory() {
@@ -408,7 +408,7 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- logTrackerName={}", logTrackerName);
         LOGGER.debug("\t- numberOfParallelThreads={}", numberOfParallelThreads);
-        LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
+        LOGGER.debug("\t- numberOfScreenshotAttempts={}", numberOfScreenshotAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- progressBarCompleteCharacter={}", progressBarCompleteCharacter);
         LOGGER.debug("\t- progressBarEnabled={}", progressBarEnabled);

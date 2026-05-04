@@ -70,7 +70,7 @@ final class ProfileScreenshotExecutor {
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Path ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("errors");
     private static final Path REDACTION_ERRORS_DIRECTORY = CONFIG.outputDirectory().resolve("redaction-errors");
-    private static final int MAXIMUM_SCREENSHOT_ATTEMPTS = CONFIG.numberOfTrackerAttempts();
+    private static final int MAXIMUM_SCREENSHOT_ATTEMPTS = CONFIG.numberOfScreenshotAttempts();
 
     private ProfileScreenshotExecutor() {
 

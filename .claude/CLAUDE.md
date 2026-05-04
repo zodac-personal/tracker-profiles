@@ -35,7 +35,7 @@ Entry point: `ApplicationLauncher` → `TrackerRetriever` (load CSV) → `Displa
 `ProfileScreenshotExecutor` has three layers:
 
 - **`takeScreenshot`** (package-private) — the entry point called by `ScreenshotOrchestrator`. Handles pre-flight logging and delegates to the loop.
-- **`takeScreenshotWithAttempts`** (private) — the retry loop. Calls `isSuccessfullyScreenshot` up to `numberOfTrackerAttempts` times.
+- **`takeScreenshotWithAttempts`** (private) — the retry loop. Calls `isSuccessfullyScreenshot` up to `numberOfScreenshotAttempts` times.
     - On any `Exception`, waits 1 second via `BrowserInteractionHelper.explicitWait` then retries.
 - **`isSuccessfullyScreenshot`** (private) — a single attempt. Contains all exception handling with per-exception log messages.
     - Returns `true` on success

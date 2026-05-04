@@ -356,7 +356,7 @@ docker run \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
+    --env NUMBER_OF_SCREENSHOT_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
@@ -400,7 +400,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
+    --env NUMBER_OF_SCREENSHOT_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
@@ -479,7 +479,7 @@ The following are all possible configuration options, defined as environment var
 | *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
 | *LOG_TRACKER_NAME*                  | Whether to prefix each log message with the name of the tracker being screenshot                                                                                                                         | true                          |
 | *NUMBER_OF_PARALLEL_THREADS*        | The number of parallel browser threads to use for Headless trackers [min: 1, max: 32]                                                                                                                    | 5                             |
-| *NUMBER_OF_TRACKER_ATTEMPTS*        | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) [max of 5]                                                                      | 1                             |
+| *NUMBER_OF_SCREENSHOT_ATTEMPTS*     | The number of times to attempt to screenshot a tracker before marking it as a fail [min: 1, max: 5]                                                                                                      | 1                             |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
 | *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
 | *PROGRESS_BAR_COMPLETE_CHARACTER*   | The character used to render the completed portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_INCOMPLETE_CHARACTER*                                                            | █                             |
@@ -645,7 +645,7 @@ docker run \
     --env LOG_LEVEL=TRACE \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \
-    --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
+    --env NUMBER_OF_SCREENSHOT_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
     --env PROGRESS_BAR_COMPLETE_CHARACTER='█' \
