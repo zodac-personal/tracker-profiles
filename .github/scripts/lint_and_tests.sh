@@ -28,6 +28,8 @@
 #   - Non-zero: One or more linting errors or test failures occurred
 # ------------------------------------------------------------------------------
 
+# TODO: Only run a lint if there has been a change from master? Might need to tag a KGB?
+
 set -uo pipefail
 
 trap 'echo; echo "❌ Interrupted"; exit 130' INT

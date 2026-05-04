@@ -45,6 +45,7 @@ historical record of your stats on a tracker in case it goes down or becomes oth
     - There are several types of redaction:
         - Blur (adds a Gaussian blur)
         - Box (draws a solid box)
+        - Removal (the text is completely removed)
         - Text (Replaces the text)
         - None (no redaction)
     - There following elements are currently redacted
@@ -354,6 +355,7 @@ docker run \
     --env JAVA_XMX=512m \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
+    --env NUMBER_OF_PARALLEL_THREADS=5 \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
@@ -397,6 +399,7 @@ MSYS_NO_PATHCONV=1 docker run \
     --env JAVA_XMX=512m \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
+    --env NUMBER_OF_PARALLEL_THREADS=5 \
     --env NUMBER_OF_TRACKER_ATTEMPTS=1 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \
@@ -475,6 +478,7 @@ The following are all possible configuration options, defined as environment var
 | *JAVA_XMX*                          | The maximum heap size for the Java process                                                                                                                                                               | 512m                          |
 | *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
 | *LOG_TRACKER_NAME*                  | Whether to prefix each log message with the name of the tracker being screenshot                                                                                                                         | true                          |
+| *NUMBER_OF_PARALLEL_THREADS*        | The number of parallel browser threads to use for Headless trackers [min: 1, max: 32]                                                                                                                    | 5                             |
 | *NUMBER_OF_TRACKER_ATTEMPTS*        | The number of times to attempt to screenshot a tracker (with retries if it fails or the wrong manual input was selected) [max of 5]                                                                      | 1                             |
 | *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
 | *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
@@ -511,13 +515,12 @@ The format string supports the following tokens, as defined in the
 | `:progress` | Number of completed internal ticks (workflow steps, not trackers) — see note below |
 | `:total`    | Total number of internal ticks (workflow steps, not trackers) — see note below     |
 
-> **Note:** `:progress` and `:total` reflect the internal tick count used to drive the bar fill (workflow steps), not
-> the number of trackers. For a tracker counter, use the `X/Y` suffix that is always appended to the bar.
+> **Note:** `:progress` and `:total` reflect the internal tick count used to drive the bar fill (workflow steps), not the number of trackers. For a
+> tracker counter, use the `X/Y` suffix that is always appended to the bar.
 
-> **Note:** When the JVM's native encoding is not UTF-8, multibyte characters passed via environment variable (such as
-> `█` and `░`) may arrive as individual bytes rather than a single character. I try to convert these appropriately, but
-> it doesn't always work. If you're having issues, try to use plain ASCII characters, or use the defaults. Feel free to
-> raise an issue and I can look into it.
+> **Note:** When the JVM's native encoding is not UTF-8, multibyte characters passed via environment variable (such as `█` and `░`) may arrive as
+> individual bytes rather than a single character. I try to convert these appropriately, but it doesn't always work. If you're having issues, try to
+> use plain ASCII characters, or use the defaults. Feel free to raise an issue and I can look into it.
 
 ## Versioning
 
@@ -527,11 +530,10 @@ This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PA
 - **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options or trackers)
 - **PATCH**: backwards-compatible bug fixes or code changes
 
-Changes to the [trackers_example.csv](./docker/trackers_example.csv) file are considered `MINOR` (new trackers) or
-`MAJOR` (updates to the tracker name). However, removing a tracker due to the site no longer being available is **not**
-considered a `MAJOR` change. Trackers are external to the application and not part of its public API, as their
-availability depends on third-party sites that can change or disappear at any time. Tracker removals will be released as
-`PATCH` versions.
+Changes to the [trackers_example.csv](./docker/trackers_example.csv) file are considered `MINOR` (new trackers) or `MAJOR` (updates to the tracker
+name). However, removing a tracker due to the site no longer being available is **not** considered a `MAJOR` change. Trackers are external to the
+application and not part of its public API, as their availability depends on third-party sites that can change or disappear at any time. Tracker
+removals will be released as `PATCH` versions.
 
 ## AI Usage
 
@@ -642,6 +644,7 @@ docker run \
     --env JAVA_XMX=512m \
     --env LOG_LEVEL=TRACE \
     --env LOG_TRACKER_NAME=true \
+    --env NUMBER_OF_PARALLEL_THREADS=5 \
     --env NUMBER_OF_TRACKER_ATTEMPTS=5 \
     --env OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
     --env OUTPUT_DIRECTORY_PARENT_PATH=/app/screenshots \

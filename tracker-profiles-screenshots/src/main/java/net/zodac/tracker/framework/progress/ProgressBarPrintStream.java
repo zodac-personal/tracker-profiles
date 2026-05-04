@@ -19,6 +19,7 @@ package net.zodac.tracker.framework.progress;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.locks.Lock;
 
 /**
  * A {@link PrintStream} wrapper that keeps a Clique progress bar pinned to the bottom of the console output.
@@ -35,7 +36,10 @@ import java.nio.charset.StandardCharsets;
  * </ul>
  *
  * <p>
- * This class is not thread-safe and is designed for single-threaded console output.
+ * This class is thread-safe. All writes are guarded by the {@link Lock} shared with {@link ProgressBarManager} (obtained via
+ * {@link ProgressBarManager#getProgressBarLock()}), ensuring that bar-clearing, log output, and bar re-rendering are atomic across
+ * concurrent threads. Because {@link java.util.concurrent.locks.ReentrantLock} permits re-entry, holding this lock while calling
+ * {@link ProgressBarManager#getProgressBarContent()} (which also acquires it) is safe.
  */
 public final class ProgressBarPrintStream extends PrintStream {
 
@@ -44,6 +48,7 @@ public final class ProgressBarPrintStream extends PrintStream {
     private static final char NEWLINE = '\n';
 
     private final ProgressBarManager progressBarManager;
+    private final Lock progressBarLock;
 
     /**
      * Creates a {@link ProgressBarPrintStream} that wraps {@link System#out}.
@@ -51,6 +56,7 @@ public final class ProgressBarPrintStream extends PrintStream {
     public ProgressBarPrintStream(final ProgressBarManager progressBarManager) {
         super(System.out, true, StandardCharsets.UTF_8);
         this.progressBarManager = progressBarManager;
+        this.progressBarLock = progressBarManager.getProgressBarLock();
     }
 
     @Override
@@ -64,26 +70,31 @@ public final class ProgressBarPrintStream extends PrintStream {
             return;
         }
 
-        final boolean isBarWrite = buf[off] == '\r';
-        if (isBarWrite) {
-            // Replace Clique's partial bar with the full bar (including X/Y tracker suffix) so the cursor position is consistent
-            // If Clique's write ends with \n (bar completed), forward that newline so close() can correctly detect isDone().
-            renderBar();
-            if (buf[off + len - 1] == NEWLINE) {
-                WRAPPED_STREAM.write(NEWLINE);
-                WRAPPED_STREAM.flush();
+        progressBarLock.lock();
+        try {
+            final boolean isBarWrite = buf[off] == '\r';
+            if (isBarWrite) {
+                // Replace Clique's partial bar with the full bar (including X/Y tracker suffix) so the cursor position is consistent
+                // If Clique's write ends with \n (bar completed), forward that newline so close() can correctly detect isDone().
+                renderBar();
+                if (buf[off + len - 1] == NEWLINE) {
+                    WRAPPED_STREAM.write(NEWLINE);
+                    WRAPPED_STREAM.flush();
+                }
+                return;
             }
-            return;
-        }
 
-        if (progressBarManager.isActive()) {
-            WRAPPED_STREAM.write(CLEAR_LINE, 0, CLEAR_LINE.length);
-        }
+            if (progressBarManager.isActive()) {
+                WRAPPED_STREAM.write(CLEAR_LINE, 0, CLEAR_LINE.length);
+            }
 
-        WRAPPED_STREAM.write(buf, off, len);
+            WRAPPED_STREAM.write(buf, off, len);
 
-        if (buf[off + len - 1] == '\n' && progressBarManager.isActive()) {
-            renderBar();
+            if (buf[off + len - 1] == '\n' && progressBarManager.isActive()) {
+                renderBar();
+            }
+        } finally {
+            progressBarLock.unlock();
         }
     }
 

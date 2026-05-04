@@ -18,8 +18,13 @@
 package net.zodac.tracker.app;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
@@ -108,13 +113,34 @@ public final class ScreenshotOrchestrator {
         LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
         LOGGER.info("");
 
-        // TODO: Execute these in parallel?
-        for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
-            final long startNanos = System.nanoTime();
-            final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
-            resultCollector.addResult(trackerType, tracker.name(), successfullyTakenScreenshot);
-            printTrackerExecutionTime(tracker.name(), startNanos);
-            progressBarManager.tickTracker(tracker.name());
+        DriverPool.initialise(trackerType, CONFIG.numberOfParallelThreads());
+
+        if (trackerType == TrackerType.HEADLESS) {
+            final List<Callable<Void>> tasks = new ArrayList<>();
+            for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
+                tasks.add(() -> {
+                    final long startNanos = System.nanoTime();
+                    final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
+                    resultCollector.addResult(trackerType, tracker.name(), success);
+                    printTrackerExecutionTime(tracker.name(), startNanos);
+                    progressBarManager.tickTracker(tracker.name());
+                    return null;
+                });
+            }
+            try (final ExecutorService executor = Executors.newFixedThreadPool(CONFIG.numberOfParallelThreads())) {
+                executor.invokeAll(tasks);
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.warn("Parallel execution interrupted for {} trackers", trackerType.formattedName());
+            }
+        } else {
+            for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
+                final long startNanos = System.nanoTime();
+                final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
+                resultCollector.addResult(trackerType, tracker.name(), success);
+                printTrackerExecutionTime(tracker.name(), startNanos);
+                progressBarManager.tickTracker(tracker.name());
+            }
         }
     }
 

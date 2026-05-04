@@ -20,6 +20,10 @@ package net.zodac.tracker.framework.progress;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.ProgressBar;
 import io.github.kusoroadeolu.clique.configuration.ProgressBarConfiguration;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -42,10 +46,12 @@ public final class ProgressBarManager {
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final Lock progressBarLock = new ReentrantLock();
+    private final AtomicInteger completedTrackers = new AtomicInteger(0);
+    private final AtomicBoolean stopped = new AtomicBoolean(false);
+
     private @Nullable ProgressBar progressBar;
     private int trackerTotal;
-    private int completedTrackers;
-    private boolean stopped;
 
     private ProgressBarManager() {
 
@@ -73,7 +79,7 @@ public final class ProgressBarManager {
      */
     public void start(final int trackerTotal, final int ticksTotal) {
         this.trackerTotal = trackerTotal;
-        this.completedTrackers = 0;
+        this.completedTrackers.set(0);
 
         if (CONFIG.progressBarEnabled()) {
             final ProgressBarConfiguration progressBarConfiguration = ProgressBarConfiguration.builder()
@@ -96,7 +102,7 @@ public final class ProgressBarManager {
      * @return {@code true} if the progress bar is active
      */
     public boolean isActive() {
-        return !stopped && progressBar != null && !progressBar.isDone();
+        return !stopped.get() && progressBar != null && !progressBar.isDone();
     }
 
     /**
@@ -116,7 +122,7 @@ public final class ProgressBarManager {
      */
     public void stop() {
         LOGGER.trace("Stopping progress bar");
-        stopped = true;
+        stopped.set(true);
     }
 
     /**
@@ -127,7 +133,12 @@ public final class ProgressBarManager {
     public void tick(final TrackerStep trackerStep) {
         if (progressBar != null) {
             LOGGER.trace("Ticking progress bar for tracker step: {}", trackerStep.formattedName());
-            progressBar.tick();
+            progressBarLock.lock();
+            try {
+                progressBar.tick();
+            } finally {
+                progressBarLock.unlock();
+            }
         }
     }
 
@@ -139,7 +150,7 @@ public final class ProgressBarManager {
      */
     public void tickTracker(final String trackerName) {
         LOGGER.trace("Updating progress for tracker: {}", trackerName);
-        completedTrackers++;
+        completedTrackers.incrementAndGet();
     }
 
     /**
@@ -152,8 +163,28 @@ public final class ProgressBarManager {
             return "";
         }
 
-        final int trackerTotalWidth = String.valueOf(trackerTotal).length();
-        final String trackerCounter = ("%" + trackerTotalWidth + "d/%d").formatted(completedTrackers, trackerTotal);
-        return "%s | %s trackers".formatted(progressBar.get(), trackerCounter);
+        progressBarLock.lock();
+        try {
+            final int trackerTotalWidth = String.valueOf(trackerTotal).length();
+            final String trackerCounter = ("%" + trackerTotalWidth + "d/%d").formatted(completedTrackers.get(), trackerTotal);
+            return "%s | %s trackers".formatted(progressBar.get(), trackerCounter);
+        } finally {
+            progressBarLock.unlock();
+        }
+    }
+
+    /**
+     * Returns the lock used to coordinate progress bar rendering.
+     *
+     * <p>
+     * {@link ProgressBarPrintStream} acquires this lock around each console write so that clearing the bar, emitting the log line, and
+     * re-rendering the bar are atomic with respect to concurrent {@link #tick(TrackerStep)} calls from other threads.
+     * Because {@link java.util.concurrent.locks.ReentrantLock} permits re-entry, holding this lock while calling
+     * {@link #getProgressBarContent()} (which also acquires it) is safe.
+     *
+     * @return the progress bar {@link Lock}
+     */
+    public Lock getProgressBarLock() {
+        return progressBarLock;
     }
 }
