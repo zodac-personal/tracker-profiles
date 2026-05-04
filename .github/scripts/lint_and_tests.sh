@@ -7,7 +7,9 @@
 # Usage:           ./lint_and_tests.sh [steps]
 #
 #                  [steps] is an optional comma-separated list of steps to run.
-#                  If omitted, all steps are run.
+#                  If omitted, only steps whose relevant files have changed since
+#                  the most recent semver git tag are run. If no tag exists, all
+#                  steps are run. Pass explicit steps to override auto-detection.
 #
 #                  Valid steps:
 #                    docker      - Lint the Dockerfile with hadolint
@@ -28,8 +30,6 @@
 #   - Non-zero: One or more linting errors or test failures occurred
 # ------------------------------------------------------------------------------
 
-# TODO: Only run a lint if there has been a change from master? Might need to tag a KGB?
-
 set -uo pipefail
 
 trap 'echo; echo "❌ Interrupted"; exit 130' INT
@@ -42,7 +42,7 @@ JDK_DOCKER_IMAGE="eclipse-temurin:26_35-jdk"
 MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.1"
 MAVEN_DOCKER_IMAGE="maven:3.9.15"
 
-VALID_STEPS=("docker" "javascript" "markdown" "java")
+VALID_STEPS=("docker" "java" "javascript" "markdown")
 
 overall_exit_code=0
 
@@ -150,9 +150,43 @@ EOF
     fi
 }
 
+detect_changed_steps() {
+    local latest_tag
+    latest_tag=$(git tag --sort=-version:refname 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+
+    if [[ -z "${latest_tag}" ]]; then
+        echo "No semver tag found; running all steps" >&2
+        printf '%s\n' "${VALID_STEPS[@]}"
+        return
+    fi
+
+    echo "Checking changes since tag [${latest_tag}]..." >&2
+
+    local run_docker=false run_java=false run_javascript=false run_markdown=false
+    local file
+
+    while IFS= read -r file; do
+        [[ -z "${file}" ]] && continue
+        [[ "${file}" =~ ^docker/ || "${file}" =~ ^ci/docker/ ]] && run_docker=true
+        [[ "${file}" =~ ^tracker-profiles-screenshots/ || "${file}" =~ ^ci/java/ || "${file}" == "pom.xml" ]] && run_java=true
+        [[ "${file}" =~ ^tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/ || "${file}" =~ ^ci/javascript/ ]] && run_javascript=true
+        [[ "${file}" == "README.md" || "${file}" =~ ^ci/doc/ ]] && run_markdown=true
+    done < <(git diff --name-only "${latest_tag}..HEAD")
+
+    [[ "${run_docker}"     == true ]] && echo "docker"
+    [[ "${run_java}"       == true ]] && echo "java"
+    [[ "${run_javascript}" == true ]] && echo "javascript"
+    [[ "${run_markdown}"   == true ]] && echo "markdown"
+}
+
 # Parse and validate steps
 if [[ $# -eq 0 ]]; then
-    steps=("${VALID_STEPS[@]}")
+    mapfile -t steps < <(detect_changed_steps)
+    if [[ ${#steps[@]} -eq 0 ]]; then
+        echo "No relevant changes detected since last tag; nothing to run"
+        exit 0
+    fi
+    echo "Running steps: $(IFS=', '; echo "${steps[*]}")"
 else
     IFS=',' read -ra steps <<<"${1}"
     for step in "${steps[@]}"; do
