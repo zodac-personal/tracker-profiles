@@ -71,7 +71,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "SlobitMedia", url = "https://media.slo-bitcloud.eu/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 @TrackerHandler(name = "VietMediaF", url = "https://tracker.vietmediaf.store/")
-@TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
 public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedHeader {
 
     @Override
