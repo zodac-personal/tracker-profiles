@@ -4,6 +4,12 @@
 
 I think the original variable name was a little ambiguous, so I'm making it a little clearer. The README still gives more details.
 
+## Removing Tracker Support
+
+Removing support for the following trackers:
+
+- InfinityLibrary
+
 # Other changes
 
 ## Parallel Execution

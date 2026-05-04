@@ -56,7 +56,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
-@TrackerHandler(name = "InfinityLibrary", url = "https://infinitylibrary.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "LDU", url = "https://theldu.to/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
