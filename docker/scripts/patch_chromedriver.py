@@ -1,21 +1,18 @@
 #!/usr/local/bin/python3
-import sys
+# SPDX-License-Identifier: 0BSD
+# Copyright (c) 2024-2026 zodac.net
 
-try:
-    import undetected_chromedriver as uc
-except ImportError:
-    print("undetected-chromedriver is not installed", file=sys.stderr)
-    sys.exit(1)
+"""Patch a Chromedriver binary using undetected-chromedriver."""
 
-def main():
+import undetected_chromedriver as uc
+
+
+def main() -> None:
+    """Patch the Chromedriver executable in place."""
     driver_path = "/usr/local/chromium/chromedriver-linux64/chromedriver"
-
-    print(f"Patching chromedriver at: {driver_path}")
 
     patcher = uc.Patcher(executable_path=driver_path)
     patcher.patch_exe()
-
-    print("Patched successfully")
 
 
 if __name__ == "__main__":
