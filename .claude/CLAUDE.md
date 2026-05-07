@@ -63,7 +63,7 @@ To add a new tracker:
 4. Override optional hooks for redaction (`ipAddressElements()`, `emailElements()`, `torrentPasskeyElements()`,
    `ircPasskeyElements()`), implement fixed element removal interfaces (`HasFixedHeader`, `HasFixedSidebar`),
    manual interaction (`preLoginClickAction()`), etc.
-5. Add the tracker's credentials to `docker/trackers_example.csv` and details to `README.md`
+5. Add the tracker's credentials to `./trackers_example.csv` and details to `README.md`
 
 Use `XpathBuilder` (with `HtmlElement` constants and `XpathAttributePredicate`) to construct selectors rather than raw XPath strings.
 

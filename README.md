@@ -328,7 +328,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 
 ### Tracker Definitions
 
-First, copy the [trackers_example.csv](./docker/trackers_example.csv) file. This file needs to be updated with your
+First, copy the [trackers_example.csv](trackers_example.csv) file. This file needs to be updated with your
 user's login information for each tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL`
 environment variable so they are excluded. The tracker names are case-insensitive.
 
@@ -540,7 +540,7 @@ This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PA
 - **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options or trackers)
 - **PATCH**: backwards-compatible bug fixes or code changes
 
-Changes to the [trackers_example.csv](./docker/trackers_example.csv) file are considered `MINOR` (new trackers) or `MAJOR` (updates to the tracker
+Changes to the [trackers_example.csv](trackers_example.csv) file are considered `MINOR` (new trackers) or `MAJOR` (updates to the tracker
 name). However, removing a tracker due to the site no longer being available is **not** considered a `MAJOR` change. Trackers are external to the
 application and not part of its public API, as their availability depends on third-party sites that can change or disappear at any time. Tracker
 removals will be released as `PATCH` versions.

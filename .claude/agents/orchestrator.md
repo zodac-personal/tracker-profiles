@@ -95,7 +95,7 @@ Rules:
 
 After writing the handler:
 
-1. Add a CSV entry to `docker/trackers_example.csv` (alphabetical order)
+1. Add a CSV entry to `./trackers_example.csv` (alphabetical order)
 2. Add a row to the correct table in `README.md` (alphabetical order):
     - `HEADLESS` type → **"### Headless"** multi-column table (find the right letter-range column)
     - `MANUAL` type → **"### Manual Interaction"** table
