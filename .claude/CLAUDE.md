@@ -52,8 +52,12 @@ Handlers are discovered at startup via reflection: `TrackerHandlerFactory` scans
 
 To add a new tracker:
 
-1. Create a class in `handler/` extending `AbstractTrackerHandler`
-2. Annotate with `@TrackerHandler(name = "...", type = TrackerType.HEADLESS, url = "https://...")`
+1. Determine whether the tracker needs **any** method overrides:
+    - **No overrides needed** (pure platform default) → add a `@TrackerHandler(name = "...", url = "...")` annotation directly to
+      the base handler class (`Unit3dHandler`, `GazelleHandler`, etc.) in alphabetical order. **Do not create a new class.**
+    - **At least one override needed** → create a new class in `handler/` extending the appropriate base class, annotate it with
+      `@TrackerHandler`, and override only the methods that differ.
+2. Annotate with `@TrackerHandler(name = "...", type = TrackerType.HEADLESS, url = "https://...")` (omit `type` for HEADLESS)
 3. Override the required selectors — at minimum: `usernameFieldSelector()`, `passwordFieldSelector()`,
    `logoutButtonSelector()`, `profileLinkSelector()`
 4. Override optional hooks for redaction (`ipAddressElements()`, `emailElements()`, `torrentPasskeyElements()`,

@@ -68,6 +68,14 @@ along with the profile agent's flags so it knows which elements have already bee
 
 ### Step 3 — Write the handler class
 
+First, decide whether a new class is needed at all:
+
+- **No method overrides required** (tracker uses the base class defaults in every respect) → add a
+  `@TrackerHandler(name = "Name", url = "https://...")` annotation directly to the base handler class
+  (`Unit3dHandler`, `GazelleHandler`, etc.) in alphabetical order among its existing annotations.
+  **Do not create a new `.java` file.**
+- **At least one method must be overridden** → create a new `.java` file as described below.
+
 Write the final `.java` file to:
 `tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/<TrackerName>.java`
 
