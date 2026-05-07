@@ -14,6 +14,7 @@ jobs:
   update-license:
     name: License Year Update
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       actions: write
       contents: write
@@ -25,18 +26,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cache local .m2
-        uses: actions/cache@v5.0.5
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Set up maven
         uses: s4u/setup-maven-action@v1.20.0
         with:
-          checkout-fetch-depth: 0
           java-distribution: 'temurin'
           java-version: '26'
           maven-version: '3.9.15'

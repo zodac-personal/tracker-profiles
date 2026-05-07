@@ -435,14 +435,21 @@ update_lint_tool_versions() {
         fi
     fi
 
-    # ruff — GitHub releases use bare version tags (e.g. "0.11.0"), matching the GHCR image tag
+    # ruff — GitHub releases use bare version tags (e.g. "0.11.0"), matching both the GHCR image tag and PyPI package version
     local ruff_version
     ruff_version=$(curl "${curl_args[@]}" "https://api.github.com/repos/astral-sh/ruff/releases/latest" | jq -r '.tag_name // empty')
     if [[ -z "${ruff_version}" ]]; then
         echo "  ⚠️ Could not fetch latest ruff version, skipping"
     else
-        echo "  ruff: ${ruff_version}"
-        sed -i "s|RUFF_DOCKER_IMAGE=\"ghcr.io/astral-sh/ruff:[^\"]*\"|RUFF_DOCKER_IMAGE=\"ghcr.io/astral-sh/ruff:${ruff_version}\"|" "${lint_script}"
+        local pypi_status
+        pypi_status=$(curl -fsSL -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/ruff/${ruff_version}/json")
+        if [[ "${pypi_status}" != "200" ]]; then
+            echo "  ⚠️ ruff ${ruff_version} pip package not found on PyPI (HTTP ${pypi_status}), skipping to keep lint_and_tests.sh and python.yml in sync"
+        else
+            echo "  ruff: ${ruff_version}"
+            sed -i "s|RUFF_DOCKER_IMAGE=\"ghcr.io/astral-sh/ruff:[^\"]*\"|RUFF_DOCKER_IMAGE=\"ghcr.io/astral-sh/ruff:${ruff_version}\"|" "${lint_script}"
+            sed -i "s|pip install ruff==[0-9.]*|pip install ruff==${ruff_version}|" ".github/workflows/python.yml"
+        fi
     fi
 
     echo "✅ Lint tool images updated in ${lint_script}"

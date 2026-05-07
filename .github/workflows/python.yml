@@ -1,0 +1,30 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/python.yml'
+      - 'ci/python/ruff.toml'
+      - 'docker/scripts/*.py'
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  analyze:
+    name: Python Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install Ruff
+        run: pip install ruff==0.15.12
+
+      - name: Run Ruff
+        run: ruff check docker/scripts --config ci/python/ruff.toml

@@ -29,7 +29,7 @@
 
 set -euo pipefail
 
-GIT_REPO_URL="https://github.com/zodac/tracker-profiles"
+GIT_REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
 
 # Get commit messages with commit hash and raw message separated
 previous_git_tag="${1}"
