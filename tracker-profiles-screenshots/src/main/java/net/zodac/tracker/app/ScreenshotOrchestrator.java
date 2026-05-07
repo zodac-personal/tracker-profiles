@@ -109,42 +109,49 @@ public final class ScreenshotOrchestrator {
             return;
         }
 
-        final int effectiveThreadCount = Math.min(CONFIG.numberOfParallelThreads(), trackersByType.get(trackerType).size());
+        final int effectiveThreadCount = getEffectiveThreadCount(trackerType, trackersByType);
         DriverPool.initialise(trackerType, effectiveThreadCount);
 
         LOGGER.info("");
         LOGGER.info(">>> Executing {} trackers {}<<<", trackerType.formattedName(),
-            effectiveThreadCount == 1 ? "" : String.format("with %d threads", effectiveThreadCount));
+            effectiveThreadCount == 1 ? "" : String.format("(with %d threads) ", effectiveThreadCount));
         LOGGER.info("");
 
-        // TODO: Skip parallelism if UI enabled? Maybe add another option to override
-        if (trackerType == TrackerType.HEADLESS) {
-            final List<Callable<Void>> tasks = new ArrayList<>();
-            for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
-                tasks.add(() -> {
-                    final long startNanos = System.nanoTime();
-                    final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
-                    resultCollector.addResult(trackerType, tracker.name(), success);
-                    printTrackerExecutionTime(tracker.name(), startNanos);
-                    progressBarManager.tickTracker(tracker.name());
-                    return null;
-                });
-            }
-            try (final ExecutorService executor = Executors.newFixedThreadPool(effectiveThreadCount)) {
-                executor.invokeAll(tasks);
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOGGER.warn("Parallel execution interrupted for {} trackers", trackerType.formattedName());
-            }
-        } else {
-            for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
+        final List<Callable<Void>> trackerScreenshotTasks = new ArrayList<>();
+        for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
+            trackerScreenshotTasks.add(() -> {
                 final long startNanos = System.nanoTime();
                 final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
                 resultCollector.addResult(trackerType, tracker.name(), success);
                 printTrackerExecutionTime(tracker.name(), startNanos);
                 progressBarManager.tickTracker(tracker.name());
-            }
+                return null;
+            });
         }
+
+        try (final ExecutorService executor = Executors.newFixedThreadPool(effectiveThreadCount)) {
+            executor.invokeAll(trackerScreenshotTasks);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Parallel execution interrupted for {} trackers", trackerType.formattedName());
+        }
+    }
+
+    private static int getEffectiveThreadCount(final TrackerType trackerType, final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+        if (CONFIG.forceUiBrowser()) {
+            LOGGER.debug("Forcing UI browser, parallelism disabled");
+            return 1;
+        }
+
+        // Currently only supporting parallel execution for HEADLESS trackers
+        if (trackerType != TrackerType.HEADLESS) {
+            LOGGER.debug("Tracker type is {}, parallelism disabled", trackerType.formattedName());
+            return 1;
+        }
+
+        final int numberOfTrackers = trackersByType.getOrDefault(trackerType, Set.of()).size();
+        LOGGER.trace("numberOfParallelThreads: {}, numberOfTrackers: {}", CONFIG.numberOfParallelThreads(), numberOfTrackers);
+        return Math.min(CONFIG.numberOfParallelThreads(), numberOfTrackers);
     }
 
     private static int maxTrackerNameLength(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
