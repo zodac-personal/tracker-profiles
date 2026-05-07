@@ -292,6 +292,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [Leech24](https://leech24.net/)                     | Captcha                                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |
 | [LetSeed](https://letseed.org/)                     | Captcha                                         |
+| [LongPT](https://longpt.org/)                       | Captcha & Cloudflare verification               |
 | [LP-Bits](https://lp-bits.com/)                     | Captcha                                         |
 | [LST](https://lst.gg/)                              | Question on login                               |
 | [Nexum-Core](https://nexum-core.com/)               | Needs to be explicitly translated               |
