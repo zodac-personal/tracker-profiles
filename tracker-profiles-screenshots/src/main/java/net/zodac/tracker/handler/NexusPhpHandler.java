@@ -63,18 +63,26 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
         // We use this instead of an explicit translation to let the website handle it
         if (CONFIG.enableTranslationToEnglish()) {
             LOGGER.debug("\t\t- Selecting English as tracker language prior to login");
-            final By languageDropdownSelector = XpathBuilder
-                .from(td, withId("nav_block"))
-                .child(form, atIndex(1))
-                .child(div, atIndex(1))
-                .child(NamedHtmlElement.of("select"), atIndex(1))
-                .build();
-            final WebElement languageDropdown = driver.findElement(languageDropdownSelector);
+            final WebElement languageDropdown = driver.findElement(languageDropdownSelector());
             new Select(languageDropdown).selectByIndex(0);
             browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
         }
 
         return super.usernameFieldSelector();
+    }
+
+    /**
+     * {@link By} selector for the language drop-down menu on the login page.
+     *
+     * @return the {@link By} selector
+     */
+    protected By languageDropdownSelector() {
+        return XpathBuilder
+            .from(td, withId("nav_block"))
+            .child(form, atIndex(1))
+            .child(div, atIndex(1))
+            .child(NamedHtmlElement.of("select"), atIndex(1))
+            .build();
     }
 
     /**
