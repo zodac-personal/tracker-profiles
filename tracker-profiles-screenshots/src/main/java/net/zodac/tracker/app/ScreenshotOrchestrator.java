@@ -113,8 +113,10 @@ public final class ScreenshotOrchestrator {
         LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
         LOGGER.info("");
 
+        // TODO: Min of parallelThreads and tracker count
         DriverPool.initialise(trackerType, CONFIG.numberOfParallelThreads());
 
+        // TODO: Skip parallelism if UI enabled? Maybe add another option to override
         if (trackerType == TrackerType.HEADLESS) {
             final List<Callable<Void>> tasks = new ArrayList<>();
             for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
