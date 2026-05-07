@@ -109,12 +109,13 @@ public final class ScreenshotOrchestrator {
             return;
         }
 
-        LOGGER.info("");
-        LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
-        LOGGER.info("");
+        final int effectiveThreadCount = Math.min(CONFIG.numberOfParallelThreads(), trackersByType.get(trackerType).size());
+        DriverPool.initialise(trackerType, effectiveThreadCount);
 
-        // TODO: Min of parallelThreads and tracker count
-        DriverPool.initialise(trackerType, CONFIG.numberOfParallelThreads());
+        LOGGER.info("");
+        LOGGER.info(">>> Executing {} trackers {}<<<", trackerType.formattedName(),
+            effectiveThreadCount == 1 ? "" : String.format("with %d threads", effectiveThreadCount));
+        LOGGER.info("");
 
         // TODO: Skip parallelism if UI enabled? Maybe add another option to override
         if (trackerType == TrackerType.HEADLESS) {
@@ -129,7 +130,7 @@ public final class ScreenshotOrchestrator {
                     return null;
                 });
             }
-            try (final ExecutorService executor = Executors.newFixedThreadPool(CONFIG.numberOfParallelThreads())) {
+            try (final ExecutorService executor = Executors.newFixedThreadPool(effectiveThreadCount)) {
                 executor.invokeAll(tasks);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
