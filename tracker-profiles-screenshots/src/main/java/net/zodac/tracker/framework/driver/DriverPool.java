@@ -159,10 +159,11 @@ public final class DriverPool {
             LOGGER.trace("Returning pooled driver, navigating to blank page");
             try {
                 driver.navigate().to(DEFAULT_BROWSER_PAGE);
+                returnDriverToPool(instance, driver);
             } catch (final Exception e) {
                 LOGGER.trace("Unable to navigate pooled driver to blank page", e);
+                replaceDeadDriverInPool(instance, driver);
             }
-            returnDriverToPool(instance, driver);
         } else {
             LOGGER.trace("Quitting fresh driver");
             try {
@@ -170,6 +171,35 @@ public final class DriverPool {
             } catch (final Exception e) {
                 LOGGER.trace("Unable to quit fresh driver", e);
             }
+        }
+    }
+
+    private static void replaceDeadDriverInPool(final DriverPool instance, final RemoteWebDriver deadDriver) {
+        LOGGER.warn("Pooled driver is dead (browser closed?), replacing with a fresh driver");
+        final TrackerType type;
+        synchronized (DriverPool.class) {
+            type = instance.driverTypeMap.remove(deadDriver);
+            instance.allPooledDrivers.remove(deadDriver);
+        }
+        if (type == null) {
+            LOGGER.warn("Dead driver has no associated TrackerType, cannot replace");
+            return;
+        }
+        final BlockingDeque<RemoteWebDriver> deque = instance.pool.get(type);
+        if (deque == null) {
+            LOGGER.warn("No pool found for type {}, cannot replace dead driver", type.formattedName());
+            return;
+        }
+        try {
+            final RemoteWebDriver replacement = JavaWebDriverFactory.createDriver(type, List.of());
+            synchronized (DriverPool.class) {
+                instance.allPooledDrivers.add(replacement);
+                instance.driverTypeMap.put(replacement, type);
+            }
+            deque.addFirst(replacement);
+            LOGGER.debug("Replaced dead pooled {} driver with a fresh one", type.formattedName());
+        } catch (final Exception e) {
+            LOGGER.warn("Failed to create replacement {} driver", type.formattedName(), e);
         }
     }
 
