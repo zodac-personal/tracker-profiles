@@ -134,7 +134,8 @@ public final class ScreenshotOrchestrator {
             executor.invokeAll(trackerScreenshotTasks);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
-            LOGGER.warn("Parallel execution interrupted for {} trackers", trackerType.formattedName());
+            LOGGER.debug("Parallel execution interrupted for {} trackers", trackerType.formattedName(), e);
+            LOGGER.warn("Parallel execution interrupted for {} trackers: {}", trackerType.formattedName(), e.getMessage());
         }
     }
 

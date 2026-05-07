@@ -39,6 +39,7 @@ import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code YggReborn} tracker.
@@ -111,8 +112,9 @@ public class YggReborn extends AbstractTrackerHandler implements HasFixedHeader 
         try {
             LOGGER.trace("Confirming we are still on the profile page");
             driver.findElement(profilePageElementSelector());
-        } catch (final Exception e) {
-            LOGGER.warn("Could not find profile page element, unable to log out");
+        } catch (final NoSuchElementException e) {
+            LOGGER.debug("Could not find profile page element, unable to log out", e);
+            LOGGER.warn("Could not find profile page element, unable to log out: {}", e.getMessage());
             throw e;
         }
 
