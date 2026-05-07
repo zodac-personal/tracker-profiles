@@ -210,4 +210,9 @@ public class NexusPhpHandler extends AbstractTrackerHandler {
             .child(a, atIndex(1))
             .build();
     }
+
+    @Override
+    protected By postLogoutElementSelector() {
+        return super.usernameFieldSelector();
+    }
 }

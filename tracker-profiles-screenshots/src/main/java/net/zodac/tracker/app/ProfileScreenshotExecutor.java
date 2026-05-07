@@ -169,9 +169,10 @@ final class ProfileScreenshotExecutor {
 
             final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
             if (cleanedErrorMessage.isEmpty()) {
-                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}'", e.getClass(), trackerCredential.name());
+                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}'", e.getClass().getSimpleName(), trackerCredential.name());
             } else {
-                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}': {}", e.getClass(), trackerCredential.name(), cleanedErrorMessage);
+                LOGGER.warn("\t- Unexpected {} taking screenshot of '{}': {}", e.getClass().getSimpleName(), trackerCredential.name(),
+                    cleanedErrorMessage);
             }
         } finally {
             if (trackerHandler != null) {

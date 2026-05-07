@@ -248,6 +248,7 @@ background:
 
 | Tracker Name (U–Z)                              |
 |-------------------------------------------------|
+| [Ultrabits](https://ultrabits.org/)             |
 | [Unwalled](https://unwalled.cc/)                |
 | [VietMediaF](https://tracker.vietmediaf.store/) |
 | [XSpeeds](https://www.xspeeds.eu/)              |
