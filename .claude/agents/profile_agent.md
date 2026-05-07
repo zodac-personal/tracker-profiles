@@ -1,6 +1,7 @@
 ---
 name: Profile Agent
 description: Determines profile page navigation selectors for a new TrackerHandler
+model: claude-haiku-4-5-20251001
 type: project
 ---
 

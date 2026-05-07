@@ -1,6 +1,7 @@
 ---
 name: Page Structure Agent
 description: Detects structural page elements that affect screenshots — cookie banners, fixed headers, and fixed sidebars
+model: claude-haiku-4-5-20251001
 type: project
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: Redactor Agent
 description: Identifies sensitive fields on the profile page for redaction in a new TrackerHandler
+model: claude-haiku-4-5-20251001
 type: project
 ---
 

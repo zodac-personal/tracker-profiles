@@ -1,6 +1,7 @@
 ---
 name: Orchestrator
 description: Coordinates the login, profile, and redactor agents to produce a complete TrackerHandler implementation
+model: claude-haiku-4-5-20251001
 type: project
 ---
 
