@@ -103,7 +103,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **149** supported trackers listed below. The available trackers come in the following types:
+There are currently **150** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -309,6 +309,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [ThePlace](https://theplace.click/)                 | Captcha                                         |
 | [TheShow](https://theshow.click/)                   | Captcha                                         |
 | [TheVault](https://thevault.click/)                 | Captcha                                         |
+| [TorrentDay](https://www.torrentday.com/)           | Cloudflare verification                         |
 | [Torrenting](https://torrenting.com/)               | Cloudflare verification                         |
 | [UploadCX](https://upload.cx/)                      | Captcha                                         |
 

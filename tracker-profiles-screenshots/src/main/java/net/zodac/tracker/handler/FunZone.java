@@ -28,7 +28,6 @@ import java.time.Duration;
 import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasDismissibleElement;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.StringUtils;
 import org.openqa.selenium.By;
@@ -38,7 +37,7 @@ import org.openqa.selenium.WebElement;
  * Extension of the {@link Unit3dHandler} for the {@code FunZone} tracker.
  */
 @TrackerHandler(name = "FunZone", url = "https://myfunzone.org/")
-public class FunZone extends Unit3dHandler implements HasDismissibleElement {
+public class FunZone extends Unit3dHandler {
 
     /**
      * {@inheritDoc}
