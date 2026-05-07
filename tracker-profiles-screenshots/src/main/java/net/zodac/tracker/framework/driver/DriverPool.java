@@ -17,9 +17,9 @@
 
 package net.zodac.tracker.framework.driver;
 
+import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,8 +57,8 @@ public final class DriverPool {
     private final Lock lock = new ReentrantLock();
     private final AtomicInteger remainingTasks = new AtomicInteger(0);
     private final Map<TrackerType, BlockingDeque<RemoteWebDriver>> pool = new EnumMap<>(TrackerType.class);
-    private final Set<RemoteWebDriver> allPooledDrivers = new HashSet<>();
-    private final Map<RemoteWebDriver, TrackerType> driverTypeMap = new HashMap<>();
+    private final Set<RemoteWebDriver> allPooledDrivers = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Map<RemoteWebDriver, TrackerType> driverTypeMap = new IdentityHashMap<>();
 
     private DriverPool() {
 
