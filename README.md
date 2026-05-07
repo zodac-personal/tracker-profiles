@@ -103,7 +103,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **154** supported trackers listed below. The available trackers come in the following types:
+There are currently **156** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -253,6 +253,7 @@ background:
 | [VietMediaF](https://tracker.vietmediaf.store/) |
 | [XSpeeds](https://www.xspeeds.eu/)              |
 | [XWT-Classics](https://xwt-classics.net/)       |
+| [YggReborn](https://www.yggreborn.org/)         |
 | [YUSCENE](https://yu-scene.net/)                |
 | [Zappateers](https://zappateers.com/)           |
 
