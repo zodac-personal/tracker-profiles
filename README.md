@@ -236,6 +236,7 @@ background:
 | [TeamOS](https://teamos.xyz/)                        |
 | [TheMixingBowl](https://themixingbowl.org/)          |
 | [Torr9](https://torr9.net/)                          |
+| [Torrenteros](https://torrenteros.org/)              |
 | [TorrentLeech](https://www.torrentleech.org/)        |
 | [TranceTraffic](https://www.trancetraffic.com/)      |
 | [TVChaosUK](https://tvchaosuk.com/)                  |
