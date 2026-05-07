@@ -217,3 +217,24 @@ Suppress only when genuinely necessary. The codebase has very few suppressions â
 
 Markdown files follow `ci/doc/.markdownlint.json`: body lines max 150 characters, heading lines max 120 characters, code block lines max 200
 characters (tables are exempt). Always run the IDE formatter (Ctrl+Shift+F) on any `.md` file after editing.
+
+### Concurrency
+
+Use `ReentrantLock` over `synchronized` blocks (PMD `AvoidSynchronizedStatement`):
+
+```java
+// Correct
+private final Lock lock = new ReentrantLock();
+
+lock.lock();
+try {
+    // critical section
+} finally {
+    lock.unlock();
+}
+
+// Wrong
+synchronized (this) {
+    // critical section
+}
+```

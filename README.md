@@ -26,16 +26,16 @@
 - [Contributing](#contributing)
     - [Requirements](#requirements)
     - [Install Git Hooks](#install-git-hooks)
-    - [Debugging Application](#debugging-application)
     - [Building And Developing In Docker](#building-and-developing-in-docker)
     - [Implementing Support For New Trackers](#implementing-support-for-new-trackers)
+    - [Debugging Application](#debugging-application)
     - [Cloudflare Verification](#cloudflare-verification)
 
 ## Overview
 
-This is a tool used to log in to private torrent websites and take a screenshot of the user's profile page. This can be
-used to showcase stats on your current tracker as part of an application to another site. It can also be used as a
-historical record of your stats on a tracker in case it goes down or becomes otherwise unavailable.
+This is a tool used to log in to private torrent websites and take a screenshot of the user's profile page. This can be used to showcase stats on your
+current tracker as part of an application to another site. It can also be used as a historical record of your stats on a tracker in case it goes down
+or becomes otherwise unavailable.
 
 ## Features
 
@@ -108,13 +108,11 @@ There are currently **157** supported trackers listed below. The available track
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
 
-The implementation for these trackers can be found in
-the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
+The implementation for these trackers can be found in the [handler](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package.
 
 ### Headless
 
-The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the
-background:
+The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been set to **true**), and can be run in the background:
 
 <table>
 <tr>
@@ -263,8 +261,8 @@ background:
 
 ### Manual Interaction
 
-If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or **MANUAL** is included in
-`TRACKER_EXECUTION_ORDER`), then a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
+If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE_PATH`, or **MANUAL** is included in `TRACKER_EXECUTION_ORDER`), then
+a UI must be enabled. Instructions for this in Docker can be seen [below](#browser-ui).
 
 <table>
 <tr>
@@ -328,13 +326,12 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 
 ### Tracker Definitions
 
-First, copy the [trackers_example.csv](trackers_example.csv) file. This file needs to be updated with your
-user's login information for each tracker. Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL`
-environment variable so they are excluded. The tracker names are case-insensitive.
+First, copy the [trackers_example.csv](trackers_example.csv) file. This file needs to be updated with your user's login information for each tracker.
+Any unwanted trackers can be deleted, or prefixed by the `CSV_COMMENT_SYMBOL` environment variable so they are excluded. The tracker names are
+case-insensitive.
 
-The file can be saved anywhere but needs to be mounted into the Docker container, and it will be referenced by the
-`TRACKER_INPUT_FILE_PATH` environment variable when running the application, so remember where it is saved and what it
-is named.
+The file can be saved anywhere but needs to be mounted into the Docker container, and it will be referenced by the `TRACKER_INPUT_FILE_PATH`
+environment variable when running the application, so remember where it is saved and what it is named.
 
 ### Running In Docker
 
@@ -439,9 +436,8 @@ MSYS_NO_PATHCONV=1 docker run \
 ### Browser UI
 
 There are two ways to execute the application - with a UI browser and without. The default commands will
-execute [trackers that require a UI](#manual-interaction), so the UI will need to be configured to run through Docker.
-A UI browser is needed for trackers that require some user input during login, like a Captcha, Cloudflare verification
-check, 2FA, etc.
+execute [trackers that require a UI](#manual-interaction), so the UI will need to be configured to run through Docker. A UI browser is needed for
+trackers that require some user input during login, like a Captcha, Cloudflare verification check, 2FA, etc.
 
 Below will define how to do this for your host system.
 
@@ -465,8 +461,8 @@ the configuration:
 
 #### Disable UI
 
-To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and
-`ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
+To disable the UI and run the browser in headless mode only, ensure `FORCE_UI_BROWSER` and `ENABLE_TRANSLATION_TO_ENGLISH` are set to **false**, and
+exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
 
 ### Configuration Options
 
@@ -507,23 +503,23 @@ The following are all possible configuration options, defined as environment var
 
 #### Progress Bar
 
-The progress bar is rendered at the bottom of the console output during execution, showing overall screenshot progress.
-It is powered by the [Clique](https://github.com/kusoroadeolu/Clique) library.
+The progress bar is rendered at the bottom of the console output during execution, showing overall screenshot progress. It is powered by
+the [Clique](https://github.com/kusoroadeolu/Clique) library.
 
-The bar advances in fine-grained steps (login, profile page, each screenshot, logout) so the fill and percentage move
-smoothly. A tracker counter (`X/Y`) is always appended to the right of the rendered format string, showing how many
-trackers have fully completed regardless of how the format string is configured.
+The bar advances in fine-grained steps (login, profile page, each screenshot, logout) so the fill and percentage move smoothly. A tracker counter (
+`X/Y`) is always appended to the right of the rendered format string, showing how many trackers have fully completed regardless of how the format
+string is configured.
 
 The format string supports the following tokens, as defined in the
 [Clique source](https://github.com/kusoroadeolu/Clique/blob/main/docs/progress-bars.md):
 
-| Token       | Description                                                                        |
-|-------------|------------------------------------------------------------------------------------|
-| `:bar`      | The rendered progress bar itself                                                   |
-| `:elapsed`  | Time elapsed since the bar was started                                             |
-| `:percent`  | Completion percentage (0–100), based on workflow steps not tracker count           |
-| `:progress` | Number of completed internal ticks (workflow steps, not trackers) — see note below |
-| `:total`    | Total number of internal ticks (workflow steps, not trackers) — see note below     |
+| Token       | Description                                                              |
+|-------------|--------------------------------------------------------------------------|
+| `:bar`      | The rendered progress bar itself                                         |
+| `:elapsed`  | Time elapsed since the bar was started                                   |
+| `:percent`  | Completion percentage (0–100), based on workflow steps not tracker count |
+| `:progress` | Number of completed internal ticks (workflow steps, not trackers)        |
+| `:total`    | Total number of internal ticks (workflow steps, not trackers)            |
 
 > **Note:** `:progress` and `:total` reflect the internal tick count used to drive the bar fill (workflow steps), not the number of trackers. For a
 > tracker counter, use the `X/Y` suffix that is always appended to the bar.
@@ -547,12 +543,12 @@ removals will be released as `PATCH` versions.
 
 ## AI Usage
 
-I use AI agents to perform the "first-pass" implementation for a new tracker site. The AI will investigate and evaluate
-the generate structure of the site and build an initial handler. Based off of this, I'll refine and test until I'm
-happy that it matches the same standards as the existing implementations.
+I use AI agents to perform the "first-pass" implementation for a new tracker site. The AI will investigate and evaluate the generate structure of the
+site and build an initial handler. Based off of this, I'll refine and test until I'm happy that it matches the same standards as the existing
+implementations.
 
-Since there were over 100 implementations prior to using AI, there are established patterns and styles to follow,
-hopefully guiding the AI to follow the same standards.
+Since there were over 100 implementations prior to using AI, there are established patterns and styles to follow, hopefully guiding the AI to follow
+the same standards.
 
 ### AI Agents
 
@@ -571,42 +567,38 @@ hopefully guiding the AI to follow the same standards.
 Every implementation relies on:
 
 - **Existing handler code**: The agents study the handlers already in
-  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project
-  conventions, selector construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`,
-  etc.)
-- **[CLAUDE.md](./.claude/CLAUDE.md)**: This defines project-level standards covering structure, selector conventions,
-  linting rules, and the mandatory post-implementation checklist
-- **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the
-  tracker to build the handler, which is refined over time
+  the [handler/](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler) package to understand project conventions, selector
+  construction patterns, and platform-specific base classes (`Unit3dHandler`, `GazelleHandler`, etc.)
+- **[CLAUDE.md](./.claude/CLAUDE.md)**: This defines project-level standards covering structure, selector conventions, linting rules, and the
+  mandatory post-implementation checklist
+- **Agent definitions**: Each agent has a [Markdown](.claude/agents) file defining its scope, and how to parse the tracker to build the handler, which
+  is refined over time
 
 ### Human Review
 
-All AI-generated code is reviewed and approved before being merged, including manual testing of the new handler. Since
-each handler needs to be tested against a real site, there's no value to automating much testing, so each implementation
-will be verified manually.
+All AI-generated code is reviewed and approved before being merged, including manual testing of the new handler. Since each handler needs to be tested
+against a real site, there's no value to automating much testing, so each implementation will be verified manually.
 
 ### Exceptions
 
 #### JavaScript Redaction
 
-The [JavaScript redaction logic](./tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction) used in
-[BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java) and
-[BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java) is mostly AI
-created with little input from me. I don't know JavaScript well enough to perform this overlay-based redaction, but I
-verify against all tracker handlers when updates are made, to cover as many cases as possible.
+The [JavaScript redaction logic](./tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction) used
+in [BlurRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BlurRedactor.java)
+and [BoxRedactor](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/BoxRedactor.java) is mostly AI created with little input
+from me. I don't know JavaScript well enough to perform this overlay-based redaction, but I verify against all tracker handlers when updates are made,
+to cover as many cases as possible.
 
 #### Progress Bar PrintStream
 
-The [ProgressBarPrintStream](tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/progress/ProgressBarPrintStream.java)
-contains some code for handling print streams to override the default console printing of
-the [Clique progress bar](#progress-bar). I'm not super well-versed in handling streams, so I use AI to make updates and
-then verify manually afterwards.
+The [ProgressBarPrintStream](tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/progress/ProgressBarPrintStream.java) contains
+some code for handling print streams to override the default console printing of the [Clique progress bar](#progress-bar). I'm not super well-versed
+in handling streams, so I use AI to make updates and then verify manually afterwards.
 
 ## Contributing
 
 ### Requirements
 
-- [Apache Maven](https://maven.apache.org/download.cgi)
 - [Docker](https://docs.docker.com/engine/install/)
 - [Java](https://jdk.java.net/)
 
@@ -617,20 +609,6 @@ Run the following command to run git hooks for the project:
 ```bash
 bash ./ci/hooks/setup-hooks.sh
 ```
-
-### Debugging Application
-
-Using IntelliJ, and click on **Run**> **Edit Configurations** and add the environment variables for the application.
-Once done, open
-the [ApplicationLauncher.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/ApplicationLauncher.java)
-and run the `main` method from the IDE.
-The [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java)
-implementation for each tracker is retrieved by the *trackerName* field within the CSV file.
-
-[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to leverage the Chromium web browser to
-take screenshots. While the application usually runs in headless mode, this can be changed by updating the
-`FORCE_UI_BROWSER` value in the [configuration](#configuration-options). This will cause a new browser instance to
-launch when taking a screenshot, and can be used for debugging a new implementation.
 
 ### Building And Developing In Docker
 
@@ -687,6 +665,20 @@ like [AbTorrents.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tr
 
 Ensure the [TrackerType](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/TrackerType.java) is
 set correctly for your tracker.
+
+### Debugging Application
+
+Rather than using debugging tools, I generally add log statements (and then tune the log level once finished debugging). But if needed, you can also
+use IDE debugging tools in IntelliJ as follows. Click on **Run**> **Edit Configurations** and add the environment variables for the application.
+Once done, open the [ApplicationLauncher.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/ApplicationLauncher.java) and run the
+`main` method from the IDE.
+The [AbstractTrackerHandler.java](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/AbstractTrackerHandler.java) implementation
+for each tracker is retrieved by the *trackerName* field within the CSV file.
+
+[Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) is used to leverage the Chromium web browser to
+take screenshots. While the application usually runs in headless mode, this can be changed by updating the
+`FORCE_UI_BROWSER` value in the [configuration](#configuration-options). This will cause a new browser instance to
+launch when taking a screenshot, and can be used for debugging a new implementation.
 
 ### Cloudflare Verification
 

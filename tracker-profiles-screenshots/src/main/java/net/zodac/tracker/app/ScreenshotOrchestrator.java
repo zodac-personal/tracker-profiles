@@ -109,8 +109,9 @@ public final class ScreenshotOrchestrator {
             return;
         }
 
-        final int effectiveThreadCount = getEffectiveThreadCount(trackerType, trackersByType);
-        DriverPool.initialise(trackerType, effectiveThreadCount);
+        final int numberOfTrackers = trackersByType.getOrDefault(trackerType, Set.of()).size();
+        final int effectiveThreadCount = getEffectiveThreadCount(trackerType, numberOfTrackers);
+        DriverPool.initialise(trackerType, effectiveThreadCount, numberOfTrackers);
 
         LOGGER.info("");
         LOGGER.info(">>> Executing {} trackers {}<<<", trackerType.formattedName(),
@@ -137,7 +138,7 @@ public final class ScreenshotOrchestrator {
         }
     }
 
-    private static int getEffectiveThreadCount(final TrackerType trackerType, final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
+    private static int getEffectiveThreadCount(final TrackerType trackerType, final int numberOfTrackers) {
         if (CONFIG.forceUiBrowser()) {
             LOGGER.debug("Forcing UI browser, parallelism disabled");
             return 1;
@@ -149,7 +150,6 @@ public final class ScreenshotOrchestrator {
             return 1;
         }
 
-        final int numberOfTrackers = trackersByType.getOrDefault(trackerType, Set.of()).size();
         LOGGER.trace("numberOfParallelThreads: {}, numberOfTrackers: {}", CONFIG.numberOfParallelThreads(), numberOfTrackers);
         return Math.min(CONFIG.numberOfParallelThreads(), numberOfTrackers);
     }
