@@ -194,7 +194,6 @@ background:
 | [Metal-Tracker](https://en.metal-tracker.com/) |
 | [MidnightScene](https://midnightscene.cc/)     |
 | [Milkie](https://milkie.cc/)                   |
-| [Milnueve](https://milnueve.cc/)               |
 | [MooKo](https://mooko.org/)                    |
 | [MoreThanTV](https://www.morethantv.me/)       |
 | [MyAnonaMouse](https://www.myanonamouse.net/)  |
@@ -300,6 +299,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [LongPT](https://longpt.org/)                       | Captcha & Cloudflare verification               |
 | [LP-Bits](https://lp-bits.com/)                     | Captcha                                         |
 | [LST](https://lst.gg/)                              | Question on login                               |
+| [Milnueve](https://milnueve.cc/)                    | Cloudflare verification                         |
 | [Nexum-Core](https://nexum-core.com/)               | Needs to be explicitly translated               |
 | [PassThePopcorn](https://passthepopcorn.me/)        | Question on login                               |
 | [PornoLab](https://pornolab.net/forum/tracker.php)  | Needs to be explicitly translated               |

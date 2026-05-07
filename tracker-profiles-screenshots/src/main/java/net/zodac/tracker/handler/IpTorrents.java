@@ -37,7 +37,20 @@ import org.openqa.selenium.By;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code IPTorrents} tracker.
  */
-@TrackerHandler(name = "IPTorrents", type = TrackerType.MANUAL, url = "https://iptorrents.com/")
+@TrackerHandler(name = "IPTorrents", type = TrackerType.MANUAL, url = {
+    "https://iptorrents.com/",
+    "https://iptorrents.me/",
+    "https://nemo.iptorrents.com/",
+    "https://ipt.getcrazy.me/",
+    "https://ipt.findnemo.net/",
+    "https://ipt.beelyrics.net/",
+    "https://ipt.venom.global/",
+    "https://ipt.workisboring.net/",
+    "https://ipt.lol/",
+    "https://ipt.cool/",
+    "https://ipt.world/",
+    "https://ipt.octopus.town/"
+})
 public class IpTorrents extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override

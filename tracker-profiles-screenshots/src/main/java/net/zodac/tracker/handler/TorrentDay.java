@@ -33,7 +33,23 @@ import org.openqa.selenium.By;
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code TorrentDay} tracker.
  */
-@TrackerHandler(name = "TorrentDay", type = TrackerType.MANUAL, url = "https://www.torrentday.com/")
+@TrackerHandler(name = "TorrentDay", type = TrackerType.MANUAL, url = {
+    "https://www.torrentday.com/",
+    "https://www.torrentday.me/",
+    "https://tday.love/",
+    "https://torrentday.cool/",
+    "https://secure.torrentday.com/",
+    "https://classic.torrentday.com/",
+    "https://torrentday.it/",
+    "https://td.findnemo.net/",
+    "https://td.getcrazy.me/",
+    "https://td.venom.global/",
+    "https://td.workisboring.net/",
+    "https://tday.findnemo.net/",
+    "https://tday.getcrazy.me/",
+    "https://tday.venom.global/",
+    "https://tday.workisboring.net/"
+})
 public class TorrentDay extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     @Override
