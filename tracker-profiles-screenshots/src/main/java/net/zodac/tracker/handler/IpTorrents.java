@@ -28,15 +28,25 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType
 
 import java.util.Collection;
 import java.util.List;
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code IPTorrents} tracker.
  */
-@TrackerHandler(name = "IPTorrents", url = "https://iptorrents.com/")
-public class IpTorrents extends AbstractTrackerHandler {
+@TrackerHandler(name = "IPTorrents", type = TrackerType.MANUAL, url = "https://iptorrents.com/")
+public class IpTorrents extends AbstractTrackerHandler implements HasCloudflareCheck {
+
+    @Override
+    public By cloudflareSelector() {
+        return XpathBuilder
+            .from(div, withClass("cf-turnstile"))
+            .child(div, atIndex(1))
+            .build();
+    }
 
     @Override
     protected By loginButtonSelector() {

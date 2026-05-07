@@ -176,7 +176,6 @@ background:
 | [Hellenic-HD](https://hellenic-hd.cc/)          |
 | [ImmortalSeed](https://immortalseed.me/)        |
 | [InfinityHD](https://infinityhd.net/)           |
-| [IPTorrents](https://iptorrents.com/)           |
 | [ItaTorrents](https://itatorrents.xyz/)         |
 | [JPopsuki](https://jpopsuki.eu/)                |
 
@@ -286,6 +285,7 @@ If the following trackers are enabled (either uncommented in `TRACKER_INPUT_FILE
 | [HDBits](https://hdbits.org/)                       | 2FA, Cloudflare verification, question on login |
 | [HDFans](https://hdfans.org/)                       | Captcha                                         |
 | [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
+| [IPTorrents](https://iptorrents.com/)               | Cloudflare verification                         |
 | [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
 | [LastFiles](https://last-torrents.org/)             | Cloudflare verification                         |
 | [Leech24](https://leech24.net/)                     | Captcha                                         |
