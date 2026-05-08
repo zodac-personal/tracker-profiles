@@ -35,7 +35,6 @@ import net.zodac.tracker.framework.progress.ProgressBarManager;
 import net.zodac.tracker.framework.progress.ProgressBarPrintStream;
 import net.zodac.tracker.framework.progress.TrackerStep;
 import net.zodac.tracker.util.StringUtils;
-import net.zodac.tracker.util.TimingUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -121,10 +120,8 @@ public final class ScreenshotOrchestrator {
         final List<Callable<Void>> trackerScreenshotTasks = new ArrayList<>();
         for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
             trackerScreenshotTasks.add(() -> {
-                final long startNanos = System.nanoTime();
                 final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
                 resultCollector.addResult(trackerType, tracker.name(), success);
-                printTrackerExecutionTime(tracker.name(), startNanos);
                 progressBarManager.tickTracker(tracker.name());
                 return null;
             });
@@ -161,11 +158,6 @@ public final class ScreenshotOrchestrator {
             .mapToInt(credential -> credential.name().length())
             .max()
             .orElse(0);
-    }
-
-    private static void printTrackerExecutionTime(final String trackerName, final long startNanos) {
-        final long elapsedNanos = System.nanoTime() - startNanos;
-        LOGGER.debug("\t- Execution time for {}: {}", trackerName, TimingUtils.toNaturalTime(elapsedNanos));
     }
 
     private static void ensureOutputDirectoryExists() {

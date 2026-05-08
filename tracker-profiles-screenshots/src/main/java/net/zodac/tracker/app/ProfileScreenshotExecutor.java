@@ -50,6 +50,7 @@ import net.zodac.tracker.redaction.RedactorDelegator;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
+import net.zodac.tracker.util.TimingUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -89,7 +90,10 @@ final class ProfileScreenshotExecutor {
         setUpPerTrackerLogging(trackerCredential, maxLogLength);
 
         try {
-            return takeScreenshotWithAttempts(trackerCredential, progressBarManager);
+            final long startNanos = System.nanoTime();
+            final boolean result = takeScreenshotWithAttempts(trackerCredential, progressBarManager);
+            printTrackerExecutionTime(trackerCredential.name(), startNanos);
+            return result;
         } finally {
             ThreadContext.clearAll();
         }
@@ -410,5 +414,10 @@ final class ProfileScreenshotExecutor {
 
     private static String screenshotBaseName(final String trackerName, final RedactionType redactionType) {
         return redactionType == RedactionType.NONE ? trackerName : (trackerName + "_" + redactionType.formattedName());
+    }
+
+    private static void printTrackerExecutionTime(final String trackerName, final long startNanos) {
+        final long elapsedNanos = System.nanoTime() - startNanos;
+        LOGGER.debug("\t- Execution time for {}: {}", trackerName, TimingUtils.toNaturalTime(elapsedNanos));
     }
 }
