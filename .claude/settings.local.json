@@ -2,6 +2,7 @@
   "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
+      "Bash(awk '{print $2}')",
       "Bash(curl:*)",
       "Bash(do)",
       "Bash(done)",

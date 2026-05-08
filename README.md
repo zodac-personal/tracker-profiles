@@ -103,7 +103,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **157** supported trackers listed below. The available trackers come in the following types:
+There are currently **160** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -120,6 +120,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 
 | Tracker Name (A–E)                                |
 |---------------------------------------------------|
+| [720pier](https://720pier.ru/)                    |
 | [ABTorrents](https://usefultrash.net/)            |
 | [AcrossTheTasman](https://acrossthetasman.com/)   |
 | [Aidoru!Online](https://aidoru-online.me/)        |
@@ -187,6 +188,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [Lat-Team](https://lat-team.com/)              |
 | [LDU](https://theldu.to/)                      |
 | [Libble](https://libble.me/)                   |
+| [Linuxtracker](https://linuxtracker.org/)      |
 | [Luminarr](https://luminarr.me/)               |
 | [MalayaBits](https://malayabits.cc/)           |
 | [Metal-Tracker](https://en.metal-tracker.com/) |
@@ -227,6 +229,7 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [SecretCinema](https://secret-cinema.pw/)            |
 | [SeedPool](https://seedpool.org/)                    |
 | [SexTorrent](https://sextorrent.myds.me/)            |
+| [Shadowbit](https://shadowbit.cc/)                   |
 | [Shazbat](https://www.shazbat.tube/)                 |
 | [SlobitMedia](https://media.slo-bitcloud.eu/)        |
 | [SpeedApp](https://speedapp.io/)                     |

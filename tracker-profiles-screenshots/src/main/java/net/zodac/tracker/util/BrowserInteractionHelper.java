@@ -267,14 +267,19 @@ public class BrowserInteractionHelper {
      */
     public void showScrollbar() {
         LOGGER.trace("Enabling scrolling on page");
-        driver.executeScript("document.body.style.height = 'auto';");
-        driver.executeScript("document.body.style.overflowY = 'visible';");
-        driver.executeScript("""
-            var style = document.getElementById('hide-scrollbar-style');
-            if (style) {
-                style.remove();
-            }
-            """);
+
+        try {
+            driver.executeScript("document.body.style.height = 'auto';");
+            driver.executeScript("document.body.style.overflowY = 'visible';");
+            driver.executeScript("""
+                var style = document.getElementById('hide-scrollbar-style');
+                if (style) {
+                    style.remove();
+                }
+                """);
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to show scrollbar", e);
+        }
     }
 
     /**
