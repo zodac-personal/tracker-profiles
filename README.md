@@ -103,7 +103,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **160** supported trackers listed below. The available trackers come in the following types:
+There are currently **159** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -166,7 +166,6 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 | [F1Carreras](https://f1carreras.xyz/)           |
 | [F1GP](https://f1gp.site/)                      |
 | [Fappaizuri](https://fappaizuri.me/)            |
-| [FearNoPeer](https://fearnopeer.com/)           |
 | [FileList](https://filelist.io/)                |
 | [FunFile](https://www.funfile.org/)             |
 | [FunZone](https://myfunzone.org/)               |
@@ -290,9 +289,9 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [HD-Forever](https://hdf.world/)                    | Needs to be explicitly translated               |
 | [HDBits](https://hdbits.org/)                       | 2FA, Cloudflare verification, question on login |
 | [HDFans](https://hdfans.org/)                       | Captcha                                         |
+| [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
 | [Immortal-S](https://immortal-s.me/)                | Cloudflare verification                         |
 | [IPTorrents](https://iptorrents.com/)               | Cloudflare verification                         |
-| [HDZero](https://hdzero.org/)                       | Cloudflare verification                         |
 | [LastFiles](https://last-torrents.org/)             | Cloudflare verification                         |
 | [Leech24](https://leech24.net/)                     | Captcha                                         |
 | [LemonHD](https://lemonhd.net/)                     | Captcha                                         |

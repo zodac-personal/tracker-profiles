@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -277,7 +278,7 @@ public class BrowserInteractionHelper {
                     style.remove();
                 }
                 """);
-        } catch (final Exception e) {
+        } catch (final JavascriptException e) {
             LOGGER.trace("Unable to show scrollbar", e);
         }
     }

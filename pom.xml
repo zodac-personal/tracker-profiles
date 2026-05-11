@@ -21,9 +21,9 @@
 
         <!-- Lint Properties -->
         <!-- All disabled by default, activated through profiles -->
+        <skip-artifact-build>false</skip-artifact-build>
         <skip-linters>true</skip-linters>
         <skip-sonarqube>true</skip-sonarqube>
-        <skip-shade>false</skip-shade>
 
         <!-- Test Properties -->
         <!-- All disabled by default, activated through profiles -->
@@ -57,7 +57,6 @@
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
-        <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <!-- Linter 3PP Versions -->
@@ -75,6 +74,7 @@
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <sonar-maven-plugin.version>5.6.0.6792</sonar-maven-plugin.version>
+        <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
 
         <!-- Linter Properties -->
@@ -460,6 +460,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven-install-plugin.version}</version>
+                    <configuration>
+                        <skip>${skip-artifact-build}</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -547,7 +550,7 @@
                     <version>${maven-shade-plugin.version}</version>
                     <configuration>
                         <createDependencyReducedPom>false</createDependencyReducedPom>
-                        <skip>${skip-shade}</skip>
+                        <skip>${skip-artifact-build}</skip>
                     </configuration>
                 </plugin>
 
@@ -692,7 +695,7 @@
                 </property>
             </activation>
             <properties>
-                <skip-shade>true</skip-shade>
+                <skip-artifact-build>true</skip-artifact-build>
                 <skip-linters>false</skip-linters>
                 <skip-tests>false</skip-tests>
             </properties>
@@ -720,7 +723,7 @@
                 </property>
             </activation>
             <properties>
-                <skip-shade>true</skip-shade>
+                <skip-artifact-build>true</skip-artifact-build>
                 <skip-linters>false</skip-linters>
             </properties>
         </profile>
