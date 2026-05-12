@@ -22,8 +22,8 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.body;
 import static net.zodac.tracker.framework.xpath.HtmlElement.button;
 import static net.zodac.tracker.framework.xpath.HtmlElement.div;
 import static net.zodac.tracker.framework.xpath.HtmlElement.input;
+import static net.zodac.tracker.framework.xpath.HtmlElement.main;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
-import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withHref;
@@ -111,7 +111,13 @@ public class Ultrabits extends AbstractTrackerHandler implements HasCloudflareCh
     @Override
     protected By profilePageElementSelector() {
         return XpathBuilder
-            .from(a, containsHref("/profile/settings"))
+            .from(main, atIndex(1))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
+            .child(div, atIndex(2))
+            .child(div, atIndex(1))
+            .child(div, atIndex(1))
             .build();
     }
 
