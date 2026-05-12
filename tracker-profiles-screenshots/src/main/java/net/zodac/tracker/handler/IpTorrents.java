@@ -31,7 +31,6 @@ import java.util.List;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
-import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 
 /**
@@ -51,15 +50,7 @@ import org.openqa.selenium.By;
     "https://ipt.world/",
     "https://ipt.octopus.town/"
 })
-public class IpTorrents extends AbstractTrackerHandler implements HasCloudflareCheck {
-
-    @Override
-    public By cloudflareSelector() {
-        return XpathBuilder
-            .from(div, withClass("cf-turnstile"))
-            .child(div, atIndex(1))
-            .build();
-    }
+public class IpTorrents extends AbstractTrackerHandler {
 
     @Override
     protected By loginButtonSelector() {
