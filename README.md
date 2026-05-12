@@ -103,7 +103,7 @@ Below are examples of the different types of redaction from the [MooKo](https://
 
 ## Trackers
 
-There are currently **159** supported trackers listed below. The available trackers come in the following types:
+There are currently **160** supported trackers listed below. The available trackers come in the following types:
 
 - Headless: Can run with the browser in headless mode, meaning no UI browser is needed
 - Manual: There is some user interaction needed (a Captcha or 2FA to log in, etc.), requiring a UI browser
@@ -281,6 +281,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [BTArg](https://www.btarg.com.ar/tracker/)          | Needs to be explicitly translated               |
 | [CGPeers](https://cgpeers.to/)                      | 2FA & Cloudflare verification                   |
 | [CinemaZ](https://cinemaz.to/)                      | Captcha & Cloudflare verification               |
+| [CZTeam](https://czteam.me/)                        | Cloudflare verification                         |
 | [DigitalCore.Club](https://digitalcore.club/)       | Captcha                                         |
 | [DocsPedia](https://docspedia.world/)               | Captcha                                         |
 | [ExoticaZ](https://exoticaz.to/)                    | Captcha & Cloudflare verification               |
