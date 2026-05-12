@@ -25,23 +25,34 @@ import static net.zodac.tracker.framework.xpath.HtmlElement.input;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.atIndex;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.containsHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withAttribute;
+import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withHref;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
+import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code Ultrabits} tracker.
  */
-@TrackerHandler(name = "Ultrabits", url = "https://ultrabits.org/")
-public class Ultrabits extends AbstractTrackerHandler {
+@TrackerHandler(name = "Ultrabits", type = TrackerType.MANUAL, url = "https://ultrabits.org/")
+public class Ultrabits extends AbstractTrackerHandler implements HasCloudflareCheck {
 
     private static final ApplicationConfiguration CONFIG = Configuration.get();
+
+    @Override
+    public By cloudflareSelector() {
+        return XpathBuilder
+            .from(div, withClass("cf-turnstile"))
+            .child(div, atIndex(1))
+            .build();
+    }
 
     @Override
     protected By usernameFieldSelector() {

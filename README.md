@@ -248,7 +248,6 @@ The following trackers do not require a UI (unless `FORCE_UI_BROWSER` has been s
 
 | Tracker Name (U–Z)                              |
 |-------------------------------------------------|
-| [Ultrabits](https://ultrabits.org/)             |
 | [Unwalled](https://unwalled.cc/)                |
 | [VietMediaF](https://tracker.vietmediaf.store/) |
 | [XSpeeds](https://www.xspeeds.eu/)              |
@@ -319,6 +318,7 @@ a UI must be enabled. Instructions for this in Docker can be seen [below](#brows
 | [TheVault](https://thevault.click/)                 | Captcha                                         |
 | [TorrentDay](https://www.torrentday.com/)           | Cloudflare verification                         |
 | [Torrenting](https://torrenting.com/)               | Cloudflare verification                         |
+| [Ultrabits](https://ultrabits.org/)                 | Cloudflare verification                         |
 | [UploadCX](https://upload.cx/)                      | Captcha                                         |
 
 </td>
