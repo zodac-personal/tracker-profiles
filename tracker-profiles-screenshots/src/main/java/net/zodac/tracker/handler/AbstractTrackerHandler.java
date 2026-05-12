@@ -154,15 +154,15 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * For some trackers the home page does not automatically redirect to the login page. In these cases, we define a {@link By} selector of the
-     * {@link WebElement} to navigate to the login page, for trackers. Is {@code null} by default as we assume this navigation is unnecessary. Should
-     * be overridden otherwise.
+     * Action to be performed prior to clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
      *
-     * @return the login page {@link By} selector
+     * <p>
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
+     *
+     * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
-    @Nullable
-    protected By loginPageSelector() {
-        return null;
+    protected void preLoginNavigationAction() {
+        // Do nothing by default
     }
 
     /**
@@ -173,6 +173,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      */
     public void navigateToLoginPage(final String trackerName) {
         LOGGER.debug("\t- Navigating to login page");
+        preLoginNavigationAction();
         final By loginLinkSelector = loginPageSelector();
 
         if (loginLinkSelector != null) {
@@ -185,6 +186,18 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         } else if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
             hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
         }
+    }
+
+    /**
+     * For some trackers the home page does not automatically redirect to the login page. In these cases, we define a {@link By} selector of the
+     * {@link WebElement} to navigate to the login page, for trackers. Is {@code null} by default as we assume this navigation is unnecessary. Should
+     * be overridden otherwise.
+     *
+     * @return the login page {@link By} selector
+     */
+    @Nullable
+    protected By loginPageSelector() {
+        return null;
     }
 
     /**
@@ -262,11 +275,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Pauses execution of the {@link AbstractTrackerHandler} prior after the first login attempt, generally for trackers that require an input prior
-     * to clicking the login button.
+     * Action to be performed prior to clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
      *
      * <p>
-     * Where possible, the element to be interacted with will be highlighted in the browser.
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
@@ -284,11 +296,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Pauses execution of the {@link AbstractTrackerHandler} prior after the first login attempt, generally for trackers that require a second input
-     * after clicking the login button.
+     * Action to be performed after clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
      *
      * <p>
-     * Where possible, the element to be interacted with will be highlighted in the browser.
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
