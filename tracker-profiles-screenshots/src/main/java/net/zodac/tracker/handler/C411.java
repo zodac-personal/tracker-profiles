@@ -71,7 +71,7 @@ public class C411 extends AbstractTrackerHandler implements HasDismissibleElemen
     public void dismiss() {
         // Remove the login pop-up (if it exists) since it covers the user drop down menu
         final By loginPopupsSelector = XpathBuilder
-            .from(span, withClass("i-lucide:x"))
+            .from(span, withClass("i-heroicons:x-mark"))
             .navigateTo(parent(button))
             .build();
         final Collection<WebElement> loginPopups = driver.findElements(loginPopupsSelector);
