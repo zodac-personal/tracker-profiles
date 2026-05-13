@@ -17,6 +17,7 @@
 
 package net.zodac.tracker.framework.driver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.IdentityHashMap;
@@ -24,6 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -91,9 +96,22 @@ public final class DriverPool {
         final int count = (trackerType == TrackerType.HEADLESS) ? numberOfParallelThreads : 1;
         LOGGER.debug("Initializing {} pooled {} driver{}", count, trackerType.formattedName(), StringUtils.pluralise(count));
 
+        final List<RemoteWebDriver> drivers = new ArrayList<>(count);
+        try (final ExecutorService executor = Executors.newFixedThreadPool(count)) {
+            final List<Future<RemoteWebDriver>> futures =
+                executor.invokeAll(Collections.nCopies(count, () -> JavaWebDriverFactory.createDriver(trackerType, List.of())));
+            for (final Future<RemoteWebDriver> future : futures) {
+                drivers.add(future.get());
+            }
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while initialising pooled %s drivers".formatted(trackerType.formattedName()), e);
+        } catch (final ExecutionException e) {
+            throw new IllegalStateException("Failed to create pooled %s driver".formatted(trackerType.formattedName()), e);
+        }
+
         final BlockingDeque<RemoteWebDriver> deque = new LinkedBlockingDeque<>();
-        for (int i = 0; i < count; i++) {
-            final RemoteWebDriver driver = JavaWebDriverFactory.createDriver(trackerType, List.of());
+        for (final RemoteWebDriver driver : drivers) {
             deque.addLast(driver);
             instance.allPooledDrivers.add(driver);
             instance.driverTypeMap.put(driver, trackerType);
