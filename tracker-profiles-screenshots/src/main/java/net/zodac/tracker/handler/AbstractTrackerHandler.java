@@ -651,12 +651,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             LOGGER.trace(e);
             browserInteractionHelper.stopPageLoad();
         } catch (final Exception e) {
-            LOGGER.trace(driver.getPageSource());
-            LOGGER.trace(e);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(driver.getPageSource());
+                LOGGER.trace(e);
+            }
             throw e;
         }
 
         driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
-        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "button click");
     }
 }
