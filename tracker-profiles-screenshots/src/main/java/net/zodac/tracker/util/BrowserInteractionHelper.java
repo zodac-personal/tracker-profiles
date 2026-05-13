@@ -374,14 +374,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
      */
     public WebElement waitForElementToBeInteractable(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to be interactable", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            return wait.until(ExpectedConditions.elementToBeClickable(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't become interactable, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to be interactable", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        return wait.until(ExpectedConditions.elementToBeClickable(selector));
     }
 
     /**
@@ -393,14 +388,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't load in the specified {@link Duration}
      */
     public WebElement waitForElementToBePresent(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to appear", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            return wait.until(ExpectedConditions.presenceOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't appear, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to appear", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        return wait.until(ExpectedConditions.presenceOfElementLocated(selector));
     }
 
     /**
@@ -411,14 +401,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become visible in the specified {@link Duration}
      */
     public void waitForElementToBeVisible(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to be visible", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't become visible, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to be visible", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
     }
 
     /**
@@ -429,14 +414,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
      */
     public void waitForElementToDisappear(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to disappear", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't disappear, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to disappear", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(selector));
     }
 
     /**
@@ -451,7 +431,9 @@ public class BrowserInteractionHelper {
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(_ -> "complete".equals(driver.executeScript("return document.readyState")));
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page didn't load, page source: {}", driver.getPageSource());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Page didn't load, page source: {}", driver.getPageSource());
+            }
             throw e;
         }
     }
