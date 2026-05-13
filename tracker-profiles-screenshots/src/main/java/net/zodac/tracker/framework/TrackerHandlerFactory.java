@@ -24,7 +24,10 @@ import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -43,7 +46,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class TrackerHandlerFactory {
 
-    private static final Set<Class<?>> TRACKER_HANDLER_CLASSES = findAllClassesUsingClassLoader(AbstractTrackerHandler.class.getPackageName());
+    private static final Map<String, Map.Entry<Class<?>, TrackerHandler>> TRACKER_HANDLES_BY_NAME = buildHandlerMap();
 
     private TrackerHandlerFactory() {
 
@@ -56,10 +59,8 @@ public final class TrackerHandlerFactory {
      * @return {@link Optional} {@link TrackerHandler} for a matching {@code trackerName}
      */
     public static Optional<TrackerHandler> findMatchingHandler(final String trackerName) {
-        return TRACKER_HANDLER_CLASSES.stream()
-            .flatMap(handler -> Arrays.stream(handler.getAnnotationsByType(TrackerHandler.class)))
-            .filter(annotation -> annotation.name().equalsIgnoreCase(trackerName))
-            .findAny();
+        return Optional.ofNullable(TRACKER_HANDLES_BY_NAME.get(trackerName.toLowerCase(Locale.ROOT)))
+            .map(Map.Entry::getValue);
     }
 
     /**
@@ -73,24 +74,24 @@ public final class TrackerHandlerFactory {
      * @throws NoSuchElementException thrown if no valid {@link AbstractTrackerHandler} implementation could be found
      */
     public static AbstractTrackerHandler getHandler(final String trackerName) {
-        final var matchingTrackerHandlerOptional = TRACKER_HANDLER_CLASSES.stream()
-            .flatMap(handler -> Arrays.stream(handler.getAnnotationsByType(TrackerHandler.class))
-                .map(annotation -> Map.entry(handler, annotation))
-            )
-            .filter(entry -> entry.getValue().name().equalsIgnoreCase(trackerName))
-            .findAny();
-
-        if (matchingTrackerHandlerOptional.isEmpty()) {
-            final String errorMessage = String.format("Unable to find %s with name '%s'", TrackerHandler.class.getSimpleName(), trackerName);
-            throw new NoSuchElementException(errorMessage);
+        final var entry = TRACKER_HANDLES_BY_NAME.get(trackerName.toLowerCase(Locale.ROOT));
+        if (entry == null) {
+            throw new NoSuchElementException(
+                "Unable to find %s with name '%s'".formatted(TrackerHandler.class.getSimpleName(), trackerName));
         }
 
-        final var matchingTrackerHandler = matchingTrackerHandlerOptional.get();
-        final Class<?> trackerHandler = matchingTrackerHandler.getKey();
+        final TrackerDefinition trackerDefinition = TrackerDefinition.fromAnnotation(entry.getValue());
+        return makeNewInstance(entry.getKey(), trackerDefinition);
+    }
 
-        final TrackerHandler annotation = matchingTrackerHandler.getValue();
-        final TrackerDefinition trackerDefinition = TrackerDefinition.fromAnnotation(annotation);
-        return makeNewInstance(trackerHandler, trackerDefinition);
+    private static Map<String, Map.Entry<Class<?>, TrackerHandler>> buildHandlerMap() {
+        final Map<String, Map.Entry<Class<?>, TrackerHandler>> map = new HashMap<>();
+        for (final Class<?> clazz : findAllClassesUsingClassLoader(AbstractTrackerHandler.class.getPackageName())) {
+            for (final TrackerHandler annotation : clazz.getAnnotationsByType(TrackerHandler.class)) {
+                map.put(annotation.name().toLowerCase(Locale.ROOT), Map.entry(clazz, annotation));
+            }
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     private static AbstractTrackerHandler makeNewInstance(final Class<?> trackerHandler, final TrackerDefinition trackerDefinition) {
@@ -99,7 +100,7 @@ public final class TrackerHandlerFactory {
             abstractTrackerHandler.configure(trackerDefinition);
             return abstractTrackerHandler;
         } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException(String.format("Error instantiating an instance of '%s'", trackerHandler), e);
+            throw new IllegalStateException("Error instantiating an instance of '%s'".formatted(trackerHandler), e);
         }
     }
 
@@ -109,20 +110,20 @@ public final class TrackerHandlerFactory {
         try {
             final URL resource = Thread.currentThread().getContextClassLoader().getResource(packagePath);
             if (resource == null) {
-                throw new IllegalStateException(String.format("Unable to retrieve classes from package '%s'", packageName));
+                throw new IllegalStateException("Unable to retrieve classes from package '%s'".formatted(packageName));
             }
 
             // If not running from a JAR, assume classes are available on the filesystem
             return "jar".equals(resource.getProtocol()) ? getFromJar(resource, packagePath) : getFromFile(resource, packageName);
         } catch (final IOException | URISyntaxException e) {
-            throw new IllegalStateException(String.format("Unable to retrieve classes from package '%s'", packageName), e);
+            throw new IllegalStateException("Unable to retrieve classes from package '%s'".formatted(packageName), e);
         }
     }
 
     private static Set<Class<?>> getFromFile(final URL resource, final String packageName) throws URISyntaxException {
         final File[] directoryFiles = new File(resource.toURI()).listFiles();
         if (directoryFiles == null || directoryFiles.length == 0) {
-            throw new IllegalStateException(String.format("Unable to retrieve classes from resource '%s'", resource.toURI()));
+            throw new IllegalStateException("Unable to retrieve classes from resource '%s'".formatted(resource.toURI()));
         }
 
         return Arrays.stream(directoryFiles)
@@ -152,7 +153,7 @@ public final class TrackerHandlerFactory {
             final String prefix = packageName == null ? "" : (packageName + ".");
             return Class.forName(prefix + className.substring(0, className.lastIndexOf('.')));
         } catch (final ClassNotFoundException e) {
-            throw new IllegalStateException(String.format("Unable to retrieve class '%s' from package '%s'", className, packageName), e);
+            throw new IllegalStateException("Unable to retrieve class '%s' from package '%s'".formatted(className, packageName), e);
         }
     }
 }
