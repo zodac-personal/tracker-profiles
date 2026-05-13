@@ -29,6 +29,7 @@ import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.exception.TrackerUnavailableException;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
@@ -125,16 +126,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
                 driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
                 driver.navigate().to(trackerUrl);
 
-                // Explicit check for Cloudflare Error 523 if a site is unavailable
-                final WebElement body = browserInteractionHelper.waitForElementToBePresent(By.tagName("body"), pageLoadDuration());
-                final String bodyText = body.getText();
-                if (bodyText.contains("HTTP ERROR 523") || bodyText.contains("Error code 523")) {
-                    LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
-                } else {
-                    LOGGER.trace("Successfully opened tracker at {}", trackerUrl);
-                    successfulUrl = trackerUrl;
-                    browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-                }
+                browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
+                successfulUrl = trackerUrl;
+                LOGGER.trace("Successfully opened tracker at {}", trackerUrl);
             } catch (final WebDriverException e) {
                 // If website can't be resolved, assume the site is down and attempt the next URL (if any), else rethrow exception
                 if (e.getMessage() != null && e.getMessage().contains("ERR_NAME_NOT_RESOLVED")) {
@@ -148,8 +142,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
         if (successfulUrl == null) {
-            throw new IllegalStateException(
-                String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", trackerDefinition.name(), trackerDefinition.urls()));
+            throw new TrackerUnavailableException(trackerDefinition.name(), trackerDefinition.urls());
         }
     }
 

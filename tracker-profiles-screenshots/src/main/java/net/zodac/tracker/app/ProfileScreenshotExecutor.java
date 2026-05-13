@@ -35,6 +35,7 @@ import net.zodac.tracker.framework.config.ExistingScreenshotAction;
 import net.zodac.tracker.framework.config.RedactionType;
 import net.zodac.tracker.framework.exception.CancelledInputException;
 import net.zodac.tracker.framework.exception.NoUserInputException;
+import net.zodac.tracker.framework.exception.TrackerUnavailableException;
 import net.zodac.tracker.framework.exception.TranslationException;
 import net.zodac.tracker.framework.progress.ProgressBarManager;
 import net.zodac.tracker.framework.progress.TrackerStep;
@@ -161,6 +162,9 @@ final class ProfileScreenshotExecutor {
             } else {
                 LOGGER.warn("\t- Timed out waiting to find required element for tracker '{}': {}", trackerCredential.name(), cleanedErrorMessage);
             }
+        } catch (final TrackerUnavailableException e) {
+            LOGGER.debug("\t- Unable to connect to tracker '{}'", trackerCredential.name(), e);
+            LOGGER.warn("\t- Unable to connect to tracker '{}'", trackerCredential.name());
         } catch (final TranslationException e) {
             LOGGER.debug("\t- Unable to translate tracker '{}' to English", trackerCredential.name(), e);
             LOGGER.warn("\t- Unable to translate tracker '{}' to English: {}", trackerCredential.name(), e.getMessage());
