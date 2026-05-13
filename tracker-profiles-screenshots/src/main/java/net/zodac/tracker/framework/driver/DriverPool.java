@@ -95,6 +95,7 @@ public final class DriverPool {
         final DriverPool instance = get();
         final int count = (trackerType == TrackerType.HEADLESS) ? numberOfParallelThreads : 1;
         LOGGER.debug("Initializing {} pooled {} driver{}", count, trackerType.formattedName(), StringUtils.pluralise(count));
+        JavaWebDriverFactory.sweepStaleUserDataDirs();
 
         final List<RemoteWebDriver> drivers = new ArrayList<>(count);
         try (final ExecutorService executor = Executors.newFixedThreadPool(count)) {
@@ -192,6 +193,7 @@ public final class DriverPool {
         } else {
             LOGGER.trace("Quitting fresh driver");
             driver.quit();
+            JavaWebDriverFactory.deleteUserDataDir(driver);
         }
     }
 
@@ -260,6 +262,7 @@ public final class DriverPool {
         LOGGER.debug("Shutting down driver pool with {} pooled driver{}", numberOfPooledDrivers, StringUtils.pluralise(numberOfPooledDrivers));
         for (final RemoteWebDriver driver : instance.allPooledDrivers) {
             driver.quit();
+            JavaWebDriverFactory.deleteUserDataDir(driver);
         }
 
         instance.pool.clear();
