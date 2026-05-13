@@ -257,56 +257,70 @@ final class ProfileScreenshotExecutor {
     private static void screenshotProfile(final AbstractTrackerHandler trackerHandler, final TrackerCredential trackerCredential,
                                           final ProgressBarManager progressBarManager) throws IOException {
         LOGGER.trace("\t- Starting to take screenshot of profile");
-        final List<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
-        if (redactionsToExecute.isEmpty()) {
-            LOGGER.warn("\t- Screenshots already exist for all redaction types for tracker '{}', skipping", trackerCredential.name());
-            return;
-        }
+        int completedSteps = 0;
+        try {
+            final List<RedactionType> redactionsToExecute = redactionTypesToExecute(trackerCredential.name(), CONFIG.redactionTypes());
+            if (redactionsToExecute.isEmpty()) {
+                LOGGER.warn("\t- Screenshots already exist for all redaction types for tracker '{}', skipping", trackerCredential.name());
+                return;
+            }
 
-        if (redactionsToExecute.size() != CONFIG.redactionTypes().size()) {
-            LOGGER.warn("\t- Some screenshots already exist for tracker '{}', only executing: {}", trackerCredential.name(), redactionsToExecute);
-        }
+            if (redactionsToExecute.size() != CONFIG.redactionTypes().size()) {
+                LOGGER.warn("\t- Some screenshots already exist for tracker '{}', only executing: {}", trackerCredential.name(), redactionsToExecute);
+            }
 
-        LOGGER.info("\t- Opening tracker");
-        trackerHandler.openTracker();
-        trackerHandler.navigateToLoginPage(trackerCredential.name());
-        progressBarManager.tick(TrackerStep.OPEN_TRACKER);
+            LOGGER.info("\t- Opening tracker");
+            trackerHandler.openTracker();
+            trackerHandler.navigateToLoginPage(trackerCredential.name());
+            progressBarManager.tick(TrackerStep.OPEN_TRACKER);
+            completedSteps++;
 
-        LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
-        trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
+            LOGGER.info("\t- Logging in as '{}'", trackerCredential.username());
+            trackerHandler.login(trackerCredential.username(), trackerCredential.password(), trackerCredential.name());
 
-        if (trackerHandler instanceof HasDismissibleElement trackerWithBanner) {
-            trackerWithBanner.dismiss();
-            LOGGER.info("\t- Banner has been cleared");
-        }
-        progressBarManager.tick(TrackerStep.LOGIN);
+            if (trackerHandler instanceof HasDismissibleElement trackerWithBanner) {
+                trackerWithBanner.dismiss();
+                LOGGER.info("\t- Banner has been cleared");
+            }
+            progressBarManager.tick(TrackerStep.LOGIN);
+            completedSteps++;
 
-        LOGGER.info("\t- Opening user profile page");
-        trackerHandler.openProfilePage();
-        progressBarManager.tick(TrackerStep.OPEN_PROFILE_PAGE);
+            LOGGER.info("\t- Opening user profile page");
+            trackerHandler.openProfilePage();
+            progressBarManager.tick(TrackerStep.OPEN_PROFILE_PAGE);
+            completedSteps++;
 
-        final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
+            final boolean scrollDuringScreenshot = !(trackerHandler instanceof DoesNotScrollDuringScreenshot);
 
-        // If the tracker has no sensitive information, all redaction types produce identical screenshots, so we take a single one
-        final List<RedactionType> effectiveRedactions;
-        if (trackerHandler.hasSensitiveInformation()) {
-            effectiveRedactions = redactionsToExecute;
-        } else {
-            LOGGER.debug("\t- No sensitive information to redact, taking a single screenshot");
-            effectiveRedactions = redactionTypesToExecute(trackerCredential.name(), Set.of(RedactionType.NONE));
-            if (effectiveRedactions.isEmpty()) {
-                LOGGER.warn("\t- Screenshot already exists for tracker '{}' with no sensitive information, skipping", trackerCredential.name());
+            // If the tracker has no sensitive information, all redaction types produce identical screenshots, so we take a single one
+            final List<RedactionType> effectiveRedactions;
+            if (trackerHandler.hasSensitiveInformation()) {
+                effectiveRedactions = redactionsToExecute;
+            } else {
+                LOGGER.debug("\t- No sensitive information to redact, taking a single screenshot");
+                effectiveRedactions = redactionTypesToExecute(trackerCredential.name(), Set.of(RedactionType.NONE));
+                if (effectiveRedactions.isEmpty()) {
+                    LOGGER.warn("\t- Screenshot already exists for tracker '{}' with no sensitive information, skipping", trackerCredential.name());
+                }
+            }
+
+            for (final RedactionType redactionType : effectiveRedactions) {
+                takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
+            }
+            progressBarManager.tick(TrackerStep.TAKE_SCREENSHOTS);
+            completedSteps++;
+
+            trackerHandler.logout();
+            LOGGER.info("\t- Logged out");
+            progressBarManager.tick(TrackerStep.LOGOUT);
+            completedSteps++;
+        } finally {
+            final int remaining = TrackerStep.NUMBER_OF_STEPS - completedSteps;
+            if (remaining > 0) {
+                LOGGER.trace("Advancing progress bar {} missed step{} due to failed execution", remaining, StringUtils.pluralise(remaining));
+                progressBarManager.tickMultipleSteps(remaining);
             }
         }
-
-        for (final RedactionType redactionType : effectiveRedactions) {
-            takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
-        }
-        progressBarManager.tick(TrackerStep.TAKE_SCREENSHOTS);
-
-        trackerHandler.logout();
-        LOGGER.info("\t- Logged out");
-        progressBarManager.tick(TrackerStep.LOGOUT);
     }
 
     private static void takeScreenshotForRedactionType(final AbstractTrackerHandler trackerHandler,

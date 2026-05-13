@@ -143,6 +143,27 @@ public final class ProgressBarManager {
     }
 
     /**
+     * Advances the bar by multiple steps for the current tracker, ensuring each tracker contributes exactly {@link TrackerStep#NUMBER_OF_STEPS} ticks
+     * regardless of whether execution completed normally or was cut short by a failure or early exit.
+     *
+     * <p>
+     * When a tracker fails partway through or its screenshots are skipped, the unfired ticks would leave the bar permanently under-filled. Call this
+     * in a {@code finally} block in the screenshot workflow to compensate for missing ticks.
+     *
+     * @param stepsToTick the number of {@link TrackerStep} steps to {@link ProgressBar#tick(int)}
+     */
+    public void tickMultipleSteps(final int stepsToTick) {
+        if (stepsToTick > 0 && progressBar != null) {
+            progressBarLock.lock();
+            try {
+                progressBar.tick(stepsToTick);
+            } finally {
+                progressBarLock.unlock();
+            }
+        }
+    }
+
+    /**
      * Increments the completed-tracker counter shown in the {@code X/Y} suffix of {@link #getProgressBarContent()}. Call once per tracker,
      * after all fine-grained ticks for that tracker have been issued.
      *
