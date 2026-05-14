@@ -343,11 +343,16 @@ final class ProfileScreenshotExecutor {
 
         final int numberOfUpdates = updateProfilePage(trackerHandler);
         final int numberOfRedactions = performRedaction(trackerHandler, redactionType, trackerCredential.name());
+        final boolean reloadNeeded = numberOfUpdates > 0 || numberOfRedactions > 0;
 
         trackerHandler.actionBeforeScreenshot();
         final Future<File> pendingWrite = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName,
             scrollDuringScreenshot, screenshotIndex(baseName));
-        trackerHandler.actionAfterScreenshot();
+
+        // Reload restores page state (scroll position, DOM), so actionAfterScreenshot is redundant when a reload follows
+        if (!reloadNeeded) {
+            trackerHandler.actionAfterScreenshot();
+        }
 
         try {
             LOGGER.info("\t\t- Screenshot saved at: [{}]", pendingWrite.get().getAbsolutePath());
@@ -358,8 +363,7 @@ final class ProfileScreenshotExecutor {
             throw new IOException("Interrupted while writing screenshot for '%s'".formatted(baseName), e);
         }
 
-        // Reload to restore page to original state (clears DOM mutations from previous redaction, and restore elements to original positions
-        if (numberOfUpdates > 0 || numberOfRedactions > 0) {
+        if (reloadNeeded) {
             LOGGER.debug("\t\t- Updates were made to profile page, reloading to undo");
             trackerHandler.reloadProfilePage();
         }

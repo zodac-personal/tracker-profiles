@@ -290,7 +290,6 @@ public class BrowserInteractionHelper {
      */
     public void scrollToTheTop() {
         driver.executeScript("window.scrollTo(0, 0);");
-        explicitWait(Duration.ofSeconds(1L), "page to scroll to the top");
     }
 
     /**
@@ -301,9 +300,9 @@ public class BrowserInteractionHelper {
         LOGGER.trace("Enabling scrolling on page");
 
         try {
-            driver.executeScript("document.body.style.height = 'auto';");
-            driver.executeScript("document.body.style.overflowY = 'visible';");
             driver.executeScript("""
+                document.body.style.height = 'auto';
+                document.body.style.overflowY = 'visible';
                 var style = document.getElementById('hide-scrollbar-style');
                 if (style) {
                     style.remove();
