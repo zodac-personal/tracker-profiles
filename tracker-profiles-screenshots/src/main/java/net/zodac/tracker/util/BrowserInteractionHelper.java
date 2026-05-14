@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -98,6 +99,36 @@ public class BrowserInteractionHelper {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Retrieves the visible text content of the given {@link WebElement}. Attempts three sources in order, via a single
+     * {@link JavascriptExecutor#executeScript} call:
+     * <ol>
+     *     <li>{@code innerText}, the standard rendered text (equivalent to {@link WebElement#getText()})</li>
+     *     <li>The {@code value} DOM property, for {@code <input>} and similar form elements</li>
+     *     <li>The {@code textContent} DOM property, for elements where rendered text is not exposed via the above</li>
+     * </ol>
+     *
+     * @param element the {@link WebElement}
+     * @return the first non-empty text value found, or an empty {@link String} if none are available
+     */
+    public String getTextContent(final WebElement element) {
+        final Object result = driver.executeScript("""
+            var e = arguments[0];
+            var t = e.innerText || '';
+            if (t !== '') {
+                return t;
+            }
+            
+            var v = e.value || '';
+            if (v !== '') {
+                return v;
+            }
+            
+            return e.textContent || '';
+            """, element);
+        return result == null ? "" : String.valueOf(result);
     }
 
     /**

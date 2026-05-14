@@ -40,7 +40,6 @@ import net.zodac.tracker.redaction.RedactionBuffer;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.TextSearcher;
-import net.zodac.tracker.util.WebElementUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -427,7 +426,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return emailElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.hasEmailAddress(WebElementUtils.getTextContent(element)))
+            .filter(element -> TextSearcher.hasEmailAddress(browserInteractionHelper.getTextContent(element)))
             .mapToInt(element -> redactor.redactEmail(element, emailElementBuffer()))
             .sum();
     }
@@ -455,7 +454,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return ipAddressElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.hasIpAddress(WebElementUtils.getTextContent(element)))
+            .filter(element -> TextSearcher.hasIpAddress(browserInteractionHelper.getTextContent(element)))
             .mapToInt(element -> redactor.redactIpAddress(element, ipAddressElementBuffer()))
             .sum();
     }
