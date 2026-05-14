@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerHandlerFactory;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
@@ -235,11 +237,15 @@ final class ProfileScreenshotExecutor {
         try {
             LOGGER.trace("Taking failure screenshot for '{}'", trackerName);
             ensureDirectoryExists(directory);
-            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), directory, trackerName, false, 0);
+            final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), directory, trackerName, false, 0).get();
             LOGGER.warn("\t\t- Failure screenshot saved at: [{}]", screenshot.getAbsolutePath());
-        } catch (final IOException e) {
+        } catch (final ExecutionException | IOException e) {
             LOGGER.debug("\t\t- Unable to take failure screenshot of '{}'", trackerName, e);
             LOGGER.warn("\t\t- Unable to take failure screenshot of '{}': {}", trackerName, e.getMessage());
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.debug("\t\t- Interrupted while taking failure screenshot of '{}'", trackerName, e);
+            LOGGER.warn("\t\t- Interrupted while taking failure screenshot of '{}': {}", trackerName, e.getMessage());
         }
     }
 
@@ -335,10 +341,18 @@ final class ProfileScreenshotExecutor {
         final int numberOfRedactions = performRedaction(trackerHandler, redactionType, trackerCredential.name());
 
         trackerHandler.actionBeforeScreenshot();
-        final File screenshot = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName, scrollDuringScreenshot,
-            screenshotIndex(baseName));
+        final Future<File> pendingWrite = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName,
+            scrollDuringScreenshot, screenshotIndex(baseName));
         trackerHandler.actionAfterScreenshot();
-        LOGGER.info("\t\t- Screenshot saved at: [{}]", screenshot.getAbsolutePath());
+
+        try {
+            LOGGER.info("\t\t- Screenshot saved at: [{}]", pendingWrite.get().getAbsolutePath());
+        } catch (final ExecutionException e) {
+            throw new IOException("Failed to write screenshot for '%s'".formatted(baseName), e);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Interrupted while writing screenshot for '%s'".formatted(baseName), e);
+        }
 
         // Reload to restore page to original state (clears DOM mutations from previous redaction, and restore elements to original positions
         if (numberOfUpdates > 0 || numberOfRedactions > 0) {

@@ -34,6 +34,7 @@ import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.progress.ProgressBarManager;
 import net.zodac.tracker.framework.progress.ProgressBarPrintStream;
 import net.zodac.tracker.framework.progress.TrackerStep;
+import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,6 +88,7 @@ public final class ScreenshotOrchestrator {
                 screenshotTrackerByType(trackerType, trackersByType, progressBarManager, maxTrackerNameLength, resultCollector);
             }
         } finally {
+            ScreenshotTaker.shutdown();
             DriverPool.shutdown();
         }
 
