@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -50,7 +49,6 @@ import net.zodac.tracker.handler.definition.HasJumpButtons;
 import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.redaction.RedactorDelegator;
-import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
 import net.zodac.tracker.util.TimingUtils;
@@ -128,7 +126,13 @@ final class ProfileScreenshotExecutor {
                 }
             } catch (final Exception e) {
                 LOGGER.trace("Error screenshotting '{}' on attempt #{}", trackerCredential.name(), attempt, e);
-                BrowserInteractionHelper.explicitWait(Duration.ofSeconds(1L), "a moment before retrying");
+                final String cleanedErrorMessage = StringUtils.firstLine(e.getMessage());
+                if (cleanedErrorMessage.isEmpty()) {
+                    LOGGER.warn("\t- Unexpected {} escaped error handling for tracker '{}'", e.getClass().getSimpleName(), trackerCredential.name());
+                } else {
+                    LOGGER.warn("\t- Unexpected {} escaped error handling for tracker '{}': {}", e.getClass().getSimpleName(),
+                        trackerCredential.name(), cleanedErrorMessage);
+                }
             }
         }
 
