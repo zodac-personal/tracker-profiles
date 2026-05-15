@@ -18,10 +18,6 @@
 package net.zodac.tracker.redaction;
 
 import static net.zodac.tracker.util.TextSearcher.EMAIL;
-import static net.zodac.tracker.util.TextSearcher.IPV4;
-import static net.zodac.tracker.util.TextSearcher.IPV4_MASKED;
-import static net.zodac.tracker.util.TextSearcher.IPV6;
-import static net.zodac.tracker.util.TextSearcher.IPV6_PARTIAL;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +36,9 @@ class TextRedactor implements Redactor {
 
     protected static final String NON_BREAKING_SPACE = "\u2002";
     protected static final String IMG_TAG_NAME = "img";
+    protected static final String CALL_IP_SCRIPT = "window.__textRedactIpAddress.apply(null, arguments);";
+    protected static final String INSTALL_IP_SCRIPT = Redactor.loadScript("text_redact_ip_address.js");
+
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Pattern IRC_KEY_PREFIX = Pattern.compile("^\\s*(IRC Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern TORRENT_PASSKEY_PREFIX = Pattern.compile("^\\s*(Passkey|Pass Key)\\s*:\\s*", Pattern.CASE_INSENSITIVE);
@@ -65,7 +64,9 @@ class TextRedactor implements Redactor {
      * @return the created {@link TextRedactor}
      */
     static TextRedactor create(final RemoteWebDriver driver) {
-        return new TextRedactor(driver, CONFIG.redactionText());
+        final TextRedactor redactor = new TextRedactor(driver, CONFIG.redactionText());
+        driver.executeScript(INSTALL_IP_SCRIPT);
+        return redactor;
     }
 
     /**
@@ -100,11 +101,7 @@ class TextRedactor implements Redactor {
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        final String htmlContent = retrieveOuterHtml(element);
-        final String afterIpv4 = IPV4.matcher(htmlContent).replaceAll(match -> replacement(match.group().length()));
-        final String afterIpv4Masked = IPV4_MASKED.matcher(afterIpv4).replaceAll(match -> replacement(match.group().length()));
-        final String afterIpv6 = IPV6.matcher(afterIpv4Masked).replaceAll(match -> replacement(match.group().length()));
-        setOuterHtml(element, IPV6_PARTIAL.matcher(afterIpv6).replaceAll(match -> replacement(match.group().length())));
+        driver.executeScript(CALL_IP_SCRIPT, element, redactionText);
         return 1;
     }
 

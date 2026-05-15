@@ -41,7 +41,9 @@ final class RemoveRedactor extends TextRedactor {
      * @return the created {@link RemoveRedactor}
      */
     static RemoveRedactor create(final RemoteWebDriver driver) {
-        return new RemoveRedactor(driver);
+        final RemoveRedactor redactor = new RemoveRedactor(driver);
+        driver.executeScript(INSTALL_IP_SCRIPT);
+        return redactor;
     }
 
     /**
@@ -60,6 +62,12 @@ final class RemoveRedactor extends TextRedactor {
             return 1;
         }
         setInnerText(element, replacement(element.getText().length()));
+        return 1;
+    }
+
+    @Override
+    public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
+        driver.executeScript(CALL_IP_SCRIPT, element, "");
         return 1;
     }
 
