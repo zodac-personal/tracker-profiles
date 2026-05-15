@@ -17,6 +17,8 @@
 
 package net.zodac.tracker.redaction;
 
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -24,15 +26,22 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Extension of {@link TextRedactor} that redacts text by replacing the sensitive information with non-breaking spaces of the same length, preserving
  * the page layout.
  */
-class RemoveRedactor extends TextRedactor {
+final class RemoveRedactor extends TextRedactor {
+
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
+
+    private RemoveRedactor(final RemoteWebDriver driver) {
+        super(driver, CONFIG.redactionText());
+    }
 
     /**
-     * Default constructor.
+     * Creates a {@link RemoveRedactor}.
      *
      * @param driver the {@link RemoteWebDriver}
+     * @return the created {@link RemoveRedactor}
      */
-    RemoveRedactor(final RemoteWebDriver driver) {
-        super(driver);
+    static RemoveRedactor create(final RemoteWebDriver driver) {
+        return new RemoveRedactor(driver);
     }
 
     /**

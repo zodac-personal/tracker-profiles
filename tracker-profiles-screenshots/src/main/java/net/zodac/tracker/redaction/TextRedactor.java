@@ -53,9 +53,19 @@ class TextRedactor implements Redactor {
      *
      * @param driver the {@link RemoteWebDriver}
      */
-    TextRedactor(final RemoteWebDriver driver) {
+    protected TextRedactor(final RemoteWebDriver driver, final String redactionText) {
         this.driver = driver;
-        this.redactionText = CONFIG.redactionText();
+        this.redactionText = redactionText;
+    }
+
+    /**
+     * Creates a {@link TextRedactor}.
+     *
+     * @param driver the {@link RemoteWebDriver}
+     * @return the created {@link TextRedactor}
+     */
+    static TextRedactor create(final RemoteWebDriver driver) {
+        return new TextRedactor(driver, CONFIG.redactionText());
     }
 
     /**

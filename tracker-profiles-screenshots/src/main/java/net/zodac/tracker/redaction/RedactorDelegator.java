@@ -51,10 +51,10 @@ public final class RedactorDelegator implements Redactor {
      */
     public static RedactorDelegator create(final RemoteWebDriver driver, final RedactionType redactionType) {
         final Redactor redactor = switch (redactionType) {
-            case BLUR -> new BlurRedactor(driver);
-            case BOX -> new BoxRedactor(driver);
-            case REMOVE -> new RemoveRedactor(driver);
-            case TEXT -> new TextRedactor(driver);
+            case BLUR -> BlurRedactor.create(driver);
+            case BOX -> BoxRedactor.create(driver);
+            case REMOVE -> RemoveRedactor.create(driver);
+            case TEXT -> TextRedactor.create(driver);
             case NONE -> throw new IllegalStateException("RedactorDelegator should not be created for NONE redaction type");
         };
         return new RedactorDelegator(new BrowserInteractionHelper(driver), redactor);
