@@ -82,6 +82,17 @@ public class Shadowbit extends AbstractTrackerHandler {
     }
 
     @Override
+    protected Collection<By> ipAddressElements() {
+        return List.of(
+            XpathBuilder
+                .from(div, withClass("profile-details"))
+                .child(div, withClass("profile-row"))
+                .child(span, withClass("profile-value"))
+                .build()
+        );
+    }
+
+    @Override
     protected Collection<By> torrentPasskeyElements() {
         return List.of(
             XpathBuilder
