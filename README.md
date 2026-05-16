@@ -3,6 +3,7 @@
 - [Overview](#overview)
 - [Features](#features)
     - [Screenshots](#screenshots)
+- [Quick Start](#quick-start)
 - [Trackers](#trackers)
     - [Headless](#headless)
     - [Manual Interaction](#manual-interaction)
@@ -85,6 +86,36 @@ Below are examples of the different types of redaction from the [MooKo](https://
 </tr>
 </table>
 </details>
+
+## Quick Start
+
+This is the fastest way to run the application (no UI configuration required, headless trackers only).
+
+Pull the image:
+
+```bash
+docker pull zodac/tracker-profiles:latest
+```
+
+Copy [trackers_example.csv](./trackers_example.csv) to `/tmp/screenshots/trackers.csv`, then populate it with credentials for one or more
+[headless trackers](#headless):
+
+```csv
+trackerName,username,password
+Aither,myusername,mypassword
+```
+
+Run:
+
+```bash
+docker run \
+    --env TRACKER_EXECUTION_ORDER=HEADLESS \
+    -v /tmp/screenshots:/tmp/screenshots \
+    --name tracker-profiles \
+    --rm zodac/tracker-profiles:latest
+```
+
+Screenshots are saved to `/tmp/screenshots/<date>/` on your host. See [Configuration Options](#configuration-options) for the full list of settings.
 
 ## Trackers
 
