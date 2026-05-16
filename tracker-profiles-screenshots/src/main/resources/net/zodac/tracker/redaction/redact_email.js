@@ -1,5 +1,5 @@
 if (!window.__redactEmail) {
-    window.__redactEmail = function(element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
+    window.__redactEmail = function (element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
         const email_regex = /[a-zA-Z0-9._+\-*]+@[a-zA-Z0-9.\-*]+\.[a-zA-Z*]{2,}/g
         let counter = 0
 
@@ -29,6 +29,7 @@ if (!window.__redactEmail) {
                     fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 const span = document.createElement('span')
+                span.setAttribute('data-redact-wrapped', '')
                 span.className = class_name
                 span.dataset.index = String(counter++)
                 span.textContent = match[0]
@@ -55,6 +56,7 @@ if (!window.__redactEmail) {
 
         function apply_box(bounding_rectangle) {
             const overlay = document.createElement('div')
+            overlay.setAttribute('data-redact-overlay', '')
             overlay.style.position = 'absolute'
             overlay.style.left = `${bounding_rectangle.left + scroll_left - bufferLeft}px`
             overlay.style.top = `${bounding_rectangle.top + scroll_top - bufferUp}px`
@@ -79,6 +81,9 @@ if (!window.__redactEmail) {
 
         function apply_redaction(target_element) {
             if (redactionType === 'blur') {
+                if (!target_element.hasAttribute('data-redact-blurred')) {
+                    target_element.setAttribute('data-redact-blurred', target_element.style.filter || '')
+                }
                 target_element.style.filter = blurDef
             } else {
                 apply_box(target_element.getBoundingClientRect())

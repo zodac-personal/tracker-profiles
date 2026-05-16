@@ -1,6 +1,9 @@
 if (!window.__redactElement) {
-    window.__redactElement = function(element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
+    window.__redactElement = function (element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
         if (redactionType === 'blur') {
+            if (!element.hasAttribute('data-redact-blurred')) {
+                element.setAttribute('data-redact-blurred', element.style.filter || '')
+            }
             element.style.filter = blurDef
         } else {
             const bounding_rectangle = element.getBoundingClientRect()
@@ -9,6 +12,7 @@ if (!window.__redactElement) {
             const computed_style = window.getComputedStyle(element)
 
             const overlay = document.createElement('div')
+            overlay.setAttribute('data-redact-overlay', '')
             overlay.style.position = 'absolute'
             overlay.style.left = `${bounding_rectangle.left + scroll_left - bufferLeft}px`
             overlay.style.top = `${bounding_rectangle.top + scroll_top - bufferUp}px`

@@ -1,5 +1,5 @@
 if (!window.__redactIpAddress) {
-    window.__redactIpAddress = function(element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
+    window.__redactIpAddress = function (element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, textColor, label, blurDef, redactionType) {
         const ipv4_regex = /((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)/g
         const ipv4_masked_regex = /((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){2}x\.x/g
         const ipv6_full_regex = /([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g
@@ -32,6 +32,7 @@ if (!window.__redactIpAddress) {
                     fragment.appendChild(document.createTextNode(text.slice(last_index, match.index)))
                 }
                 const span = document.createElement('span')
+                span.setAttribute('data-redact-wrapped', '')
                 span.className = class_name
                 span.dataset.index = String(counter++)
                 span.textContent = match[0]
@@ -66,6 +67,7 @@ if (!window.__redactIpAddress) {
 
         function apply_box(bounding_rectangle) {
             const overlay = document.createElement('div')
+            overlay.setAttribute('data-redact-overlay', '')
             overlay.style.position = 'absolute'
             overlay.style.left = `${bounding_rectangle.left + scroll_left - bufferLeft}px`
             overlay.style.top = `${bounding_rectangle.top + scroll_top - bufferUp}px`
@@ -90,6 +92,9 @@ if (!window.__redactIpAddress) {
 
         function apply_redaction(target_element) {
             if (redactionType === 'blur') {
+                if (!target_element.hasAttribute('data-redact-blurred')) {
+                    target_element.setAttribute('data-redact-blurred', target_element.style.filter || '')
+                }
                 target_element.style.filter = blurDef
             } else {
                 apply_box(target_element.getBoundingClientRect())

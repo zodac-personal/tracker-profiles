@@ -314,6 +314,7 @@ final class ProfileScreenshotExecutor {
                 }
             }
 
+            updateProfilePage(trackerHandler);
             for (final RedactionType redactionType : effectiveRedactions) {
                 takeScreenshotForRedactionType(trackerHandler, trackerCredential, redactionType, scrollDuringScreenshot);
             }
@@ -341,18 +342,12 @@ final class ProfileScreenshotExecutor {
         LOGGER.info("\t- Redaction: {}", redactionType.formattedName());
         final String baseName = screenshotBaseName(trackerCredential.name(), redactionType);
 
-        final int numberOfUpdates = updateProfilePage(trackerHandler);
-        final int numberOfRedactions = performRedaction(trackerHandler, redactionType, trackerCredential.name());
-        final boolean reloadNeeded = numberOfUpdates > 0 || numberOfRedactions > 0;
+        final Redactor redactor = performRedaction(trackerHandler, redactionType, trackerCredential.name());
 
         trackerHandler.actionBeforeScreenshot();
         final Future<File> pendingWrite = ScreenshotTaker.takeScreenshot(trackerHandler.driver(), CONFIG.outputDirectory(), baseName,
             scrollDuringScreenshot, screenshotIndex(baseName));
-
-        // Reload restores page state (scroll position, DOM), so actionAfterScreenshot is redundant when a reload follows
-        if (!reloadNeeded) {
-            trackerHandler.actionAfterScreenshot();
-        }
+        trackerHandler.actionAfterScreenshot();
 
         try {
             LOGGER.info("\t\t- Screenshot saved at: [{}]", pendingWrite.get().getAbsolutePath());
@@ -363,69 +358,64 @@ final class ProfileScreenshotExecutor {
             throw new IOException("Interrupted while writing screenshot for '%s'".formatted(baseName), e);
         }
 
-        if (reloadNeeded) {
-            LOGGER.debug("\t\t- Updates were made to profile page, reloading to undo");
-            trackerHandler.reloadProfilePage();
+        if (redactor != null) {
+            LOGGER.debug("\t\t- Undoing redaction");
+            redactor.undoRedaction();
         }
     }
 
     // Perform modifications to the user profile page before redaction so redaction positions are computed against the settled layout
-    private static int updateProfilePage(final AbstractTrackerHandler trackerHandler) {
+    private static void updateProfilePage(final AbstractTrackerHandler trackerHandler) {
         LOGGER.info("\t\t- Performing updates to profile page, if needed");
-        int numberOfUpdates = 0;
 
         if (CONFIG.enableTranslationToEnglish() && trackerHandler instanceof NeedsExplicitTranslation trackerNeedsTranslation) {
             LOGGER.info("\t\t\t- Translating profile page to English");
             trackerNeedsTranslation.translatePageToEnglish();
-            numberOfUpdates++;
         }
 
         if (trackerHandler instanceof HasFixedHeader trackerWithFixedHeader) {
             LOGGER.debug("\t\t\t- Unfixing header");
             trackerWithFixedHeader.unfixHeaders(trackerHandler.driver(), trackerWithFixedHeader.headerSelectors());
             LOGGER.info("\t\t\t- Header has been updated to not be fixed");
-            numberOfUpdates++;
         }
 
         if (trackerHandler instanceof HasFixedSidebar trackerWithFixedSidebar) {
             LOGGER.debug("\t\t\t- Unfixing sidebar");
             trackerWithFixedSidebar.unfixSidebar(trackerHandler.driver());
             LOGGER.info("\t\t\t- Sidebar has been updated to not be fixed");
-            numberOfUpdates++;
         }
 
         if (trackerHandler instanceof HasJumpButtons trackerWithJumpButtons) {
             LOGGER.debug("\t\t\t- Hiding jump to top/bottom buttons");
             trackerWithJumpButtons.hideJumpButtons(trackerHandler.driver(), trackerWithJumpButtons.jumpButtonSelectors());
             LOGGER.info("\t\t\t- Top/bottom jump buttons have been hidden");
-            numberOfUpdates++;
         }
-
-        LOGGER.debug("\t\t\t- Made {} updates", numberOfUpdates);
-        return numberOfUpdates;
     }
 
-    private static int performRedaction(final AbstractTrackerHandler trackerHandler, final RedactionType redactionType, final String trackerName) {
+    @Nullable
+    private static Redactor performRedaction(final AbstractTrackerHandler handler, final RedactionType redactionType, final String trackerName) {
         if (redactionType == RedactionType.NONE) {
             LOGGER.debug("\t\t- Not redacting content");
-        } else if (trackerHandler.hasSensitiveInformation()) {
-            final Redactor redactor = RedactorDelegator.create(trackerHandler.driver(), redactionType);
-            LOGGER.info("\t\t- Redacting elements with sensitive information");
-
-            final int numberOfRedactedElements = trackerHandler.redactElements(redactor);
-            if (numberOfRedactedElements == 0) {
-                screenshotOnError(trackerHandler, trackerName, REDACTION_ERRORS_DIRECTORY);
-                LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
-            } else {
-                clearErrorScreenshots(trackerName, REDACTION_ERRORS_DIRECTORY);
-                LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
-            }
-            return numberOfRedactedElements;
-        } else {
-            LOGGER.debug("\t\t- Nothing to redact");
+            return null;
         }
 
-        return 0;
+        if (!handler.hasSensitiveInformation()) {
+            LOGGER.debug("\t\t- Nothing to redact");
+            return null;
+        }
+
+        final Redactor redactor = RedactorDelegator.create(handler.driver(), redactionType);
+        LOGGER.info("\t\t- Redacting elements with sensitive information");
+
+        final int numberOfRedactedElements = handler.redactElements(redactor);
+        if (numberOfRedactedElements == 0) {
+            screenshotOnError(handler, trackerName, REDACTION_ERRORS_DIRECTORY);
+            LOGGER.warn("\t\t- Unexpectedly found nothing to redact");
+        } else {
+            clearErrorScreenshots(trackerName, REDACTION_ERRORS_DIRECTORY);
+            LOGGER.info("\t\t- Redacted the text of {} element{}", numberOfRedactedElements, StringUtils.pluralise(numberOfRedactedElements));
+        }
+        return redactor;
     }
 
     private static List<RedactionType> redactionTypesToExecute(final String trackerName, final Set<RedactionType> redactionTypes) {

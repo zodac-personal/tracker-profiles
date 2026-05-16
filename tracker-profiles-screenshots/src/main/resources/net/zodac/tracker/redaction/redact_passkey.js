@@ -1,5 +1,5 @@
 if (!window.__redactPasskey) {
-    window.__redactPasskey = function(element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, label, prefixAlternation, blurDef, redactionType) {
+    window.__redactPasskey = function (element, bufferLeft, bufferUp, bufferRight, bufferDown, bgColor, label, prefixAlternation, blurDef, redactionType) {
         function collect_text_nodes(el) {
             const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null)
             const text_nodes = []
@@ -20,6 +20,7 @@ if (!window.__redactPasskey) {
                 const tn_len = tn_text.length
                 if (past_prefix) {
                     const span = document.createElement('span')
+                    span.setAttribute('data-redact-wrapped', '')
                     span.textContent = tn_text
                     tn.parentNode.replaceChild(span, tn)
                     spans.push(span)
@@ -32,6 +33,7 @@ if (!window.__redactPasskey) {
                         parent.insertBefore(document.createTextNode(tn_text.slice(0, split_pos)), tn)
                     }
                     const sensitive_span = document.createElement('span')
+                    sensitive_span.setAttribute('data-redact-wrapped', '')
                     sensitive_span.textContent = tn_text.slice(split_pos)
                     parent.replaceChild(sensitive_span, tn)
                     spans.push(sensitive_span)
@@ -51,6 +53,7 @@ if (!window.__redactPasskey) {
 
         function apply_box(bounding_rectangle, show_label) {
             const overlay = document.createElement('div')
+            overlay.setAttribute('data-redact-overlay', '')
             overlay.style.position = 'absolute'
             overlay.style.left = `${bounding_rectangle.left + scroll_left - bufferLeft}px`
             overlay.style.top = `${bounding_rectangle.top + scroll_top - bufferUp}px`
@@ -77,6 +80,9 @@ if (!window.__redactPasskey) {
 
         function apply_redaction(target_element, show_label) {
             if (redactionType === 'blur') {
+                if (!target_element.hasAttribute('data-redact-blurred')) {
+                    target_element.setAttribute('data-redact-blurred', target_element.style.filter || '')
+                }
                 target_element.style.filter = blurDef
             } else {
                 apply_box(target_element.getBoundingClientRect(), show_label)

@@ -97,6 +97,11 @@ public final class RedactorDelegator implements Redactor {
         return numberOfRedactedElements;
     }
 
+    @Override
+    public void undoRedaction() {
+        redactor.undoRedaction();
+    }
+
     private void logElementToBeRedacted(final WebElement element, final String elementType) {
         final String elementText = browserInteractionHelper.getTextContent(element);
         final String type = elementType.isBlank() ? "" : (" " + elementType);  // Add leading space for the log output only if there is a type

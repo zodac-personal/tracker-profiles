@@ -30,12 +30,13 @@ final class BoxRedactor implements Redactor {
     private static final String TORRENT_PASSKEY_PREFIX_ALTERNATION = "Passkey|Pass Key";
 
     private static final String INSTALL_ALL_SCRIPTS = Redactor.loadScripts(List.of(
-        "redact_element.js", "redact_email.js", "redact_ip_address.js", "redact_passkey.js"
+        "redact_element.js", "redact_email.js", "redact_ip_address.js", "redact_passkey.js", "undo_redaction.js"
     ));
     private static final String CALL_ELEMENT_SCRIPT = "window.__redactElement.apply(null, arguments);";
     private static final String CALL_EMAIL_SCRIPT = "window.__redactEmail.apply(null, arguments);";
     private static final String CALL_IP_ADDRESS_SCRIPT = "window.__redactIpAddress.apply(null, arguments);";
     private static final String CALL_PASSKEY_SCRIPT = "window.__redactPasskey.apply(null, arguments);";
+    private static final String CALL_UNDO_SCRIPT = "window.__undoRedaction();";
 
     private final RemoteWebDriver driver;
 
@@ -88,5 +89,10 @@ final class BoxRedactor implements Redactor {
         driver.executeScript(CALL_PASSKEY_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "red", "Passkey",
             TORRENT_PASSKEY_PREFIX_ALTERNATION, "", "box");
         return 1;
+    }
+
+    @Override
+    public void undoRedaction() {
+        driver.executeScript(CALL_UNDO_SCRIPT);
     }
 }
