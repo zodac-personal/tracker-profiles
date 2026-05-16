@@ -39,20 +39,10 @@ public enum RedactionType {
     /**
      * Cover the sensitive text with a solid box with a title.
      */
-    BOX,
+    BOX;
 
     /**
-     * Replace the sensitive text with non-breaking spaces of the same length, preserving the page layout.
-     */
-    REMOVE,
-
-    /**
-     * Replace the sensitive text with some placeholder text.
-     */
-    TEXT;
-
-    /**
-     * Returns the formatted name of this {@link RedactionType}, using title case. For example, {@link #TEXT} returns {@code "Text"}.
+     * Returns the formatted name of this {@link RedactionType}, using title case. For example, {@link #BLUR} returns {@code "Blur"}.
      *
      * @return the formatted name
      */

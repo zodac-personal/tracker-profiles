@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import javax.imageio.ImageIO;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.redaction.RedactionType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -47,7 +48,7 @@ public final class ScreenshotTaker {
 
     /**
      * Checks how many screenshots already exist for the given base name in the given directory. The base name is either the tracker name alone (for
-     * {@link net.zodac.tracker.framework.config.RedactionType#NONE}) or the tracker name with the redaction type appended (e.g.
+     * {@link RedactionType#NONE}) or the tracker name with the redaction type appended (e.g.
      * {@code trackerName_Text}).
      *
      * <p>

@@ -18,7 +18,6 @@
 package net.zodac.tracker.redaction;
 
 import java.util.regex.Pattern;
-import net.zodac.tracker.framework.config.RedactionType;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,8 +52,6 @@ public final class RedactorDelegator implements Redactor {
         final Redactor redactor = switch (redactionType) {
             case BLUR -> BlurRedactor.create(driver);
             case BOX -> BoxRedactor.create(driver);
-            case REMOVE -> RemoveRedactor.create(driver);
-            case TEXT -> TextRedactor.create(driver);
             case NONE -> throw new IllegalStateException("RedactorDelegator should not be created for NONE redaction type");
         };
         return new RedactorDelegator(new BrowserInteractionHelper(driver), redactor);
@@ -109,6 +106,7 @@ public final class RedactorDelegator implements Redactor {
             return;
         }
 
+        // Possibly an image
         final String elementSrc = element.getAttribute("src");
         if (elementSrc != null && !elementSrc.isBlank()) {
             LOGGER.info("\t\t\t- Found: <{}>: {}", element.getTagName(), element);

@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.redaction.RedactionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,7 +61,6 @@ import org.apache.logging.log4j.Logger;
  * @param progressBarFormat              the format string for the progress bar
  * @param progressBarIncompleteCharacter the character used to represent an incomplete portion of the progress bar
  * @param progressBarLength              the length (in characters) of the progress bar
- * @param redactionText                  the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
  * @param redactionTypes                 the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
  * @param takeScreenshotOnError          whether to take a screenshot of the current page if an error occurs during screenshotting
  * @param trackerExecutionOrder          the execution order of the different {@link TrackerType}s
@@ -87,7 +87,6 @@ public record ApplicationConfiguration(
     String progressBarFormat,
     char progressBarIncompleteCharacter,
     int progressBarLength,
-    String redactionText,
     Set<RedactionType> redactionTypes,
     boolean takeScreenshotOnError,
     Set<TrackerType> trackerExecutionOrder,
@@ -112,6 +111,7 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "HEADLESS,MANUAL";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
 
+    // TODO: Use Apache Level
     private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(
         "TRACE",
         "DEBUG",
@@ -158,7 +158,6 @@ public record ApplicationConfiguration(
             getProgressBarFormat(),
             getProgressBarIncompleteCharacter(),
             getProgressBarLength(),
-            getRedactionText(),
             getRedactionTypes(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
             getTrackerExecutionOrder(),
@@ -319,14 +318,6 @@ public record ApplicationConfiguration(
         }
     }
 
-    private static String getRedactionText() {
-        final String redactionText = getOrDefault("REDACTION_TEXT", "----");
-        if (redactionText.isBlank()) {
-            throw new IllegalArgumentException("[REDACTION_TEXT] Value must not be blank");
-        }
-        return redactionText;
-    }
-
     private static Set<RedactionType> getRedactionTypes() {
         return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPE, RedactionType::find);
     }
@@ -415,7 +406,6 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- progressBarFormat={}", progressBarFormat);
         LOGGER.debug("\t- progressBarIncompleteCharacter={}", progressBarIncompleteCharacter);
         LOGGER.debug("\t- progressBarLength={}", progressBarLength);
-        LOGGER.debug("\t- redactionText={}", redactionText);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);
         LOGGER.debug("\t- trackerExecutionOrder={}", trackerExecutionOrder);

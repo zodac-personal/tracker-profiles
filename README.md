@@ -44,11 +44,9 @@ or becomes otherwise unavailable.
 - Requests user input for trackers with manual inputs (like Captcha, 2FA, etc.)
 - Redacts the user's sensitive information
     - There are several types of redaction:
+        - None (no redaction)
         - Blur (adds a Gaussian blur)
         - Box (draws a solid box)
-        - Removal (the text is completely removed)
-        - Text (Replaces the text)
-        - None (no redaction)
     - There following elements are currently redacted
         - Email address
         - IP address (including ISP)
@@ -82,20 +80,6 @@ Below are examples of the different types of redaction from the [MooKo](https://
 #### Box
 
 ![Box Redaction](./doc/images/MooKo_Box.png)
-
-</td>
-<td valign="top">
-
-#### Remove
-
-![Remove Redaction](./doc/images/MooKo_Remove.png)
-
-</td>
-<td valign="top">
-
-#### Text
-
-![Text Redaction](./doc/images/MooKo_Text.png)
 
 </td>
 </tr>
@@ -375,7 +359,6 @@ docker run \
     --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
     --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
     --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
@@ -419,7 +402,6 @@ MSYS_NO_PATHCONV=1 docker run \
     --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
     --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
     --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
     --env REDACTION_TYPE=BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=false \
@@ -472,38 +454,37 @@ exclude **MANUAL** from `TRACKER_EXECUTION_ORDER`.
 
 The following are all possible configuration options, defined as environment variables for the docker image:
 
-| Environment Variable                | Description                                                                                                                                                                                              | Default Value                 |
-|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                          |
-| *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                          |
-| *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
-| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       |                               |
-| *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
-| *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
-| *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                          |
-| *FORCE_UI_BROWSER*                  | Forces a browser with UI for each tracker, even for headless trackers (this will disable parallel execution)                                                                                             | false                         |
-| *INPUT_TIMEOUT_ENABLED*             | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
-| *INPUT_TIMEOUT_SECONDS*             | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input in [seconds]                                                                                                                    | 300                           |
-| *JAVA_ADDITIONAL_OPTS*              | Additional JVM options to be appended to [start.sh](./docker/scripts/start.sh)                                                                                                                           |                               |
-| *JAVA_OPTS*                         | Replaces all default JVM options entirely; if unset or empty, the built-in defaults are used (see [JVM Options](#jvm-options))                                                                           |                               |
-| *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
-| *LOG_TRACKER_NAME*                  | Whether to prefix each log message with the name of the tracker being screenshot                                                                                                                         | true                          |
-| *NUMBER_OF_PARALLEL_THREADS*        | The number of parallel browser threads to use for Headless trackers [min: 1, max: 32]                                                                                                                    | 5                             |
-| *NUMBER_OF_SCREENSHOT_ATTEMPTS*     | The number of times to attempt to screenshot a tracker before marking it as a fail [min: 1, max: 5]                                                                                                      | 1                             |
-| *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)) | yyyy-MM-dd                    |
-| *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                       | /tmp/screenshots              |
-| *PROGRESS_BAR_COMPLETE_CHARACTER*   | The character used to render the completed portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_INCOMPLETE_CHARACTER*                                                            | █                             |
-| *PROGRESS_BAR_ENABLED*              | Whether to render a progress bar at the bottom of the console output                                                                                                                                     | true                          |
-| *PROGRESS_BAR_FORMAT*               | The format string for the [progress bar](#progress-bar) (must not be blank)                                                                                                                              | :bar :percent% \| [:elapsed]  |
-| *PROGRESS_BAR_INCOMPLETE_CHARACTER* | The character used to render the incomplete portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_COMPLETE_CHARACTER*                                                             | ░                             |
-| *PROGRESS_BAR_LENGTH*               | The length (in characters) of the [progress bar](#progress-bar) [min: 10, max: 80]                                                                                                                       | 35                            |
-| *REDACTION_TEXT*                    | The placeholder text used to replace sensitive information (only when using TEXT redaction, will be truncated if longer than the sensitive information)                                                  | ----                          |
-| *REDACTION_TYPE*                    | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [NONE, BLUR, BOX, REMOVE, TEXT]                                                  | BOX                           |
-| *SCREENSHOT_EXISTS_ACTION*          | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP]                                                                                         | CREATE_ANOTHER                |
-| *TAKE_SCREENSHOT_ON_ERROR*          | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                       | false                         |
-| *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
-| *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
-| *TRACKER_INPUT_FILE_PATH*           | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv |
+| Environment Variable                | Description                                                                                                                                                                                                                            | Default Value                 |
+|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                                                     | 1050                          |
+| *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                                                      | 1680                          |
+| *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                                                     | #                             |
+| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                                                     |                               |
+| *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                                              | true                          |
+| *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                                                   | true                          |
+| *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                                                    | true                          |
+| *FORCE_UI_BROWSER*                  | Forces a browser with UI for each tracker, even for headless trackers (this will disable parallel execution)                                                                                                                           | false                         |
+| *INPUT_TIMEOUT_ENABLED*             | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                                                            | false                         |
+| *INPUT_TIMEOUT_SECONDS*             | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input in [seconds]                                                                                                                                                  | 300                           |
+| *JAVA_ADDITIONAL_OPTS*              | Additional JVM options to be appended to [start.sh](./docker/scripts/start.sh)                                                                                                                                                         |                               |
+| *JAVA_OPTS*                         | Replaces all default JVM options entirely; if unset or empty, the built-in defaults are used (see [JVM Options](#jvm-options))                                                                                                         |                               |
+| *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                                                 | INFO                          |
+| *LOG_TRACKER_NAME*                  | Whether to prefix each log message with the name of the tracker being screenshot                                                                                                                                                       | true                          |
+| *NUMBER_OF_PARALLEL_THREADS*        | The number of parallel browser threads to use for Headless trackers [min: 1, max: 32]                                                                                                                                                  | 5                             |
+| *NUMBER_OF_SCREENSHOT_ATTEMPTS*     | The number of times to attempt to screenshot a tracker before marking it as a fail [min: 1, max: 5]                                                                                                                                    | 1                             |
+| *OUTPUT_DIRECTORY_NAME_FORMAT*      | The name of the output directory to be created for the of the screenshots (see [Patterns for Formatting and Parsing](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html))                               | yyyy-MM-dd                    |
+| *OUTPUT_DIRECTORY_PARENT_PATH*      | The output location of the new directory created for the screenshots, relative to the project root                                                                                                                                     | /tmp/screenshots              |
+| *PROGRESS_BAR_COMPLETE_CHARACTER*   | The character used to render the completed portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_INCOMPLETE_CHARACTER*                                                                                          | █                             |
+| *PROGRESS_BAR_ENABLED*              | Whether to render a progress bar at the bottom of the console output                                                                                                                                                                   | true                          |
+| *PROGRESS_BAR_FORMAT*               | The format string for the [progress bar](#progress-bar) (must not be blank)                                                                                                                                                            | :bar :percent% \| [:elapsed]  |
+| *PROGRESS_BAR_INCOMPLETE_CHARACTER* | The character used to render the incomplete portion of the [progress bar](#progress-bar) (must differ from *PROGRESS_BAR_COMPLETE_CHARACTER*                                                                                           | ░                             |
+| *PROGRESS_BAR_LENGTH*               | The length (in characters) of the [progress bar](#progress-bar) [min: 10, max: 80]                                                                                                                                                     | 35                            |
+| *REDACTION_TYPE*                    | Comma-separated list of redaction types to apply (if more than one is selected then multiple screenshots will be taken) [BLUR, BOX, NONE](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/redaction/RedactionType.java) | BOX                           |
+| *SCREENSHOT_EXISTS_ACTION*          | What to do when a screenshot for the tracker for the given date already exists [CREATE_ANOTHER, OVERWRITE, SKIP](./tracker-profiles-screenshots/src/main/java/net/zodac/tracker/framework/config/ExistingScreenshotAction.java)        | CREATE_ANOTHER                |
+| *TAKE_SCREENSHOT_ON_ERROR*          | Whether to take a screenshot of the current tracker page if any failure occurs (in a subdirectory called `errors`)                                                                                                                     | false                         |
+| *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                                                     | UTC                           |
+| *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                                                        | HEADLESS,MANUAL               |
+| *TRACKER_INPUT_FILE_PATH*           | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                                                        | /tmp/screenshots/trackers.csv |
 
 #### JVM Options
 
@@ -555,7 +536,7 @@ This project follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PA
 - **MINOR**: backwards-compatible new functionality added to the public API (e.g. new configuration options or trackers)
 - **PATCH**: backwards-compatible bug fixes or code changes
 
-Changes to the [trackers_example.csv](trackers_example.csv) file are considered `MINOR` (new trackers) or `MAJOR` (updates to the tracker
+Changes to the [trackers_example.csv](./trackers_example.csv) file are considered `MINOR` (new trackers) or `MAJOR` (updates to the tracker
 name). However, removing a tracker due to the site no longer being available is **not** considered a `MAJOR` change. Trackers are external to the
 application and not part of its public API, as their availability depends on third-party sites that can change or disappear at any time. Tracker
 removals will be released as `PATCH` versions.
@@ -660,8 +641,7 @@ docker run \
     --env PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
     --env PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
     --env PROGRESS_BAR_LENGTH=35 \
-    --env REDACTION_TEXT=---- \
-    --env REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
+    --env REDACTION_TYPE=NONE,BLUR,BOX \
     --env SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     --env TAKE_SCREENSHOT_ON_ERROR=true \
     --env TIMEZONE=UTC \
@@ -726,8 +706,7 @@ mvn clean install && \
     PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
     PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
     PROGRESS_BAR_LENGTH=35 \
-    REDACTION_TEXT=---- \
-    REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
+    REDACTION_TYPE=NONE,BLUR,BOX \
     SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
     TAKE_SCREENSHOT_ON_ERROR=true \
     TIMEZONE=UTC \
