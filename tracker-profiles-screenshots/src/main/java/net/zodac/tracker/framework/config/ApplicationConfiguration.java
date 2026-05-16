@@ -27,14 +27,17 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.redaction.RedactionType;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -111,14 +114,9 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "HEADLESS,MANUAL";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
 
-    // TODO: Use Apache Level
-    private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARNING",
-        "ERROR"
-    ));
+    private static final Set<String> VALID_LOG_LEVELS = Arrays.stream(Level.values())
+        .map(Level::name)
+        .collect(Collectors.toSet());
 
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
         "1280x1024",
