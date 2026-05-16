@@ -14,6 +14,10 @@
 #   - `tracker-profiles.jar` available at /app/tracker-profiles.jar
 #   - X display server running and accessible at DISPLAY=:0
 #
+# Environment Variables:
+#   - JAVA_ADDITIONAL_OPTS: Additional JVM options appended after whichever options are in effect
+#   - JAVA_OPTS:            Replaces all default JVM options (defaults are used if unset or empty)
+#
 # Behavior:
 #   - Starts the web browser
 #   - Executes the Java JAR file
@@ -31,12 +35,15 @@ main() {
     chromium --display=:0 >/dev/null 2>&1 &
     BROWSER_PID=$!
 
-    java \
-      -Xms"${JAVA_XMS:-128m}" -Xmx"${JAVA_XMX:-512m}" \
+    DEFAULT_JAVA_OPTS="-Xms128m -Xmx512m \
       -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders \
       -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
       -XX:SharedArchiveFile=/app/app.jsa -Xshare:auto \
-      -Djava.util.logging.config.file=/app/logging.properties \
+      -Djava.util.logging.config.file=/app/logging.properties"
+
+    # SC2086: intentional word splitting to pass JVM flags as separate arguments
+    # shellcheck disable=SC2086
+    java ${JAVA_OPTS:-${DEFAULT_JAVA_OPTS}} ${JAVA_ADDITIONAL_OPTS:-} \
       -jar /app/tracker-profiles.jar &
     JAVA_PID=$!
 

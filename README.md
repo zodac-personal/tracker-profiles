@@ -362,8 +362,8 @@ docker run \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
+    --env JAVA_ADDITIONAL_OPTS= \
+    --env JAVA_OPTS= \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \
@@ -406,8 +406,8 @@ MSYS_NO_PATHCONV=1 docker run \
     --env FORCE_UI_BROWSER=false \
     --env INPUT_TIMEOUT_ENABLED=false \
     --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
+    --env JAVA_ADDITIONAL_OPTS= \
+    --env JAVA_OPTS= \
     --env LOG_LEVEL=INFO \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \
@@ -477,15 +477,15 @@ The following are all possible configuration options, defined as environment var
 | *BROWSER_HEIGHT*                    | The height (in pixels) of the web browser used to take screenshots                                                                                                                                       | 1050                          |
 | *BROWSER_WIDTH*                     | The width (in pixels) of the web browser used to take screenshots                                                                                                                                        | 1680                          |
 | *CSV_COMMENT_SYMBOL*                | If this character is the first in a CSV row, the CSV row is considered a comment and not processed                                                                                                       | #                             |
-| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       | None (required)               |
+| *DISPLAY*                           | The X11 display used to render browser screenshots (see [Browser UI](#browser-ui))                                                                                                                       |                               |
 | *ENABLE_ADULT_TRACKERS*             | Whether to take screenshots of trackers that primarily host adult content                                                                                                                                | true                          |
 | *ENABLE_TRANSLATION_TO_ENGLISH*     | Whether to translate non-English trackers to English                                                                                                                                                     | true                          |
 | *FAIL_ON_UNSUPPORTED_TRACKER*       | Whether to fail if a tracker in the CSV file has no matching handler implementation                                                                                                                      | true                          |
 | *FORCE_UI_BROWSER*                  | Forces a browser with UI for each tracker, even for headless trackers (this will disable parallel execution)                                                                                             | false                         |
 | *INPUT_TIMEOUT_ENABLED*             | Whether to add a timeout for when a user-input is required, otherwise waits                                                                                                                              | false                         |
 | *INPUT_TIMEOUT_SECONDS*             | If *INPUT_TIMEOUT_ENABLED* is enabled, how long to wait for a user-input in [seconds]                                                                                                                    | 300                           |
-| *JAVA_XMS*                          | The initial heap size for the Java process                                                                                                                                                               | 128m                          |
-| *JAVA_XMX*                          | The maximum heap size for the Java process                                                                                                                                                               | 512m                          |
+| *JAVA_ADDITIONAL_OPTS*              | Additional JVM options to be appended to [start.sh](./docker/scripts/start.sh)                                                                                                                           |                               |
+| *JAVA_OPTS*                         | Replaces all default JVM options entirely; if unset or empty, the built-in defaults are used (see [JVM Options](#jvm-options))                                                                           |                               |
 | *LOG_LEVEL*                         | The logging level for console output [TRACE, DEBUG, INFO, WARN, ERROR]                                                                                                                                   | INFO                          |
 | *LOG_TRACKER_NAME*                  | Whether to prefix each log message with the name of the tracker being screenshot                                                                                                                         | true                          |
 | *NUMBER_OF_PARALLEL_THREADS*        | The number of parallel browser threads to use for Headless trackers [min: 1, max: 32]                                                                                                                    | 5                             |
@@ -504,6 +504,21 @@ The following are all possible configuration options, defined as environment var
 | *TIMEZONE*                          | The local timezone, used to retrieve the current date to name the output directory                                                                                                                       | UTC                           |
 | *TRACKER_EXECUTION_ORDER*           | The order in which different tracker types should be executed, at least one must be selected (case-insensitive)                                                                                          | HEADLESS,MANUAL               |
 | *TRACKER_INPUT_FILE_PATH*           | The path to the input tracker definition CSV file (inside the docker container)                                                                                                                          | /tmp/screenshots/trackers.csv |
+
+#### JVM Options
+
+The following options are passed to the Java process by default:
+
+```text
+-Xms128m -Xmx512m
+-XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders
+-XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45
+-XX:SharedArchiveFile=/app/app.jsa -Xshare:auto
+-Djava.util.logging.config.file=/app/logging.properties
+```
+
+Set `JAVA_OPTS` to replace all defaults entirely (e.g., to swap the GC algorithm or remove experimental flags). Set `JAVA_ADDITIONAL_OPTS` to append
+extra flags on top of whichever options are active, which can be useful for enabling JFR recording, GC logging, or similar diagnostics.
 
 #### Progress Bar
 
@@ -632,8 +647,8 @@ docker run \
     --env FORCE_UI_BROWSER=true \
     --env INPUT_TIMEOUT_ENABLED=true \
     --env INPUT_TIMEOUT_SECONDS=300 \
-    --env JAVA_XMS=128m \
-    --env JAVA_XMX=512m \
+    --env JAVA_ADDITIONAL_OPTS= \
+    --env JAVA_OPTS= \
     --env LOG_LEVEL=TRACE \
     --env LOG_TRACKER_NAME=true \
     --env NUMBER_OF_PARALLEL_THREADS=5 \

@@ -190,7 +190,7 @@ detect_changed_steps() {
         [[ "${file}" =~ ^tracker-profiles-screenshots/ || "${file}" =~ ^ci/java/ || "${file}" == "pom.xml" ]] && run_java=true
         [[ "${file}" =~ ^tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/ || "${file}" =~ ^ci/javascript/ ]] && run_javascript=true
         [[ "${file}" == "README.md" || "${file}" =~ ^ci/doc/ ]] && run_markdown=true
-        [[ "${file}" =~ ^docker/scripts/ || "${file}" =~ ^ci/python/ ]] && run_python=true
+        [[ "${file}" =~ ^docker/scripts/.*\.py$ || "${file}" =~ ^ci/python/ ]] && run_python=true
     done < <(
         {
             git diff --name-only "${latest_tag}..HEAD"
