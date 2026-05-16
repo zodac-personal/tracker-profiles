@@ -29,6 +29,7 @@
     - [Building And Developing In Docker](#building-and-developing-in-docker)
     - [Implementing Support For New Trackers](#implementing-support-for-new-trackers)
     - [Debugging Application](#debugging-application)
+    - [Performance Analysis](#performance-analysis)
     - [Cloudflare Verification](#cloudflare-verification)
 
 ## Overview
@@ -682,6 +683,51 @@ for each tracker is retrieved by the *trackerName* field within the CSV file.
 take screenshots. While the application usually runs in headless mode, this can be changed by updating the
 `FORCE_UI_BROWSER` value in the [configuration](#configuration-options). This will cause a new browser instance to
 launch when taking a screenshot, and can be used for debugging a new implementation.
+
+### Performance Analysis
+
+To generate a `.jfr` file for profiling with [Java Mission Control (JMC)](https://jdk.java.net/jmc/), build and run the JAR with JFR flags
+(environment variables are prefixed before `java`, equivalent to `--env` in the [Docker commands](#building-and-developing-in-docker)):
+
+```bash
+mvn clean install && \
+    BROWSER_HEIGHT=1050 \
+    BROWSER_WIDTH=1680 \
+    CSV_COMMENT_SYMBOL='#' \
+    ENABLE_ADULT_TRACKERS=true \
+    ENABLE_TRANSLATION_TO_ENGLISH=true \
+    FAIL_ON_UNSUPPORTED_TRACKER=false \
+    FORCE_UI_BROWSER=true \
+    INPUT_TIMEOUT_ENABLED=true \
+    INPUT_TIMEOUT_SECONDS=300 \
+    LOG_LEVEL=TRACE \
+    LOG_TRACKER_NAME=true \
+    NUMBER_OF_PARALLEL_THREADS=5 \
+    NUMBER_OF_SCREENSHOT_ATTEMPTS=5 \
+    OUTPUT_DIRECTORY_NAME_FORMAT=yyyy-MM-dd \
+    OUTPUT_DIRECTORY_PARENT_PATH=/tmp/screenshots \
+    PROGRESS_BAR_COMPLETE_CHARACTER='█' \
+    PROGRESS_BAR_ENABLED=true \
+    PROGRESS_BAR_FORMAT=":bar :percent% | :progress/:total | [:elapsed]" \
+    PROGRESS_BAR_INCOMPLETE_CHARACTER='░' \
+    PROGRESS_BAR_LENGTH=35 \
+    REDACTION_TEXT=---- \
+    REDACTION_TYPE=NONE,BLUR,BOX,REMOVE,TEXT \
+    SCREENSHOT_EXISTS_ACTION=CREATE_ANOTHER \
+    TAKE_SCREENSHOT_ON_ERROR=true \
+    TIMEZONE=UTC \
+    TRACKER_EXECUTION_ORDER=HEADLESS,MANUAL \
+    TRACKER_INPUT_FILE_PATH=/tmp/screenshots/trackers.csv \
+    java \
+        --enable-preview \
+        -Xms128m -Xmx512m \
+        -XX:+UseG1GC -XX:ParallelGCThreads=4 -XX:ConcGCThreads=2 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 \
+        -XX:StartFlightRecording=filename=recording_$(date +%Y%m%d_%H%M%S).jfr,settings=profile \
+        -jar ./tracker-profiles-screenshots/target/tracker-profiles-screenshots-*.jar
+```
+
+Once the application completes, open the generated `.jfr` file in Java Mission Control to analyse CPU usage, memory allocation, GC activity, and
+thread behaviour.
 
 ### Cloudflare Verification
 
