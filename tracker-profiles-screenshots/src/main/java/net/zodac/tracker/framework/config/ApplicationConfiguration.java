@@ -195,7 +195,7 @@ public record ApplicationConfiguration(
     }
 
     private static String getLogLevel() {
-        final String logLevelRaw = getOrDefault("LOG_LEVEL", "INFO").toUpperCase(Locale.getDefault());
+        final String logLevelRaw = getOrDefault("LOG_LEVEL", "INFO").toUpperCase(Locale.ROOT);
         if (!VALID_LOG_LEVELS.contains(logLevelRaw)) {
             throw new IllegalArgumentException(
                 String.format("[LOG_LEVEL] Invalid value: '%s', must be one of: %s", logLevelRaw, VALID_LOG_LEVELS));

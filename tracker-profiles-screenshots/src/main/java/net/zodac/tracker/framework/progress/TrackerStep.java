@@ -57,7 +57,7 @@ public enum TrackerStep {
     private final String name;
 
     TrackerStep() {
-        this.name = name().toLowerCase(Locale.getDefault()).replace('_', ' ');
+        this.name = name().toLowerCase(Locale.ROOT).replace('_', ' ');
     }
 
     /**

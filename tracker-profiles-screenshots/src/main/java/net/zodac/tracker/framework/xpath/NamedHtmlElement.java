@@ -63,6 +63,6 @@ public record NamedHtmlElement(String tagName) implements Element {
 
     @Override
     public String tagName() {
-        return tagName.toLowerCase(Locale.getDefault());
+        return tagName.toLowerCase(Locale.ROOT);
     }
 }

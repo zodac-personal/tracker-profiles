@@ -46,7 +46,7 @@ public record TrackerCredential(String name, String username, String password)
 
     @Override
     public int compareTo(final TrackerCredential other) {
-        return name.toLowerCase(Locale.getDefault()).compareTo(other.name.toLowerCase(Locale.getDefault()));
+        return name.toLowerCase(Locale.ROOT).compareTo(other.name.toLowerCase(Locale.ROOT));
     }
 
     @Override

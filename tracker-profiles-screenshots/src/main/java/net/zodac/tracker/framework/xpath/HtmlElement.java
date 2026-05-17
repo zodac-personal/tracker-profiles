@@ -150,6 +150,6 @@ public enum HtmlElement implements Element {
 
     @Override
     public String tagName() {
-        return name().toLowerCase(Locale.getDefault());
+        return name().toLowerCase(Locale.ROOT);
     }
 }

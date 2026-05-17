@@ -48,7 +48,7 @@ public enum RedactionType {
      */
     public String formattedName() {
         final String name = toString();
-        return name.charAt(0) + name.substring(1).toLowerCase(Locale.getDefault());
+        return name.charAt(0) + name.substring(1).toLowerCase(Locale.ROOT);
     }
 
     /**
