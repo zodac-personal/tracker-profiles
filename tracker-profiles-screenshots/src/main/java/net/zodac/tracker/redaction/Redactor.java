@@ -82,6 +82,11 @@ public interface Redactor {
     int redactTorrentPasskey(WebElement element, RedactionBuffer buffer);
 
     /**
+     * Undoes all DOM mutations applied by the previous redaction pass, restoring the page to its original state. Safe to call multiple times.
+     */
+    void undoRedaction();
+
+    /**
      * Loads a JavaScript resource file from the same package as this interface.
      *
      * @param scriptName the name of the script resource

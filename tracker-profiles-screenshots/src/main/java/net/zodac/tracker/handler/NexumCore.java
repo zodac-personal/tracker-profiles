@@ -29,6 +29,7 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withId;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
 import java.util.List;
+import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasFixedHeader;
@@ -41,7 +42,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * Extension of {@link AbstractTrackerHandler} for the {@code Nexum-Core} tracker.
  */
-@TrackerHandler(name = "Nexum-Core", url = "https://nexum-core.com/")
+@TrackerHandler(name = "Nexum-Core", type = TrackerType.MANUAL, url = "https://nexum-core.com/")
 public class NexumCore extends AbstractTrackerHandler implements HasFixedHeader, HasFixedSidebar, NeedsExplicitTranslation {
 
     @Override

@@ -27,20 +27,19 @@ import java.util.Objects;
 import net.zodac.tracker.app.ScreenshotOrchestrator;
 import net.zodac.tracker.framework.TrackerDefinition;
 import net.zodac.tracker.framework.TrackerType;
-import net.zodac.tracker.framework.driver.JavaWebDriverFactory;
+import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.driver.extension.Extension;
+import net.zodac.tracker.framework.exception.TrackerUnavailableException;
 import net.zodac.tracker.framework.gui.DisplayUtils;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import net.zodac.tracker.handler.definition.HasCloudflareCheck;
 import net.zodac.tracker.handler.definition.HasProfilePageActions;
-import net.zodac.tracker.handler.definition.NeedsExplicitTranslation;
 import net.zodac.tracker.handler.definition.TrackerTimings;
 import net.zodac.tracker.handler.definition.UsesExtensions;
 import net.zodac.tracker.redaction.RedactionBuffer;
 import net.zodac.tracker.redaction.Redactor;
 import net.zodac.tracker.util.BrowserInteractionHelper;
 import net.zodac.tracker.util.TextSearcher;
-import net.zodac.tracker.util.WebElementUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -92,16 +91,19 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     /**
      * We use a no-arg constructor to instantiate the {@link AbstractTrackerHandler} to avoid needing to define a constructor for each implementation.
-     * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker for execution, so we overwrite the default
-     * values that were already set.
+     * However, we still need to configure the {@link AbstractTrackerHandler} with details for the tracker, so the required fields are set here.
+     *
+     * <p>
+     * A {@link RemoteWebDriver} is acquired from the {@link DriverPool}.
      *
      * @param trackerDefinition the {@link TrackerDefinition} for this {@link AbstractTrackerHandler}
+     * @see DriverPool#acquire(TrackerType, List)
      */
     public void configure(final TrackerDefinition trackerDefinition) {
         LOGGER.trace("Configuring {}: {}", this.getClass().getSimpleName(), trackerDefinition);
         this.trackerDefinition = trackerDefinition;
         final List<Extension> extensions = this instanceof UsesExtensions trackerExtensions ? trackerExtensions.requiredExtensions() : List.of();
-        driver = createRemoteWebDriver(trackerDefinition.type(), extensions);
+        driver = DriverPool.acquire(trackerDefinition.type(), extensions);
         browserInteractionHelper = new BrowserInteractionHelper(driver);
         displayUtils = DisplayUtils.withDriver(driver);
     }
@@ -123,16 +125,9 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
                 driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
                 driver.navigate().to(trackerUrl);
 
-                // Explicit check for Cloudflare Error 523 if a site is unavailable
-                final WebElement body = browserInteractionHelper.waitForElementToBePresent(By.tagName("body"), pageLoadDuration());
-                final String bodyText = body.getText();
-                if (bodyText.contains("HTTP ERROR 523") || bodyText.contains("Error code 523")) {
-                    LOGGER.warn("\t\t- Unable to connect: Cloudflare Error 523 (Origin is unreachable)");
-                } else {
-                    LOGGER.trace("Successfully opened tracker at {}", trackerUrl);
-                    successfulUrl = trackerUrl;
-                    browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
-                }
+                browserInteractionHelper.waitForPageToLoad(pageLoadDuration());
+                successfulUrl = trackerUrl;
+                LOGGER.trace("Successfully opened tracker at {}", trackerUrl);
             } catch (final WebDriverException e) {
                 // If website can't be resolved, assume the site is down and attempt the next URL (if any), else rethrow exception
                 if (e.getMessage() != null && e.getMessage().contains("ERR_NAME_NOT_RESOLVED")) {
@@ -146,8 +141,42 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
         // If all possible URLs have been attempted but no connection occurred, assume the website is down
         if (successfulUrl == null) {
-            throw new IllegalStateException(
-                String.format("Tracker unavailable, unable to connect to any URL for '%s': %s", trackerDefinition.name(), trackerDefinition.urls()));
+            throw new TrackerUnavailableException(trackerDefinition.name(), trackerDefinition.urls());
+        }
+    }
+
+    /**
+     * Action to be performed prior to clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
+     *
+     * <p>
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
+     *
+     * @see BrowserInteractionHelper#highlightElement(WebElement)
+     */
+    protected void preLoginNavigationAction() {
+        // Do nothing by default
+    }
+
+    /**
+     * For some trackers the home page does not automatically redirect to the login page. In these cases, we need to explicitly click on the login
+     * link to redirect. We'll only do this navigation if {@link #loginPageSelector()} is not {@code null}.
+     *
+     * @param trackerName the name of the tracker
+     */
+    public void navigateToLoginPage(final String trackerName) {
+        LOGGER.debug("\t- Navigating to login page");
+        preLoginNavigationAction();
+        final By loginLinkSelector = loginPageSelector();
+
+        if (loginLinkSelector != null) {
+            final WebElement loginLink = browserInteractionHelper.waitForElementToBeInteractable(loginLinkSelector, pageLoadDuration());
+            clickButton(loginLink);
+            if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
+                hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
+            }
+            browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
+        } else if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
+            hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
         }
     }
 
@@ -161,28 +190,6 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     @Nullable
     protected By loginPageSelector() {
         return null;
-    }
-
-    /**
-     * For some trackers the home page does not automatically redirect to the login page. In these cases, we need to explicitly click on the login
-     * link to redirect. We'll only do this navigation if {@link #loginPageSelector()} is not {@code null}.
-     *
-     * @param trackerName the name of the tracker
-     */
-    public void navigateToLoginPage(final String trackerName) {
-        LOGGER.debug("\t- Navigating to login page");
-        final By loginLinkSelector = loginPageSelector();
-
-        if (loginLinkSelector != null) {
-            final WebElement loginLink = browserInteractionHelper.waitForElementToBeInteractable(loginLinkSelector, pageLoadDuration());
-            clickButton(loginLink);
-            if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
-                hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
-            }
-            browserInteractionHelper.waitForElementToBePresent(usernameFieldSelector(), pageLoadDuration());
-        } else if (this instanceof HasCloudflareCheck hasCloudflareCheck) {
-            hasCloudflareCheck.cloudflareCheck(driver, pageLoadDuration(), trackerName);
-        }
     }
 
     /**
@@ -260,11 +267,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Pauses execution of the {@link AbstractTrackerHandler} prior after the first login attempt, generally for trackers that require an input prior
-     * to clicking the login button.
+     * Action to be performed prior to clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
      *
      * <p>
-     * Where possible, the element to be interacted with will be highlighted in the browser.
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
@@ -282,11 +288,10 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
     }
 
     /**
-     * Pauses execution of the {@link AbstractTrackerHandler} prior after the first login attempt, generally for trackers that require a second input
-     * after clicking the login button.
+     * Action to be performed after clicking the {@link #loginButtonSelector()}, generally for trackers that require an input.
      *
      * <p>
-     * Where possible, the element to be interacted with will be highlighted in the browser.
+     * Where necessary, the element to be interacted with should be highlighted in the browser.
      *
      * @see BrowserInteractionHelper#highlightElement(WebElement)
      */
@@ -387,7 +392,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
      * @return the number of {@link WebElement}s where the text has been redacted
      * @see Redactor
      */
-    // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port, age/birthday)
+    // TODO: Add other redaction types (country, flag, avatar, gender, BT client, BT port, age/birthday, invitedBy)
     // TODO: Move redaction methods to interfaces
     public int redactElements(final Redactor redactor) {
         LOGGER.trace("Redacting elements");
@@ -421,7 +426,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return emailElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.hasEmailAddress(WebElementUtils.getTextContent(element)))
+            .filter(element -> TextSearcher.hasEmailAddress(browserInteractionHelper.getTextContent(element)))
             .mapToInt(element -> redactor.redactEmail(element, emailElementBuffer()))
             .sum();
     }
@@ -449,7 +454,7 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
         return ipAddressElements()
             .stream()
             .flatMap(rootSelector -> driver.findElements(rootSelector).stream())
-            .filter(element -> TextSearcher.hasIpAddress(WebElementUtils.getTextContent(element)))
+            .filter(element -> TextSearcher.hasIpAddress(browserInteractionHelper.getTextContent(element)))
             .mapToInt(element -> redactor.redactIpAddress(element, ipAddressElementBuffer()))
             .sum();
     }
@@ -614,8 +619,8 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
 
     @Override
     public void close() {
-        LOGGER.trace("Closing driver");
-        driver.quit();
+        LOGGER.trace("Releasing driver");
+        DriverPool.release(driver);
     }
 
     /**
@@ -645,26 +650,13 @@ public abstract class AbstractTrackerHandler implements AutoCloseable, TrackerTi
             LOGGER.trace(e);
             browserInteractionHelper.stopPageLoad();
         } catch (final Exception e) {
-            LOGGER.trace(driver.getPageSource());
-            LOGGER.trace(e);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(driver.getPageSource());
+                LOGGER.trace(e);
+            }
             throw e;
         }
 
         driver.manage().timeouts().pageLoadTimeout(maximumLinkResolutionDuration());
-        BrowserInteractionHelper.explicitWait(pageTransitionsDuration(), "button click");
-    }
-
-    private RemoteWebDriver createRemoteWebDriver(final TrackerType trackerType, final List<Extension> requiredExtensions) {
-        final boolean needsExplicitTranslation = this instanceof NeedsExplicitTranslation;
-        LOGGER.trace("Creating driver of type: {}", trackerType);
-        final RemoteWebDriver configurationDriver = JavaWebDriverFactory.createDriver(trackerType, needsExplicitTranslation, requiredExtensions);
-
-        LOGGER.trace("Configuring extensions: {}", requiredExtensions);
-        for (final Extension extension : requiredExtensions) {
-            extension.configure(configurationDriver);
-        }
-
-        LOGGER.trace("Returning created driver");
-        return configurationDriver;
     }
 }

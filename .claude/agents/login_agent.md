@@ -1,6 +1,7 @@
 ---
 name: Login Agent
 description: Determines login and logout selectors for a new TrackerHandler
+model: claude-haiku-4-5-20251001
 type: project
 ---
 

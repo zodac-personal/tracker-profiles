@@ -29,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -97,6 +99,62 @@ public class BrowserInteractionHelper {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Retrieves the visible text content of the given {@link WebElement}. Attempts three sources in order, via a single
+     * {@link JavascriptExecutor#executeScript} call:
+     * <ol>
+     *     <li>{@code innerText}, the standard rendered text (equivalent to {@link WebElement#getText()})</li>
+     *     <li>The {@code value} DOM property, for {@code <input>} and similar form elements</li>
+     *     <li>The {@code textContent} DOM property, for elements where rendered text is not exposed via the above</li>
+     * </ol>
+     *
+     * @param element the {@link WebElement}
+     * @return the first non-empty text value found, or an empty {@link String} if none are available
+     */
+    public String getTextContent(final WebElement element) {
+        final Object result = driver.executeScript("""
+            var e = arguments[0];
+            var t = e.innerText || '';
+            if (t !== '') {
+                return t;
+            }
+            
+            var v = e.value || '';
+            if (v !== '') {
+                return v;
+            }
+            
+            return e.textContent || '';
+            """, element);
+        return result == null ? "" : String.valueOf(result);
+    }
+
+    /**
+     * Performs a hard reload of the current page by navigating to the current URL as a fresh top-level navigation, then waits for the page to load.
+     * This is distinct from {@code driver.navigate().refresh()}, which sends a reload with:
+     * <ul>
+     *     <li>{@code Cache-Control: max-age=0}</li>
+     *     <li>{@code Sec-Fetch-Site: same-origin}</li>
+     *     <li>{@code Referer} header</li>
+     * </ul>
+     *
+     * <p>
+     * Instead, this method navigates directly to the URL, equivalent to typing the URL in the address bar and pressing {@code ENTER}.
+     *
+     * @param pageLoadDuration the maximum {@link Duration} to wait for the page to load
+     */
+    public void hardReloadPage(final Duration pageLoadDuration) {
+        LOGGER.trace("Hard reloading page");
+        final String currentUrl = driver.getCurrentUrl();
+        if (currentUrl == null) {
+            LOGGER.trace("Current URL is null");
+            return;
+        }
+
+        driver.navigate().to(currentUrl);
+        waitForPageToLoad(pageLoadDuration);
     }
 
     /**
@@ -232,7 +290,6 @@ public class BrowserInteractionHelper {
      */
     public void scrollToTheTop() {
         driver.executeScript("window.scrollTo(0, 0);");
-        explicitWait(Duration.ofSeconds(1L), "page to scroll to the top");
     }
 
     /**
@@ -241,14 +298,19 @@ public class BrowserInteractionHelper {
      */
     public void showScrollbar() {
         LOGGER.trace("Enabling scrolling on page");
-        driver.executeScript("document.body.style.height = 'auto';");
-        driver.executeScript("document.body.style.overflowY = 'visible';");
-        driver.executeScript("""
-            var style = document.getElementById('hide-scrollbar-style');
-            if (style) {
-                style.remove();
-            }
-            """);
+
+        try {
+            driver.executeScript("""
+                document.body.style.height = 'auto';
+                document.body.style.overflowY = 'visible';
+                var style = document.getElementById('hide-scrollbar-style');
+                if (style) {
+                    style.remove();
+                }
+                """);
+        } catch (final JavascriptException e) {
+            LOGGER.trace("Unable to show scrollbar", e);
+        }
     }
 
     /**
@@ -342,14 +404,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
      */
     public WebElement waitForElementToBeInteractable(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to be interactable", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            return wait.until(ExpectedConditions.elementToBeClickable(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't become interactable, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to be interactable", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        return wait.until(ExpectedConditions.elementToBeClickable(selector));
     }
 
     /**
@@ -361,14 +418,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't load in the specified {@link Duration}
      */
     public WebElement waitForElementToBePresent(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to appear", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            return wait.until(ExpectedConditions.presenceOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't appear, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to appear", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        return wait.until(ExpectedConditions.presenceOfElementLocated(selector));
     }
 
     /**
@@ -379,14 +431,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become visible in the specified {@link Duration}
      */
     public void waitForElementToBeVisible(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to be visible", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't become visible, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to be visible", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
     }
 
     /**
@@ -397,14 +444,9 @@ public class BrowserInteractionHelper {
      * @throws TimeoutException thrown if the {@link WebElement} doesn't become interactable in the specified {@link Duration}
      */
     public void waitForElementToDisappear(final By selector, final Duration timeout) {
-        try {
-            LOGGER.trace("Waiting {} for [{}] to disappear", timeout, selector);
-            final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(selector));
-        } catch (final TimeoutException e) {
-            LOGGER.trace("Element didn't disappear, page source: {}", driver.getPageSource());
-            throw e;
-        }
+        LOGGER.trace("Waiting {} for [{}] to disappear", timeout, selector);
+        final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(selector));
     }
 
     /**
@@ -419,7 +461,9 @@ public class BrowserInteractionHelper {
             final Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
             wait.until(_ -> "complete".equals(driver.executeScript("return document.readyState")));
         } catch (final TimeoutException e) {
-            LOGGER.debug("Page didn't load, page source: {}", driver.getPageSource());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Page didn't load, page source: {}", driver.getPageSource());
+            }
             throw e;
         }
     }

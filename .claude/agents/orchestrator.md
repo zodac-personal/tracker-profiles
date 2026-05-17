@@ -1,6 +1,7 @@
 ---
 name: Orchestrator
 description: Coordinates the login, profile, and redactor agents to produce a complete TrackerHandler implementation
+model: claude-haiku-4-5-20251001
 type: project
 ---
 
@@ -67,6 +68,14 @@ along with the profile agent's flags so it knows which elements have already bee
 
 ### Step 3 — Write the handler class
 
+First, decide whether a new class is needed at all:
+
+- **No method overrides required** (tracker uses the base class defaults in every respect) → add a
+  `@TrackerHandler(name = "Name", url = "https://...")` annotation directly to the base handler class
+  (`Unit3dHandler`, `GazelleHandler`, etc.) in alphabetical order among its existing annotations.
+  **Do not create a new `.java` file.**
+- **At least one method must be overridden** → create a new `.java` file as described below.
+
 Write the final `.java` file to:
 `tracker-profiles-screenshots/src/main/java/net/zodac/tracker/handler/<TrackerName>.java`
 
@@ -86,7 +95,7 @@ Rules:
 
 After writing the handler:
 
-1. Add a CSV entry to `docker/trackers_example.csv` (alphabetical order)
+1. Add a CSV entry to `./trackers_example.csv` (alphabetical order)
 2. Add a row to the correct table in `README.md` (alphabetical order):
     - `HEADLESS` type → **"### Headless"** multi-column table (find the right letter-range column)
     - `MANUAL` type → **"### Manual Interaction"** table

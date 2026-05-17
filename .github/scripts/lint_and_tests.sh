@@ -7,13 +7,16 @@
 # Usage:           ./lint_and_tests.sh [steps]
 #
 #                  [steps] is an optional comma-separated list of steps to run.
-#                  If omitted, all steps are run.
+#                  If omitted, only steps whose relevant files have changed since
+#                  the most recent semver git tag are run. If no tag exists, all
+#                  steps are run. Pass explicit steps to override auto-detection.
 #
 #                  Valid steps:
 #                    docker      - Lint the Dockerfile with hadolint
+#                    java        - Run Java lints and tests with Maven
 #                    javascript  - Lint JavaScript files with eslint
 #                    markdown    - Lint Markdown files with markdownlint-cli2
-#                    java        - Run Java lints and tests with Maven
+#                    python      - Lint Python files with ruff
 #
 #                  Examples:
 #                    ./lint_and_tests.sh
@@ -33,14 +36,15 @@ set -uo pipefail
 trap 'echo; echo "❌ Interrupted"; exit 130' INT
 
 ESLINT_BUILD_IMAGE="local/tracker-profiles-eslint:latest"
-ESLINT_NODE_IMAGE="node:25.9.0-alpine"
+ESLINT_NODE_IMAGE="node:26.1.0-alpine"
 HADOLINT_DOCKER_IMAGE="hadolint/hadolint:v2.14.0-alpine"
 JAVA_BUILD_IMAGE="local/tracker-profiles-builder:latest"
 JDK_DOCKER_IMAGE="eclipse-temurin:26_35-jdk"
 MARKDOWNLINT_DOCKER_IMAGE="davidanson/markdownlint-cli2:v0.22.1"
 MAVEN_DOCKER_IMAGE="maven:3.9.15"
+RUFF_DOCKER_IMAGE="ghcr.io/astral-sh/ruff:0.15.12"
 
-VALID_STEPS=("docker" "javascript" "markdown" "java")
+VALID_STEPS=("docker" "java" "javascript" "markdown" "python")
 
 overall_exit_code=0
 
@@ -148,9 +152,69 @@ EOF
     fi
 }
 
+run_python() {
+    echo
+    echo "Running Python lint using [${RUFF_DOCKER_IMAGE}]"
+    docker pull "${RUFF_DOCKER_IMAGE}" >/dev/null
+    if output=$(docker run --rm \
+        -v "${PWD}":/app \
+        -w /app \
+        "${RUFF_DOCKER_IMAGE}" \
+        check docker/scripts --config ci/python/ruff.toml 2>&1); then
+        echo "✅ Python lint passed"
+    else
+        echo "${output}"
+        echo "❌ Python lint failed"
+        overall_exit_code=1
+    fi
+}
+
+detect_changed_steps() {
+    local latest_tag
+    latest_tag=$(git tag --sort=-version:refname 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+
+    if [[ -z "${latest_tag}" ]]; then
+        echo "No semver tag found; running all steps" >&2
+        printf '%s\n' "${VALID_STEPS[@]}"
+        return
+    fi
+
+    echo "Checking changes since tag [${latest_tag}]..." >&2
+
+    local run_docker=false run_java=false run_javascript=false run_markdown=false run_python=false
+    local file
+
+    while IFS= read -r file; do
+        [[ -z "${file}" ]] && continue
+        [[ "${file}" =~ ^docker/ || "${file}" =~ ^ci/docker/ ]] && run_docker=true
+        [[ "${file}" =~ ^tracker-profiles-screenshots/ || "${file}" =~ ^ci/java/ || "${file}" == "pom.xml" ]] && run_java=true
+        [[ "${file}" =~ ^tracker-profiles-screenshots/src/main/resources/net/zodac/tracker/redaction/ || "${file}" =~ ^ci/javascript/ ]] && run_javascript=true
+        [[ "${file}" == "README.md" || "${file}" =~ ^ci/doc/ ]] && run_markdown=true
+        [[ "${file}" =~ ^docker/scripts/.*\.py$ || "${file}" =~ ^ci/python/ ]] && run_python=true
+    done < <(
+        {
+            git diff --name-only "${latest_tag}..HEAD"
+            git diff --name-only
+            git diff --name-only --cached
+            git ls-files --others --exclude-standard
+        } | sort -u
+    )
+
+    [[ "${run_docker}"     == true ]] && echo "docker"
+    [[ "${run_java}"       == true ]] && echo "java"
+    [[ "${run_javascript}" == true ]] && echo "javascript"
+    [[ "${run_markdown}"   == true ]] && echo "markdown"
+    [[ "${run_python}"     == true ]] && echo "python"
+}
+
 # Parse and validate steps
 if [[ $# -eq 0 ]]; then
-    steps=("${VALID_STEPS[@]}")
+    mapfile -t steps < <(detect_changed_steps)
+    if [[ ${#steps[@]} -eq 0 ]]; then
+        echo "No relevant changes detected since last tag; nothing to run"
+        exit 0
+    fi
+    echo "Running steps: $(IFS=', '; echo "${steps[*]}")"
 else
     IFS=',' read -ra steps <<<"${1}"
     for step in "${steps[@]}"; do
@@ -169,9 +233,10 @@ fi
 for step in "${steps[@]}"; do
     case "${step}" in
     docker) run_docker ;;
+    java) run_java ;;
     javascript) run_javascript ;;
     markdown) run_markdown ;;
-    java) run_java ;;
+    python) run_python ;;
     esac
 done
 

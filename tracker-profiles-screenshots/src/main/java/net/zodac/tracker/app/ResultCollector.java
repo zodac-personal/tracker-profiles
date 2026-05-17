@@ -24,6 +24,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.util.StringUtils;
@@ -39,6 +40,7 @@ final class ResultCollector {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final ReentrantLock addResultLock = new ReentrantLock();
     private final Map<TrackerType, Collection<String>> successfulTrackers = new EnumMap<>(TrackerType.class);
     private final Map<TrackerType, Collection<String>> unsuccessfulTrackers = new EnumMap<>(TrackerType.class);
 
@@ -70,10 +72,15 @@ final class ResultCollector {
      * @param wasSuccessful whether the screenshot was successful
      */
     void addResult(final TrackerType trackerType, final String trackerName, final boolean wasSuccessful) {
-        final Map<TrackerType, Collection<String>> targetMap = wasSuccessful ? successfulTrackers : unsuccessfulTrackers;
-        targetMap
-            .computeIfAbsent(trackerType, _ -> new TreeSet<>())
-            .add(trackerName);
+        addResultLock.lock();
+        try {
+            final Map<TrackerType, Collection<String>> targetMap = wasSuccessful ? successfulTrackers : unsuccessfulTrackers;
+            targetMap
+                .computeIfAbsent(trackerType, _ -> new TreeSet<>())
+                .add(trackerName);
+        } finally {
+            addResultLock.unlock();
+        }
     }
 
     /**

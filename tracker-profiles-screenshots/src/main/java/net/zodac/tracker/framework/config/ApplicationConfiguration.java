@@ -27,13 +27,17 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.zodac.tracker.framework.TrackerType;
+import net.zodac.tracker.redaction.RedactionType;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,14 +56,14 @@ import org.apache.logging.log4j.Logger;
  * @param inputTimeoutEnabled            whether a timeout for a user-input is enabled or not
  * @param logLevel                       the log level for the application, must be one of: {@code INFO, DEBUG, TRACE, WARNING, ERROR}
  * @param logTrackerName                 whether to prefix each log message with the name of the tracker being screenshotted
- * @param numberOfTrackerAttempts        the number of times to attempt to screenshot a tracker
+ * @param numberOfParallelThreads        the number of parallel browser threads to use for {@link TrackerType#HEADLESS} trackers
+ * @param numberOfScreenshotAttempts     the number of times to attempt to screenshot a tracker
  * @param outputDirectory                the output {@link Path} to the directory within which the screenshots will be saved
  * @param progressBarCompleteCharacter   the character used to represent a completed portion of the progress bar
  * @param progressBarEnabled             whether to display a progress bar at the bottom of the console output
  * @param progressBarFormat              the format string for the progress bar
  * @param progressBarIncompleteCharacter the character used to represent an incomplete portion of the progress bar
  * @param progressBarLength              the length (in characters) of the progress bar
- * @param redactionText                  the placeholder text used to replace sensitive information when using {@link RedactionType#TEXT} redaction
  * @param redactionTypes                 the {@link RedactionType}s to perform redaction of sensitive information on the user profile page, in order
  * @param seleniumRemoteUrl              the URL of the Selenium Grid or standalone endpoint; if blank, a local {@code ChromeDriver} is used
  * @param takeScreenshotOnError          whether to take a screenshot of the current page if an error occurs during screenshotting
@@ -79,14 +83,14 @@ public record ApplicationConfiguration(
     boolean inputTimeoutEnabled,
     String logLevel,
     boolean logTrackerName,
-    int numberOfTrackerAttempts,
+    int numberOfParallelThreads,
+    int numberOfScreenshotAttempts,
     Path outputDirectory,
     char progressBarCompleteCharacter,
     boolean progressBarEnabled,
     String progressBarFormat,
     char progressBarIncompleteCharacter,
     int progressBarLength,
-    String redactionText,
     Set<RedactionType> redactionTypes,
     String seleniumRemoteUrl,
     boolean takeScreenshotOnError,
@@ -112,13 +116,9 @@ public record ApplicationConfiguration(
     private static final String DEFAULT_TRACKER_EXECUTION_ORDER = "HEADLESS,MANUAL";
     private static final String DEFAULT_TRACKER_INPUT_FILE_PATH = DEFAULT_OUTPUT_DIRECTORY_PARENT_PATH + "/trackers.csv";
 
-    private static final Set<String> VALID_LOG_LEVELS = new LinkedHashSet<>(List.of(
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARNING",
-        "ERROR"
-    ));
+    private static final Set<String> VALID_LOG_LEVELS = Arrays.stream(Level.values())
+        .map(Level::name)
+        .collect(Collectors.toSet());
 
     private static final Set<String> VALID_RESOLUTIONS = new LinkedHashSet<>(List.of(
         "1280x1024",
@@ -150,14 +150,14 @@ public record ApplicationConfiguration(
             getBooleanEnvironmentVariable("INPUT_TIMEOUT_ENABLED", false),
             getLogLevel(),
             getBooleanEnvironmentVariable("LOG_TRACKER_NAME", true),
-            getNumberOfTrackerAttempts(),
+            getNumberOfParallelThreads(),
+            getNumberOfScreenshotAttempts(),
             getOutputDirectory(),
             getProgressBarCompleteCharacter(),
             getBooleanEnvironmentVariable("PROGRESS_BAR_ENABLED", true),
             getProgressBarFormat(),
             getProgressBarIncompleteCharacter(),
             getProgressBarLength(),
-            getRedactionText(),
             getRedactionTypes(),
             getSeleniumRemoteUrl(),
             getBooleanEnvironmentVariable("TAKE_SCREENSHOT_ON_ERROR", false),
@@ -206,9 +206,14 @@ public record ApplicationConfiguration(
         return logLevelRaw;
     }
 
-    private static int getNumberOfTrackerAttempts() {
-        final String numberOfRetriesRaw = getOrDefault("NUMBER_OF_TRACKER_ATTEMPTS", "1");
-        return parseIntegerInRange(numberOfRetriesRaw, "NUMBER_OF_TRACKER_ATTEMPTS", 5);
+    private static int getNumberOfParallelThreads() {
+        final String raw = getOrDefault("NUMBER_OF_PARALLEL_THREADS", "5");
+        return parseIntegerInRange(raw, "NUMBER_OF_PARALLEL_THREADS", 32);
+    }
+
+    private static int getNumberOfScreenshotAttempts() {
+        final String numberOfRetriesRaw = getOrDefault("NUMBER_OF_SCREENSHOT_ATTEMPTS", "1");
+        return parseIntegerInRange(numberOfRetriesRaw, "NUMBER_OF_SCREENSHOT_ATTEMPTS", 5);
     }
 
     private static Path getOutputDirectory() {
@@ -314,14 +319,6 @@ public record ApplicationConfiguration(
         }
     }
 
-    private static String getRedactionText() {
-        final String redactionText = getOrDefault("REDACTION_TEXT", "----");
-        if (redactionText.isBlank()) {
-            throw new IllegalArgumentException("[REDACTION_TEXT] Value must not be blank");
-        }
-        return redactionText;
-    }
-
     private static Set<RedactionType> getRedactionTypes() {
         return parseCommaSeparatedEnvVar("REDACTION_TYPE", DEFAULT_REDACTION_TYPE, RedactionType::find);
     }
@@ -406,14 +403,14 @@ public record ApplicationConfiguration(
         LOGGER.debug("\t- inputTimeoutEnabled={}", inputTimeoutEnabled);
         LOGGER.debug("\t- logLevel={}", logLevel);
         LOGGER.debug("\t- logTrackerName={}", logTrackerName);
-        LOGGER.debug("\t- numberOfTrackerAttempts={}", numberOfTrackerAttempts);
+        LOGGER.debug("\t- numberOfParallelThreads={}", numberOfParallelThreads);
+        LOGGER.debug("\t- numberOfScreenshotAttempts={}", numberOfScreenshotAttempts);
         LOGGER.debug("\t- outputDirectory={}", outputDirectory);
         LOGGER.debug("\t- progressBarCompleteCharacter={}", progressBarCompleteCharacter);
         LOGGER.debug("\t- progressBarEnabled={}", progressBarEnabled);
         LOGGER.debug("\t- progressBarFormat={}", progressBarFormat);
         LOGGER.debug("\t- progressBarIncompleteCharacter={}", progressBarIncompleteCharacter);
         LOGGER.debug("\t- progressBarLength={}", progressBarLength);
-        LOGGER.debug("\t- redactionText={}", redactionText);
         LOGGER.debug("\t- redactionTypes={}", redactionTypes);
         LOGGER.debug("\t- seleniumRemoteUrl={}", seleniumRemoteUrl);
         LOGGER.debug("\t- takeScreenshotOnError={}", takeScreenshotOnError);

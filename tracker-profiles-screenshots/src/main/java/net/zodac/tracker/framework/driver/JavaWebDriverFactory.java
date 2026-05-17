@@ -18,12 +18,20 @@
 package net.zodac.tracker.framework.driver;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
@@ -44,6 +52,7 @@ public final class JavaWebDriverFactory {
     private static final File CHROMEDRIVER_EXECUTABLE_FILEPATH = new File("/usr/local/chromium/chromedriver-linux64/chromedriver");
     private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Map<RemoteWebDriver, Path> USER_DATA_DIRS = new ConcurrentHashMap<>();
 
     private JavaWebDriverFactory() {
 
@@ -64,22 +73,18 @@ public final class JavaWebDriverFactory {
      * <p>
      * Otherwise it will run in full UI mode.
      *
-     * @param trackerType              whether {@link TrackerType} defining the execution method for this tracker
-     * @param needsExplicitTranslation whether this {@link TrackerType} needs explicit translation, requiring a UI
-     * @param extensions               any {@link Extension}s to be installed
+     * @param trackerType whether {@link TrackerType} defining the execution method for this tracker
+     * @param extensions  any {@link Extension}s to be installed
      * @return the {@link RemoteWebDriver} instance
      */
-    // TODO: Reuse driver for each tracker?
-    public static RemoteWebDriver createDriver(final TrackerType trackerType,
-                                               final boolean needsExplicitTranslation,
-                                               final List<Extension> extensions
-    ) {
+    public static RemoteWebDriver createDriver(final TrackerType trackerType, final List<Extension> extensions) {
         LOGGER.trace("Creating Java driver");
         final ChromeOptions chromeOptions = new ChromeOptions();
+        final Path userDataDir = Path.of(CONFIG.browserDataStoragePath(), UUID.randomUUID().toString());
 
         // User-defined options
         chromeOptions.addArguments("--window-size=" + CONFIG.browserDimensions());
-        if (canTrackerUseHeadlessBrowser(trackerType, needsExplicitTranslation)) {
+        if (canTrackerUseHeadlessBrowser(trackerType)) {
             LOGGER.trace("Using headless browser");
             chromeOptions.addArguments("--headless=new");
         }
@@ -88,7 +93,7 @@ public final class JavaWebDriverFactory {
         chromeOptions.addArguments("--disk-cache-dir=" + CONFIG.browserDataStoragePath() + File.separator + "selenium");
 
         // Following 3 options are to ensure there are no conflicting issues running the browser on Linux
-        chromeOptions.addArguments("--user-data-dir=" + CONFIG.browserDataStoragePath() + File.separator + UUID.randomUUID());
+        chromeOptions.addArguments("--user-data-dir=" + userDataDir);
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-dev-shm-usage");
 
@@ -128,20 +133,105 @@ public final class JavaWebDriverFactory {
             return createRemoteDriver(chromeOptions);
         }
 
-        if (!CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
+        final ChromeDriver driver;
+        if (CHROMEDRIVER_EXECUTABLE_FILEPATH.exists()) {
+            final ChromeDriverService service = new ChromeDriverService  // NOPMD: CloseResource - Not closing since it takes 5 seconds to close
+                .Builder()
+                .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
+                .build();
+            LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
+            driver = new ChromeDriver(service, chromeOptions);
+        } else {
             LOGGER.trace("Creating driver without chromedriver executable filepath");
-            return new ChromeDriver(chromeOptions);
+            driver = new ChromeDriver(chromeOptions);
         }
 
-        final ChromeDriverService service = new ChromeDriverService  // NOPMD: CloseResource - Not closing since it takes 5 seconds to close
-            .Builder()
-            .usingDriverExecutable(CHROMEDRIVER_EXECUTABLE_FILEPATH)
-            .build();
-        LOGGER.trace("Creating driver with chromedriver executable at '{}'", CHROMEDRIVER_EXECUTABLE_FILEPATH.getAbsolutePath());
-        final ChromeDriver driver = new ChromeDriver(service, chromeOptions);
         applyConfiguredSize(driver);
         LOGGER.trace("Returning created driver");
+        USER_DATA_DIRS.put(driver, userDataDir);
         return driver;
+    }
+
+    /**
+     * Sweeps and deletes any stale user-data directories under the configured browser data storage path.
+     *
+     * <p>
+     * Previous JVM runs may leave UUID-named subdirectories behind if the process was interrupted before {@link #deleteUserDataDir(RemoteWebDriver)}
+     * could clean them up. Any UUID-named subdirectory of the storage path that does not belong to a currently tracked driver is deleted.
+     *
+     * <p>
+     * Safe to call multiple times, as directories belonging to active drivers are excluded from deletion.
+     */
+    static void sweepStaleUserDataDirs() {
+        final Path base = Path.of(CONFIG.browserDataStoragePath());
+        if (!Files.isDirectory(base)) {
+            return;
+        }
+
+        final Set<Path> activeDirs = new HashSet<>(USER_DATA_DIRS.values());
+        try (final Stream<Path> children = Files.list(base)) {
+            final List<Path> staleDirs = children
+                .filter(JavaWebDriverFactory::isUuidDirectory)
+                .filter(p -> !activeDirs.contains(p))
+                .toList();
+
+            if (staleDirs.isEmpty()) {
+                LOGGER.trace("No stale user-data directories to clean`");
+            } else {
+                LOGGER.debug("Sweeping {} stale user-data directories", staleDirs.size());
+                staleDirs.forEach(JavaWebDriverFactory::deleteDirectory);
+            }
+        } catch (final IOException e) {
+            LOGGER.debug("Failed to sweep stale user-data directories in '{}'", base, e);
+            LOGGER.warn("Failed to sweep stale user-data directories in '{}': {}", base, e.getMessage());
+        }
+    }
+
+    /**
+     * Removes the user-data directory associated with the given {@link RemoteWebDriver} and deletes it from disk.
+     *
+     * <p>
+     * The directory is tracked from the moment the driver was created by {@link #createDriver(TrackerType, List)}. If no
+     * directory is registered for the driver, this method is a no-op.
+     *
+     * @param driver the {@link RemoteWebDriver} whose user-data directory should be deleted
+     */
+    static void deleteUserDataDir(final RemoteWebDriver driver) {
+        final Path dir = USER_DATA_DIRS.remove(driver);
+        if (dir != null) {
+            LOGGER.trace("Deleting user-data directory '{}'", dir);
+            deleteDirectory(dir);
+        }
+    }
+
+    private static boolean isUuidDirectory(final Path path) {
+        if (!Files.isDirectory(path)) {
+            return false;
+        }
+
+        try {
+            UUID.fromString(path.getFileName().toString());
+            return true;
+        } catch (final IllegalArgumentException _) {
+            return false;
+        }
+    }
+
+    private static void deleteDirectory(final Path dir) {
+        try (final Stream<Path> walk = Files.walk(dir)) {
+            walk.sorted(Comparator.reverseOrder())
+                .forEach(JavaWebDriverFactory::deleteWithLogging);
+        } catch (final IOException e) {
+            LOGGER.trace("Could not delete user-data directory '{}'", dir, e);
+        }
+    }
+
+    private static void deleteWithLogging(final Path filePath) {
+        try {
+            Files.delete(filePath);
+        } catch (final IOException e) {
+            LOGGER.trace("Could not delete '{}'", filePath, e);
+        }
     }
 
     private static void applyConfiguredSize(final ChromeDriver driver) {
@@ -198,15 +288,10 @@ public final class JavaWebDriverFactory {
         return translateWhitelists;
     }
 
-    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType, final boolean needsExplicitTranslation) {
+    private static boolean canTrackerUseHeadlessBrowser(final TrackerType trackerType) {
         if (CONFIG.forceUiBrowser()) {
             LOGGER.trace("UI browser is forced");
             return false;
-        }
-
-        if (needsExplicitTranslation && !CONFIG.enableTranslationToEnglish()) {
-            LOGGER.trace("'{}' requires explicit translation, but translation is disabled, allowing headless", trackerType.formattedName());
-            return true;
         }
 
         return trackerType != TrackerType.MANUAL;

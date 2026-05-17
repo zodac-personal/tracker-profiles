@@ -18,18 +18,24 @@
 package net.zodac.tracker.app;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import net.zodac.tracker.framework.ExitState;
 import net.zodac.tracker.framework.TrackerCredential;
 import net.zodac.tracker.framework.TrackerType;
 import net.zodac.tracker.framework.config.ApplicationConfiguration;
 import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.framework.driver.DriverPool;
 import net.zodac.tracker.framework.progress.ProgressBarManager;
 import net.zodac.tracker.framework.progress.ProgressBarPrintStream;
 import net.zodac.tracker.framework.progress.TrackerStep;
+import net.zodac.tracker.util.ScreenshotTaker;
 import net.zodac.tracker.util.StringUtils;
-import net.zodac.tracker.util.TimingUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,6 +87,9 @@ public final class ScreenshotOrchestrator {
             for (final TrackerType trackerType : CONFIG.trackerExecutionOrder()) {
                 screenshotTrackerByType(trackerType, trackersByType, progressBarManager, maxTrackerNameLength, resultCollector);
             }
+        } finally {
+            ScreenshotTaker.shutdown();
+            DriverPool.shutdown();
         }
 
         return resultCollector.generateSummary(CONFIG.trackerExecutionOrder());
@@ -101,18 +110,48 @@ public final class ScreenshotOrchestrator {
             return;
         }
 
+        final int numberOfTrackers = trackersByType.getOrDefault(trackerType, Set.of()).size();
+        final int effectiveThreadCount = getEffectiveThreadCount(trackerType, numberOfTrackers);
+        DriverPool.initialise(trackerType, effectiveThreadCount, numberOfTrackers);
+
         LOGGER.info("");
-        LOGGER.info(">>> Executing {} trackers <<<", trackerType.formattedName());
+        LOGGER.info(">>> Executing {} trackers {}<<<", trackerType.formattedName(),
+            effectiveThreadCount == 1 ? "" : String.format("(with %d threads) ", effectiveThreadCount));
         LOGGER.info("");
 
-        // TODO: Execute these in parallel?
+        final List<Callable<Void>> trackerScreenshotTasks = new ArrayList<>();
         for (final TrackerCredential tracker : trackersByType.get(trackerType)) {
-            final long startNanos = System.nanoTime();
-            final boolean successfullyTakenScreenshot = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
-            resultCollector.addResult(trackerType, tracker.name(), successfullyTakenScreenshot);
-            printTrackerExecutionTime(tracker.name(), startNanos);
-            progressBarManager.tickTracker(tracker.name());
+            trackerScreenshotTasks.add(() -> {
+                final boolean success = ProfileScreenshotExecutor.takeScreenshot(tracker, progressBarManager, maxTrackerNameLength);
+                resultCollector.addResult(trackerType, tracker.name(), success);
+                progressBarManager.tickTracker(tracker.name());
+                return null;
+            });
         }
+
+        try (final ExecutorService executor = Executors.newFixedThreadPool(effectiveThreadCount)) {
+            executor.invokeAll(trackerScreenshotTasks);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.debug("Parallel execution interrupted for {} trackers", trackerType.formattedName(), e);
+            LOGGER.warn("Parallel execution interrupted for {} trackers: {}", trackerType.formattedName(), e.getMessage());
+        }
+    }
+
+    private static int getEffectiveThreadCount(final TrackerType trackerType, final int numberOfTrackers) {
+        if (CONFIG.forceUiBrowser()) {
+            LOGGER.debug("Forcing UI browser, parallelism disabled");
+            return 1;
+        }
+
+        // Currently only supporting parallel execution for HEADLESS trackers
+        if (trackerType != TrackerType.HEADLESS) {
+            LOGGER.debug("Tracker type is {}, parallelism disabled", trackerType.formattedName());
+            return 1;
+        }
+
+        LOGGER.trace("numberOfParallelThreads: {}, numberOfTrackers: {}", CONFIG.numberOfParallelThreads(), numberOfTrackers);
+        return Math.min(CONFIG.numberOfParallelThreads(), numberOfTrackers);
     }
 
     private static int maxTrackerNameLength(final Map<TrackerType, Set<TrackerCredential>> trackersByType) {
@@ -121,11 +160,6 @@ public final class ScreenshotOrchestrator {
             .mapToInt(credential -> credential.name().length())
             .max()
             .orElse(0);
-    }
-
-    private static void printTrackerExecutionTime(final String trackerName, final long startNanos) {
-        final long elapsedNanos = System.nanoTime() - startNanos;
-        LOGGER.debug("\t- Execution time for {}: {}", trackerName, TimingUtils.toNaturalTime(elapsedNanos));
     }
 
     private static void ensureOutputDirectoryExists() {

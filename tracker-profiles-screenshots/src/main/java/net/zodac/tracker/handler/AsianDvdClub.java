@@ -24,15 +24,38 @@ import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.contains
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withClass;
 import static net.zodac.tracker.framework.xpath.XpathAttributePredicate.withType;
 
+import java.time.Duration;
+import java.util.Collection;
 import net.zodac.tracker.framework.annotation.TrackerHandler;
 import net.zodac.tracker.framework.xpath.XpathBuilder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * Implementation of {@link AbstractTrackerHandler} for the {@code AsianDvdClub} tracker.
  */
 @TrackerHandler(name = "AsianDVDClub", url = "https://asiandvdclub.org/")
 public class AsianDvdClub extends AbstractTrackerHandler {
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * For {@link AsianDvdClub}, when loading the page the site can request you to wait for 2 minutes before the login page is allowed to load.
+     */
+    @Override
+    protected void preLoginNavigationAction() {
+        final By progressBarSelector = By.id("progressBar");
+        final Collection<WebElement> progressBars = driver.findElements(progressBarSelector);
+
+        if (progressBars.isEmpty()) {
+            LOGGER.trace("No progress bar found prior to login");
+            return;
+        }
+
+        LOGGER.info("\t\t- Progress bar found, assuming we need to wait for 2 minutes");
+        browserInteractionHelper.waitForElementToBeInteractable(loginButtonSelector(), Duration.ofMinutes(2L));
+    }
 
     @Override
     protected By loginButtonSelector() {
@@ -60,5 +83,10 @@ public class AsianDvdClub extends AbstractTrackerHandler {
         return XpathBuilder
             .from(a, containsHref("/logout"))
             .build();
+    }
+
+    @Override
+    protected By postLogoutElementSelector() {
+        return By.id("progressBar");
     }
 }

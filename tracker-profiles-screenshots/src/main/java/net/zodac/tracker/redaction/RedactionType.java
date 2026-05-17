@@ -15,7 +15,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package net.zodac.tracker.framework.config;
+package net.zodac.tracker.redaction;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -39,20 +39,10 @@ public enum RedactionType {
     /**
      * Cover the sensitive text with a solid box with a title.
      */
-    BOX,
+    BOX;
 
     /**
-     * Replace the sensitive text with non-breaking spaces of the same length, preserving the page layout.
-     */
-    REMOVE,
-
-    /**
-     * Replace the sensitive text with some placeholder text.
-     */
-    TEXT;
-
-    /**
-     * Returns the formatted name of this {@link RedactionType}, using title case. For example, {@link #TEXT} returns {@code "Text"}.
+     * Returns the formatted name of this {@link RedactionType}, using title case. For example, {@link #BLUR} returns {@code "Blur"}.
      *
      * @return the formatted name
      */

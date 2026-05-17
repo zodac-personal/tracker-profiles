@@ -5,7 +5,7 @@
 
     <groupId>net.zodac</groupId>
     <artifactId>tracker-profiles</artifactId>
-    <version>8.6.4-SNAPSHOT</version>
+    <version>10.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>[${project.artifactId}] project</name>
 
@@ -21,9 +21,9 @@
 
         <!-- Lint Properties -->
         <!-- All disabled by default, activated through profiles -->
+        <skip-artifact-build>false</skip-artifact-build>
         <skip-linters>true</skip-linters>
         <skip-sonarqube>true</skip-sonarqube>
-        <skip-shade>false</skip-shade>
 
         <!-- Test Properties -->
         <!-- All disabled by default, activated through profiles -->
@@ -33,18 +33,18 @@
 
         <!-- 3PP Versions -->
         <ashot.version>1.5.4</ashot.version>
-        <clique.version>4.0.1</clique.version>
+        <clique.version>4.0.2</clique.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-io.version>2.22.0</commons-io.version>
         <flatlaf.version>3.7.1</flatlaf.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
-        <log4j.version>2.25.4</log4j.version>
+        <log4j.version>2.26.0</log4j.version>
         <selenium.version>4.43.0</selenium.version>
 
         <!-- Test 3PP Versions -->
         <assertj-core.version>3.27.7</assertj-core.version>
-        <junit-bom.version>6.0.3</junit-bom.version>
+        <junit-bom.version>6.1.0-RC1</junit-bom.version>
 
         <!-- Plugin Versions -->
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
@@ -57,12 +57,11 @@
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
-        <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <!-- Linter 3PP Versions -->
         <asm-version>9.9.1</asm-version>
-        <checkstyle.version>13.4.0</checkstyle.version>
+        <checkstyle.version>13.4.2</checkstyle.version>
         <error_prone_core.version>2.49.0</error_prone_core.version>
         <licenses.version>1</licenses.version>
         <nullaway.version>0.13.4</nullaway.version>
@@ -75,6 +74,7 @@
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <sonar-maven-plugin.version>5.6.0.6792</sonar-maven-plugin.version>
+        <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
 
         <!-- Linter Properties -->
@@ -458,6 +458,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven-install-plugin.version}</version>
+                    <configuration>
+                        <skip>${skip-artifact-build}</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -545,7 +548,7 @@
                     <version>${maven-shade-plugin.version}</version>
                     <configuration>
                         <createDependencyReducedPom>false</createDependencyReducedPom>
-                        <skip>${skip-shade}</skip>
+                        <skip>${skip-artifact-build}</skip>
                     </configuration>
                 </plugin>
 
@@ -690,7 +693,7 @@
                 </property>
             </activation>
             <properties>
-                <skip-shade>true</skip-shade>
+                <skip-artifact-build>true</skip-artifact-build>
                 <skip-linters>false</skip-linters>
                 <skip-tests>false</skip-tests>
             </properties>
@@ -718,7 +721,7 @@
                 </property>
             </activation>
             <properties>
-                <skip-shade>true</skip-shade>
+                <skip-artifact-build>true</skip-artifact-build>
                 <skip-linters>false</skip-linters>
             </properties>
         </profile>

@@ -151,6 +151,7 @@ public final class XpathAttributePredicate {
      * @return this {@link XpathAttributePredicate}
      * @see #containsAttribute(String, String)
      */
+    // TODO: Make a containsFlag method for convenience?
     public static XpathPredicate containsSrc(final String value) {
         return containsAttribute("src", value);
     }

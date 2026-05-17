@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1}"
-PREV_TAG="${2}"
+VERSION="${1:?VERSION argument is required}"
+PREV_TAG="${2:?PREV_TAG argument is required}"
 
 : "${CHANGELOG_CONTENT:?CHANGELOG_CONTENT is required}"
 
@@ -13,7 +13,6 @@ PREV_TAG="${2}"
     if [ -s RELEASE_NOTES.md ]; then
         echo "Including RELEASE_NOTES.md content" >&2
         cat RELEASE_NOTES.md
-        echo
         echo
         echo "---"
         echo

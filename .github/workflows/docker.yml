@@ -15,6 +15,7 @@ jobs:
   analyze:
     name: Docker Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       actions: read
       contents: read
@@ -23,8 +24,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6.0.2
-        with:
-          fetch-depth: 0
 
       # Docker linting
       - name: Run Hadolint and generate report

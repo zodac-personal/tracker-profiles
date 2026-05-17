@@ -56,15 +56,14 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "F1Carreras", url = "https://f1carreras.xyz/")
 @TrackerHandler(name = "HDUnited", url = "https://hd-united.vn/")
 @TrackerHandler(name = "Hellenic-HD", url = "https://hellenic-hd.cc/")
-@TrackerHandler(name = "InfinityLibrary", url = "https://infinitylibrary.net/")
 @TrackerHandler(name = "ItaTorrents", url = "https://itatorrents.xyz/")
 @TrackerHandler(name = "LDU", url = "https://theldu.to/")
 @TrackerHandler(name = "Luminarr", url = "https://luminarr.me/")
 @TrackerHandler(name = "MalayaBits", url = "https://malayabits.cc/")
+@TrackerHandler(name = "MidnightScene", url = "https://midnightscene.cc/")
 @TrackerHandler(name = "NordicQuality", url = "https://nordicq.org/")
 @TrackerHandler(name = "OldToons.World", url = "https://oldtoons.world/")
 @TrackerHandler(name = "OnlyEncodes", url = "https://onlyencodes.cc/")
-@TrackerHandler(name = "Podzemlje", url = "https://podzemlje.net/")
 @TrackerHandler(name = "PolishTorrent", url = "https://polishtorrent.top/")
 @TrackerHandler(name = "Rastastugan", url = "https://rastastugan.org/")
 @TrackerHandler(name = "RocketHD", url = "https://rocket-hd.cc/")
@@ -72,7 +71,6 @@ import org.openqa.selenium.WebElement;
 @TrackerHandler(name = "SlobitMedia", url = "https://media.slo-bitcloud.eu/")
 @TrackerHandler(name = "Unwalled", url = "https://unwalled.cc/")
 @TrackerHandler(name = "VietMediaF", url = "https://tracker.vietmediaf.store/")
-@TrackerHandler(name = "YUSCENE", url = "https://yu-scene.net/")
 public class Unit3dHandler extends AbstractTrackerHandler implements HasDismissibleElement, HasFixedHeader {
 
     @Override

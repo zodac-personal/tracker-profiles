@@ -19,10 +19,15 @@ package net.zodac.tracker.util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.imageio.ImageIO;
+import net.zodac.tracker.framework.config.ApplicationConfiguration;
+import net.zodac.tracker.framework.config.Configuration;
+import net.zodac.tracker.redaction.RedactionType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -33,7 +38,9 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
  */
 public final class ScreenshotTaker {
 
+    private static final ApplicationConfiguration CONFIG = Configuration.get();
     private static final Duration TIME_BETWEEN_SCROLLS = Duration.ofMillis(500L);
+    private static final ExecutorService WRITE_EXECUTOR = Executors.newFixedThreadPool(CONFIG.numberOfParallelThreads());
 
     private ScreenshotTaker() {
 
@@ -41,7 +48,7 @@ public final class ScreenshotTaker {
 
     /**
      * Checks how many screenshots already exist for the given base name in the given directory. The base name is either the tracker name alone (for
-     * {@link net.zodac.tracker.framework.config.RedactionType#NONE}) or the tracker name with the redaction type appended (e.g.
+     * {@link RedactionType#NONE}) or the tracker name with the redaction type appended (e.g.
      * {@code trackerName_Text}).
      *
      * <p>
@@ -85,20 +92,24 @@ public final class ScreenshotTaker {
      * @param baseName               the base file name for the screenshot (tracker name, with optional redaction type suffix)
      * @param scrollDuringScreenshot whether to scroll the profile page during the screenshot
      * @param index                  how many screenshots already exist for this base name
-     * @return the {@link File} instance of the saved screenshot
-     * @throws IOException thrown if an error occurs saving the screenshot to the file system
+     * @return a {@link Future} that resolves to the saved screenshot {@link File} once PNG encoding is complete
      * @see BrowserInteractionHelper#scrollToTheTop()
      */
-    public static File takeScreenshot(final RemoteWebDriver driver,
-                                      final Path outputDirectory,
-                                      final String baseName,
-                                      final boolean scrollDuringScreenshot,
-                                      final int index
-    ) throws IOException {
+    public static Future<File> takeScreenshot(final RemoteWebDriver driver, final Path outputDirectory, final String baseName,
+                                              final boolean scrollDuringScreenshot, final int index) {
         final BufferedImage screenshotImage = takeScreenshotOfEntirePage(driver, scrollDuringScreenshot);
         final File screenshot = createOutputFileHandle(outputDirectory.toAbsolutePath(), baseName, index);
-        ImageIO.write(screenshotImage, "PNG", screenshot);
-        return screenshot;
+        return WRITE_EXECUTOR.submit(() -> {
+            ImageIO.write(screenshotImage, "PNG", screenshot);
+            return screenshot;
+        });
+    }
+
+    /**
+     * Shuts down the bounded PNG write executor. Call once after all screenshot work is finished.
+     */
+    public static void shutdown() {
+        WRITE_EXECUTOR.shutdown();
     }
 
     private static File createOutputFileHandle(final Path outputDirectory, final String baseName, final int index) {

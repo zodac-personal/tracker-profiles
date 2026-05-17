@@ -18,8 +18,7 @@
 package net.zodac.tracker.redaction;
 
 import java.util.regex.Pattern;
-import net.zodac.tracker.framework.config.RedactionType;
-import net.zodac.tracker.util.WebElementUtils;
+import net.zodac.tracker.util.BrowserInteractionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
@@ -33,9 +32,11 @@ public final class RedactorDelegator implements Redactor {
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("\\r?\\n");
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final BrowserInteractionHelper browserInteractionHelper;
     private final Redactor redactor;
 
-    private RedactorDelegator(final Redactor redactor) {
+    private RedactorDelegator(final BrowserInteractionHelper browserInteractionHelper, final Redactor redactor) {
+        this.browserInteractionHelper = browserInteractionHelper;
         this.redactor = redactor;
     }
 
@@ -49,13 +50,11 @@ public final class RedactorDelegator implements Redactor {
      */
     public static RedactorDelegator create(final RemoteWebDriver driver, final RedactionType redactionType) {
         final Redactor redactor = switch (redactionType) {
-            case BLUR -> new BlurRedactor(driver);
-            case BOX -> new BoxRedactor(driver);
-            case REMOVE -> new RemoveRedactor(driver);
-            case TEXT -> new TextRedactor(driver);
+            case BLUR -> BlurRedactor.create(driver);
+            case BOX -> BoxRedactor.create(driver);
             case NONE -> throw new IllegalStateException("RedactorDelegator should not be created for NONE redaction type");
         };
-        return new RedactorDelegator(redactor);
+        return new RedactorDelegator(new BrowserInteractionHelper(driver), redactor);
     }
 
     @Override
@@ -98,15 +97,21 @@ public final class RedactorDelegator implements Redactor {
         return numberOfRedactedElements;
     }
 
-    private static void logElementToBeRedacted(final WebElement element, final String elementType) {
-        final String elementText = WebElementUtils.getTextContent(element);
+    @Override
+    public void undoRedaction() {
+        redactor.undoRedaction();
+    }
+
+    private void logElementToBeRedacted(final WebElement element, final String elementType) {
+        final String elementText = browserInteractionHelper.getTextContent(element);
         final String type = elementType.isBlank() ? "" : (" " + elementType);  // Add leading space for the log output only if there is a type
 
         if (!elementText.isBlank()) {
-            LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(element.getText()).replaceAll(""), element.getTagName());
+            LOGGER.info("\t\t\t- Found{}: '{}' in <{}>", type, NEWLINE_PATTERN.matcher(elementText).replaceAll(""), element.getTagName());
             return;
         }
 
+        // Possibly an image
         final String elementSrc = element.getAttribute("src");
         if (elementSrc != null && !elementSrc.isBlank()) {
             LOGGER.info("\t\t\t- Found: <{}>: {}", element.getTagName(), element);

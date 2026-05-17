@@ -11,8 +11,34 @@ on:
   workflow_dispatch: # allows manual trigger
 
 jobs:
-  build-and-publish:
+  test:
+    name: Test Latest Software
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.20.0
+        with:
+          checkout-fetch-depth: 0
+          java-distribution: 'temurin'
+          java-version: '26'
+          maven-version: '3.9.15'
+
+      - name: Run Java lints and tests with Maven (including SonarQube)
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONARQUBE_PAT: ${{ secrets.SONARQUBE_PAT }}
+        run: mvn clean install -Dall -Dsonarqube
+
+  docker-publish:
+    name: Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 30
     env:
       has_changes: 'false'
 
@@ -37,15 +63,6 @@ jobs:
           echo "Using version: ${version}"
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      # Set up Java & Maven to execute tests
-      - name: Cache local .m2
-        uses: actions/cache@v5.0.5
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.20.0
         with:
@@ -54,18 +71,11 @@ jobs:
           java-version: '26'
           maven-version: '3.9.15'
 
-      - name: Run Java lints and tests with Maven (including SonarQube)
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONARQUBE_PAT: ${{ secrets.SONARQUBE_PAT }}
-        run: mvn clean install -Dall -Dsonarqube
-
       - name: Set Maven version from VERSION file
         run: mvn versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false -DprocessAllModules
 
-      # Output is not used in Docker image, this step is only used to smoke-test the version update
-      - name: Build source with updated versions
-        run: mvn clean install
+      - name: Verify build with updated versions
+        run: mvn compile -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.0.0

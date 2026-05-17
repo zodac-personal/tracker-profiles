@@ -25,60 +25,76 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Implementation of {@link Redactor} that redacts text by applying a Gaussian blur directly to the sensitive content within the impacted
  * {@link WebElement}.
  */
-class BlurRedactor implements Redactor {
+final class BlurRedactor implements Redactor {
 
     private static final String BLUR_DEFINITION = "blur(0.5em)";
     private static final String IRC_KEY_PREFIX_ALTERNATION = "IRC Key";
     private static final String TORRENT_PASSKEY_PREFIX_ALTERNATION = "Passkey|Pass Key";
 
-    private static final String REDACT_ELEMENT_SCRIPT = Redactor.loadScript("redact_element.js");
-    private static final String REDACT_EMAIL_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_email.js"));
-    private static final String REDACT_IP_ADDRESS_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_ip_address.js"));
-    private static final String REDACT_PASSKEY_SCRIPT = Redactor.loadScripts(List.of("redact_helpers.js", "redact_passkey.js"));
+    private static final String INSTALL_ALL_SCRIPTS = Redactor.loadScripts(List.of(
+        "redact_element.js", "redact_email.js", "redact_ip_address.js", "redact_passkey.js", "undo_redaction.js"
+    ));
+    private static final String CALL_ELEMENT_SCRIPT = "window.__redactElement.apply(null, arguments);";
+    private static final String CALL_EMAIL_SCRIPT = "window.__redactEmail.apply(null, arguments);";
+    private static final String CALL_IP_ADDRESS_SCRIPT = "window.__redactIpAddress.apply(null, arguments);";
+    private static final String CALL_PASSKEY_SCRIPT = "window.__redactPasskey.apply(null, arguments);";
+    private static final String CALL_UNDO_SCRIPT = "window.__undoRedaction();";
 
     private final RemoteWebDriver driver;
 
+    private BlurRedactor(final RemoteWebDriver driver) {
+        this.driver = driver;
+    }
+
     /**
-     * Default constructor.
+     * Creates a {@link BlurRedactor} and installs the redaction scripts on the page.
      *
      * @param driver the {@link RemoteWebDriver}
+     * @return the created {@link BlurRedactor}
      */
-    BlurRedactor(final RemoteWebDriver driver) {
-        this.driver = driver;
+    static BlurRedactor create(final RemoteWebDriver driver) {
+        final BlurRedactor redactor = new BlurRedactor(driver);
+        driver.executeScript(INSTALL_ALL_SCRIPTS);
+        return redactor;
     }
 
     @Override
     public int redact(final WebElement element, final String description, final RedactionBuffer buffer) {
-        final String script = REDACT_ELEMENT_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
-        driver.executeScript(script, element);
+        driver.executeScript(CALL_ELEMENT_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "", "", "", BLUR_DEFINITION,
+            "blur");
         return 1;
     }
 
     @Override
     public int redactEmail(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_EMAIL_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
-        driver.executeScript(script, element);
+        driver.executeScript(CALL_EMAIL_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "", "", "", BLUR_DEFINITION,
+            "blur");
         return 1;
     }
 
     @Override
     public int redactIpAddress(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_IP_ADDRESS_SCRIPT.formatted(0, 0, 0, 0, "", "", "", BLUR_DEFINITION, "blur");
-        driver.executeScript(script, element);
+        driver.executeScript(CALL_IP_ADDRESS_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "", "", "", BLUR_DEFINITION,
+            "blur");
         return 1;
     }
 
     @Override
     public int redactIrcPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_PASSKEY_SCRIPT.formatted(0, 0, 0, 0, "", "", IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
-        driver.executeScript(script, element);
+        driver.executeScript(CALL_PASSKEY_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "", "",
+            IRC_KEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
         return 1;
     }
 
     @Override
     public int redactTorrentPasskey(final WebElement element, final RedactionBuffer buffer) {
-        final String script = REDACT_PASSKEY_SCRIPT.formatted(0, 0, 0, 0, "", "", TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
-        driver.executeScript(script, element);
+        driver.executeScript(CALL_PASSKEY_SCRIPT, element, buffer.left(), buffer.up(), buffer.right(), buffer.down(), "", "",
+            TORRENT_PASSKEY_PREFIX_ALTERNATION, BLUR_DEFINITION, "blur");
         return 1;
+    }
+
+    @Override
+    public void undoRedaction() {
+        driver.executeScript(CALL_UNDO_SCRIPT);
     }
 }
