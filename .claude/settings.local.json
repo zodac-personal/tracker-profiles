@@ -28,18 +28,5 @@
       "WebSearch",
       "Write"
     ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/approve-logic.js"
-          }
-        ]
-      }
-    ]
   }
 }
