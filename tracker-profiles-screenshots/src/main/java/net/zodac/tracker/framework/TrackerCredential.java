@@ -18,7 +18,6 @@
 package net.zodac.tracker.framework;
 
 import java.util.Locale;
-import java.util.Objects;
 import org.apache.commons.csv.CSVRecord;
 
 /**
@@ -51,15 +50,7 @@ public record TrackerCredential(String name, String username, String password)
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof TrackerCredential(final String otherName, final String otherUsername, final String otherPassword))) {
-            return false;
-        }
-        return Objects.equals(name, otherName) && Objects.equals(username, otherUsername) && Objects.equals(password, otherPassword);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, username, password);
+    public String toString() {
+        return "TrackerCredential[name=%s, username=%s, password=****]".formatted(name, username);
     }
 }
